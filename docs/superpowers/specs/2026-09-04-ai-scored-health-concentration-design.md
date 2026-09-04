@@ -120,11 +120,13 @@ back to `templateNarration()` — if any of:
 - `concentration.countries` isn't an array, or contains any code not present in the facts'
   `countrySignals` (defends against a hallucinated country)
 
-`templateNarration()` is extended to also return `health`/`concentration` — `health`/`healthBand`
-from the `clientEval` object it's already handed, `concentration` from `store.js`'s
-`concentration()` selector (household-aware, called fresh) — so the fallback shape is identical to
-the AI shape and every consumer reads one field name regardless of source, even though the two
-values still come from the two places they come from today.
+`templateNarration()` and `narrateClient()` stay pure — no new import of `store.js` — so both keep
+working with the plain fixtures their existing tests already construct. The household-aware
+concentration fallback is fetched once by the caller (`main.js`'s `maybeNarrateOpenClient()`,
+which already has `S` in scope) and threaded through as an explicit parameter:
+`narrateClient(clientEval, portfolio, rmNotes, fallbackConcentration)`, and
+`templateNarration(clientEval, portfolio, fallbackConcentration)`. Both existing tests gain one
+new fixture argument (a plain `{ pct, countries }` object); neither needs the global store.
 
 ## 6. Wiring + provenance
 
@@ -132,9 +134,11 @@ No change to `clientEval.js`. Its internal `conc` (account-only, from `portfolio
 exactly what it is today: an input to the health penalty math, never exposed. The concentration
 *fallback* is sourced the same place the card gets it today — `store.js`'s household-aware
 `concentration()` selector — so a failed or invalid AI call regresses the card to precisely what
-it would have shown before this feature existed, not to a different (account-only) scope.
-`narrate.js`'s facts-builder and its fallback path both call this selector for their concentration
-figure; `clientEval.js` is read only for `health`/`healthBand`/the risk-and-opportunity prose.
+it would have shown before this feature existed, not to a different (account-only) scope. `main.js`
+calls this selector once per narration attempt (it already has `S` in scope) and passes the result
+down to `narrateClient`/`templateNarration` as an explicit parameter, keeping `narrate.js` itself
+free of any `store.js` import — see §5. `clientEval.js` is still read for `health`/`healthBand`/the
+risk-and-opportunity prose, exactly as today.
 
 `main.js`'s `maybeNarrateOpenClient()` overwrites `live.health`, `live.healthBand`,
 `live.concentration` in place once the AI answers — the same idiom already used for
