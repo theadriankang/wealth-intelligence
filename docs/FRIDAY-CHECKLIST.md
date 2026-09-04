@@ -1,52 +1,115 @@
-# Friday checklist
+# Demo checklist
 
-## Before the reveal (Thursday night)
+Rewritten 5 Sep 2026, after the AI-scoring merge and the Intelligence tab landed.
+The previous version rehearsed a four-segment spine that no longer exists.
 
-- [ ] `npm install` on every laptop, on hotel wifi, not conference wifi
-- [ ] `npm run dev` works offline with wifi turned off
-- [ ] Everyone has run the demo path once end to end
-- [ ] Check the T&Cs on pre-existing code and be ready to disclose this scaffold
+---
 
-## In the deep-dive session
+## Before you present
 
-Ask these at the booth. The answers matter more than the written brief:
+- [ ] `npm install` on every laptop that might drive the demo
+- [ ] `npm run dev:all` — **both** processes. `npm run dev` alone leaves `/api/llm`,
+      `/api/signals` and `/api/policy-scan` unserved and the cockpit falls back silently.
+- [ ] `.env` has `ANTHROPIC_API_KEY`, `TINYFISH_API_KEY`, `FRED_API_KEY`
+- [ ] Open in **Chrome**, not the VS Code preview — the preview has no WebGL and renders
+      the cockpit as floating white boxes. It is not broken; it is the wrong browser.
+- [ ] Let the book finish scoring before you start talking. Client cards read
+      "Scoring…" until the boot-time narration returns.
+- [ ] `npm test` — 48 tests, all green
 
-- [ ] Does this sit **inside Wealth Navigator** or beside it?
-- [ ] How does it relate to **JAI**? What is it allowed to duplicate?
-- [ ] RM-facing, client-facing, or both?
-- [ ] Is the **CIO house view** available as data?
-- [ ] Do they provide sample portfolios? What identifiers — ISIN or ticker?
-- [ ] Do funds come with a **country breakdown**, or only domicile?
-- [ ] Any required stack? Any hard compliance framing they want to see?
-- [ ] What is the **side challenge** (revealed 14:00) and does it overlap?
+## The demo path — rehearse this, five minutes
 
-## First 60 minutes after the repo drops
+**1. Open on the book.** Twenty clients, sorted by attention. Say what the screen is: a
+relationship manager's morning, ranked by who needs them today.
 
-1. [ ] Read their schema. Open `src/model/schema.js` beside it.
-2. [ ] Fill in `src/adapters/juliusbaer.js` — only the mapping functions.
-3. [ ] Set `ADAPTER: "juliusbaer"` in `src/config.js`.
-4. [ ] Open the console. `validatePortfolio` names every field that didn't map.
-5. [ ] Fix `deriveExposures()` for their instrument types — this is the one that needs judgement.
-6. [ ] Check `server/worldmonitor.js` `normalise()` against the real World Monitor response.
+**2. Open Lau Chi Ming (CL-0014).** The richest client for this story — a live margin-call
+finding, a real dataset-vs-live divergence, and three retrieved documents.
 
-Do **not** start by restyling anything. The UI is done; the data mapping is the risk.
+**3. Overview.** Globe, four lenses, look-through country exposure. Point out that a fund
+is not a country: `JBGEF` contributes its Taiwan sleeve everywhere at once. Toggle
+Household and watch the concentration cross its mandate limit.
 
-## Demo path (rehearse this, five minutes)
+**4. Risks & Actions.** AI-scored, each carrying its citation count. Advisory versus
+discretionary mandates behave differently — the suitability record is generated, not typed.
 
-- Globe opens on the **AI risk** lens — every country coloured by the model's composite score.
-- The **Urgent strip** under the ticker lists the highest-urgency actions across the whole book;
-  click one to jump to that client's Actions.
-- A client's spine: **Explanation** (health dial + AI-written thesis/summary + a Full-portfolio
-  drawer) → **Situation** (the global picture) → **Analysis** (flagged risks & opportunities,
-  each with an urgency score and citation count) → **Actions** (RM to-dos, urgent ones pinned,
-  each tagged by mandate class).
-- The "evaluated Ns ago" stamp by the live clock; the whole book re-scores every 60 s.
-- With no LLM key the thesis/summary come from a template — everything else is identical.
+**5. Intelligence — this is the differentiator, spend the most time here.**
+   - Header: `17 tool calls · 7 findings · 0 citable · 3 blocked`
+   - The findings, each with its evidence refs (`auth:facility.CF-0002.ltv_pct`)
+   - **The fence.** Every number leaves a tool as a Measure carrying its own provenance.
+     Arithmetic refuses a bare number and refuses a live value. Not a prompt asking the
+     model to behave — a function that throws.
+   - **Dataset vs live**, stated and never reconciled: VIX 25.1 in the dataset, 14.32 live.
+   - **Then the moment.** Scroll to Retrieved evidence. Nothing is citable — every document
+     is a candidate, and the pipeline cannot approve its own output. Click
+     **Approve for citation** on the HKMA document. The walk re-runs: `0 citable` becomes
+     `1 citable`, `3 blocked` becomes `2`.
+     Say it plainly: *that is what the relationship manager does in this system.*
 
-Let a ticker signal land while you talk. Do not narrate the tech stack.
+**6. Compliance / Impact** only if there is time. The argument survives without them.
 
-## If something breaks on stage
+## What to say about the data
 
-- Signals down → the badge says `fixtures`; say so and carry on. It is designed for this.
-- LLM down → the note still generates from the template. Nobody can tell unless you say.
-- Globe won't render (WebGL) → go to the Actions and Impact tabs; the argument survives.
+Be precise here; a private bank will test it.
+
+- **Live and real:** 60 documents retrieved through TinyFish and 155 market series from
+  FRED, across all 20 clients, each traceable to the exposure that caused the query.
+- **Fabricated:** the portfolios, the clients, the 2026 events. The disclaimer strip says so
+  and stays up.
+- **Not live:** the globe's Instability, Tone and Policy lenses. They are dataset signals.
+  Do not call them live.
+- If asked about physical-world feeds: we built a GDELT lane and a WorldMonitor client.
+  WorldMonitor returns 401 with no public signup below USD 99.99/month; GDELT rate-limited
+  our IP to a standstill (429 on a single cold request after 11.5s). Both are in the repo
+  with the measurements. That answer lands better than a lens that greys out on stage.
+
+## If something breaks
+
+| Fails | What happens | What you say |
+|---|---|---|
+| LLM key missing or model down | Deterministic template note; `aiState` reports "unavailable", never a made-up number | "The scoring degrades to the deterministic rubric — it never invents a figure." |
+| Signals unreachable | `fixtures` badge next to the clock | "It's designed to say so rather than hide it." |
+| WebGL / no globe | Fallback panel; Actions, Intelligence and Impact all still work | Move to the Intelligence tab; the argument is there anyway. |
+| Model returns uncited claims | Those claims are dropped before render, count shown | This is the point. Say it out loud. |
+| Intel bundle missing for a client | Panel names the client and the command to rebuild | Switch to CL-0014. |
+
+Do not narrate the tech stack. Let a ticker signal land while you talk.
+
+## Rebuilding the intel bundles (only if you must)
+
+The bundles and the recording are committed, so `--frozen` replays without the network.
+A live rebuild takes 12–15 minutes and spends real TinyFish budget:
+
+```bash
+npm run intel -- --live     # all 20 clients, rate-limited to 24 req/min
+npm run publish-intel       # out/intel -> public/intel for the browser
+```
+
+Rehearse from the committed cache. A pipeline that depends on a live call succeeding on
+stage is not a pipeline, it is a bet.
+
+## Deployed demo (Vercel)
+
+`/api/llm`, `/api/signals` and `/api/policy-scan` exist as serverless functions, but they
+read environment variables that must be set in the Vercel dashboard — they are NOT read
+from `.env`, which is gitignored and never leaves the laptop. Without them the deployed
+site silently falls back to templates. Set: `ANTHROPIC_API_KEY`, `TINYFISH_API_KEY`,
+`POLICY_SCAN_QUERY`, `POLICY_SCAN_DOMAINS`, `POLICY_SCAN_LOCATION`, `POLICY_SCAN_LANGUAGE`,
+`OFFLINE=0`.
+
+A warm local server always demos better than a cold serverless one. Prefer localhost;
+keep the deployment as the link you hand over afterwards.
+
+## Ask at the booth
+
+- Does this sit inside Wealth Navigator, or beside it? How does it relate to JAI?
+- RM-facing, client-facing, or both?
+- Is the CIO house view available as data?
+- Do funds carry a country breakdown, or only domicile?
+- What is the side challenge, and does it overlap?
+
+## The question you must be able to answer
+
+**"What does the relationship manager stop doing?"**
+
+Not what they get more of. What comes off their plate. Have one sentence ready, and make
+the approval click the proof.
