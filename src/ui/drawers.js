@@ -110,6 +110,53 @@ export function openPosition(id) {
     </div>`);
 }
 
+export function openPolicyTrial() {
+  const scan = S.policyScan || currentPolicyScan();
+  const score = scan.signal.stanceScore > 0 ? `+${scan.signal.stanceScore.toFixed(2)}`
+    : scan.signal.stanceScore.toFixed(2);
+  openDrawer(`
+    <div class="dr-h"><div>
+      <div style="font-size:15px; font-weight:600">Evidence Trial Mode</div>
+      <div style="font-size:11.5px; color:var(--ink-3); margin-top:3px">
+        ${scan.source.issuer} · ${scan.signal.stance} ${score} · ${scan.fetchedAt}</div>
+    </div><button class="x" aria-label="Close">×</button></div>
+    <div class="dr-body">
+      <section class="dr-sec"><h3>Policy signal</h3>
+        <p class="lede"><strong>${scan.signal.policyActionType}</strong> flagged for
+        ${scan.signal.country}. ${scan.signal.whyFlagged}</p>
+        <div class="pillrow" style="margin-top:12px">
+          <span class="chip"><b>mode</b>${scan.mode}</span>
+          <span class="chip"><b>confidence</b>${Math.round(scan.signal.confidence * 100)}%</span>
+          <span class="chip"><b>urgency</b>${scan.signal.urgency}</span>
+        </div>
+      </section>
+
+      <section class="dr-sec"><h3>Agent trial</h3>
+        <div class="trial-list">${scan.agents.map(a => `<article class="trial-step ${a.status}">
+          <div class="num">${a.status === "approved" ? "✓" : "•"}</div>
+          <div><h4>${a.name}</h4><p>${a.finding}</p>
+            <div class="src2">${a.evidence}</div></div>
+        </article>`).join("")}</div>
+      </section>
+
+      <section class="dr-sec"><h3>RM briefing</h3>
+        <div class="brief-lines">${scan.rmBrief.map((line, i) =>
+          `<p><span>${i + 1}</span>${line}</p>`).join("")}</div>
+      </section>
+
+      <section class="dr-sec"><h3>Citations</h3>
+        <table class="prov"><thead><tr><th>Source</th><th>Evidence</th></tr></thead>
+          <tbody>${scan.citations.map(c => `<tr><td><a href="${c.url}" target="_blank" rel="noreferrer">${c.label}</a>
+            <div class="e">${c.url}</div></td><td>${c.quote}</td></tr>`).join("")}</tbody></table>
+      </section>
+
+      <section class="dr-sec"><h3>Guardrail</h3>
+        <p class="lede">This drawer deliberately stops at adviser intelligence. It does not create a
+        client-facing recommendation, order instruction, or suitability conclusion without RM review.</p>
+      </section>
+    </div>`, true);
+}
+
 /* ------------------------------------------------------------------ */
 /* Client note. Tries the LLM; falls back to a deterministic template.  */
 /* ------------------------------------------------------------------ */
