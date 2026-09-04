@@ -4,3 +4,6 @@ dist
 .DS_Store
 *.log
 .preview*
+.vercel
+.env*
+*.bak
