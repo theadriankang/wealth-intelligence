@@ -21,6 +21,8 @@ export const shellHtml = () => `
     <div class="tick-view"><div class="tick-run" id="ticker"></div></div>
   </div>
 
+  <div class="urgent-strip" id="urgent" hidden></div>
+
   <div class="stage">
     <nav class="book" id="book-rail">
       <div class="book-h"><h2>Book</h2><span id="book-n"></span></div>
@@ -35,10 +37,11 @@ export const shellHtml = () => `
         <div id="globe"></div>
         <div class="overlay hint">Drag to rotate · click a country</div>
         <div class="overlay lensbar" role="group" aria-label="Globe encoding">
-          <button data-lens="d" aria-pressed="true">Risk Δ</button>
+          <button data-lens="d" aria-pressed="false">Risk Δ</button>
           <button data-lens="inst" aria-pressed="false">Instability</button>
           <button data-lens="tone" aria-pressed="false">Tone</button>
           <button data-lens="pol" aria-pressed="false">Policy</button>
+          <button data-lens="ai" aria-pressed="true">AI risk</button>
         </div>
         <div class="overlay evid">
           <div class="k" id="ev-k">Risk-weighted concentration</div>
@@ -59,11 +62,10 @@ export const shellHtml = () => `
     </section>
 
     <div class="spine" id="spine">
+      <section class="seg" id="seg-explanation"></section>
       <section class="seg" id="seg-situation"></section>
-      <section class="seg" id="seg-goals"></section>
-      <section class="seg" id="seg-positions"></section>
+      <section class="seg" id="seg-analysis"></section>
       <section class="seg" id="seg-actions"></section>
-      <section class="seg" id="seg-conv"></section>
       <div class="evi-cta">
         <button class="ghost" id="ev-open-comp">Compliance &amp; screening →</button>
         <button class="ghost" id="ev-open-econ">Operating impact →</button>

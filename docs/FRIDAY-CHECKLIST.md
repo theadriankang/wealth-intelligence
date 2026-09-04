@@ -33,16 +33,15 @@ Do **not** start by restyling anything. The UI is done; the data mapping is the 
 
 ## Demo path (rehearse this, five minutes)
 
-1. Open on **Bergmann**. Goals strip: the 2027 property purchase is down sharply.
-2. Click that goal → globe and positions filter to what funds it. *“The map is now a picture of one objective.”*
-3. Open **TSM** → look-through table, signal timeline, provenance, house-view tension.
-4. Open **JBGEF** → *“this fund is 5% Taiwan and nobody's statement says so.”* ← the banker moment
-5. Toggle **Household** → Taiwan 7.8% → 11.5%, crosses the limit. *“Invisible per account.”*
-6. **Actions** tab → trim vs. collar, expand a suitability record. Switch to **Vogt** to show
-   discretionary behaving differently.
-7. **Impact** tab → prepare once, deliver to many.
-8. **Generate client note** → footnoted, every claim cited.
-9. **Client view** → turn the screen around.
+- Globe opens on the **AI risk** lens — every country coloured by the model's composite score.
+- The **Urgent strip** under the ticker lists the highest-urgency actions across the whole book;
+  click one to jump to that client's Actions.
+- A client's spine: **Explanation** (health dial + AI-written thesis/summary + a Full-portfolio
+  drawer) → **Situation** (the global picture) → **Analysis** (flagged risks & opportunities,
+  each with an urgency score and citation count) → **Actions** (RM to-dos, urgent ones pinned,
+  each tagged by mandate class).
+- The "evaluated Ns ago" stamp by the live clock; the whole book re-scores every 60 s.
+- With no LLM key the thesis/summary come from a template — everything else is identical.
 
 Let a ticker signal land while you talk. Do not narrate the tech stack.
 

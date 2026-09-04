@@ -81,7 +81,9 @@ export function paintGlobe() {
       <div class="r"><span>Capital at risk</span><span>${e.weightPct.toFixed(1)}%</span></div>
       <div class="r"><span>${L.label.split(",")[0]}</span>
         <span style="color:${L.col(L.val(s))}">${L.fmt(L.val(s))}</span></div>
-      <div class="r"><span>Via</span><span>${e.instrumentIds.join(" ")}</span></div></div>`;
+      <div class="r"><span>Via</span><span>${e.instrumentIds.join(" ")}</span></div>
+      ${S.lens === "ai" && S.evaluation?.countries?.[iso] ? `<div class="r"><span>Drivers</span><span>${
+        S.evaluation.countries[iso].drivers.filter(d => d.contribution > 0).map(d => d.label).join(", ") || "—"}</span></div>` : ""}</div>`;
   });
 
   /* points: chokepoints + any exposed micro-state */

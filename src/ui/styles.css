@@ -739,3 +739,57 @@ button:disabled{opacity:.58; cursor:wait}
 .goal .gh{font-family:var(--mono); font-size:10px; color:var(--ink-4); letter-spacing:.03em}
 .goal .gt2{font-size:10.5px; color:var(--ink-4); white-space:nowrap}
 .goal .gt2 span:first-child{font-family:var(--mono); font-size:10px}
+
+/* ══ RM-Intelligence evaluation: urgent strip + 4-segment spine ═════════════ */
+
+/* ── Urgent strip ──────────────────────────────────────────────────────── */
+.urgent-strip{display:flex; align-items:center; gap:8px; padding:7px 18px; overflow-x:auto;
+  background:rgba(226,104,60,.08); border-bottom:1px solid var(--line)}
+.urgent-lab{flex:none; font-family:var(--mono); font-size:9px; letter-spacing:.12em; text-transform:uppercase; color:var(--ember)}
+.urgent-task{flex:none; display:flex; align-items:center; gap:7px; background:var(--panel); border:1px solid var(--line);
+  border-left:2px solid var(--ember); border-radius:6px; padding:5px 9px; font-size:11px; color:var(--ink-2); cursor:pointer; white-space:nowrap}
+.urgent-task b{color:var(--ink); font-weight:600}
+.urgent-task.urg-reduce-risk{border-left-color:var(--ember)}
+.urgent-task.urg-use-opportunity{border-left-color:var(--cool)}
+.urgent-task.urg-fit-needs{border-left-color:var(--amber-2)}
+.upip{font-family:var(--mono); font-size:9px; color:var(--ember); border:1px solid var(--line); border-radius:3px; padding:0 4px}
+
+/* ── Explanation ───────────────────────────────────────────────────────── */
+.health{display:flex; align-items:center; gap:14px; margin:4px 0 14px}
+.health-dial{width:52px; height:52px; border-radius:50%; display:grid; place-items:center;
+  font-family:var(--disp); font-weight:800; font-size:18px; border:2px solid var(--flat)}
+.health-strong{border-color:var(--cool); color:var(--cool)}
+.health-watch{border-color:var(--amber); color:var(--amber)}
+.health-strained{border-color:var(--ember); color:var(--ember)}
+.health-band{font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-3)}
+.health-drivers span{font-size:10px; color:var(--ink-4); margin-right:8px}
+.prose{font-family:var(--serif); font-size:13.5px; line-height:1.62; color:var(--ink-2); margin:0 0 10px}
+.prose-shimmer{color:var(--ink-4); animation:pl 1.6s infinite}
+.rollup{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:12px 0 12px}
+.rollup h4{font-family:var(--mono); font-size:9px; letter-spacing:.09em; text-transform:uppercase; color:var(--ink-3); margin:0 0 6px}
+.ru{display:flex; justify-content:space-between; font-size:12px; color:var(--ink-2); padding:3px 0}
+
+/* ── Analysis / Actions ────────────────────────────────────────────────── */
+#seg-analysis h4, #seg-actions h4{font-family:var(--mono); font-size:9px; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--ink-3); margin:12px 0 6px}
+.findings{list-style:none; margin:0 0 6px; padding:0}
+.finding{display:flex; gap:9px; align-items:baseline; padding:8px 0; border-bottom:1px solid var(--line-soft); font-size:12.5px; color:var(--ink-2)}
+.finding.urg-hi{border-left:2px solid var(--amber); padding-left:9px}
+.finding .ftext{flex:1}
+.sev{width:6px; height:6px; border-radius:50%; flex:none; margin-top:5px}
+.sev-high{background:var(--ember)} .sev-medium{background:var(--amber)} .sev-low{background:var(--cool)}
+.cite-chip{flex:none; font-family:var(--mono); font-size:9px; color:var(--ink-4); border:1px solid var(--line); border-radius:3px; padding:1px 5px}
+.action{border:1px solid var(--line); border-left:2px solid var(--flat); border-radius:8px; padding:10px 12px; margin-bottom:8px; background:var(--raise)}
+.act-reduce-risk{border-left-color:var(--ember)} .act-use-opportunity{border-left-color:var(--cool)} .act-fit-needs{border-left-color:var(--amber-2)}
+.a-top{display:flex; gap:8px; align-items:center; margin-bottom:5px}
+.a-kind{font-family:var(--mono); font-size:9px; text-transform:uppercase; letter-spacing:.05em; color:var(--amber-2)}
+.a-class{font-family:var(--mono); font-size:9px; text-transform:uppercase; color:var(--ink-4); border:1px solid var(--line); border-radius:3px; padding:1px 5px}
+.a-top .upip{margin-left:auto}
+.a-text{font-size:13px; color:var(--ink); margin:0 0 4px}
+.a-reason{font-size:11.5px; color:var(--ink-4); margin:0 0 6px; line-height:1.5}
+.urgent-head{color:var(--ember) !important}
+.disclaimer-line{font-family:var(--mono); font-size:10px; text-transform:uppercase; letter-spacing:.06em; color:var(--amber-2); margin:0 0 12px}
+.muted{color:var(--ink-4); font-size:12px}
+.flash{animation:flash 1.4s ease}
+@keyframes flash{0%{box-shadow:0 0 0 2px var(--amber)}100%{box-shadow:0 0 0 0 transparent}}
+@media (prefers-reduced-motion:reduce){.prose-shimmer,.flash{animation:none}}

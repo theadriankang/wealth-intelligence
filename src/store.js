@@ -4,9 +4,10 @@ import { goalDelta, riskConcentration, flaggedPositions, rmEconomics, FLAG_THRES
 
 export const S = {
   instruments: {}, portfolios: [], signals: {}, prevSignals: {},
-  portfolio: null, lens: "d", selIso: null, goalSel: null,
+  portfolio: null, lens: "ai", selIso: null, goalSel: null,
   household: false, live: false, actionState: {}, meta: {},
-  policyScan: null, policyScanState: "idle"
+  policyScan: null, policyScanState: "idle",
+  evaluation: null, narratedHash: {}
 };
 
 export const positions = () =>
@@ -56,3 +57,7 @@ export const visibleRows = () => {
 export const actionState = a => S.actionState[S.portfolio.id + a.id] || a.state;
 export const factsForCountries = isos => isos.flatMap(i => S.signals[i]?.events || []);
 export { FLAG_THRESHOLD };
+
+export const countryScore = iso3 => S.evaluation?.countries?.[iso3] || null;
+export const clientEval = () => S.evaluation?.clients?.[S.portfolio?.id] || null;
+export const urgentTasks = () => S.evaluation?.urgent || [];
