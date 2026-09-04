@@ -441,6 +441,7 @@ table.prov a:hover{text-decoration:underline}
   border:1px solid var(--line); border-radius:3px; padding:1px 5px; color:var(--ink-3)}
 .mode.live{color:var(--good); border-color:#1f5236}
 .mode.fixtures{color:var(--warn); border-color:#5b4a1c}
+.mode.ai{color:var(--good); border-color:#1f5236}
 button:disabled{opacity:.58; cursor:wait}
 
 /* look-through */

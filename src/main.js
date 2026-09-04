@@ -1,6 +1,6 @@
 import { CONFIG } from "./config.js";
 import { loadData } from "./adapters/index.js";
-import { S } from "./store.js";
+import { S, rows, concentration } from "./store.js";
 import { fetchSignals, pollSignals } from "./signals/worldmonitor.js";
 import { FEED, LATE_FEED } from "./signals/fixtures/signals.js";
 import { initPalette } from "./ui/palette.js";
@@ -16,7 +16,7 @@ import { renderClientView } from "./ui/clientview.js";
 import * as M from "./ui/motion.js";
 import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
 import { runEvaluation } from "./eval/evaluate.js";
-import { narrateClient } from "./eval/narrate.js";
+import { narrateClient, factsHash } from "./eval/narrate.js";
 import * as marketData from "./market/index.js";
 
 const root = document.getElementById("root");
@@ -124,12 +124,41 @@ function refreshEvaluation() {
 
 function rmNotesFor(p) { return (p.relationship?.concerns || []); }
 
+/** Everything narrateClient needs to compute health/concentration, but no store import in narrate.js. */
+function buildGrounding() {
+  const list = rows();
+  const positions = list.map(r => ({
+    instrumentId: r.instrumentId,
+    name: r.name,
+    weightPct: r.weightPct,
+    riskDelta: r.riskDelta,
+    countries: r.inst?.exposures?.length
+      ? r.inst.exposures.map(e => ({ iso3: e.iso3, weight: e.weight }))
+      : [{ iso3: r.iso3, weight: 1 }]
+  }));
+  const isos = new Set(positions.flatMap(p => p.countries.map(c => c.iso3)));
+  const countrySignals = [...isos].filter(iso => S.signals[iso]).map(iso => ({
+    iso3: iso, name: S.signals[iso].name || iso, riskDelta: S.signals[iso].riskDelta
+  }));
+  return {
+    household: S.household,
+    positions,
+    countrySignals,
+    fallbackConcentration: concentration(),
+    policyStance: S.policyScan?.signal?.stanceScore ?? null
+  };
+}
+
 /**
- * Narration is the only LLM call: one client — the one on screen — and only when its
- * facts actually moved. Each evaluation mints fresh client objects with `thesis: null`,
- * so the prose is cached in `S.narratedHash` (portfolioId → {hash, thesis, summary})
- * and copied back onto the live object; an unchanged hash never reaches the model.
- * `inflight` makes that guarantee hold for calls that overlap in time, not just in sequence.
+ * Narration is the only LLM call: one client — the one on screen — and only when its facts
+ * actually moved (positions, signals, the household toggle, or the policy scan). It now also
+ * carries health and the risk-weighted concentration figure, not just prose — both fall back to
+ * the deterministic values in `grounding`/`clientEval` if the call fails or the response doesn't
+ * validate. Each evaluation mints fresh client objects with `thesis: null`, so the answer is
+ * cached in `S.narratedHash` (portfolioId → { hash, health, healthBand, concentration,
+ * scoreSource, thesis, summary }) and copied back onto the live object; an unchanged hash never
+ * reaches the model. `inflight` makes that guarantee hold for calls that overlap in time, not
+ * just in sequence.
  */
 const inflight = new Set(); // `${portfolioId}|${hash}` — one narration per client per hash
 
@@ -137,13 +166,16 @@ async function maybeNarrateOpenClient() {
   const id = S.portfolio?.id;
   const ev = S.evaluation?.clients?.[id];
   if (!ev) return;
-  const hash = S.evaluation.hash[id];
+  const grounding = buildGrounding();
+  const hash = factsHash(id, grounding);
 
   const cached = S.narratedHash[id];
   if (cached?.hash === hash) {
     if (ev.thesis !== cached.thesis) {
       ev.thesis = cached.thesis; ev.summary = cached.summary;
-      paintExplanation();
+      ev.health = cached.health; ev.healthBand = cached.healthBand;
+      ev.concentration = cached.concentration; ev.scoreSource = cached.scoreSource;
+      paintExplanation(); paintEvidence();
     }
     return;
   }
@@ -153,18 +185,20 @@ async function maybeNarrateOpenClient() {
   inflight.add(key);
   let narrated;
   try {
-    narrated = await narrateClient(ev, S.portfolio, rmNotesFor(S.portfolio));
+    narrated = await narrateClient(ev, S.portfolio, rmNotesFor(S.portfolio), grounding);
   } finally {
     inflight.delete(key);
   }
 
-  // A poll may have rebuilt S.evaluation mid-await: `ev` can be an orphan, and an answer
-  // for superseded facts is discarded — the poll's own call covers the new hash.
+  // A poll (or a household toggle) may have moved the facts mid-await: an answer for
+  // superseded facts is discarded — whatever triggered the change makes its own call.
   const live = S.evaluation?.clients?.[id];
-  if (!live || S.evaluation.hash[id] !== hash) return;
-  S.narratedHash[id] = { hash, thesis: narrated.thesis, summary: narrated.summary };
+  if (!live || factsHash(id, buildGrounding()) !== hash) return;
+  S.narratedHash[id] = { hash, ...narrated };
   live.thesis = narrated.thesis; live.summary = narrated.summary;
-  if (S.portfolio?.id === id) paintExplanation();
+  live.health = narrated.health; live.healthBand = narrated.healthBand;
+  live.concentration = narrated.concentration; live.scoreSource = narrated.scoreSource;
+  if (S.portfolio?.id === id) { paintExplanation(); paintEvidence(); }
 }
 
 function onUrgentPick({ portfolioId, actionId }) {
@@ -209,7 +243,7 @@ export function renderAll() {
     renderAll();
     maybeNarrateOpenClient();
   });
-  paintHead(() => { S.household = !S.household; S.selIso = null; renderAll(); });
+  paintHead(() => { S.household = !S.household; S.selIso = null; renderAll(); maybeNarrateOpenClient(); });
   paintLegend(); paintGlobe(); paintEvidence();
   paintTicker(feed);
   paintUrgent(onUrgentPick);

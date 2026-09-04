@@ -54,6 +54,7 @@ export function paintHead(onHousehold) {
 }
 
 export function paintEvidence() {
+  const ev = S.evaluation?.clients?.[S.portfolio.id];
   const g = S.goalSel ? goals().find(x => x.id === S.goalSel) : null;
   if (g) {
     document.getElementById("ev-k").textContent = "This goal moved";
@@ -64,11 +65,13 @@ export function paintEvidence() {
     M.once("evid", "g:" + g.id + ":" + g.change, M.evidence);
     return;
   }
-  const c = concentration();
+  const c = ev?.concentration ?? concentration();
+  const src = ev?.scoreSource === "ai" ? "ai" : "deterministic";
   document.getElementById("ev-k").textContent = "Risk-weighted concentration";
   document.getElementById("ev-v").textContent = c.pct + "%";
   document.getElementById("ev-s").innerHTML =
-    `of deteriorating exposure in three countries<br><span style="font-family:var(--mono);color:var(--ink-2)">${c.countries.join(" · ")}</span>`;
+    `of deteriorating exposure in three countries<br><span style="font-family:var(--mono);color:var(--ink-2)">${c.countries.join(" · ")}</span>
+    <span class="mode ${src === "ai" ? "ai" : ""}" style="margin-left:6px">${src === "ai" ? "ai-scored" : "deterministic"}</span>`;
   M.once("evid", "c:" + S.portfolio.id + ":" + c.pct, M.evidence);
 }
 
