@@ -5,15 +5,17 @@ export default async function handler(req, res) {
     res.setHeader("Allow", "GET, POST");
     return res.status(405).json({ error: "Method not allowed" });
   }
-
   try {
     const body = req.method === "POST" ? req.body || {} : {};
+    const pick = k => body[k] ?? req.query?.[k];
+    const countries = pick("countries");
     const scan = await runPolicySentinelScan({
-      query: body.query || req.query.query,
-      includeDomains: body.includeDomains || req.query.includeDomains,
-      recencyMinutes: body.recencyMinutes || req.query.recencyMinutes,
-      location: body.location || req.query.location,
-      language: body.language || req.query.language
+      countries: Array.isArray(countries) ? countries : String(countries || "").split(",").filter(Boolean),
+      query: pick("query"),
+      recencyMinutes: pick("recencyMinutes"),
+      afterDate: pick("afterDate"),
+      location: pick("location"),
+      language: pick("language")
     });
     res.status(200).json(scan);
   } catch (err) {
