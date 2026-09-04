@@ -278,14 +278,8 @@ export function paintHead(onHousehold) {
     </div>
     <div class="head-prose">
       ${overviewBlock}
-      <button class="ghost sm" id="inspect-data-btn" style="align-self:flex-start">${S.inspectDataOpen ? "Hide data used" : "Inspect data used"}</button>
-      ${S.inspectDataOpen ? `<pre class="inspect-data">${JSON.stringify(ev?.groundingUsed ?? {}, null, 2)}</pre>` : ""}
     </div>`;
   document.getElementById("hh-btn")?.addEventListener("click", onHousehold);
-  document.getElementById("inspect-data-btn")?.addEventListener("click", () => {
-    S.inspectDataOpen = !S.inspectDataOpen;
-    paintHead(onHousehold);
-  });
 }
 
 export function paintGoals(onPick) {
@@ -321,7 +315,7 @@ export function paintEvidence() {
   document.getElementById("ev-k").textContent = "Risk-weighted concentration";
   if (state === "ai") {
     const c = ev.concentration;
-    document.getElementById("ev-v").textContent = c.pct + "%";
+    document.getElementById("ev-v").textContent = Math.round(c.pct) + "%";
     document.getElementById("ev-s").innerHTML =
       `of deteriorating exposure in three countries<br><span style="font-family:var(--mono);color:var(--ink-2)">${c.countries.join(" · ")}</span>
       <span class="mode ai" style="margin-left:6px">ai-scored</span>`;
@@ -410,13 +404,30 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
   M.once("rail", [p.id, S.selIso, S.goalSel, S.household].join("|"), M.rail);
 }
 
-export function paintCopilot({ onToggle }) {
+/** The AI Copilot's ask box, actually routed to the model now (askCopilot in eval/narrate.js,
+ * via main.js's askCopilotQuestion) instead of the old static "Drafting workspace for: X"
+ * placeholder. The answer shown is scoped to whichever client it was actually asked about
+ * (S.copilotAnsweredFor) — switching clients doesn't leave a stale answer from someone else's
+ * portfolio on screen. */
+export function paintCopilot({ onToggle, onAsk }) {
   const p = S.portfolio, open = S.copilotOpen;
   const prompts = ["Prepare call brief", "Show liquidity risks", "Summarise alerts", "Find clients affected by Singapore"];
-  document.getElementById("copilot").innerHTML = open ? `<div class="copilot-box"><div class="copilot-h"><div><h2><span>✦</span> AI Copilot</h2><p>Ask about this client, a holding, or market event</p></div><button class="x" id="copilot-close" aria-label="Close copilot">×</button></div><div class="prompt-grid">${prompts.map(x => `<button data-prompt="${x}">${x}</button>`).join("")}</div><div class="copilot-answer">${S.copilotDraft ? `Drafting workspace for: <b>${S.copilotDraft}</b><br><span>Will use portfolio, goals, RM notes and live signals when routing is connected.</span>` : "Select a prompt or ask a question to organise the RM workflow."}</div><div class="ask-row"><input value="${S.copilotDraft || ""}" placeholder="Ask anything..."><button>➤</button></div></div>` : `<button class="copilot-launch" id="copilot-open" aria-label="Open AI Copilot"><span>✦</span></button>`;
+  const answeredHere = S.copilotAnsweredFor === p.id;
+  const answerBody = S.copilotAsking ? `<span class="prose-shimmer">Thinking…</span>`
+    : answeredHere && S.copilotAnswer ? `${S.copilotAnswer} <span class="mode ai" style="margin-left:6px">ai-scored</span>`
+    : "Select a prompt or ask a question to organise the RM workflow.";
+  document.getElementById("copilot").innerHTML = open ? `<div class="copilot-box"><div class="copilot-h"><div><h2><span>✦</span> AI Copilot</h2><p>Ask about this client, a holding, or market event</p></div><button class="x" id="copilot-close" aria-label="Close copilot">×</button></div><div class="prompt-grid">${prompts.map(x => `<button data-prompt="${x}">${x}</button>`).join("")}</div><div class="copilot-answer">${answerBody}</div><div class="ask-row"><input id="copilot-input" value="${S.copilotDraft || ""}" placeholder="Ask anything..."><button id="copilot-ask" ${S.copilotAsking ? "disabled" : ""}>➤</button></div></div>` : `<button class="copilot-launch" id="copilot-open" aria-label="Open AI Copilot"><span>✦</span></button>`;
   document.getElementById("copilot-open")?.addEventListener("click", onToggle);
   document.getElementById("copilot-close")?.addEventListener("click", onToggle);
-  document.querySelectorAll("#copilot [data-prompt]").forEach(b => b.addEventListener("click", () => { S.copilotDraft = b.dataset.prompt; paintCopilot({ onToggle }); }));
+  document.querySelectorAll("#copilot [data-prompt]").forEach(b => b.addEventListener("click", () => {
+    S.copilotDraft = b.dataset.prompt;
+    onAsk?.(b.dataset.prompt);
+  }));
+  const input = document.getElementById("copilot-input");
+  const submit = () => onAsk?.(input?.value);
+  document.getElementById("copilot-ask")?.addEventListener("click", submit);
+  input?.addEventListener("keydown", e => { if (e.key === "Enter") submit(); });
+  input?.addEventListener("input", e => { S.copilotDraft = e.target.value; });
 }
 
 function topEventsRaw(n) {

@@ -83,8 +83,6 @@ function effectTiles(a) {
  *    from portfolio.mandate — never asked of or trusted from the model.
  *  - Human oversight: Accept/Reject on every action, tracked in S.aiActionState. Nothing here
  *    executes anything; this is a record of what the RM decided, not an execution trigger.
- *  - Traceability: the exact facts behind the current risks/actions are inspectable via the
- *    "Inspect data used" toggle in the client header (paintHead), reading groundingUsed.
  */
 export function paintActions() {
   const p = S.portfolio;

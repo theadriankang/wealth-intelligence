@@ -16,7 +16,7 @@ import { initDrawers, openPosition, openPolicyTrial } from "./ui/drawers.js";
 import * as M from "./ui/motion.js";
 import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
 import { runEvaluation } from "./eval/evaluate.js";
-import { narrateClient, factsHash } from "./eval/narrate.js";
+import { narrateClient, factsHash, askCopilot } from "./eval/narrate.js";
 import * as marketData from "./market/index.js";
 
 const root = document.getElementById("root");
@@ -117,7 +117,7 @@ function wire() {
     if (!S.copilotOpen) return;
     if (e.target.closest("#copilot")) return;
     S.copilotOpen = false;
-    paintCopilot({ onToggle: railHandlers.onCopilotToggle });
+    paintCopilot({ onToggle: railHandlers.onCopilotToggle, onAsk: askCopilotQuestion });
   });
 
   document.getElementById("open-client-rail")?.addEventListener("click", () => { S.clientDrawerOpen = true; S.railDrawerOpen = false; syncDrawers(); });
@@ -206,7 +206,7 @@ async function switchSnapshot(asOf) {
     Object.assign(S, data);
     S.portfolio = S.portfolios.find(p => p.id === keepId) || S.portfolios[0];
     S.operator = currentOperator(data);
-    S.narratedHash = {}; S.aiActionState = {}; S.inspectDataOpen = false;
+    S.narratedHash = {}; S.aiActionState = {};
     since = 0;
     await loadSignals(data, collectIsos(S.portfolios, S.instruments));
     refreshEvaluation();
@@ -340,8 +340,6 @@ function copyNarratedFields(target, src) {
  * overview, risks, opportunities, actions, relationship, complianceChecks, impactNarrative })
  * and copied back onto the live object; an unchanged hash never reaches the model. `inflight`
  * makes that guarantee hold for calls that overlap in time, not just in sequence.
- * `groundingUsed` is stashed on the live object too — the exact facts behind the current
- * answer, for the traceability panel.
  */
 const inflight = new Set(); // `${portfolioId}|${hash}` — one narration per client per hash
 
@@ -354,16 +352,16 @@ async function maybeNarratePortfolio(p) {
 
   const cached = S.narratedHash[id];
   if (cached?.hash === hash) {
-    ev.groundingUsed = grounding;
     if (ev.overview !== cached.overview) {
       copyNarratedFields(ev, cached);
       // Health/overview live in the client header (paintHead), concentration in the globe
       // overlay (paintEvidence), risks/opportunities/actions in the Risks & Actions tab,
       // relationship in the Conversation tab, and complianceChecks/impactNarrative in the
-      // Compliance/Impact tabs — renderAll() repaints all of them; it's cheap and this branch
-      // is rare (only fires once per resolved narration, on a cache hit for a stale object).
-      // Only worth a repaint if this portfolio is the one open.
-      if (S.portfolio?.id === id) renderAll();
+      // Compliance/Impact tabs — but the book list and priority rail show every portfolio's
+      // score too, not just the open one, so this repaints regardless of which portfolio just
+      // resolved. renderAll() is cheap and this branch is rare (only fires once per resolved
+      // narration, on a cache hit for a stale object).
+      renderAll();
     }
     return;
   }
@@ -383,9 +381,11 @@ async function maybeNarratePortfolio(p) {
   const live = S.evaluation?.clients?.[id];
   if (!live || factsHash(id, withPortfolioContext(p, buildGrounding)) !== hash) return;
   S.narratedHash[id] = { hash, ...narrated };
-  live.groundingUsed = grounding;
   copyNarratedFields(live, narrated);
-  if (S.portfolio?.id === id) renderAll();
+  // Every render of the book list / priority rail reads every portfolio's aiState(), so a
+  // freshly-scored client shows up there immediately — not just when it happens to be the one
+  // open. This is what makes narrateAllPortfolios() actually feel automatic at boot.
+  renderAll();
 }
 
 function maybeNarrateOpenClient() {
@@ -424,6 +424,26 @@ async function runPolicySentinel() {
   refreshEvaluation();
   renderAll();
   openPolicyTrial();
+}
+
+/** The AI Copilot's "ask anything" box, actually routed now instead of showing a static
+ * placeholder. One-off per question — not cached/hash-gated like narrateClient, since a
+ * question isn't a recurring fact-driven score. If the client changes while the answer is in
+ * flight, the answer is discarded rather than attached to the wrong client (copilotAnsweredFor
+ * lets paintCopilot only ever show an answer that belongs to the portfolio on screen). */
+async function askCopilotQuestion(question) {
+  const q = question?.trim();
+  const forId = S.portfolio?.id;
+  if (!q || !forId) return;
+  S.copilotAsking = true;
+  renderAll();
+  const grounding = buildGrounding(); // S.portfolio is already the client being asked about
+  const res = await askCopilot(q, S.portfolio, grounding, rmNotesFor(S.portfolio));
+  S.copilotAsking = false;
+  if (S.portfolio?.id !== forId) return; // switched clients mid-ask; the answer no longer applies
+  S.copilotAnsweredFor = forId;
+  S.copilotAnswer = res.ok ? res.answer : "Couldn't find an answer from the current portfolio data — try rephrasing.";
+  renderAll();
 }
 
 export function renderAll() {

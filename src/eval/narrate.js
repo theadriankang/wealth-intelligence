@@ -45,7 +45,7 @@ const SYSTEM =
 const SCHEMA = {
   health: "number 0-100 — overall portfolio health given the facts",
   concentration: {
-    pct: "number 0-100 — risk-weighted concentration of deteriorating exposure",
+    pct: "whole number 0-100, no decimal places — risk-weighted concentration of deteriorating exposure",
     countries: "array of ISO3 codes present in the facts, most significant first"
   },
   overview: "string — a single prose paragraph, not a list, 100 words or fewer: client intro, " +
@@ -258,7 +258,7 @@ export async function narrateClient(clientEval, portfolio, rmNotes = [], groundi
     const healthBand = health >= HEALTH_BANDS.strong ? "strong" : health >= HEALTH_BANDS.watch ? "watch" : "strained";
     return {
       health, healthBand,
-      concentration: { pct: res.data.concentration.pct, countries: res.data.concentration.countries },
+      concentration: { pct: Math.round(res.data.concentration.pct), countries: res.data.concentration.countries },
       scoreSource: "ai",
       overview: res.data.overview,
       risks: res.data.risks, opportunities: res.data.opportunities, actions: res.data.actions,
@@ -267,4 +267,42 @@ export async function narrateClient(clientEval, portfolio, rmNotes = [], groundi
     };
   }
   return fallback();
+}
+
+const COPILOT_SYSTEM =
+  "You are an internal RM copilot answering a relationship manager's question about a specific " +
+  "client's portfolio. Use only the facts given — never invent a position, signal, goal, or " +
+  "note; if the facts don't support an answer, say so honestly rather than guessing at one. No " +
+  "client-facing advice, never the words buy / sell / execute / switch. Keep the answer to 80 " +
+  "words or fewer. Return JSON only.";
+const COPILOT_SCHEMA = {
+  answer: "string — a concise answer grounded only in the facts given, 80 words or fewer"
+};
+
+/** The AI Copilot's "ask anything" box, routed to the same /api/llm path as narrateClient — one
+ * question about the currently open client, answered from the same facts (positions, goals,
+ * tax/life-stage, lombard, RM notes) rather than the static placeholder this used to show.
+ * Not hash-gated/cached like narrateClient: each question is its own one-off ask, not a
+ * recurring fact-driven score. Falls back to `{ ok: false }` on any network failure, invalid
+ * response, empty answer, or a stray imperative verb — the caller decides what to show. */
+export async function askCopilot(question, portfolio, grounding, rmNotes = []) {
+  const facts = {
+    client: { ref: portfolio.ref, mandate: portfolio.mandate, riskProfile: portfolio.riskProfile, riskBand: portfolio.riskBand },
+    question,
+    household: grounding?.household ?? false,
+    taxDomicile: grounding?.taxDomicile ?? null,
+    lifeStage: grounding?.lifeStage ?? null,
+    objectives: grounding?.objectives ?? null,
+    positions: grounding?.positions ?? [],
+    countrySignals: grounding?.countrySignals ?? [],
+    goals: (portfolio.goals || []).map(g => ({ name: g.name, horizon: g.horizon, baseFunded: g.baseFunded })),
+    lombard: portfolio.lombard ? { headroomPct: portfolio.lombard.headroomPct } : null,
+    rmNotes
+  };
+  const res = await generateBrief({ system: COPILOT_SYSTEM, prompt: `Facts:\n${JSON.stringify(facts, null, 2)}`, schema: COPILOT_SCHEMA });
+  const answer = res.data?.answer;
+  if (res.ok && nonEmptyString(answer) && !HAS_IMPERATIVE.test(answer)) {
+    return { ok: true, answer };
+  }
+  return { ok: false, answer: null };
 }
