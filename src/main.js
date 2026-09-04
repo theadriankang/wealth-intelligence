@@ -6,9 +6,10 @@ import { FEED, LATE_FEED } from "./signals/fixtures/signals.js";
 import { initPalette } from "./ui/palette.js";
 import { shellHtml } from "./ui/shell.js";
 import { mountGlobe, paintGlobe, sizeGlobe } from "./ui/globe.js";
-import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTicker, paintPfRail }
-  from "./ui/panels.js";
-import { paintActions, paintConversation, paintCompliance, paintEconomics } from "./ui/tabs.js";
+import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTicker,
+  paintSituation, paintPositions } from "./ui/panels.js";
+import { paintActions, paintConversation } from "./ui/spine.js";
+import { openEvidence, closeEvidence } from "./ui/evidence.js";
 import { initDrawers, openPosition, openBrief, openPolicyTrial } from "./ui/drawers.js";
 import { renderClientView } from "./ui/clientview.js";
 import * as M from "./ui/motion.js";
@@ -39,12 +40,22 @@ async function boot() {
     return;
   }
 
-  root.innerHTML = shellHtml();
-  initDrawers();
-  mountGlobe(document.getElementById("globe"), { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
-  wire();
-  renderAll();
-  M.boot();
+  const buildCockpit = () => {
+    root.innerHTML = shellHtml();
+    initDrawers();
+    mountGlobe(document.getElementById("globe"), { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
+    wire();
+    renderAll();
+    M.boot();
+    requestAnimationFrame(() => sizeGlobe());
+  };
+
+  if (CONFIG.TITLE_SCREEN && new URLSearchParams(location.search).get("view") !== "client") {
+    const { renderTitle } = await import("./ui/title.js");
+    renderTitle(root, buildCockpit);
+  } else {
+    buildCockpit();
+  }
 
   pollSignals([...isos], ({ signals, prevSignals }) => {
     S.signals = signals; S.prevSignals = prevSignals; renderAll();
@@ -62,15 +73,11 @@ function wire() {
     paintLegend(); paintGlobe();
   }));
 
-  document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => {
-    S.tab = b.dataset.tab;
-    document.querySelectorAll("[data-tab]").forEach(x =>
-      x.setAttribute("aria-selected", String(x.dataset.tab === S.tab)));
-    ["pf","act","conv","comp","econ"].forEach(k =>
-      document.getElementById("pane-" + k).hidden = (k !== S.tab));
-    if (S.tab === "pf") requestAnimationFrame(sizeGlobe);
-    M.pane(S.tab);
-  }));
+  document.getElementById("ev-open-comp").addEventListener("click", openEvidence);
+  document.getElementById("ev-open-econ").addEventListener("click", openEvidence);
+  document.getElementById("slideover-x").addEventListener("click", closeEvidence);
+  document.getElementById("scrim").addEventListener("click", closeEvidence);
+  addEventListener("keydown", e => { if (e.key === "Escape") closeEvidence(); });
 
   setInterval(() => {
     since++;
@@ -89,7 +96,9 @@ function wire() {
 }
 
 function refresh(what) {
-  if (what === "globe") { paintGlobe(); paintPfRail(railHandlers); paintEvidence(); return; }
+  if (what === "globe") {
+    paintGlobe(); paintSituation(); paintPositions(railHandlers); paintEvidence(); return;
+  }
   renderAll();
 }
 
@@ -132,9 +141,8 @@ export function renderAll() {
   });
   paintLegend(); paintGlobe(); paintEvidence();
   paintTicker(feed);
-  paintPfRail(railHandlers);
+  paintSituation();
+  paintPositions(railHandlers);
   paintActions(renderAll);
   paintConversation();
-  paintCompliance();
-  paintEconomics();
 }

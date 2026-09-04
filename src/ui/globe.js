@@ -17,7 +17,7 @@ let globe = null;
 export function mountGlobe(el, { onSelect }) {
   globe = Globe({ animateIn:false })(el)
     .backgroundColor("rgba(0,0,0,0)")
-    .showAtmosphere(true).atmosphereColor("#4f6d8f").atmosphereAltitude(0.16)
+    .showAtmosphere(true).atmosphereColor("#f0a03c").atmosphereAltitude(0.15)
     .polygonsData(COUNTRIES.features)
     .polygonSideColor(() => "rgba(255,255,255,0.05)")
     .onPolygonClick(f => onSelect(exposure()[a3(f)] ? a3(f) : null))
@@ -25,19 +25,20 @@ export function mountGlobe(el, { onSelect }) {
     .pointLabel(p => `<div class="gt"><div class="n">${p.name}</div>
       <div class="r"><span>${p.kind}</span><span>${p.detail}</span></div></div>`)
     .ringsData(CHOKEPOINTS.filter(c => c.status === "strained"))
-    .ringLat("lat").ringLng("lng").ringColor(() => (t => `rgba(250,178,25,${1 - t})`))
+    .ringLat("lat").ringLng("lng").ringColor(() => (t => `rgba(226,104,60,${1 - t})`))
     .ringMaxRadius(4.5).ringPropagationSpeed(1.6).ringRepeatPeriod(1500)
     .arcsData(LANES)
     .arcStartLat("sLat").arcStartLng("sLng").arcEndLat("eLat").arcEndLng("eLng")
-    .arcColor(a => a.hot ? ["rgba(250,178,25,0.05)","rgba(250,178,25,0.7)"]
-                         : ["rgba(168,176,186,0.03)","rgba(168,176,186,0.24)"])
+    .arcColor(a => a.hot ? ["rgba(245,197,66,0.05)","rgba(245,197,66,0.75)"]
+                         : ["rgba(92,122,143,0.03)","rgba(92,122,143,0.25)"])
     .arcStroke(a => a.hot ? 0.4 : 0.22).arcAltitudeAutoScale(0.42)
     .arcDashLength(0.4).arcDashGap(0.9).arcDashAnimateTime(a => a.hot ? 3200 : 6000)
     .onGlobeClick(() => onSelect(null));
 
-  globe.globeMaterial().color.set("#141a21");
-  globe.globeMaterial().emissive.set("#05070a");
-  globe.globeMaterial().shininess = 3;
+  globe.globeMaterial().color.set("#0c0d10");
+  globe.globeMaterial().emissive.set("#f5c542");
+  globe.globeMaterial().emissiveIntensity = 0.02;
+  globe.globeMaterial().shininess = 2;
   globe.pointOfView({ lat:14, lng:104, altitude:2.15 }, 0);
 
   const reduced = matchMedia("(prefers-reduced-motion:reduce)").matches;
@@ -50,7 +51,7 @@ export function mountGlobe(el, { onSelect }) {
 }
 
 export function sizeGlobe() {
-  const el = document.querySelector(".globe-wrap");
+  const el = document.querySelector(".glass");
   if (globe && el?.clientWidth) globe.width(el.clientWidth).height(el.clientHeight);
 }
 
@@ -71,7 +72,7 @@ export function paintGlobe() {
     if (S.selIso && iso !== S.selIso) return P.MUTE;
     return L.col(L.val(sig(iso)));
   });
-  globe.polygonStrokeColor(f => ex[a3(f)] ? "rgba(255,255,255,0.32)" : "rgba(255,255,255,0.06)");
+  globe.polygonStrokeColor(f => ex[a3(f)] ? "rgba(245,197,66,0.35)" : "rgba(255,255,255,0.08)");
   globe.polygonLabel(f => {
     const iso = a3(f), e = ex[iso], s = sig(iso);
     if (!e || !s) return `<div class="gt"><div class="n">${f.properties.name}</div>
@@ -91,7 +92,7 @@ export function paintGlobe() {
                       detail:`${e.weightPct.toFixed(1)}% via ${e.instrumentIds.join(" ")}` });
   }
   globe.pointsData(pts).pointColor(p =>
-    p.status === "strained" ? css("--warn")
+    p.status === "strained" ? css("--ember")
     : p.status === "holding" && sig(p.iso3) ? L.col(L.val(sig(p.iso3)))
     : P.INK4);
 }

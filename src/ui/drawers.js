@@ -8,6 +8,7 @@ import { validateBrief, briefToHtml } from "../llm/validate.js";
 import { BRIEF_SCHEMA } from "../llm/contract.js";
 import { SYSTEM, buildBriefPrompt } from "../llm/prompts.js";
 import { economics } from "../store.js";
+import { currentPolicyScan } from "../policy/sentinel.js";
 import * as M from "./motion.js";
 
 const scrim = () => document.getElementById("scrim");
