@@ -1,19 +1,33 @@
 const BIS_URL = "https://www.bis.org/speeches/central-bank";
 const MAS_URL = "https://www.mas.gov.sg/news/monetary-policy-statements";
+const TINYFISH_SEARCH = "https://api.search.tinyfish.ai";
+const TINYFISH_FETCH = "https://api.fetch.tinyfish.ai";
+
+const DEFAULT_QUERY = "latest MAS monetary policy statement central bank policy speech Singapore";
+const DEFAULT_DOMAINS = "mas.gov.sg,bis.org,federalreserve.gov,ecb.europa.eu";
 
 const CANDIDATES = [
   { issuer: "MAS", country: "SGP", documentType: "Monetary Policy Statements", url: MAS_URL },
   { issuer: "BIS", country: "GLOBAL", documentType: "Central banker speeches archive", url: BIS_URL }
 ];
 
-export async function runPolicySentinelScan() {
+export async function runPolicySentinelScan(opts = {}) {
   if (process.env.OFFLINE === "1") return fallback("offline");
+
+  if (process.env.TINYFISH_API_KEY) {
+    try {
+      const source = await discoverPolicySource(opts);
+      const doc = await fetchWithTinyFish(source.url, opts);
+      return buildScan({ ...source, title: doc.title || source.documentType, finalUrl: doc.finalUrl }, doc.text, doc.mode);
+    } catch (err) {
+      console.warn("[policy-sentinel:tinyfish]", err.message);
+    }
+  }
+
   let lastError = "";
   for (const source of CANDIDATES) {
     try {
-      const doc = process.env.TINYFISH_API_KEY
-        ? await fetchWithTinyFish(source.url)
-        : await fetchDirect(source.url);
+      const doc = await fetchDirect(source.url);
       if (/maintenance/i.test(doc.title || "") && source.issuer !== "BIS") {
         lastError = `${source.issuer} returned maintenance shell`;
         continue;
@@ -27,20 +41,69 @@ export async function runPolicySentinelScan() {
   return fallback(lastError || "all sources unavailable");
 }
 
-async function fetchWithTinyFish(url) {
-  const res = await fetch("https://api.fetch.tinyfish.ai", {
+async function discoverPolicySource(opts) {
+  const params = new URLSearchParams({
+    query: opts.query || process.env.POLICY_SCAN_QUERY || DEFAULT_QUERY,
+    purpose: "Find official central bank or regulator communications for a wealth-advisory policy risk signal.",
+    location: opts.location || process.env.POLICY_SCAN_LOCATION || "SG",
+    language: opts.language || process.env.POLICY_SCAN_LANGUAGE || "en",
+    include_domains: opts.includeDomains || process.env.POLICY_SCAN_DOMAINS || DEFAULT_DOMAINS
+  });
+  if (opts.recencyMinutes || process.env.POLICY_SCAN_RECENCY_MINUTES) {
+    params.set("recency_minutes", String(opts.recencyMinutes || process.env.POLICY_SCAN_RECENCY_MINUTES));
+  }
+
+  const res = await fetch(`${TINYFISH_SEARCH}?${params}`, {
+    headers: { "X-API-Key": process.env.TINYFISH_API_KEY }
+  });
+  if (!res.ok) throw new Error(`TinyFish Search HTTP ${res.status}: ${(await res.text()).slice(0, 180)}`);
+
+  const json = await res.json();
+  const result = (json.results || []).find(r => r.url && !/login|youtube|instagram/i.test(r.url));
+  if (!result) throw new Error("TinyFish Search returned no policy source");
+
+  const url = normaliseUrl(result.url);
+  const issuer = issuerFromUrl(url);
+  return {
+    issuer,
+    country: issuer === "MAS" ? "SGP" : issuer === "BIS" ? "GLOBAL" : issuer === "ECB" ? "EUR" : "USA",
+    documentType: documentTypeFromTitle(result.title || ""),
+    url,
+    searchTitle: result.title,
+    searchSnippet: result.snippet,
+    searchPosition: result.position
+  };
+}
+
+async function fetchWithTinyFish(url, opts = {}) {
+  const res = await fetch(TINYFISH_FETCH, {
     method: "POST",
     headers: {
       "content-type": "application/json",
-      authorization: `Bearer ${process.env.TINYFISH_API_KEY}`
+      "X-API-Key": process.env.TINYFISH_API_KEY
     },
-    body: JSON.stringify({ urls: [url], format: "markdown" })
+    body: JSON.stringify({
+      urls: [url],
+      format: "markdown",
+      ttl: Number(opts.ttl ?? process.env.TINYFISH_FETCH_TTL ?? 0),
+      per_url_timeout_ms: Number(opts.timeoutMs ?? process.env.TINYFISH_FETCH_TIMEOUT_MS ?? 45000),
+      purpose: "Extract clean central bank or regulator text for stance classification and cited RM briefing."
+    })
   });
-  if (!res.ok) throw new Error(`TinyFish HTTP ${res.status}`);
+  if (!res.ok) throw new Error(`TinyFish Fetch HTTP ${res.status}: ${(await res.text()).slice(0, 180)}`);
+
   const json = await res.json();
   const first = json.results?.[0];
-  if (!first?.text) throw new Error("TinyFish returned no document text");
-  return { title: first.title, text: first.text, mode: "tinyfish" };
+  if (!first?.text) {
+    const err = json.errors?.[0]?.error || "no document text";
+    throw new Error(`TinyFish Fetch returned ${err}`);
+  }
+  return {
+    title: first.title,
+    text: typeof first.text === "string" ? first.text : JSON.stringify(first.text),
+    mode: "tinyfish",
+    finalUrl: first.final_url || first.url
+  };
 }
 
 async function fetchDirect(url) {
@@ -57,8 +120,9 @@ async function fetchDirect(url) {
 function buildScan(source, text, mode) {
   const score = stanceScore(text);
   const stance = score >= 0.25 ? "hawkish" : score <= -0.25 ? "dovish" : "neutral";
-  const quote = evidenceLine(text) || "The BIS archive contains selected policy-relevant central banker speeches from official central bank sources.";
+  const quote = evidenceLine(text) || `${source.issuer} source was fetched and retained for audit.`;
   const urgency = source.issuer === "MAS" || score > 0.45 ? "high" : "medium";
+  const sourceUrl = source.finalUrl || source.url;
   return {
     mode,
     fetchedAt: new Intl.DateTimeFormat("en-SG", {
@@ -66,7 +130,7 @@ function buildScan(source, text, mode) {
       timeStyle: "short",
       timeZone: "Asia/Singapore"
     }).format(new Date()),
-    source,
+    source: { ...source, url: sourceUrl },
     signal: {
       issuer: source.issuer,
       country: source.country === "GLOBAL" ? "SGP" : source.country,
@@ -75,15 +139,15 @@ function buildScan(source, text, mode) {
       policyActionType: source.issuer === "MAS" ? "FX policy band" : "central bank communication",
       affectedAssets: ["DBS", "SGD", "Singapore financials", "USD rates sensitivity"],
       urgency,
-      confidence: mode === "tinyfish" ? 0.84 : 0.72,
-      whyFlagged: "Fresh official policy communication was fetched, classified, and mapped to holdings an RM may need to discuss."
+      confidence: mode === "tinyfish" ? 0.86 : 0.72,
+      whyFlagged: "Fresh official policy communication was found, fetched, classified, and mapped to holdings an RM may need to discuss."
     },
     agents: [
       {
         name: "Scout Agent",
         status: "complete",
-        finding: `Fetched ${source.documentType} from ${source.issuer}.`,
-        evidence: source.url
+        finding: `Searched official policy domains and fetched ${source.documentType} from ${source.issuer}.`,
+        evidence: sourceUrl
       },
       {
         name: "Macro Analyst Agent",
@@ -104,7 +168,7 @@ function buildScan(source, text, mode) {
       "RM prompt: Ask whether the client's near-term goals require liquidity certainty before discussing any product action.",
       "Do not say: buy, sell, switch, or guarantee. This is an internal intelligence flag for adviser review."
     ],
-    citations: [{ label: source.title, url: source.url, quote }]
+    citations: [{ label: source.title || source.documentType, url: sourceUrl, quote }]
   };
 }
 
@@ -161,6 +225,27 @@ function evidenceLine(text) {
   return text.split(/\n|\. /).map(s => s.trim())
     .find(s => /policy|central bank|inflation|monetary|speech/i.test(s) && s.length > 55)
     ?.slice(0, 260);
+}
+
+function issuerFromUrl(url) {
+  if (/mas\.gov\.sg/i.test(url)) return "MAS";
+  if (/bis\.org/i.test(url)) return "BIS";
+  if (/federalreserve\.gov/i.test(url)) return "Fed";
+  if (/ecb\.europa\.eu/i.test(url)) return "ECB";
+  return "Policy source";
+}
+
+function documentTypeFromTitle(title) {
+  if (/monetary policy statement/i.test(title)) return "Monetary Policy Statement";
+  if (/speech/i.test(title)) return "Central bank speech";
+  if (/minutes/i.test(title)) return "Policy minutes";
+  if (/consultation/i.test(title)) return "Consultation paper";
+  return "Policy communication";
+}
+
+function normaliseUrl(url) {
+  if (/^https?:\/\//i.test(url)) return url;
+  return `https://${url}`;
 }
 
 function titleFromHtml(html) {
