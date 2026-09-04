@@ -1,0 +1,162 @@
+[
+ {
+  "client_id": "CL-0001",
+  "name": "Hartono Wijaya Kusuma",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 8,
+  "generated_at": "2026-09-04T15:48:14.944Z"
+ },
+ {
+  "client_id": "CL-0002",
+  "name": "Ravi Chandrasekaran",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 7,
+  "generated_at": "2026-09-04T15:48:37.828Z"
+ },
+ {
+  "client_id": "CL-0003",
+  "name": "Margarethe Voss-Brenner",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 9,
+  "generated_at": "2026-09-04T15:49:25.340Z"
+ },
+ {
+  "client_id": "CL-0004",
+  "name": "Chalermchai Suphanburi",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 7,
+  "generated_at": "2026-09-04T15:49:43.002Z"
+ },
+ {
+  "client_id": "CL-0005",
+  "name": "Aishah binti Rahman",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 8,
+  "generated_at": "2026-09-04T15:50:14.340Z"
+ },
+ {
+  "client_id": "CL-0006",
+  "name": "Nguyen Thi Bao Tran",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 7,
+  "generated_at": "2026-09-04T15:50:49.534Z"
+ },
+ {
+  "client_id": "CL-0007",
+  "name": "Alistair Pemberton-Hale",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 8,
+  "generated_at": "2026-09-04T15:51:21.300Z"
+ },
+ {
+  "client_id": "CL-0008",
+  "name": "Chen Wei Ling",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 7,
+  "generated_at": "2026-09-04T15:51:53.890Z"
+ },
+ {
+  "client_id": "CL-0009",
+  "name": "Andreas Lindqvist",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 9,
+  "generated_at": "2026-09-04T15:52:37.562Z"
+ },
+ {
+  "client_id": "CL-0010",
+  "name": "Priya Nair Menon",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 8,
+  "generated_at": "2026-09-04T15:52:59.549Z"
+ },
+ {
+  "client_id": "CL-0011",
+  "name": "Tan Boon Huat",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 6,
+  "generated_at": "2026-09-04T15:54:02.905Z"
+ },
+ {
+  "client_id": "CL-0012",
+  "name": "Cheung Kwok Wing",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 9,
+  "generated_at": "2026-09-04T15:54:21.513Z"
+ },
+ {
+  "client_id": "CL-0013",
+  "name": "Zhang Meiling",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 8,
+  "generated_at": "2026-09-04T15:54:59.604Z"
+ },
+ {
+  "client_id": "CL-0014",
+  "name": "Lau Chi Ming",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 7,
+  "generated_at": "2026-09-04T15:55:57.209Z"
+ },
+ {
+  "client_id": "CL-0015",
+  "name": "Kim Do-Yoon",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 8,
+  "generated_at": "2026-09-04T15:56:23.682Z"
+ },
+ {
+  "client_id": "CL-0016",
+  "name": "Yamamoto Kenji",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 7,
+  "generated_at": "2026-09-04T15:57:01.608Z"
+ },
+ {
+  "client_id": "CL-0017",
+  "name": "Fong Enterprises Family Office",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 7,
+  "generated_at": "2026-09-04T15:57:20.822Z"
+ },
+ {
+  "client_id": "CL-0018",
+  "name": "Elena Marchetti-Wong",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 9,
+  "generated_at": "2026-09-04T15:57:54.900Z"
+ },
+ {
+  "client_id": "CL-0019",
+  "name": "Abdullah Al-Mansoori",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 8,
+  "generated_at": "2026-09-04T15:58:27.479Z"
+ },
+ {
+  "client_id": "CL-0020",
+  "name": "Grace Adeyemi-Lim",
+  "snapshot": "2026-08-26",
+  "docs": 3,
+  "quant": 8,
+  "generated_at": "2026-09-04T15:59:07.832Z"
+ }
+]

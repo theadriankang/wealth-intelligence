@@ -50,6 +50,7 @@ export const shellHtml = () => `
         <button role="tab" aria-selected="true" data-tab="pf">Overview</button>
         <button role="tab" aria-selected="false" data-tab="act">Risks & Actions<span class="n" id="tn-act"></span></button>
         <button role="tab" aria-selected="false" data-tab="conv">Conversation</button>
+        <button role="tab" aria-selected="false" data-tab="intel">Intelligence<span class="n" id="tn-intel"></span></button>
         <button role="tab" aria-selected="false" data-tab="comp">Compliance<span class="n" id="tn-comp"></span></button>
         <button role="tab" aria-selected="false" data-tab="econ">Impact</button>
       </div>
@@ -86,6 +87,7 @@ export const shellHtml = () => `
 
       <div class="pane" id="pane-act" hidden><div class="scrollpane"><div class="colw" id="actions"></div></div></div>
       <div class="pane" id="pane-conv" hidden><div class="scrollpane"><div class="colw" id="conv"></div></div></div>
+      <div class="pane" id="pane-intel" hidden><div class="scrollpane"><div class="colw" id="seg-intel"></div></div></div>
       <div class="pane" id="pane-comp" hidden><div class="scrollpane"><div class="colw" id="comp"></div></div></div>
       <div class="pane" id="pane-econ" hidden><div class="scrollpane"><div class="colw" id="econ"></div></div></div>
     </main>

@@ -1052,3 +1052,42 @@ button:disabled{opacity:.58; cursor:wait}
     @apply font-sans;
   }
 }
+
+/* ── Intelligence panel ─────────────────────────────────────────────────
+   The retrieval layer made visible. Findings read as prose; evidence reads as
+   evidence — monospaced refs, a source host, and an approval control that is a
+   real state change, not a toggle. */
+.intel-meta{display:flex; gap:20px; flex-wrap:wrap; margin:0 0 18px;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.intel-meta b{font-size:15px; color:var(--ink-1); letter-spacing:0; margin-right:5px}
+.intel-meta .warn b{color:var(--warn)}
+
+.intel-findings{list-style:none; margin:0 0 22px; padding:0; display:grid; gap:14px}
+.intel-findings li{border-left:2px solid var(--dn-3); padding:2px 0 2px 14px}
+.if-title{margin:0 0 5px; font-weight:700; font-size:13.5px; color:var(--ink-1); line-height:1.4}
+.if-why{margin:0 0 7px; font-size:12.5px; color:var(--ink-2); line-height:1.65; max-width:70ch}
+.if-ev{margin:0; display:flex; flex-wrap:wrap; gap:5px}
+.if-ev code{font-family:var(--mono); font-size:9.5px; color:var(--ink-3);
+  border:1px solid var(--rule); border-radius:3px; padding:2px 5px; background:transparent}
+
+.intel-div{width:100%; border-collapse:collapse; margin:0 0 6px; font-size:12px}
+.intel-div td{padding:6px 10px 6px 0; border-bottom:1px solid var(--rule); color:var(--ink-2)}
+.intel-div .num{font-family:var(--mono); text-align:right}
+.intel-div .up{color:var(--warn)} .intel-div .down{color:var(--good)}
+
+.if-gate{margin:0 0 12px; font-size:11.5px; color:var(--ink-3); line-height:1.6; max-width:66ch; font-style:italic}
+.intel-docs{list-style:none; margin:0 0 22px; padding:0; display:grid; gap:10px}
+.intel-docs li{border:1px solid var(--rule); border-radius:6px; padding:12px 14px}
+.intel-docs li.doc-approved{border-color:#1f5236; background:rgba(31,82,54,.06)}
+.doc-h{display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-bottom:4px}
+.doc-h a{font-size:12.5px; font-weight:600; color:var(--ink-1); text-decoration:none; line-height:1.4}
+.doc-h a:hover{text-decoration:underline}
+.doc-src{font-family:var(--mono); font-size:9.5px; color:var(--ink-3); white-space:nowrap}
+.doc-q{margin:0 0 6px; font-family:var(--mono); font-size:9.5px; color:var(--ink-3); letter-spacing:.04em}
+.doc-q code{color:var(--ink-2)}
+.doc-x{margin:0 0 9px; font-size:11.5px; color:var(--ink-3); line-height:1.6; max-width:74ch}
+.doc-ok{font-family:var(--mono); font-size:9.5px; letter-spacing:.05em; color:var(--good)}
+
+.intel-gaps{list-style:none; margin:0 0 6px; padding:0; display:grid; gap:4px;
+  font-family:var(--mono); font-size:10.5px; color:var(--ink-3)}
+.intel-gaps li::before{content:"— "; opacity:.5}

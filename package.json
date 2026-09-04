@@ -13,6 +13,7 @@
     "dossiers": "node scripts/build-dossiers.js",
     "dev:all": "concurrently -n web,api -c cyan,magenta \"npm:dev\" \"npm:server\"",
     "intel": "node scripts/build-intel.js",
+    "publish-intel": "node scripts/publish-intel.js",
     "agent": "node scripts/run-agent.js",
     "test": "node scripts/test-fx.js && node scripts/test-intel.js && node scripts/build-intel.js && node scripts/test-agent.js && node --test 'src/**/*.test.js'"
   },

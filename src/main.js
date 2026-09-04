@@ -13,6 +13,7 @@ import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTick
   from "./ui/panels.js";
 import { paintActions, paintConversation, paintCompliance, paintEconomics } from "./ui/tabs.js";
 import { initDrawers, openPosition, openPolicyTrial } from "./ui/drawers.js";
+import { paintIntel, ensureIntel } from "./ui/intel.js";
 import * as M from "./ui/motion.js";
 import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
 
@@ -97,7 +98,7 @@ function wire() {
     S.tab = b.dataset.tab;
     document.querySelectorAll("[data-tab]").forEach(x =>
       x.setAttribute("aria-selected", String(x.dataset.tab === S.tab)));
-    ["pf","act","conv","comp","econ"].forEach(k =>
+    ["pf","act","conv","intel","comp","econ"].forEach(k =>
       document.getElementById("pane-" + k).hidden = (k !== S.tab));
     if (S.tab === "pf") requestAnimationFrame(sizeGlobe);
     M.pane(S.tab);
@@ -198,6 +199,10 @@ export function renderAll() {
   paintConversation();
   paintCompliance();
   paintEconomics();
+  // Fetches this client's bundle on first view, then paints from memory. The
+  // walk itself is synchronous and re-derived on every paint, so an approval
+  // shows up without a round trip.
+  ensureIntel(paintIntel);
   applyLiquidGlass();
 }
 

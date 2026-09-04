@@ -8,6 +8,7 @@ export const S = {
   route: "dashboard", clientScopeId: null,
   household: false, live: false, actionState: {}, meta: {},
   policyScan: null, policyScanState: "idle",
+  intel: {},                    // clientId -> bundle | null (null = built but absent)
   evaluation: null, narratedHash: {},
   clientFilter: "all", clientSearch: "", copilotOpen: false, copilotDraft: "",
   driverFilter: "all", profileFilter: "all", bookingFilter: "all", aumFilter: "all",
