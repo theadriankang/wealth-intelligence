@@ -1,56 +1,175 @@
-import { S, goals, concentration, flagCountFor, positions } from "../store.js";
-import { P, LENSES, fmtD, css } from "./palette.js";
+import { S, rows, visibleRows, goals, goal, concentration, flagCountFor, positions, flagged } from "../store.js";
+import { P, LENSES, fmtD, css, BUCKETS, FUNDING_METHOD } from "./palette.js";
 import { POLICY, FEED } from "../signals/fixtures/signals.js";
 import { getMode } from "../signals/worldmonitor.js";
 import { reconcile, HOUSE_VIEW } from "../model/houseview.js";
+import { currentPolicyScan } from "../policy/sentinel.js";
 import * as M from "./motion.js";
 
-/* ---------- look-through bar: the visual proof a fund is not a country ---------- */
+const SCALE = { total:20 };
+
 export function lookThroughBar(inst, signals) {
   if (!inst?.exposures?.length || inst.exposures.length === 1) return "";
   const L = LENSES().d;
   const top = [...inst.exposures].sort((a, b) => b.weight - a.weight).slice(0, 6);
-  return `<div class="lt">
-    <div class="lt-bar">${top.map(e => {
-      const s = signals[e.iso3];
-      return `<i style="width:${e.weight * 100}%; background:${s ? L.col(s.riskDelta) : P.DIM}"></i>`;
-    }).join("")}</div>
-    <div class="lt-leg">${top.map(e => {
-      const s = signals[e.iso3];
-      return `<span><em style="background:${s ? L.col(s.riskDelta) : P.DIM}"></em>${e.iso3} ${(e.weight * 100).toFixed(0)}%</span>`;
-    }).join("")}</div></div>`;
+  return `<div class="lt"><div class="lt-bar">${top.map(e => {
+    const s = signals[e.iso3];
+    return `<i style="width:${e.weight * 100}%; background:${s ? L.col(s.riskDelta) : P.DIM}"></i>`;
+  }).join("")}</div><div class="lt-leg">${top.map(e => {
+    const s = signals[e.iso3];
+    return `<span><em style="background:${s ? L.col(s.riskDelta) : P.DIM}"></em>${e.iso3} ${(e.weight * 100).toFixed(0)}%</span>`;
+  }).join("")}</div></div>`;
+}
+
+function withPortfolio(p, fn) {
+  const old = S.portfolio;
+  const oldScope = S.clientScopeId;
+  S.portfolio = p;
+  S.clientScopeId = p.id;
+  try { return fn(); } finally { S.portfolio = old; S.clientScopeId = oldScope; }
+}
+
+function clientHasIso(p, iso) {
+  if (!iso) return true;
+  return (p.positions || []).some(pos =>
+    S.instruments[pos.instrumentId]?.exposures?.some(e => e.iso3 === iso));
+}
+
+function clientMeta(p) {
+  return withPortfolio(p, () => {
+    const fl = flagged();
+    const gs = goals();
+    const dueSoon = /09 Sep|18 Sep/i.test(p.reviewDate);
+    const ltv = p.lombard?.headroomPct && p.lombard.headroomPct < 30;
+    const affected = [...new Set((p.positions || []).flatMap(pos =>
+      S.instruments[pos.instrumentId]?.exposures?.map(e => e.iso3) || []))]
+      .filter(iso => (S.signals[iso]?.riskDelta || 0) >= 6).slice(0, 3);
+    const concentrationRisk = Math.min(15, Math.round(Math.max(...(p.positions || []).map(x => x.weightPct || 0), 0)));
+    const liquidityRisk = Math.min(25, Math.round(((p.meta?.nearCashNeeds || 0) + (p.meta?.privateCommitments || 0)) ? 25 - Math.min(22, (p.meta?.dailyLiquidityPct || 0) / 3) : 4));
+    const collateralRisk = p.lombard ? Math.max(0, Math.min(25, Math.round(25 - (p.lombard.headroomPct || 0) * .8))) : 0;
+    const mandateRisk = Math.min(20, Math.round(fl.length * 4 + (p.mandate === "Execution only" ? 4 : 0)));
+    const complianceRisk = Math.min(10, dueSoon ? 10 : /Sep|Oct|Nov/i.test(p.reviewDate) ? 5 : 1);
+    const eventRisk = Math.min(5, affected.length * 2 + (p.meta?.eventCount ? 1 : 0));
+    const breakdown = { collateralRisk, liquidityRisk, mandateRisk, concentrationRisk, complianceRisk, eventRisk };
+    const score = Math.min(100, Math.round(Object.values(breakdown).reduce((s, v) => s + v, 0)));
+    const band = score >= 80 ? "critical" : score >= 60 ? "high" : score >= 35 ? "medium" : "low";
+    const worst = fl[0];
+    const reason = ltv && p.lombard.currentLtv ? `LTV ${p.lombard.currentLtv.toFixed(2)}% vs ${p.lombard.marginCallLtv.toFixed(0)}% trigger`
+      : ltv ? `Collateral headroom at ${p.lombard.headroomPct}%`
+      : worst ? `${worst.instrumentId} pressure +${worst.riskDelta.toFixed(0)}`
+      : dueSoon ? `Review due ${p.reviewDate}` : "No urgent client action";
+    const driver = ltv ? "Collateral/Leverage"
+      : liquidityRisk >= 18 ? "Liquidity"
+      : mandateRisk >= 12 ? "Mandate/Suitability"
+      : concentrationRisk >= 12 ? "Concentration"
+      : complianceRisk >= 8 ? "Compliance/KYC"
+      : eventRisk >= 3 ? "Event Exposure" : "Concentration";
+    const next = band === "critical" ? "Open review" : dueSoon ? "Prepare brief" : ltv ? "Check collateral" : "Monitor";
+    const source = p.sourceOfWealth ? p.sourceOfWealth.split(" - ")[0] : "Private client";
+    return { fl, gs, dueSoon, ltv, affected, urgency:score, band, category:band, reason, driver, next, source, breakdown };
+  });
+}
+
+function clientMatches(p, meta) {
+  const filter = S.clientFilter || "all";
+  const q = (S.clientSearch || "").trim().toLowerCase();
+  const hay = [p.name, p.ref, meta.source, p.countryOfResidence, p.bookingCentre, p.currency].join(" ").toLowerCase();
+  if (q && !hay.includes(q)) return false;
+  if (filter !== "all" && meta.category !== filter) return false;
+  if (S.driverFilter !== "all" && meta.driver !== S.driverFilter) return false;
+  if (S.profileFilter !== "all" && p.riskProfile !== S.profileFilter) return false;
+  if (S.bookingFilter !== "all" && p.bookingCentre !== S.bookingFilter) return false;
+  if (S.aumFilter === "hnw" && p.wealthBand !== "HNW") return false;
+  if (S.aumFilter === "uhnw" && p.wealthBand !== "UHNW") return false;
+  if (S.selIso && !clientHasIso(p, S.selIso)) return false;
+  return true;
 }
 
 export function paintBook(onPick) {
-  document.getElementById("book-n").textContent = S.portfolios.length + " mandates";
-  document.getElementById("book").innerHTML = S.portfolios.map(p => {
-    const n = flagCountFor(p);
-    return `<button class="cl" data-cl="${p.id}" aria-current="${p.id === S.portfolio.id}">
-      <span class="nm">${p.name}</span><span class="badge ${n ? "" : "zero"}">${n}</span>
-      <span class="rf">${p.ref} · ${p.currency} ${p.aum}</span></button>`;
-  }).join("");
-  document.querySelectorAll("[data-cl]").forEach(b =>
-    b.addEventListener("click", () => onPick(b.dataset.cl)));
-  M.once("book", S.portfolios.length, () => M.enter("#book .cl", { y: 6, delay: 22, duration: 340 }));
+  const metas = new Map(S.portfolios.map(p => [p.id, clientMeta(p)]));
+  const filtered = S.portfolios.filter(p => clientMatches(p, metas.get(p.id)))
+    .sort((a, b) => metas.get(b.id).urgency - metas.get(a.id).urgency);
+  document.getElementById("book-n").textContent = `${SCALE.total} synthetic clients`;
+  document.getElementById("book-foot").innerHTML = `Sorted by attention score, then nearest deadline. Synthetic demo data as of 26 Aug 2026.`;
+  const input = document.getElementById("client-search");
+  if (input && input.value !== S.clientSearch) input.value = S.clientSearch;
+  document.querySelectorAll("#client-filters [data-filter]").forEach(b =>
+    b.setAttribute("aria-pressed", String((S.clientFilter || "all") === b.dataset.filter)));
+  const fs = document.getElementById("filter-summary");
+  for (const [id, value] of [["driver-filter", S.driverFilter], ["profile-filter", S.profileFilter], ["booking-filter", S.bookingFilter], ["aum-filter", S.aumFilter]]) {
+    const el = document.getElementById(id);
+    if (el) el.value = value || "all";
+  }
+  const active = activeClientFilters();
+  if (fs) fs.textContent = active.length ? active.join(" · ") : "No active filters";
+  document.getElementById("book").innerHTML = filtered.map(p => {
+    const m = metas.get(p.id);
+    const tone = m.band;
+    return `<button class="cl rm-client ${tone}" data-cl="${p.id}" aria-current="${p.id === S.portfolio.id}">
+      <span class="client-dot"></span><span class="nm">${p.name}</span>
+      <span class="badge ${m.band}">${m.urgency} · ${m.band}</span>
+      <span class="rf">${m.source}</span>
+      <span class="riskline">${p.aum} · ${p.riskProfile}</span>
+      <span class="reason">${m.driver}: ${m.reason}</span><span class="mini-trend" title="Collateral ${m.breakdown.collateralRisk}/25 · Liquidity ${m.breakdown.liquidityRisk}/25 · Mandate ${m.breakdown.mandateRisk}/20 · Concentration ${m.breakdown.concentrationRisk}/15 · KYC ${m.breakdown.complianceRisk}/10 · Events ${m.breakdown.eventRisk}/5">${m.fl.length} alerts</span>
+      <span class="next">${m.next} · ${p.reviewDate}</span>
+    </button>`;
+  }).join("") || `<div class="empty-state">No clients match ${active.length ? active.join(" · ") : "the current search"}.</div>`;
+  document.querySelectorAll("[data-cl]").forEach(b => b.addEventListener("click", () => onPick(b.dataset.cl)));
+  document.querySelectorAll("#client-filters [data-filter]").forEach(b => b.addEventListener("click", () => { S.clientFilter = b.dataset.filter; paintBook(onPick); }));
+  document.getElementById("clear-client-filters")?.addEventListener("click", () => {
+    S.clientFilter = "all"; S.clientSearch = ""; S.driverFilter = "all"; S.profileFilter = "all"; S.bookingFilter = "all"; S.aumFilter = "all"; paintBook(onPick);
+  });
+  for (const [id, key] of [["driver-filter", "driverFilter"], ["profile-filter", "profileFilter"], ["booking-filter", "bookingFilter"], ["aum-filter", "aumFilter"]]) {
+    document.getElementById(id)?.addEventListener("change", e => { S[key] = e.target.value; paintBook(onPick); });
+  }
+  document.getElementById("client-search")?.addEventListener("input", e => { S.clientSearch = e.target.value; paintBook(onPick); });
+  M.once("book", filtered.map(p => p.id).join("|") + S.clientFilter, () => M.enter("#book .cl", { y: 6, delay: 22, duration: 340 }));
+}
+
+function activeClientFilters() {
+  return [
+    (S.clientFilter || "all") !== "all" && `Band: ${S.clientFilter}`,
+    S.driverFilter !== "all" && `Driver: ${S.driverFilter}`,
+    S.profileFilter !== "all" && `Profile: ${S.profileFilter}`,
+    S.bookingFilter !== "all" && `Booking: ${S.bookingFilter}`,
+    S.aumFilter !== "all" && `AUM: ${S.aumFilter.toUpperCase()}`,
+    S.clientSearch?.trim() && `Search: ${S.clientSearch.trim()}`
+  ].filter(Boolean);
 }
 
 export function paintHead(onHousehold) {
   const p = S.portfolio, L = p.lombard;
-  document.getElementById("sit-head").innerHTML = `
-    <h2>${p.name}</h2><span class="ref">${p.ref}</span>
+  const meta = clientMeta(p);
+  document.getElementById("client-head").innerHTML = `
+    <h2>${p.name}</h2><span class="ref">${p.ref}</span><span class="ref">${meta.source}</span>
     <span class="tag ${p.mandate === "Advisory" ? "adv" : "disc"}">${p.mandate} mandate</span>
     <div class="facts">
-      <div class="fct"><span class="k">${S.household ? "Household" : "Account"}</span>
-        <span class="v">${p.currency} ${S.household ? (p.householdAum || p.aum) : p.aum}</span></div>
+      <div class="fct"><span class="k">${S.household ? "Household" : "AUM"}</span><span class="v">${p.currency} ${S.household ? (p.householdAum || p.aum) : p.aum}</span></div>
       <div class="fct"><span class="k">Risk profile</span><span class="v">${p.riskProfile} · ${p.riskBand}</span></div>
-      ${L ? `<div class="fct"><span class="k">Lombard headroom</span>
-        <span class="v" style="color:${L.headroomPct < 25 ? P.SEV.warn : "inherit"}">${L.headroomPct}%
-        <span style="color:var(--ink-4)">from ${L.prevHeadroomPct}%</span></span></div>` : ""}
+      <div class="fct"><span class="k">Attention</span><span class="v">${meta.urgency} · ${meta.band}</span></div>
+      ${L ? `<div class="fct"><span class="k">Lombard headroom</span><span class="v" style="color:${L.headroomPct < 25 ? P.SEV.warn : "inherit"}">${L.headroomPct}% <span style="color:var(--ink-4)">from ${L.prevHeadroomPct}%</span></span></div>` : ""}
       <div class="fct"><span class="k">Next review</span><span class="v">${p.reviewDate}</span></div>
-      ${p.householdPositions ? `<button class="hh" id="hh-btn" aria-pressed="${S.household}">
-        <span class="sw"></span>Household · ${(p.entities || []).length} entities</button>` : ""}
+      ${p.householdPositions ? `<button class="hh" id="hh-btn" aria-pressed="${S.household}"><span class="sw"></span>Household · ${(p.entities || []).length} entities</button>` : ""}
     </div>`;
   document.getElementById("hh-btn")?.addEventListener("click", onHousehold);
+}
+
+export function paintGoals(onPick) {
+  const gs = goals();
+  const moved = gs.filter(g => g.change !== 0).length;
+  document.getElementById("goals").innerHTML = `<div class="goal-lab"><h2>Objectives</h2><span class="n">funding ratio</span><span class="n2">${gs.length} tracked · ${moved || "none"} moved</span><span class="method" tabindex="0" title="${FUNDING_METHOD}">method</span></div>` + gs.map(g => {
+    const col = g.change < 0 ? P.UP[3] : g.change > 0 ? P.SEV.good : css("--ink-3");
+    const bar = g.funded >= 95 ? P.SEV.good : g.funded >= 80 ? P.SEV.warn : P.UP[3];
+    const bk = BUCKETS[g.bucket] || { label: "Objective", cap: "" };
+    return `<button class="goal" data-g="${g.id}" aria-pressed="${S.goalSel === g.id}">
+      <div class="g-top"><span class="bkt b-${g.bucket || "other"}" title="${bk.cap}">${bk.label}</span><span class="gh">${g.horizon}</span></div>
+      <div class="gn">${g.name}</div><div class="gv"><span class="pct">${g.funded}%</span><span class="chg" style="color:${col}">${g.change === 0 ? "no change" : fmtD(g.change) + " pts this week"}</span></div>
+      <div class="track"><i style="width:${Math.min(100, g.funded)}%; background:${bar}"></i><span class="prev" style="left:${Math.min(100, g.prevFunded)}%"></span></div>
+      <div class="gt2"><span>${g.targetLabel}</span><span>${g.driverIds.length ? g.driverIds.length + " positions" : "cash-funded"}</span></div>
+    </button>`;
+  }).join("");
+  document.querySelectorAll("[data-g]").forEach(b => b.addEventListener("click", () => onPick(b.dataset.g)));
+  M.once("goals", S.portfolio.id + "|" + S.household, M.goals);
 }
 
 export function paintEvidence() {
@@ -59,16 +178,14 @@ export function paintEvidence() {
     document.getElementById("ev-k").textContent = "This goal moved";
     document.getElementById("ev-v").textContent = fmtD(g.change) + " pts";
     const drv = g.contributions.slice(0, 3).map(c => c.instrumentId).join(" · ");
-    document.getElementById("ev-s").innerHTML =
-      `this week, driven by<br><span style="font-family:var(--mono);color:var(--ink-2)">${drv || "no market driver"}</span>`;
+    document.getElementById("ev-s").innerHTML = `this week, driven by<br><span style="font-family:var(--mono);color:var(--ink-2)">${drv || "no market driver"}</span>`;
     M.once("evid", "g:" + g.id + ":" + g.change, M.evidence);
     return;
   }
   const c = concentration();
   document.getElementById("ev-k").textContent = "Risk-weighted concentration";
   document.getElementById("ev-v").textContent = c.pct + "%";
-  document.getElementById("ev-s").innerHTML =
-    `of deteriorating exposure in three countries<br><span style="font-family:var(--mono);color:var(--ink-2)">${c.countries.join(" · ")}</span>`;
+  document.getElementById("ev-s").innerHTML = `of deteriorating exposure in three countries<br><span style="font-family:var(--mono);color:var(--ink-2)">${c.countries.join(" · ")}</span>`;
   M.once("evid", "c:" + S.portfolio.id + ":" + c.pct, M.evidence);
 }
 
@@ -76,8 +193,7 @@ export function paintLegend() {
   const L = LENSES()[S.lens];
   document.getElementById("lg-title").textContent = L.label;
   document.getElementById("lg-cap").textContent = L.cap;
-  document.getElementById("lg-ramp").innerHTML =
-    L.ramp.map(c => `<span style="background:${c}"></span>`).join("");
+  document.getElementById("lg-ramp").innerHTML = L.ramp.map(c => `<span style="background:${c}"></span>`).join("");
   document.getElementById("lg-lo").textContent = L.lo;
   document.getElementById("lg-mid").textContent = L.mid;
   document.getElementById("lg-hi").textContent = L.hi;
@@ -85,69 +201,71 @@ export function paintLegend() {
 }
 
 export function paintTicker(feed = FEED) {
-  const item = f => `<span class="tk ${f[5] ? "new" : ""}"><time>${f[0]}</time>
-    <span class="sv" style="background:${P.SEV[f[4]]}"></span>
-    <b>${f[2]}</b> ${f[3]} <span class="src">${f[1]}</span></span>`;
+  const item = f => `<span class="tk ${f[5] ? "new" : ""}"><time>${f[0]}</time><span class="sv" style="background:${P.SEV[f[4]]}"></span><b>${f[2]}</b> ${f[3]} <span class="src">${f[1]}</span></span>`;
   document.getElementById("ticker").innerHTML = feed.map(item).join("") + feed.map(item).join("");
   M.tick();
   const tag = document.getElementById("mode-tag");
   const { mode } = getMode();
   tag.className = "mode " + mode;
   tag.textContent = mode === "live" ? "live feed" : mode === "fixtures" ? "fixtures" : "…";
-  tag.title = mode === "fixtures"
-    ? "Live feed unavailable — showing fixture data. This is stated, not hidden."
-    : "Signals fetched from the live World Monitor feed.";
 }
 
-/* segment 02 — Situation: the global picture — overnight change, house-view tension, policy radar */
-export function paintSituation() {
-  const sel = S.selIso ? S.signals[S.selIso] : null;
-  const hv = sel ? reconcile(S.selIso, sel.riskDelta) : null;
-  const held = new Set(positions().map(p => p.instrumentId));
-  const digest = sel
-    ? sel.events.map(e => [e.at.split(" ").slice(-1)[0], e.source, `<strong>${e.text}</strong> — ${e.value}`])
-    : topEvents(3);
-
-  document.getElementById("seg-situation").innerHTML = `
-    <div class="seg-h"><span class="seg-n">02</span><h3>Situation</h3>
-      <span class="c">${sel ? sel.name : "the global picture"}</span></div>
-    <div class="digest">${digest.map(e => `<article class="dg"><time>${e[0]}</time>
-      <div><p>${e[2]}</p><span class="src">${e[1]}</span></div></article>`).join("")}</div>
-    ${hv ? `<div class="hv ${hv.verdict}">
-      <div class="hd"><span class="vd" style="color:${hv.verdict === "tension" ? P.SEV.warn
-        : hv.verdict === "confirms" ? P.SEV.good : css("--ink-3")}">${hv.verdict}</span>
-        <span class="src">House view</span></div>
-      <p>${hv.line}</p>${hv.note ? `<div class="src2">“${hv.note}”</div>` : ""}
-      <div class="src2">${HOUSE_VIEW.source} · as of ${HOUSE_VIEW.asOf}</div></div>` : ""}
-    <div class="policy-radar">
-      <div class="st-ax"><span>← easing</span><span>tightening →</span></div>
-      ${POLICY.map(p => {
-        const w = Math.abs(p.stance) / 3 * 50;
-        const col = p.stance > 0 ? P.POL_H[p.stance >= 1.5 ? 1 : 0]
-                  : p.stance < 0 ? P.POL_D[p.stance <= -1.5 ? 1 : 0] : P.FLAT;
-        const hits = p.affects.filter(t => held.has(t));
-        return `<article class="pl"><time>${p.date}</time><div>
-          <h3>${p.who} <span style="color:var(--ink-4); font-weight:400">${p.name}</span></h3>
-          <p class="ex">${p.excerpt}</p>
-          <div class="stance"><div class="st-track"><i style="background:${col};
-            ${p.stance > 0 ? `left:50%; width:${w}%` : `right:50%; width:${w}%`}"></i></div>
-            <span class="st-lab" style="color:${col}">${p.stance > 0 ? "+" : ""}${p.stance.toFixed(1)}</span></div>
-          <div class="pillrow" style="margin-top:7px">${hits.length
-            ? hits.map(t => `<span class="chip"><b>holds</b>${t}</span>`).join("")
-            : `<span class="chip" style="color:var(--ink-4)">no position</span>`}</div>
-        </div></article>`;
-      }).join("")}
-    </div>`;
+export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle }) {
+  const p = S.portfolio, meta = clientMeta(p), L = LENSES().d;
+  const urgent = S.portfolios.filter(x => clientHasIso(x, S.selIso)).map(x => ({ p:x, m:clientMeta(x) })).sort((a,b)=>b.m.urgency-a.m.urgency).slice(0,5);
+  const digest = S.selIso ? S.signals[S.selIso]?.events || [] : topEventsRaw(4);
+  const top = meta.fl[0];
+  const scan = S.policyScan || currentPolicyScan();
+  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div><div class="urgent-list">${urgent.map(({p,m}) => `<article class="urgent-mini"><div><h3>${p.name}</h3><p>${m.reason}</p><span>${p.aum} · ${p.reviewDate}</span></div><b class="${m.band}">${m.urgency}</b><button class="ghost sm" data-cl="${p.id}">Open review</button></article>`).join("")}</div><button class="ghost solid" id="priority-open">View all urgent reviews</button></section>
+    <section class="priority-card"><div class="sec-h"><h2>Live Intelligence</h2><button class="ghost sm" id="clear-sel">Reset view</button></div><div class="situation-list">${digest.map(e => signalCard(e)).join("")}</div><div class="policy-mini"><span>Policy Sentinel</span><b>${scan.signal.stance}</b><button class="ghost sm" id="rail-policy-open">Evidence</button></div></section>
+    <section class="priority-card positions-mini"><div class="sec-h"><h2>Positions by pressure</h2><span class="count">top 4</span></div>${visibleRows().slice(0,4).map(r => `<button class="mini-pos" data-t="${r.instrumentId}"><span class="tickr">${r.instrumentId}</span><span>${r.name}</span><b style="color:${L.col(r.riskDelta)}">${fmtD(r.riskDelta)}</b></button>`).join("")}</section>
+    <section class="priority-card copilot-card"><div class="sec-h"><h2>AI Copilot</h2><span class="spark">✦</span></div><p>Ask about this client, a holding, or a market signal.</p><button class="suggest" data-coprompt="Prepare a call brief for ${p.name}">Prepare call brief</button><button class="suggest" data-coprompt="Show liquidity risks for ${p.name}">Show liquidity risks</button><button class="ghost solid" id="open-copilot">Open copilot</button></section>`;
+  document.getElementById("priority-open")?.addEventListener("click", () => top ? onOpenPosition(top.instrumentId) : onRunPolicyScan());
+  document.getElementById("clear-sel")?.addEventListener("click", onClearSel);
+  document.getElementById("rail-policy-open")?.addEventListener("click", onOpenPolicyTrial);
+  document.getElementById("open-copilot")?.addEventListener("click", onCopilotToggle);
+  document.querySelectorAll(".suggest").forEach(b => b.addEventListener("click", () => { S.copilotDraft = b.dataset.coprompt; onCopilotToggle(); }));
+  document.querySelectorAll("#pfrail [data-cl]").forEach(b => b.addEventListener("click", () => onOpenClient?.(b.dataset.cl)));
+  document.querySelectorAll("#pfrail [data-iso]").forEach(b => b.addEventListener("click", () => onSelectIso?.(b.dataset.iso)));
+  document.querySelectorAll("#pfrail [data-t]").forEach(b => b.addEventListener("click", () => onOpenPosition(b.dataset.t)));
+  M.once("rail", [p.id, S.selIso, S.goalSel, S.household].join("|"), M.rail);
 }
 
-/** The three most consequential events across the countries this book touches. */
-function topEvents(n) {
-  const iso = new Set(Object.keys(S.signals));
+export function paintCopilot({ onToggle }) {
+  const p = S.portfolio, open = S.copilotOpen;
+  const prompts = ["Prepare call brief", "Show liquidity risks", "Summarise alerts", "Find clients affected by Singapore"];
+  document.getElementById("copilot").innerHTML = open ? `<div class="copilot-box"><div class="copilot-h"><div><h2>AI Copilot</h2><span>UI prototype · ${p.name}</span></div><button class="x" id="copilot-close">×</button></div><div class="prompt-grid">${prompts.map(x => `<button data-prompt="${x}">${x}</button>`).join("")}</div><div class="copilot-answer">${S.copilotDraft ? `Drafting workspace for: <b>${S.copilotDraft}</b><br><span>Will use portfolio, goals, RM notes and live signals when routing is connected.</span>` : "Select a prompt or ask a question to organise the RM workflow."}</div><div class="ask-row"><input value="${S.copilotDraft || ""}" placeholder="Ask a question..."><button>➤</button></div></div>` : `<button class="copilot-launch" id="copilot-open"><span>✦</span> AI Copilot</button>`;
+  document.getElementById("copilot-open")?.addEventListener("click", onToggle);
+  document.getElementById("copilot-close")?.addEventListener("click", onToggle);
+  document.querySelectorAll("#copilot [data-prompt]").forEach(b => b.addEventListener("click", () => { S.copilotDraft = b.dataset.prompt; paintCopilot({ onToggle }); }));
+}
+
+function topEventsRaw(n) {
   const evs = [];
-  for (const i of iso) {
-    const s = S.signals[i];
-    for (const e of s.events || []) evs.push({ ...e, weight: Math.abs(s.riskDelta) });
-  }
-  return evs.sort((a, b) => b.weight - a.weight).slice(0, n)
-    .map(e => [e.at.split(" ").slice(-1)[0], e.source, `<strong>${e.text}</strong> — ${e.value}`]);
+  for (const s of Object.values(S.signals)) for (const e of s.events || []) evs.push({ ...e, sev: Math.abs(s.riskDelta) > 25 ? "crit" : Math.abs(s.riskDelta) > 12 ? "serious" : "warn" });
+  return evs.sort((a,b) => (b.value || "").length - (a.value || "").length).slice(0,n);
+}
+
+function affectedForEvent(e) {
+  const iso = e.iso3 || e.iso;
+  const clients = S.portfolios.filter(p => clientHasIso(p, iso));
+  const aum = clients.reduce((s, p) => s + (p.aumUsd || 0), 0);
+  const names = clients.slice(0, 3).map(p => p.name).join(" · ");
+  return { iso, clients, aum, names };
+}
+
+function signalCard(e) {
+  const affected = affectedForEvent(e);
+  const sev = e.sev || (e.severity === "Severe" ? "crit" : e.severity === "High" ? "serious" : "warn");
+  const aum = affected.aum >= 1e9 ? `USD ${(affected.aum / 1e9).toFixed(2)}bn` : `USD ${(affected.aum / 1e6).toFixed(0)}m`;
+  const why = e.transmission || e.primary_transmission || e.value || "Review client exposure and portfolio actions.";
+  return `<article class="sit">
+    <time>${(e.at || "").split(" ").slice(-1)[0]}</time><span class="dot" style="background:${P.SEV[sev] || P.SEV.warn}"></span>
+    <div><h3>${e.text || "Signal update"}</h3><p>${why}</p><span class="src">${affected.clients.length} clients · ${aum}${affected.names ? ` · ${affected.names}` : ""}</span>
+    ${affected.iso ? `<button class="ghost sm" data-iso="${affected.iso}">View ${affected.iso}</button>` : ""}</div>
+  </article>`;
+}
+
+function topEvents(n) {
+  return topEventsRaw(n).map(e => [e.at.split(" ").slice(-1)[0], e.source, `<strong>${e.text}</strong> — ${e.value}`]);
 }

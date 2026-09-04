@@ -110,6 +110,9 @@ function computeAt(events, market, universe, date) {
       text: e.description,
       value: `${e.severity} · ${e.event_type}`,
       endpoint: "data/juliusbaer/event_log.csv",
+      region: e.region,
+      eventType: e.event_type,
+      severity: e.severity,
       sectors: [...new Set(hints.flatMap(h => h.sectors))],
       chokepoints,
       transmission: e.primary_transmission
@@ -121,7 +124,7 @@ function computeAt(events, market, universe, date) {
       if (e.event_type === "Geopolitical") s.tone -= 0.35 * recency;
       if (e.event_type === "Policy") s.policyStance += 0.6 * recency;
       for (const c of chokepoints) if (!s.chokepoints.includes(c)) s.chokepoints.push(c);
-      if (s.events.length < 8) s.events.push(ev);
+      if (s.events.length < 8) s.events.push({ ...ev, iso3 });
     }
   });
 

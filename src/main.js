@@ -5,19 +5,16 @@ import { fetchSignals, pollSignals } from "./signals/worldmonitor.js";
 import { FEED, LATE_FEED } from "./signals/fixtures/signals.js";
 import { initPalette } from "./ui/palette.js";
 import { shellHtml } from "./ui/shell.js";
+import { installLiquidGlass, applyLiquidGlass } from "./ui/glass.js";
+import { mountSilk } from "./ui/silk.js";
 import { mountGlobe, paintGlobe, sizeGlobe } from "./ui/globe.js";
-import { paintBook, paintHead, paintEvidence, paintLegend, paintTicker,
-  paintSituation } from "./ui/panels.js";
-import { paintExplanation, paintAnalysis, paintActions } from "./ui/segments.js";
-import { paintUrgent } from "./ui/urgent.js";
-import { openEvidence, closeEvidence } from "./ui/evidence.js";
-import { initDrawers, openBrief, openPolicyTrial } from "./ui/drawers.js";
-import { renderClientView } from "./ui/clientview.js";
+import { mountGoogleGlobe } from "./ui/googleGlobe.js";
+import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTicker, paintPfRail, paintCopilot }
+  from "./ui/panels.js";
+import { paintActions, paintConversation, paintCompliance, paintEconomics } from "./ui/tabs.js";
+import { initDrawers, openPosition, openPolicyTrial } from "./ui/drawers.js";
 import * as M from "./ui/motion.js";
 import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
-import { runEvaluation } from "./eval/evaluate.js";
-import { narrateClient } from "./eval/narrate.js";
-import * as marketData from "./market/index.js";
 
 const root = document.getElementById("root");
 let feed = FEED.slice(), lateIdx = 0, since = 0;
@@ -30,50 +27,64 @@ async function boot() {
   Object.assign(S, data);
   S.portfolio = S.portfolios[0];
   S.policyScan = FALLBACK_SCAN;
+  const usesDatasetSignals = data.meta?.source === "julius-baer";
 
   // Live signals where possible; fixtures otherwise. Never blocks the first paint.
   const isos = new Set();
   for (const p of S.portfolios) for (const pos of p.positions) {
     for (const e of S.instruments[pos.instrumentId]?.exposures || []) isos.add(e.iso3);
   }
-  const sig = await fetchSignals([...isos], { offline: CONFIG.OFFLINE });
-  S.signals = sig.signals; S.prevSignals = sig.prevSignals; S.live = sig.live;
-
-  if (new URLSearchParams(location.search).get("view") === "client") {
-    renderClientView(root);
-    return;
-  }
-
-  const buildCockpit = () => {
-    root.innerHTML = shellHtml();
-    initDrawers();
-    mountGlobe(document.getElementById("globe"), { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
-    wire();
-    refreshEvaluation();
-    renderAll();
-    maybeNarrateOpenClient();
-    M.boot();
-    requestAnimationFrame(() => sizeGlobe());
-  };
-
-  if (CONFIG.TITLE_SCREEN && new URLSearchParams(location.search).get("view") !== "client") {
-    const { renderTitle } = await import("./ui/title.js");
-    renderTitle(root, buildCockpit);
+  if (usesDatasetSignals) {
+    S.signals = data.signals;
+    S.prevSignals = data.prevSignals;
+    S.live = false;
+    feed = feedFromSignals(data.signals);
   } else {
-    buildCockpit();
+    const sig = await fetchSignals([...isos], { offline: CONFIG.OFFLINE });
+    S.signals = sig.signals; S.prevSignals = sig.prevSignals; S.live = sig.live;
   }
+  readRouteFromLocation();
 
-  pollSignals([...isos], ({ signals, prevSignals }) => {
-    S.signals = signals; S.prevSignals = prevSignals;
-    refreshEvaluation();
-    renderAll();
-    maybeNarrateOpenClient();
-  }, CONFIG.POLL_MS, { offline: CONFIG.OFFLINE });
+  root.innerHTML = shellHtml();
+  installLiquidGlass();
+  mountSilk(document.getElementById("silk-bg"), {
+    speed: 5,
+    scale: 1,
+    color: "#7B7481",
+    noiseIntensity: 1.5,
+    rotation: 0
+  });
+  initDrawers();
+  try {
+    const globeEl = document.getElementById("globe");
+    if (CONFIG.GLOBE_PROVIDER === "google" && CONFIG.GOOGLE_MAPS_API_KEY) {
+      await mountGoogleGlobe(globeEl, { apiKey: CONFIG.GOOGLE_MAPS_API_KEY });
+      document.querySelector(".globe-wrap")?.classList.add("using-google-globe");
+    } else {
+      mountGlobe(globeEl, { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
+    }
+  } catch (err) {
+    console.warn("[globe] WebGL unavailable, rendering dashboard without globe canvas:", err);
+    document.getElementById("globe").innerHTML = `<div class="globe-fallback">
+      <div class="fallback-orbit"></div>
+      <div class="fallback-core">Global exposure map unavailable</div>
+    </div>`;
+  }
+  wire();
+  renderAll();
+  M.boot();
+
+  if (!usesDatasetSignals) {
+    pollSignals([...isos], ({ signals, prevSignals }) => {
+      S.signals = signals; S.prevSignals = prevSignals; renderAll();
+    }, CONFIG.POLL_MS, { offline: CONFIG.OFFLINE });
+  }
 }
 
 function wire() {
-  document.getElementById("brief-btn").addEventListener("click", openBrief);
-  document.getElementById("policy-scan-btn").addEventListener("click", runPolicySentinel);
+  document.getElementById("open-client-rail")?.addEventListener("click", () => { S.clientDrawerOpen = true; S.railDrawerOpen = false; syncDrawers(); });
+  document.getElementById("open-priority-rail")?.addEventListener("click", () => { S.railDrawerOpen = true; S.clientDrawerOpen = false; syncDrawers(); });
+  document.getElementById("close-client-rail")?.addEventListener("click", () => { S.clientDrawerOpen = false; syncDrawers(); });
 
   document.querySelectorAll("[data-lens]").forEach(b => b.addEventListener("click", () => {
     S.lens = b.dataset.lens;
@@ -82,18 +93,20 @@ function wire() {
     paintLegend(); paintGlobe();
   }));
 
-  document.getElementById("ev-open-comp").addEventListener("click", openEvidence);
-  document.getElementById("ev-open-econ").addEventListener("click", openEvidence);
-  document.getElementById("slideover-x").addEventListener("click", closeEvidence);
-  document.getElementById("scrim").addEventListener("click", closeEvidence);
-  addEventListener("keydown", e => { if (e.key === "Escape") closeEvidence(); });
+  document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => {
+    S.tab = b.dataset.tab;
+    document.querySelectorAll("[data-tab]").forEach(x =>
+      x.setAttribute("aria-selected", String(x.dataset.tab === S.tab)));
+    ["pf","act","conv","comp","econ"].forEach(k =>
+      document.getElementById("pane-" + k).hidden = (k !== S.tab));
+    if (S.tab === "pf") requestAnimationFrame(sizeGlobe);
+    M.pane(S.tab);
+  }));
 
   setInterval(() => {
     since++;
-    const evAgo = S.evaluation ? Math.round((Date.now() - S.evaluation.at) / 1000) : null;
     document.getElementById("live-t").textContent =
-      "live · updated " + (since < 60 ? since + "s" : Math.floor(since / 60) + "m") + " ago"
-      + (evAgo != null ? ` · evaluated ${evAgo < 60 ? evAgo + "s" : Math.floor(evAgo / 60) + "m"} ago` : "");
+      "portfolio + intelligence · updated " + (since < 60 ? since + "s" : Math.floor(since / 60) + "m") + " ago";
   }, 1000);
 
   // Simulated arrivals so the demo shows liveness even on fixtures.
@@ -104,122 +117,105 @@ function wire() {
       since = 0; paintTicker(feed);
     }, 21000);
   }
+  addEventListener("popstate", () => { readRouteFromLocation(); renderAll(); });
 }
 
 function refresh(what) {
-  if (what === "globe") {
-    paintGlobe(); paintSituation(); paintEvidence(); return;
-  }
+  if (what === "globe") { paintGlobe(); paintPfRail(railHandlers); paintEvidence(); return; }
   renderAll();
 }
 
-/** The whole evaluation, recomputed from current signals. Pure — no I/O, no LLM. */
-function refreshEvaluation() {
-  S.evaluation = runEvaluation({
-    portfolios: S.portfolios, instruments: S.instruments,
-    signals: S.signals, prevSignals: S.prevSignals,
-    market: marketData, policyScan: S.policyScan
-  });
+const railHandlers = {
+  onClearGoal: () => { S.goalSel = null; renderAll(); },
+  onClearSel: () => { S.selIso = null; S.clientScopeId = null; refresh("globe"); },
+  onSelectIso: iso => { S.selIso = iso; S.railDrawerOpen = false; refresh("globe"); },
+  onOpenClient: id => {
+    S.portfolio = S.portfolios.find(p => p.id === id) || S.portfolio;
+    S.clientScopeId = null; S.selIso = null; S.goalSel = null; S.household = false; S.railDrawerOpen = false;
+    navigateToClient(id);
+  },
+  onOpenPosition: openPosition,
+  onRunPolicyScan: runPolicySentinel,
+  onOpenPolicyTrial: openPolicyTrial,
+  onCopilotToggle: () => { S.copilotOpen = !S.copilotOpen; renderAll(); }
+};
+
+function readRouteFromLocation() {
+  const match = location.pathname.match(/^\/clients\/([^/]+)/);
+  S.route = match ? "client" : "dashboard";
+  if (!match) S.tab = "pf";
+  if (match) {
+    const id = decodeURIComponent(match[1]);
+    S.portfolio = S.portfolios.find(p => p.id === id) || S.portfolio;
+    S.clientScopeId = null;
+  }
 }
 
-function rmNotesFor(p) { return (p.relationship?.concerns || []); }
-
-/**
- * Narration is the only LLM call: one client — the one on screen — and only when its
- * facts actually moved. Each evaluation mints fresh client objects with `thesis: null`,
- * so the prose is cached in `S.narratedHash` (portfolioId → {hash, thesis, summary})
- * and copied back onto the live object; an unchanged hash never reaches the model.
- * `inflight` makes that guarantee hold for calls that overlap in time, not just in sequence.
- */
-const inflight = new Set(); // `${portfolioId}|${hash}` — one narration per client per hash
-
-async function maybeNarrateOpenClient() {
-  const id = S.portfolio?.id;
-  const ev = S.evaluation?.clients?.[id];
-  if (!ev) return;
-  const hash = S.evaluation.hash[id];
-
-  const cached = S.narratedHash[id];
-  if (cached?.hash === hash) {
-    if (ev.thesis !== cached.thesis) {
-      ev.thesis = cached.thesis; ev.summary = cached.summary;
-      paintExplanation();
-    }
-    return;
-  }
-
-  const key = `${id}|${hash}`;
-  if (inflight.has(key)) return; // same client, same facts, already asking
-  inflight.add(key);
-  let narrated;
-  try {
-    narrated = await narrateClient(ev, S.portfolio, rmNotesFor(S.portfolio));
-  } finally {
-    inflight.delete(key);
-  }
-
-  // A poll may have rebuilt S.evaluation mid-await: `ev` can be an orphan, and an answer
-  // for superseded facts is discarded — the poll's own call covers the new hash.
-  const live = S.evaluation?.clients?.[id];
-  if (!live || S.evaluation.hash[id] !== hash) return;
-  S.narratedHash[id] = { hash, thesis: narrated.thesis, summary: narrated.summary };
-  live.thesis = narrated.thesis; live.summary = narrated.summary;
-  if (S.portfolio?.id === id) paintExplanation();
+function navigateToClient(id) {
+  history.pushState(null, "", `/clients/${encodeURIComponent(id)}`);
+  readRouteFromLocation();
+  renderAll();
 }
 
-function onUrgentPick({ portfolioId, actionId }) {
-  if (S.portfolio.id !== portfolioId) {
-    S.portfolio = S.portfolios.find(p => p.id === portfolioId);
-    S.selIso = null; S.goalSel = null; S.household = false;
-    renderAll(); maybeNarrateOpenClient();
-  }
-  requestAnimationFrame(() => {
-    document.getElementById("seg-actions")?.scrollIntoView({
-      behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth",
-      block: "start"
-    });
-    const card = document.querySelector(`[data-action="${actionId}"]`);
-    if (card) { card.classList.add("flash"); setTimeout(() => card.classList.remove("flash"), 1400); }
-  });
+function syncRouteClass() {
+  const app = document.querySelector(".app");
+  app?.classList.toggle("dashboard-view", S.route === "dashboard");
+  app?.classList.toggle("client-workbench", S.route === "client");
 }
 
 async function runPolicySentinel() {
   S.policyScanState = "running";
   renderAll();
   const btn = document.getElementById("policy-scan-btn");
-  if (btn) btn.textContent = "Scanning policy...";
-  try {
-    S.policyScan = await runPolicyScan();
-    since = 0;
-    refreshEvaluation();
-    maybeNarrateOpenClient();
-    openPolicyTrial();
-  } catch (err) {
-    console.error("policy scan failed", err);
-  } finally {
-    S.policyScanState = "idle";
-    renderAll();
-  }
+  if (btn) btn.textContent = "Scanning portfolio...";
+  S.policyScan = await runPolicyScan();
+  S.policyScanState = "idle";
+  since = 0;
+  renderAll();
+  openPolicyTrial();
 }
 
 export function renderAll() {
-  const policyBtn = document.getElementById("policy-scan-btn");
-  if (policyBtn) {
-    policyBtn.textContent = S.policyScanState === "running" ? "Scanning policy..." : "Run live policy scan";
-    policyBtn.disabled = S.policyScanState === "running";
-  }
+  syncRouteClass();
   paintBook(id => {
     S.portfolio = S.portfolios.find(p => p.id === id);
-    S.selIso = null; S.goalSel = null; S.household = false;
+    S.clientScopeId = id; S.goalSel = null; S.household = false; S.clientDrawerOpen = false;
     renderAll();
-    maybeNarrateOpenClient();
   });
   paintHead(() => { S.household = !S.household; S.selIso = null; renderAll(); });
+  paintGoals(id => {
+    S.goalSel = S.goalSel === id ? null : id;
+    S.selIso = null;
+    renderAll();
+  });
   paintLegend(); paintGlobe(); paintEvidence();
   paintTicker(feed);
-  paintUrgent(onUrgentPick);
-  paintExplanation();
-  paintSituation();
-  paintAnalysis();
-  paintActions();
+  paintPfRail(railHandlers);
+  document.getElementById("close-priority-rail")?.addEventListener("click", () => { S.railDrawerOpen = false; syncDrawers(); });
+  syncDrawers();
+  paintCopilot({ onToggle: railHandlers.onCopilotToggle });
+  paintActions(renderAll);
+  paintConversation();
+  paintCompliance();
+  paintEconomics();
+  applyLiquidGlass();
+}
+
+function syncDrawers() {
+  document.querySelector(".mission-stage")?.classList.toggle("client-open", !!S.clientDrawerOpen);
+  document.querySelector(".mission-stage")?.classList.toggle("rail-open", !!S.railDrawerOpen);
+}
+
+function feedFromSignals(signals) {
+  const seen = new Set();
+  const events = [];
+  for (const s of Object.values(signals)) {
+    for (const e of s.events || []) {
+      if (seen.has(e.id)) continue;
+      seen.add(e.id);
+      const sev = e.severity === "Severe" ? "crit" : e.severity === "High" ? "serious" : "warn";
+      events.push([(e.at || "").slice(5), e.source || "event_log.csv", e.region || s.name, e.text || e.value || "Signal update", sev]);
+    }
+  }
+  return events.sort((a, b) => b[0].localeCompare(a[0])).slice(0, 12);
 }

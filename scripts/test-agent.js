@@ -19,6 +19,56 @@ const throwsFence = (fn) => { try { fn(); return null; } catch (e) { return e in
 const section = s => console.log(`\n${s}\n`);
 
 const bundle = JSON.parse(readFileSync("out/intel/CL-0014.json", "utf8"));
+if (!bundle.context.observations.some(o => o.series?.key === "UST_10Y")) {
+  bundle.context.observations.push({
+    id: "test-live-ust10y",
+    lane: "quant",
+    status: "candidate",
+    driver: { key: "rates:UST_10Y" },
+    relevance: 1,
+    series: {
+      key: "UST_10Y",
+      name: "US 10Y Treasury yield",
+      latest: 4.31,
+      unit: "percent",
+      as_of: "test fixture",
+      transform: "latest",
+      note: "Seeded by scripts/test-agent.js when no provider keys are present."
+    }
+  });
+}
+if (!bundle.context.observations.some(o => o.series?.key === "VIX")) {
+  bundle.context.observations.push({
+    id: "test-live-vix",
+    lane: "quant",
+    status: "candidate",
+    driver: { key: "risk:VIX" },
+    relevance: 1,
+    series: {
+      key: "VIX",
+      name: "CBOE Volatility Index",
+      latest: 30.2,
+      unit: "index",
+      as_of: "test fixture",
+      transform: "latest",
+      note: "Seeded by scripts/test-agent.js when no provider keys are present."
+    }
+  });
+}
+if (!bundle.context.observations.some(o => o.lane === "doc")) {
+  bundle.context.observations.push({
+    id: "test-doc-policy",
+    lane: "doc",
+    status: "candidate",
+    driver: { key: "policy:test" },
+    relevance: 1,
+    doc: {
+      title: "Policy fixture",
+      final_url: "https://example.test/policy",
+      excerpt: "Seeded by scripts/test-agent.js when document providers are unavailable."
+    }
+  });
+}
 
 section("Measures carry provenance");
 {
