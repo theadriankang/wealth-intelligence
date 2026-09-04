@@ -167,18 +167,20 @@ function urgentReviewCard({ p, m }, index, total) {
   const badge = band === "critical" ? "Critical attention" : band === "high" ? "High attention" : band === "medium" ? "Medium attention" : "Low attention";
   return `<article class="urgent-swipe-card ${band}" data-urgent-card>
     <div class="urgent-card-top"><span class="attention-badge ${band}"><i></i>${badge}</span><span>${index + 1} / ${total}</span></div>
-    ${profileAvatar(p)}
-    <h3>${p.name}</h3>
-    <p class="client-type">${m.source}</p>
-    <div class="profile-facts">
-      <div><span>AUM</span><b>${p.currency || ""} ${p.aum}</b></div>
-      <div><span>Mandate</span><b>${p.riskProfile || p.mandate}</b></div>
-    </div>
-    <button class="risk-callout ${band}" data-cl="${p.id}">
+    <button class="profile-open" data-open-client="${p.id}" type="button">
+      ${profileAvatar(p)}
+      <span class="urgent-name">${p.name}</span>
+      <span class="client-type">${m.source}</span>
+      <span class="profile-facts">
+        <span><em>AUM</em><b>${p.currency || ""} ${p.aum}</b></span>
+        <span><em>Mandate</em><b>${p.riskProfile || p.mandate}</b></span>
+      </span>
+    </button>
+    <button class="risk-callout ${band}" data-open-client="${p.id}" type="button">
       <b>${score}</b><span><strong>${aiInsight({ ...m, band })}</strong>${m.reason}</span><em>›</em>
     </button>
     <div class="next-review"><span>▣</span><div><small>Next Review</small><b>${reviewDateLabel(p.reviewDate)}</b></div></div>
-    <button class="open-review" data-cl="${p.id}">Open client review <span>→</span></button>
+    <button class="open-review" data-open-client="${p.id}" type="button">Open client review <span>→</span></button>
   </article>`;
 }
 
@@ -379,33 +381,88 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
   const scan = S.policyScan || currentPolicyScan();
   const activeIndex = urgent.length ? Math.min(S.urgentReviewIndex || 0, urgent.length - 1) : 0;
   const activeUrgent = urgent[activeIndex];
-  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card urgent-carousel"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div>${activeUrgent ? urgentReviewCard(activeUrgent, activeIndex, urgent.length) : `<div class="empty-state">No urgent reviews for this scope.</div>`}<div class="urgent-nav"><button class="urgent-arrow" data-urg-nav="-1" aria-label="Previous urgent review">‹</button><div class="urgent-dots">${urgent.map((_, i) => `<button data-urg-dot="${i}" aria-label="Urgent review ${i + 1}" aria-pressed="${i === activeIndex}"></button>`).join("")}</div><button class="urgent-arrow" data-urg-nav="1" aria-label="Next urgent review">›</button></div></section>
+  let cardWasSwiped = false;
+  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card urgent-carousel"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div>${activeUrgent ? urgentReviewCard(activeUrgent, activeIndex, urgent.length) : `<div class="empty-state">No urgent reviews for this scope.</div>`}<div class="urgent-nav"><button class="urgent-arrow" type="button" data-urg-nav="-1" aria-label="Previous urgent review">‹</button><div class="urgent-dots">${urgent.map((_, i) => `<button class="dot" type="button" data-urg-dot="${i}" aria-label="Urgent review ${i + 1}" aria-pressed="${i === activeIndex}"></button>`).join("")}</div><button class="urgent-arrow" type="button" data-urg-nav="1" aria-label="Next urgent review">›</button></div></section>
     <section class="priority-card"><div class="sec-h"><h2>Live Intelligence</h2><button class="ghost sm" id="clear-sel">Reset view</button></div><div class="situation-list">${digest.map(e => signalCard(e)).join("")}</div><div class="policy-mini"><span>Policy Sentinel</span><b>${scan.signal.stance}</b><button class="ghost sm" id="rail-policy-open">Evidence</button></div></section>
     <section class="priority-card positions-mini"><div class="sec-h"><h2>Positions by pressure</h2><span class="count">top 4</span></div>${visibleRows().slice(0,4).map(r => `<button class="mini-pos" data-t="${r.instrumentId}"><span class="tickr">${r.instrumentId}</span><span>${r.name}</span><b style="color:${L.col(r.riskDelta)}">${fmtD(r.riskDelta)}</b></button>`).join("")}</section>
     <section class="priority-card copilot-card"><div class="sec-h"><h2>AI Copilot</h2><span class="spark">✦</span></div><p>Ask about this client, a holding, or a market signal.</p><button class="suggest" data-coprompt="Prepare a call brief for ${p.name}">Prepare call brief</button><button class="suggest" data-coprompt="Show liquidity risks for ${p.name}">Show liquidity risks</button><button class="ghost solid" id="open-copilot">Open copilot</button></section>`;
   document.getElementById("priority-open")?.addEventListener("click", () => top ? onOpenPosition(top.instrumentId) : onRunPolicyScan());
   document.getElementById("clear-sel")?.addEventListener("click", onClearSel);
+  document.getElementById("pfrail")?.addEventListener("click", e => {
+    const nav = e.target.closest("[data-urg-nav]");
+    if (nav) {
+      e.preventDefault();
+      e.stopPropagation();
+      moveUrgent(Number(nav.dataset.urgNav));
+      return;
+    }
+    const dot = e.target.closest("[data-urg-dot]");
+    if (dot) {
+      e.preventDefault();
+      e.stopPropagation();
+      S.urgentReviewIndex = Number(dot.dataset.urgDot) || 0;
+      paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle });
+      return;
+    }
+    const open = e.target.closest("[data-open-client]");
+    if (!open || cardWasSwiped) return;
+    e.preventDefault();
+    e.stopPropagation();
+    onOpenClient?.(open.dataset.openClient);
+  });
   document.querySelectorAll("#pfrail [data-cl]").forEach(b => b.addEventListener("click", () => onOpenClient?.(b.dataset.cl)));
   document.querySelectorAll("#pfrail [data-iso]").forEach(b => b.addEventListener("click", () => onSelectIso?.(b.dataset.iso)));
   document.querySelectorAll("#pfrail [data-t]").forEach(b => b.addEventListener("click", () => onOpenPosition(b.dataset.t)));
-  document.querySelectorAll("#pfrail [data-urg-nav]").forEach(b => b.addEventListener("click", () => {
+  const moveUrgent = delta => {
     if (!urgent.length) return;
-    S.urgentReviewIndex = (S.urgentReviewIndex + Number(b.dataset.urgNav) + urgent.length) % urgent.length;
+    S.urgentReviewIndex = (S.urgentReviewIndex + delta + urgent.length) % urgent.length;
     paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle });
-  }));
-  document.querySelectorAll("#pfrail [data-urg-dot]").forEach(b => b.addEventListener("click", () => {
-    S.urgentReviewIndex = Number(b.dataset.urgDot) || 0;
-    paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle });
-  }));
-  const card = document.querySelector("#pfrail [data-urgent-card]");
-  if (card) {
+  };
+  const swipeTarget = document.querySelector("#pfrail .urgent-carousel");
+  if (swipeTarget) {
     let startX = 0;
-    card.addEventListener("pointerdown", e => { startX = e.clientX; card.setPointerCapture?.(e.pointerId); });
-    card.addEventListener("pointerup", e => {
-      const dx = e.clientX - startX;
-      if (Math.abs(dx) < 34 || !urgent.length) return;
-      S.urgentReviewIndex = (S.urgentReviewIndex + (dx < 0 ? 1 : -1) + urgent.length) % urgent.length;
-      paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle });
+    let startY = 0;
+    let tracking = false;
+    cardWasSwiped = false;
+    const finishSwipe = (x, y) => {
+      const dx = x - startX;
+      const dy = Math.abs((y || 0) - startY);
+      if (Math.abs(dx) < 34 || Math.abs(dx) < dy * 1.2 || !urgent.length) return;
+      cardWasSwiped = true;
+      moveUrgent(dx < 0 ? 1 : -1);
+    };
+    swipeTarget.addEventListener("pointerdown", e => {
+      if (e.target.closest("[data-urg-nav],[data-urg-dot]")) return;
+      startX = e.clientX;
+      startY = e.clientY;
+      tracking = true;
+      cardWasSwiped = false;
+      swipeTarget.setPointerCapture?.(e.pointerId);
+    });
+    swipeTarget.addEventListener("pointerup", e => {
+      if (!tracking) return;
+      tracking = false;
+      finishSwipe(e.clientX, e.clientY);
+    });
+    swipeTarget.addEventListener("pointercancel", () => { tracking = false; });
+    swipeTarget.addEventListener("touchstart", e => {
+      const t = e.changedTouches?.[0];
+      if (!t || e.target.closest("[data-urg-nav],[data-urg-dot]")) return;
+      startX = t.clientX;
+      startY = t.clientY;
+      tracking = true;
+      cardWasSwiped = false;
+    }, { passive:true });
+    swipeTarget.addEventListener("touchend", e => {
+      if (!tracking) return;
+      const t = e.changedTouches?.[0];
+      tracking = false;
+      if (t) finishSwipe(t.clientX, t.clientY);
+    }, { passive:true });
+    swipeTarget.addEventListener("touchcancel", () => { tracking = false; }, { passive:true });
+    swipeTarget.addEventListener("click", () => {
+      if (!cardWasSwiped) return;
+      setTimeout(() => { cardWasSwiped = false; }, 0);
     });
   }
   M.once("rail", [p.id, S.selIso, S.goalSel, S.household].join("|"), M.rail);

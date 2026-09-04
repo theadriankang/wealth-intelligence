@@ -18,6 +18,10 @@ const COUNTRY_VIEW = {
   SAU:{ lat:23.9, lng:45.1 }, SGP:{ lat:1.29, lng:103.85 }, TWN:{ lat:23.7, lng:121 },
   USA:{ lat:39.8, lng:-98.6 }
 };
+const FLAGS = {
+  BRA:"🇧🇷", CHE:"🇨🇭", CHN:"🇨🇳", DEU:"🇩🇪", GBR:"🇬🇧", IND:"🇮🇳",
+  JPN:"🇯🇵", KOR:"🇰🇷", NLD:"🇳🇱", SAU:"🇸🇦", SGP:"🇸🇬", TWN:"🇹🇼", USA:"🇺🇸"
+};
 
 let globe = null;
 let idleTimer = null;
@@ -33,6 +37,66 @@ function pauseForFocus() {
   if (!globe) return;
   globe.controls().autoRotate = false;
   scheduleIdleReset();
+}
+
+function topCountryPositions(iso, limit = 20) {
+  return (S.portfolio?.positions || [])
+    .map(pos => {
+      const inst = S.instruments[pos.instrumentId];
+      const ex = inst?.exposures?.find(x => x.iso3 === iso);
+      return ex ? {
+        id: pos.instrumentId,
+        name: inst.name || pos.instrumentId,
+        weightPct: pos.weightPct * ex.weight
+      } : null;
+    })
+    .filter(Boolean)
+    .sort((a, b) => b.weightPct - a.weightPct)
+    .slice(0, limit);
+}
+
+function exposedClients(iso) {
+  return (S.portfolios || []).filter(p =>
+    (p.positions || []).some(pos => S.instruments[pos.instrumentId]?.exposures?.some(x => x.iso3 === iso))
+  );
+}
+
+function initials(name) {
+  return String(name || "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map(x => x[0])
+    .join("")
+    .toUpperCase();
+}
+
+function countryTooltip({ countryName, iso, exposureMeta, signal, lens }) {
+  if (!exposureMeta || !signal) {
+    return `<div class="gt wi-country-tip">
+      <div class="gt-head"><b><span class="gt-flag">${FLAGS[iso] || ""}</span>${countryName}</b><span>${iso || ""}</span></div>
+      <div class="gt-empty">No mandate exposure</div>
+    </div>`;
+  }
+  const positions = topCountryPositions(iso);
+  const clients = exposedClients(iso);
+  const more = Math.max(0, exposureMeta.instrumentIds.length - positions.length);
+  const delta = lens.val(signal);
+  const improving = delta < 0;
+  const status = improving ? "Improving" : delta > 0 ? "Worsening" : "Stable";
+  return `<div class="gt wi-country-tip">
+    <div class="gt-head"><b><span class="gt-flag">${FLAGS[iso] || ""}</span>${signal.name || countryName}</b><span class="gt-status ${improving ? "improving" : delta > 0 ? "worsening" : "stable"}">${status}</span></div>
+    <div class="gt-risk"><strong>${exposureMeta.weightPct.toFixed(1)}<small>%</small></strong><span>capital at risk</span></div>
+    <div class="gt-rule"><i style="width:${Math.min(100, Math.max(4, exposureMeta.weightPct))}%;background:${lens.col(delta)}"></i></div>
+    <div class="gt-metrics">
+      <span>7-day change in exposure risk</span><strong style="color:${lens.col(delta)}">${lens.fmt(delta)}</strong>
+      <span>Holdings exposed</span><strong>${exposureMeta.instrumentIds.length}</strong>
+    </div>
+    <div class="gt-clients"><span>${clients.length} clients exposed</span><div>${clients.slice(0, 6).map(p => `<b>${initials(p.name)}</b>`).join("")}${clients.length > 6 ? `<em>+${clients.length - 6}</em>` : ""}</div></div>
+    <div class="gt-sub">Exposure via</div>
+    <div class="gt-positions">${positions.map(x => `<div><span title="${x.name}">${x.name}</span><em>${x.weightPct.toFixed(1)}%</em></div>`).join("") || `<p>No positions found</p>`}</div>
+    ${more ? `<div class="gt-more">+ ${more} more positions</div>` : ""}
+  </div>`;
 }
 
 export function mountGlobe(el, { onSelect }) {
@@ -115,13 +179,7 @@ export function paintGlobe() {
   globe.polygonStrokeColor(f => ex[a3(f)] ? "rgba(74,92,118,0.42)" : "rgba(74,92,118,0.10)");
   globe.polygonLabel(f => {
     const iso = a3(f), e = ex[iso], s = sig(iso);
-    if (!e || !s) return `<div class="gt"><div class="n">${f.properties.name}</div>
-      <div class="r"><span>Mandate exposure</span><span>none</span></div></div>`;
-    return `<div class="gt"><div class="n">${s.name}</div>
-      <div class="r"><span>Capital at risk</span><span>${e.weightPct.toFixed(1)}%</span></div>
-      <div class="r"><span>${L.label.split(",")[0]}</span>
-        <span style="color:${L.col(L.val(s))}">${L.fmt(L.val(s))}</span></div>
-      <div class="r"><span>Via</span><span>${e.instrumentIds.join(" ")}</span></div></div>`;
+    return countryTooltip({ countryName:f.properties.name, iso, exposureMeta:e, signal:s, lens:L });
   });
 
   /* points: chokepoints + any exposed micro-state */
