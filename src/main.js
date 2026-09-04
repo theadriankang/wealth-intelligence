@@ -6,14 +6,18 @@ import { FEED, LATE_FEED } from "./signals/fixtures/signals.js";
 import { initPalette } from "./ui/palette.js";
 import { shellHtml } from "./ui/shell.js";
 import { mountGlobe, paintGlobe, sizeGlobe } from "./ui/globe.js";
-import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTicker,
-  paintSituation, paintPositions } from "./ui/panels.js";
-import { paintActions, paintConversation } from "./ui/spine.js";
+import { paintBook, paintHead, paintEvidence, paintLegend, paintTicker,
+  paintSituation } from "./ui/panels.js";
+import { paintExplanation, paintAnalysis, paintActions } from "./ui/segments.js";
+import { paintUrgent } from "./ui/urgent.js";
 import { openEvidence, closeEvidence } from "./ui/evidence.js";
-import { initDrawers, openPosition, openBrief, openPolicyTrial } from "./ui/drawers.js";
+import { initDrawers, openBrief, openPolicyTrial } from "./ui/drawers.js";
 import { renderClientView } from "./ui/clientview.js";
 import * as M from "./ui/motion.js";
 import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
+import { runEvaluation } from "./eval/evaluate.js";
+import { narrateClient } from "./eval/narrate.js";
+import * as marketData from "./market/index.js";
 
 const root = document.getElementById("root");
 let feed = FEED.slice(), lateIdx = 0, since = 0;
@@ -45,7 +49,9 @@ async function boot() {
     initDrawers();
     mountGlobe(document.getElementById("globe"), { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
     wire();
+    refreshEvaluation();
     renderAll();
+    maybeNarrateOpenClient();
     M.boot();
     requestAnimationFrame(() => sizeGlobe());
   };
@@ -58,7 +64,10 @@ async function boot() {
   }
 
   pollSignals([...isos], ({ signals, prevSignals }) => {
-    S.signals = signals; S.prevSignals = prevSignals; renderAll();
+    S.signals = signals; S.prevSignals = prevSignals;
+    refreshEvaluation();
+    renderAll();
+    maybeNarrateOpenClient();
   }, CONFIG.POLL_MS, { offline: CONFIG.OFFLINE });
 }
 
@@ -81,8 +90,10 @@ function wire() {
 
   setInterval(() => {
     since++;
+    const evAgo = S.evaluation ? Math.round((Date.now() - S.evaluation.at) / 1000) : null;
     document.getElementById("live-t").textContent =
-      "live · updated " + (since < 60 ? since + "s" : Math.floor(since / 60) + "m") + " ago";
+      "live · updated " + (since < 60 ? since + "s" : Math.floor(since / 60) + "m") + " ago"
+      + (evAgo != null ? ` · evaluated ${evAgo < 60 ? evAgo + "s" : Math.floor(evAgo / 60) + "m"} ago` : "");
   }, 1000);
 
   // Simulated arrivals so the demo shows liveness even on fixtures.
@@ -97,18 +108,80 @@ function wire() {
 
 function refresh(what) {
   if (what === "globe") {
-    paintGlobe(); paintSituation(); paintPositions(railHandlers); paintEvidence(); return;
+    paintGlobe(); paintSituation(); paintEvidence(); return;
   }
   renderAll();
 }
 
-const railHandlers = {
-  onClearGoal: () => { S.goalSel = null; renderAll(); },
-  onClearSel: () => { S.selIso = null; refresh("globe"); },
-  onOpenPosition: openPosition,
-  onRunPolicyScan: runPolicySentinel,
-  onOpenPolicyTrial: openPolicyTrial
-};
+/** The whole evaluation, recomputed from current signals. Pure — no I/O, no LLM. */
+function refreshEvaluation() {
+  S.evaluation = runEvaluation({
+    portfolios: S.portfolios, instruments: S.instruments,
+    signals: S.signals, prevSignals: S.prevSignals,
+    market: marketData, policyScan: S.policyScan
+  });
+}
+
+function rmNotesFor(p) { return (p.relationship?.concerns || []); }
+
+/**
+ * Narration is the only LLM call: one client — the one on screen — and only when its
+ * facts actually moved. Each evaluation mints fresh client objects with `thesis: null`,
+ * so the prose is cached in `S.narratedHash` (portfolioId → {hash, thesis, summary})
+ * and copied back onto the live object; an unchanged hash never reaches the model.
+ * `inflight` makes that guarantee hold for calls that overlap in time, not just in sequence.
+ */
+const inflight = new Set(); // `${portfolioId}|${hash}` — one narration per client per hash
+
+async function maybeNarrateOpenClient() {
+  const id = S.portfolio?.id;
+  const ev = S.evaluation?.clients?.[id];
+  if (!ev) return;
+  const hash = S.evaluation.hash[id];
+
+  const cached = S.narratedHash[id];
+  if (cached?.hash === hash) {
+    if (ev.thesis !== cached.thesis) {
+      ev.thesis = cached.thesis; ev.summary = cached.summary;
+      paintExplanation();
+    }
+    return;
+  }
+
+  const key = `${id}|${hash}`;
+  if (inflight.has(key)) return; // same client, same facts, already asking
+  inflight.add(key);
+  let narrated;
+  try {
+    narrated = await narrateClient(ev, S.portfolio, rmNotesFor(S.portfolio));
+  } finally {
+    inflight.delete(key);
+  }
+
+  // A poll may have rebuilt S.evaluation mid-await: `ev` can be an orphan, and an answer
+  // for superseded facts is discarded — the poll's own call covers the new hash.
+  const live = S.evaluation?.clients?.[id];
+  if (!live || S.evaluation.hash[id] !== hash) return;
+  S.narratedHash[id] = { hash, thesis: narrated.thesis, summary: narrated.summary };
+  live.thesis = narrated.thesis; live.summary = narrated.summary;
+  if (S.portfolio?.id === id) paintExplanation();
+}
+
+function onUrgentPick({ portfolioId, actionId }) {
+  if (S.portfolio.id !== portfolioId) {
+    S.portfolio = S.portfolios.find(p => p.id === portfolioId);
+    S.selIso = null; S.goalSel = null; S.household = false;
+    renderAll(); maybeNarrateOpenClient();
+  }
+  requestAnimationFrame(() => {
+    document.getElementById("seg-actions")?.scrollIntoView({
+      behavior: matchMedia("(prefers-reduced-motion:reduce)").matches ? "auto" : "smooth",
+      block: "start"
+    });
+    const card = document.querySelector(`[data-action="${actionId}"]`);
+    if (card) { card.classList.add("flash"); setTimeout(() => card.classList.remove("flash"), 1400); }
+  });
+}
 
 async function runPolicySentinel() {
   S.policyScanState = "running";
@@ -118,7 +191,9 @@ async function runPolicySentinel() {
   S.policyScan = await runPolicyScan();
   S.policyScanState = "idle";
   since = 0;
+  refreshEvaluation();
   renderAll();
+  maybeNarrateOpenClient();
   openPolicyTrial();
 }
 
@@ -132,17 +207,14 @@ export function renderAll() {
     S.portfolio = S.portfolios.find(p => p.id === id);
     S.selIso = null; S.goalSel = null; S.household = false;
     renderAll();
+    maybeNarrateOpenClient();
   });
   paintHead(() => { S.household = !S.household; S.selIso = null; renderAll(); });
-  paintGoals(id => {
-    S.goalSel = S.goalSel === id ? null : id;
-    S.selIso = null;
-    renderAll();
-  });
   paintLegend(); paintGlobe(); paintEvidence();
   paintTicker(feed);
+  paintUrgent(onUrgentPick);
+  paintExplanation();
   paintSituation();
-  paintPositions(railHandlers);
-  paintActions(renderAll);
-  paintConversation();
+  paintAnalysis();
+  paintActions();
 }
