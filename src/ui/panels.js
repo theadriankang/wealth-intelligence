@@ -140,6 +140,21 @@ function initials(name) {
   return String(name || "RM").split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join("").toUpperCase();
 }
 
+const PROFILE_IMAGES = {
+  "Ravi Chandrasekaran": "/avatars/ravi-chandrasekaran.png",
+  "Fong Enterprises Family Office": "/avatars/fong-enterprises.png",
+  "Zhang Meiling": "/avatars/zhang-meiling.png",
+  "Tan Boon Huat": "/avatars/tan-boon-huat.png",
+  "Kim Do-Yoon": "/avatars/kim-do-yoon.png"
+};
+
+function profileAvatar(p) {
+  const src = PROFILE_IMAGES[p.name];
+  return src
+    ? `<div class="profile-avatar has-photo"><img src="${src}" alt="${p.name} profile portrait" loading="lazy"></div>`
+    : `<div class="profile-avatar">${initials(p.name)}</div>`;
+}
+
 function reviewDateLabel(date) {
   const d = String(date || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!d) return date || "Not scheduled";
@@ -152,7 +167,7 @@ function urgentReviewCard({ p, m }, index, total) {
   const badge = band === "critical" ? "Critical attention" : band === "high" ? "High attention" : band === "medium" ? "Medium attention" : "Low attention";
   return `<article class="urgent-swipe-card ${band}" data-urgent-card>
     <div class="urgent-card-top"><span class="attention-badge ${band}"><i></i>${badge}</span><span>${index + 1} / ${total}</span></div>
-    <div class="profile-avatar">${initials(p.name)}</div>
+    ${profileAvatar(p)}
     <h3>${p.name}</h3>
     <p class="client-type">${m.source}</p>
     <div class="profile-facts">
@@ -205,16 +220,7 @@ export function paintBook(onPick) {
   const active = activeClientFilters();
   document.getElementById("book").innerHTML = filtered.map(p => {
     const m = metas.get(p.id);
-    const tone = m.band;
-    const badgeLabel = m.band === "loading" ? "Scoring…" : m.band === "unavailable" ? "Unavailable" : `${m.urgency} · ${m.band}`;
-    return `<button class="cl rm-client ${tone}" data-cl="${p.id}" aria-current="${p.id === S.portfolio.id}">
-      <span class="client-dot"></span><span class="nm">${p.name}</span>
-      <span class="badge ${m.band}">${badgeLabel}</span>
-      <span class="rf">${m.source}</span>
-      <span class="riskline">${p.aum} · ${p.riskProfile}</span>
-      <span class="reason">${m.driver}: ${m.reason}</span><span class="mini-trend">${m.fl.length} alerts</span>
-      <span class="next">${m.next} · ${p.reviewDate}</span>
-    </button>`;
+    return clientCard(p, m);
   }).join("") || `<div class="empty-state">No clients match ${active.length ? active.join(" · ") : "the current search"}.</div>`;
   document.querySelectorAll("[data-cl]").forEach(b => b.addEventListener("click", () => onPick(b.dataset.cl)));
   document.querySelectorAll("#client-filters [data-filter]").forEach(b => b.addEventListener("click", () => { S.clientFilter = b.dataset.filter; paintBook(onPick); }));
@@ -371,7 +377,9 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
   const digest = S.selIso ? S.signals[S.selIso]?.events || [] : topEventsRaw(4);
   const top = meta.fl[0];
   const scan = S.policyScan || currentPolicyScan();
-  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div><div class="urgent-list">${urgent.map(({p,m}) => `<article class="urgent-mini"><div><h3>${p.name}</h3><p>${m.reason}</p><span>${p.aum} · ${p.reviewDate}</span></div><b class="${m.band}">${m.band === "loading" ? "…" : m.band === "unavailable" ? "n/a" : m.urgency}</b><button class="ghost sm" data-cl="${p.id}">Open review</button></article>`).join("")}</div><button class="ghost solid" id="priority-open">View all urgent reviews</button></section>
+  const activeIndex = urgent.length ? Math.min(S.urgentReviewIndex || 0, urgent.length - 1) : 0;
+  const activeUrgent = urgent[activeIndex];
+  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card urgent-carousel"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div>${activeUrgent ? urgentReviewCard(activeUrgent, activeIndex, urgent.length) : `<div class="empty-state">No urgent reviews for this scope.</div>`}<div class="urgent-nav"><button class="urgent-arrow" data-urg-nav="-1" aria-label="Previous urgent review">‹</button><div class="urgent-dots">${urgent.map((_, i) => `<button data-urg-dot="${i}" aria-label="Urgent review ${i + 1}" aria-pressed="${i === activeIndex}"></button>`).join("")}</div><button class="urgent-arrow" data-urg-nav="1" aria-label="Next urgent review">›</button></div></section>
     <section class="priority-card"><div class="sec-h"><h2>Live Intelligence</h2><button class="ghost sm" id="clear-sel">Reset view</button></div><div class="situation-list">${digest.map(e => signalCard(e)).join("")}</div><div class="policy-mini"><span>Policy Sentinel</span><b>${scan.signal.stance}</b><button class="ghost sm" id="rail-policy-open">Evidence</button></div></section>
     <section class="priority-card positions-mini"><div class="sec-h"><h2>Positions by pressure</h2><span class="count">top 4</span></div>${visibleRows().slice(0,4).map(r => `<button class="mini-pos" data-t="${r.instrumentId}"><span class="tickr">${r.instrumentId}</span><span>${r.name}</span><b style="color:${L.col(r.riskDelta)}">${fmtD(r.riskDelta)}</b></button>`).join("")}</section>
     <section class="priority-card copilot-card"><div class="sec-h"><h2>AI Copilot</h2><span class="spark">✦</span></div><p>Ask about this client, a holding, or a market signal.</p><button class="suggest" data-coprompt="Prepare a call brief for ${p.name}">Prepare call brief</button><button class="suggest" data-coprompt="Show liquidity risks for ${p.name}">Show liquidity risks</button><button class="ghost solid" id="open-copilot">Open copilot</button></section>`;
