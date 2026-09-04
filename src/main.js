@@ -24,19 +24,19 @@ let feed = FEED.slice(), lateIdx = 0, since = 0;
 
 boot();
 
-async function boot() {
-  initPalette();
-  const data = await loadData(CONFIG.ADAPTER);
-  Object.assign(S, data);
-  S.portfolio = S.portfolios[0];
-  S.policyScan = FALLBACK_SCAN;
-  const usesDatasetSignals = data.meta?.source === "julius-baer";
-
-  // Live signals where possible; fixtures otherwise. Never blocks the first paint.
+function collectIsos(portfolios, instruments) {
   const isos = new Set();
-  for (const p of S.portfolios) for (const pos of p.positions) {
-    for (const e of S.instruments[pos.instrumentId]?.exposures || []) isos.add(e.iso3);
+  for (const p of portfolios) for (const pos of p.positions) {
+    for (const e of instruments[pos.instrumentId]?.exposures || []) isos.add(e.iso3);
   }
+  return isos;
+}
+
+/** Live signals where possible; fixtures/dataset-calibrated signals otherwise. Never blocks the
+ * first paint. Returns whether this adapter carries its own pre-computed signals (in which case
+ * boot() must not start a live poll on top of them). */
+async function loadSignals(data, isos) {
+  const usesDatasetSignals = data.meta?.source === "julius-baer";
   if (usesDatasetSignals) {
     S.signals = data.signals;
     S.prevSignals = data.prevSignals;
@@ -46,6 +46,17 @@ async function boot() {
     const sig = await fetchSignals([...isos], { offline: CONFIG.OFFLINE });
     S.signals = sig.signals; S.prevSignals = sig.prevSignals; S.live = sig.live;
   }
+  return usesDatasetSignals;
+}
+
+async function boot() {
+  initPalette();
+  const data = await loadData(CONFIG.ADAPTER);
+  Object.assign(S, data);
+  S.portfolio = S.portfolios[0];
+  S.policyScan = FALLBACK_SCAN;
+  const isos = collectIsos(S.portfolios, S.instruments);
+  const usesDatasetSignals = await loadSignals(data, isos);
   readRouteFromLocation();
 
   root.innerHTML = shellHtml();
@@ -74,6 +85,7 @@ async function boot() {
     </div>`;
   }
   wire();
+  paintSnapshotPicker();
   refreshEvaluation();
   renderAll();
   M.boot();
@@ -125,6 +137,50 @@ function wire() {
     }, 21000);
   }
   addEventListener("popstate", () => { readRouteFromLocation(); renderAll(); });
+  document.getElementById("snapshot-select")?.addEventListener("change", e => switchSnapshot(e.target.value));
+}
+
+/** Shows/hides and fills the top-right snapshot picker from S.meta.snapshots/asOf — present
+ * only on adapters that expose multiple calibrated points in time (the Julius Baer dataset's
+ * five: 2025-12-31 through 2026-08-26). Absent entirely on the demo adapter. */
+function paintSnapshotPicker() {
+  const wrap = document.getElementById("snapshot-picker");
+  const select = document.getElementById("snapshot-select");
+  if (!wrap || !select) return;
+  const snapshots = S.meta?.snapshots;
+  if (!snapshots?.length) { wrap.hidden = true; return; }
+  wrap.hidden = false;
+  select.innerHTML = snapshots.map(d =>
+    `<option value="${d}" ${d === S.meta.asOf ? "selected" : ""}>${d}</option>`).join("");
+}
+
+/**
+ * Reloads the whole book "as of" a different calibrated snapshot — the same adapter, the same
+ * seam (loadData(CONFIG.ADAPTER, { asOf })), just a different point in time, so an RM (or a
+ * judge) can see how the AI's read of the same clients changes as market conditions move.
+ * Keeps the currently open client selected across the switch when it still exists in the new
+ * snapshot. Every prior AI answer is for facts that no longer apply, so S.narratedHash/
+ * S.aiActionState are cleared and the whole book is re-scored from scratch — this is a genuine
+ * change of "now", not a signals poll tick.
+ */
+async function switchSnapshot(asOf) {
+  const select = document.getElementById("snapshot-select");
+  if (select) select.disabled = true;
+  try {
+    const keepId = S.portfolio?.id;
+    const data = await loadData(CONFIG.ADAPTER, { asOf });
+    Object.assign(S, data);
+    S.portfolio = S.portfolios.find(p => p.id === keepId) || S.portfolios[0];
+    S.narratedHash = {}; S.aiActionState = {}; S.inspectDataOpen = false;
+    since = 0;
+    await loadSignals(data, collectIsos(S.portfolios, S.instruments));
+    refreshEvaluation();
+    paintSnapshotPicker();
+    renderAll();
+    narrateAllPortfolios();
+  } finally {
+    if (select) select.disabled = false;
+  }
 }
 
 function refresh(what) {

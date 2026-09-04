@@ -13,7 +13,6 @@ import { buildSignals } from "./signals.js";
 
 export const SNAPSHOTS = ["2025-12-31", "2026-02-27", "2026-03-31", "2026-06-30", "2026-08-26"];
 export const TODAY = SNAPSHOTS[SNAPSHOTS.length - 1];
-const PREV = SNAPSHOTS[SNAPSHOTS.length - 2];
 
 const ASSET_CLASS = {
   "Equity": "equity", "Fixed Income": "bond", "Cash and Equivalents": "cash",
@@ -28,7 +27,11 @@ const fmtM = (usd, ccy, fx) => {
 
 export function buildJuliusBaer(src, opts = {}) {
   const asOf = opts.asOf || TODAY;
-  const prev = opts.prev || (SNAPSHOTS[SNAPSHOTS.indexOf(asOf) - 1] || PREV);
+  // The snapshot immediately before `asOf`. When `asOf` is itself the earliest snapshot there is
+  // no earlier one to fall back to (SNAPSHOTS[-1] is undefined, not "wrap to the latest") — using
+  // `asOf` as its own `prev` is the only sensible answer, and reads as "no change yet" rather
+  // than comparing against a snapshot that's actually months in the future.
+  const prev = opts.prev || SNAPSHOTS[SNAPSHOTS.indexOf(asOf) - 1] || asOf;
 
   const clients     = parseCsv(src.clients);
   const portfolios  = parseCsv(src.portfolios);
