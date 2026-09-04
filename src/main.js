@@ -14,7 +14,6 @@ import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTick
 import { paintActions, paintConversation, paintCompliance, paintEconomics } from "./ui/tabs.js";
 import { initDrawers, openPosition, openPolicyTrial } from "./ui/drawers.js";
 import { paintIntel, ensureIntel } from "./ui/intel.js";
-import { fetchLiveTone, pollLiveTone, topExposures } from "./signals/gdelt.js";
 import * as M from "./ui/motion.js";
 import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
 import { runEvaluation } from "./eval/evaluate.js";
@@ -81,39 +80,22 @@ async function boot() {
   M.boot();
   narrateAllPortfolios(); // fire-and-forget: scores the whole book once, doesn't block first paint
 
-  // Live narrative tone. The one lens on this globe reading the real world
-  // today — everything else is the dataset's fictional 2026. Fetched after the
-  // first paint so a slow or unreachable GDELT never delays the cockpit, and
-  // kept in S.liveTone rather than merged into S.signals: the dataset stays the
-  // sole authority for every portfolio number.
-  if (!CONFIG.OFFLINE) {
-    const toneIsos = topExposures(8);
-    S.liveToneState = "loading";
-    const applyTone = ({ readings, failures, pending, live, warming }) => {
-      S.liveTone = readings || {};
-      S.liveToneState = warming ? "warming" : live ? "live" : "unavailable";
-      if (failures?.length) console.warn("[gdelt] no reading for:", failures.map(f => f.iso3 || "?").join(", "));
-      paintLegend();
-      if (S.lens === "gtone") paintGlobe();
-
-      const btn = document.getElementById("lens-gtone");
-      if (!btn) return;
-      const n = Object.keys(S.liveTone).length;
-      const waiting = pending?.length || 0;
-
-      // Never disable while warming: GDELT throttles to one country every ~6.5s,
-      // so an empty first response is the normal path, not a failure.
-      btn.disabled = !n && !warming;
-      btn.textContent = n ? `Live tone · ${n}` : warming ? "Live tone · …" : "Live tone";
-      btn.title = n
-        ? `${n} countries live from GDELT${waiting ? `, ${waiting} still loading` : ""}`
-        : warming
-          ? `Warming — GDELT rate-limits to one country every few seconds; ${waiting} queued`
-          : "No live reading. GDELT is unreachable or rate-limiting; the other four lenses are unaffected.";
-    };
-    fetchLiveTone(toneIsos).then(applyTone);
-    pollLiveTone(toneIsos, applyTone);
-  }
+  // GDELT live-tone lens: BUILT, THEN WITHDRAWN — 4 Sep 2026.
+  //
+  // The lane works. GDELT does not, for us: it rate-limited this IP to a hard
+  // stop and would not release it. Measured, from Singapore:
+  //   - a single cold curl -> HTTP 429 after 11.5s
+  //   - serial requests spaced 12s apart, browser UA, 2-minute cooldown on 429
+  //     -> 429 or connection failure on every one of 8 countries
+  // No public tier, no key to buy, nothing left to tune.
+  //
+  // Shipping a lens that greys itself out in front of a judge is worse than
+  // shipping five that work, so the button and the lens are withdrawn. The
+  // server lane is left intact (server/providers/gdelt.js, api/gdelt.js,
+  // src/signals/gdelt.js) because it is correct and because "we integrated it,
+  // they blocked our IP, here is the log" is a better answer than silence.
+  // Restore: re-add the gtone lens to palette.js, the button to shell.js, and
+  // the fetch/poll pair here.
 
   if (!usesDatasetSignals) {
     pollSignals([...isos], ({ signals, prevSignals }) => {

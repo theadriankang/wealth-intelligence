@@ -1,5 +1,12 @@
 /**
- * GDELT — the live narrative-tone lane.
+ * GDELT — the live narrative-tone lane. DORMANT: not wired to the UI.
+ *
+ * WITHDRAWN 4 Sep 2026 after measurement, not after a guess. GDELT rate-limited
+ * this IP to a standstill and never released it: a single cold curl returned
+ * HTTP 429 after 11.5s, and serial requests 12s apart with a browser UA and a
+ * two-minute cooldown still failed on all 8 countries. There is no public API
+ * tier to buy past it. The code below is correct and left in place; only the
+ * lens and its button were removed (see src/main.js for the restore steps).
  *
  * WHY THIS EXISTS
  * The globe's Instability and Tone lenses were reading fixture values. World
