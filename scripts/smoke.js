@@ -25,18 +25,25 @@ head("Unit tests");
   // Parsed defensively on purpose. An earlier version printed "PASS — undefined
   // passing" when the summary line did not match: a check that cannot read its
   // own result must fail, or a green run hides a broken suite.
-  const run = () => {
-    try { return execSync("node --test 'src/**/*.test.js' 2>&1", { encoding: "utf8", shell: "/bin/bash" }); }
+  // Test files are enumerated here rather than handed to a shell glob: `**`
+  // needs globstar in bash 3.2 (macOS default) and node's own glob support
+  // arrived late, so the pattern silently matched nothing on some machines and
+  // the summary never appeared.
+  const walk = d => readdirSync(d, { withFileTypes: true }).flatMap(e =>
+    e.isDirectory() ? walk(`${d}/${e.name}`) : (e.name.endsWith(".test.js") ? [`${d}/${e.name}`] : []));
+  const files = walk("src");
+
+  const out = (() => {
+    try { return execSync(`node --test ${files.map(f => JSON.stringify(f)).join(" ")} 2>&1`, { encoding: "utf8" }); }
     catch (e) { return String(e.stdout || "") + String(e.stderr || ""); }
-  };
-  const out = run();
+  })();
   const num = re => { const m = out.match(re); return m ? Number(m[1]) : null; };
   const passed = num(/^# pass (\d+)/m);
   const failed = num(/^# fail (\d+)/m);
   const total  = num(/^# tests (\d+)/m);
 
   if (passed === null || failed === null) {
-    bad("node --test", `could not read the summary — last line: ${out.trim().split("\n").pop()}`);
+    bad("node --test", `could not read the summary from ${files.length} test file(s) — last line: ${out.trim().split("\n").pop()}`);
   } else if (failed > 0) {
     bad("node --test", `${failed} of ${total} failing — run 'npm test' to see which`);
   } else if (passed < 40) {
