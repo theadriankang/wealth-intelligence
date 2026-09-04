@@ -32,6 +32,13 @@ export function buildAgenda(fp, { tiers = ["structural", "forward"], limit = 12 
         items.push({
           query, tier,
           score: Math.round(Math.max(el.weight_pct, 1) * TIER_PRIORITY[tier] * (DIM_PRIORITY[el.dimension] ?? 1) * 100) / 100,
+          // The element's OWN key travels with the item. Reconstructing it
+          // downstream as `dimension:value` is wrong for 130 of 364 elements —
+          // a Lombard facility's key is "collateral:lombard" while its value is
+          // "Lombard Credit Facility CF-0002 LTV 69.41% vs 70.0% trigger" — and
+          // the return gate would silently drop every one of them.
+          key: el.key,
+          dimension: el.dimension,
           driver: `${el.dimension}: ${el.value}`,
           driver_weight: el.weight_pct,
           sources: entry.sources || [],
