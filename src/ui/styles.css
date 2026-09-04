@@ -1117,3 +1117,113 @@ button:disabled{opacity:.58; cursor:wait}
 .intel-gaps{list-style:none; margin:0 0 6px; padding:0; display:grid; gap:4px;
   font-family:var(--mono); font-size:10.5px; color:var(--ink-3)}
 .intel-gaps li::before{content:"— "; opacity:.5}
+
+/* ===== country tooltip — light card, number-first (variant B) ===== */
+.gt{
+  font-family:var(--sans);
+  width:264px; padding:0; overflow:hidden;
+  background:rgba(255,255,255,.94);
+  -webkit-backdrop-filter:blur(16px) saturate(1.4);
+  backdrop-filter:blur(16px) saturate(1.4);
+  color:var(--ink);
+  border:1px solid rgba(25,33,45,.14);
+  border-radius:11px;
+  box-shadow:0 16px 34px -12px rgba(15,26,45,.42), 0 2px 6px rgba(15,26,45,.14);
+}
+/* legacy point/chokepoint labels keep their own padding */
+.gt > .n{padding:11px 13px 0}
+.gt > .r{padding:2px 13px 11px}
+
+.gt-hd{display:flex; align-items:center; gap:8px; padding:11px 13px 7px}
+.gt-n{font-size:13.5px; font-weight:600; letter-spacing:-.01em; color:var(--ink)}
+.gt-flag{display:inline-flex; width:21px; height:14px; flex:none}
+.gt-flag img{width:21px; height:14px; object-fit:cover; border-radius:2.5px;
+  box-shadow:0 0 0 1px rgba(25,33,45,.18)}
+.gt-cc{font-family:var(--mono); font-size:9px; font-weight:600; letter-spacing:.04em;
+  display:inline-flex; align-items:center; justify-content:center;
+  width:21px; height:14px; flex:none; border-radius:2.5px;
+  background:var(--mute-sel); color:var(--ink-3); box-shadow:0 0 0 1px rgba(25,33,45,.12)}
+
+.gt-tag{margin-left:auto; font-size:9.5px; font-weight:600; letter-spacing:.06em;
+  text-transform:uppercase; padding:3px 7px; border-radius:99px; white-space:nowrap}
+.gt-tag.gt-up{background:rgba(198,64,64,.12); color:var(--crit)}
+.gt-tag.gt-dn{background:rgba(57,135,229,.13); color:var(--dn-2)}
+.gt-tag.gt-fl{background:var(--mute-sel); color:var(--ink-3)}
+
+.gt-hero{display:flex; align-items:baseline; gap:7px; padding:0 13px 7px}
+.gt-big{font-size:29px; font-weight:650; letter-spacing:-.035em; line-height:1; color:var(--ink)}
+.gt-big i{font-size:16px; font-weight:600; font-style:normal; margin-left:1px}
+.gt-cap{font-size:11px; color:var(--ink-3)}
+
+.gt-bar{height:3px; margin:0 13px 10px; border-radius:99px;
+  background:rgba(25,33,45,.09); overflow:hidden}
+.gt-bar i{display:block; height:100%; border-radius:99px}
+
+.gt-rows{padding:0 13px 10px; border-top:1px solid rgba(25,33,45,.07); padding-top:9px}
+.gt-r{display:flex; justify-content:space-between; align-items:baseline; gap:14px;
+  font-size:11.5px; color:var(--ink-3); padding:2.5px 0}
+.gt-r b{font-family:var(--mono); font-size:12px; font-weight:600; color:var(--ink)}
+
+.gt-ft{background:rgba(238,242,248,.72); border-top:1px solid rgba(25,33,45,.07);
+  padding:8px 13px 9px}
+.gt-lb{font-size:9px; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--ink-4); margin-bottom:4px}
+.gt-ln{display:flex; align-items:baseline; gap:10px; padding:1.5px 0; font-size:11px}
+.gt-id{color:var(--ink-2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+.gt-w{margin-left:auto; font-family:var(--mono); font-size:10.5px; color:var(--ink-3); flex:none}
+
+.gt-empty{width:auto; min-width:150px}
+.gt-none{padding:0 13px 11px; font-size:11.5px; color:var(--ink-3)}
+
+/* ===== interactive country panel (anchored, hoverable, clickable) ===== */
+.scene-tooltip:empty{display:none}
+
+.gt-panel{
+  position:absolute; z-index:40; pointer-events:auto;
+  animation:gt-in .13s ease-out;
+}
+@keyframes gt-in{from{opacity:0; transform:translateY(3px) scale(.985)}}
+@media (prefers-reduced-motion:reduce){.gt-panel{animation:none}}
+
+.gt-clients{padding:9px 13px 10px; border-top:1px solid rgba(25,33,45,.07)}
+.gt-clients .gt-lb{display:flex; align-items:baseline; justify-content:space-between; gap:8px}
+.gt-clients .gt-lb em{font-style:normal; text-transform:none; letter-spacing:0;
+  font-size:9.5px; color:var(--ink-4); opacity:0; transition:opacity .15s}
+.gt-clients:hover .gt-lb em{opacity:1}
+
+/* stacked by default; fans out into named, clickable rows on hover */
+.gt-bubs{display:flex; align-items:center; padding-left:3px}
+.gt-bub{
+  display:flex; align-items:center; gap:0; flex:none;
+  margin-left:-9px; padding:0; border:0; background:transparent;
+  cursor:pointer; border-radius:99px; max-width:26px; overflow:hidden;
+  transition:max-width .22s cubic-bezier(.22,.9,.3,1), margin-left .22s cubic-bezier(.22,.9,.3,1),
+             background-color .13s;
+  transition-delay:calc(var(--i) * 22ms);
+}
+.gt-bub:first-child{margin-left:0}
+.gt-av{
+  width:26px; height:26px; flex:none; border-radius:99px;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-family:var(--mono); font-size:9.5px; font-weight:600; letter-spacing:.02em;
+  color:#fff; background:linear-gradient(140deg,#4f7fd4,#2a5fb0);
+  box-shadow:0 0 0 2px rgba(255,255,255,.96), 0 1px 3px rgba(15,26,45,.28);
+}
+.gt-bname{
+  display:flex; align-items:baseline; gap:6px; white-space:nowrap;
+  padding:0 9px 0 7px; font-size:11.5px; color:var(--ink);
+  opacity:0; transition:opacity .16s; transition-delay:calc(var(--i) * 22ms + 60ms);
+}
+.gt-bname i{font-family:var(--mono); font-style:normal; font-size:10px; color:var(--ink-3)}
+
+.gt-clients:hover .gt-bubs{display:block}
+.gt-clients:hover .gt-bub{
+  max-width:100%; margin-left:0; margin-bottom:2px; width:100%;
+}
+.gt-clients:hover .gt-bname{opacity:1}
+.gt-bub:hover{background:var(--panel-3)}
+.gt-bub:focus-visible{outline:2px solid var(--dn-3); outline-offset:2px}
+
+.gt-more{margin-left:2px; font-family:var(--mono); font-size:10px; color:var(--ink-3);
+  padding-left:8px}
+.gt-clients:hover .gt-more{display:block; padding:3px 0 0 3px}
