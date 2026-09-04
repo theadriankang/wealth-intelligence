@@ -371,9 +371,9 @@ export function renderAll() {
   syncRouteClass();
   paintBook(id => {
     S.portfolio = S.portfolios.find(p => p.id === id);
-    S.clientScopeId = id; S.goalSel = null; S.household = false; S.clientDrawerOpen = false;
+    S.clientScopeId = null; S.selIso = null; S.goalSel = null; S.household = false; S.clientDrawerOpen = false;
     focusPortfolio(S.portfolio);
-    renderAll();
+    navigateToClient(id);
   });
   paintHead(() => { S.household = !S.household; S.selIso = null; renderAll(); });
   paintGoals(id => {
