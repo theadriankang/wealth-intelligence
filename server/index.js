@@ -2,6 +2,7 @@
  * Tiny API. Two jobs: hold the keys, and never let a slow upstream hang the UI.
  *   GET  /api/signals?countries=TWN,SAU     -> normalised CountrySignal map
  *   POST /api/llm  {system, prompt, schema} -> parsed JSON result
+ *   GET  /api/gdelt?countries=SGP,TWN        -> live narrative tone (GDELT)
  *   GET  /api/health
  */
 import "dotenv/config";
@@ -9,6 +10,7 @@ import express from "express";
 import { fetchWorldMonitor } from "./worldmonitor.js";
 import { callLLM } from "./llm.js";
 import { runPolicySentinelScan } from "./policy-sentinel.js";
+import { toneFor } from "./providers/gdelt.js";
 
 const app = express();
 app.use(express.json({ limit: "2mb" }));
@@ -36,6 +38,18 @@ app.get("/api/signals", async (req, res) => {
   } catch (err) {
     console.warn("[signals]", err.message);
     res.status(502).json({ error: err.message, signals: {} });
+  }
+});
+
+/** Live narrative tone. Free, keyless, 15-minute refresh upstream. */
+app.get("/api/gdelt", async (req, res) => {
+  const isos = String(req.query.countries || "").split(",").map(s => s.trim().toUpperCase()).filter(Boolean);
+  if (!isos.length) return res.status(400).json({ error: "countries is required" });
+  try {
+    res.json(await toneFor(isos.slice(0, 12), { days: Number(req.query.days) || 14 }));
+  } catch (err) {
+    console.warn("[gdelt]", err.message);
+    res.status(502).json({ error: err.message, readings: {}, failures: [] });
   }
 });
 

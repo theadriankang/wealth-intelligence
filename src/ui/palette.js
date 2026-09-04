@@ -46,6 +46,16 @@ export const LENSES = () => ({
       fmt:v => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(1),
       col:v => v >= 1.5 ? P.POL_H[1] : v > 0.3 ? P.POL_H[0]
              : v <= -1.5 ? P.POL_D[1] : v < -0.3 ? P.POL_D[0] : P.FLAT },
+  gtone:{ label:"Live narrative tone — GDELT",
+      cap:"Diverging, and the only lens on this globe reading the real world today. Deviation from the country's own 14-day mean. Grey means no live reading, never neutral.",
+      lo:"below baseline", mid:"0", hi:"above baseline",
+      ramp:[...P.UP].reverse().concat([P.FLAT], P.DN),
+      val:c => S.liveTone?.[c.iso3]?.deviation ?? null,
+      fmt:v => v == null ? "no live reading"
+             : (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(2),
+      col:v => v == null ? P.DIM
+             : v < 0 ? P.UP[Math.min(4, Math.floor(-v / 0.5))]
+             : v > 0 ? P.DN[Math.min(3, Math.floor(v / 0.5))] : P.FLAT },
   ai:{ label:"AI risk score",
       cap:"Sequential. The model's composite country risk — signals, market volatility and policy combined.",
       lo:"0 calm", mid:"", hi:"100 acute", ramp:P.SQ,

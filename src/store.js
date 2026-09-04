@@ -9,6 +9,7 @@ export const S = {
   household: false, live: false, actionState: {}, meta: {},
   policyScan: null, policyScanState: "idle",
   intel: {},                    // clientId -> bundle | null (null = built but absent)
+  liveTone: {}, liveToneState: "idle",   // GDELT: iso3 -> reading. Never merged into S.signals.
   evaluation: null, narratedHash: {},
   clientFilter: "all", clientSearch: "", copilotOpen: false, copilotDraft: "",
   driverFilter: "all", profileFilter: "all", bookingFilter: "all", aumFilter: "all",

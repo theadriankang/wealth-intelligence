@@ -65,6 +65,7 @@ export const shellHtml = () => `
               <button data-lens="inst" aria-pressed="false">Instability</button>
               <button data-lens="tone" aria-pressed="false">Tone</button>
               <button data-lens="pol" aria-pressed="false">Policy</button>
+              <button data-lens="gtone" aria-pressed="false" id="lens-gtone" title="Live narrative tone from GDELT — the only lens reading today's world">Live tone</button>
             </div>
             <div class="overlay evid liquid-glass">
               <div class="k" id="ev-k">Risk-weighted concentration</div>

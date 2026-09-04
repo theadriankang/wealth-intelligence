@@ -14,6 +14,7 @@ import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTick
 import { paintActions, paintConversation, paintCompliance, paintEconomics } from "./ui/tabs.js";
 import { initDrawers, openPosition, openPolicyTrial } from "./ui/drawers.js";
 import { paintIntel, ensureIntel } from "./ui/intel.js";
+import { fetchLiveTone, pollLiveTone, topExposures } from "./signals/gdelt.js";
 import * as M from "./ui/motion.js";
 import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
 
@@ -74,6 +75,34 @@ async function boot() {
   wire();
   renderAll();
   M.boot();
+
+  // Live narrative tone. The one lens on this globe reading the real world
+  // today — everything else is the dataset's fictional 2026. Fetched after the
+  // first paint so a slow or unreachable GDELT never delays the cockpit, and
+  // kept in S.liveTone rather than merged into S.signals: the dataset stays the
+  // sole authority for every portfolio number.
+  if (!CONFIG.OFFLINE) {
+    const toneIsos = topExposures(10);
+    S.liveToneState = "loading";
+    const applyTone = ({ readings, failures, live }) => {
+      S.liveTone = readings || {};
+      S.liveToneState = live ? "live" : "unavailable";
+      if (failures?.length) console.warn("[gdelt] no reading for:", failures.map(f => f.iso3 || "?").join(", "));
+      paintLegend();
+      if (S.lens === "gtone") paintGlobe();
+      const btn = document.getElementById("lens-gtone");
+      if (btn) {
+        const n = Object.keys(S.liveTone).length;
+        btn.textContent = n ? `Live tone · ${n}` : "Live tone";
+        btn.disabled = !n;
+        btn.title = n
+          ? `${n} countries, live from GDELT`
+          : "GDELT unreachable — no live reading. Run npm run dev:all so /api/gdelt is served.";
+      }
+    };
+    fetchLiveTone(toneIsos).then(applyTone);
+    pollLiveTone(toneIsos, applyTone);
+  }
 
   if (!usesDatasetSignals) {
     pollSignals([...isos], ({ signals, prevSignals }) => {
