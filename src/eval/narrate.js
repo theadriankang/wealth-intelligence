@@ -2,9 +2,13 @@ import { generateBrief } from "../llm/client.js";
 import { HEALTH_BANDS } from "./rubric.js";
 
 const SYSTEM =
-  "You write a relationship manager's internal briefing and score the portfolio. " +
-  "Arrange only the facts given — never invent a position, signal, or country. " +
-  "No client-facing advice, never the words buy / sell / execute / switch. " +
+  "You write a relationship manager's internal client-facing explanation and score the " +
+  "portfolio. Arrange only the facts given — never invent a position, signal, or country. " +
+  "`thesis` states the mandate and what the portfolio is built to fund. `summary` factually " +
+  "describes the current portfolio's composition — size, number of positions, concentration by " +
+  "theme or market. `summary` must NOT mention risks, opportunities, urgency, or anything " +
+  "time-framed like 'this week' — that commentary belongs in a different, separate briefing, not " +
+  "in this explanation. No client-facing advice, never the words buy / sell / execute / switch. " +
   "Compute `health` (0-100, overall portfolio health) and `concentration` (risk-weighted " +
   "concentration of deteriorating exposure, 0-100, plus the driving countries) from the numbers " +
   "given — do not just describe them qualitatively. `concentration.countries` must only contain " +
@@ -16,7 +20,7 @@ const SCHEMA = {
     countries: "array of ISO3 codes present in the facts, most significant first"
   },
   thesis: "string — what the portfolio is built to do",
-  summary: "string — where it stands now"
+  summary: "string — a factual description of the current portfolio's composition; no risk, opportunity, or this-week commentary"
 };
 
 export function templateNarration(clientEval, portfolio, fallbackConcentration) {
@@ -24,10 +28,11 @@ export function templateNarration(clientEval, portfolio, fallbackConcentration) 
   const thesis =
     `A ${portfolio.mandate.toLowerCase()} mandate on a ${(portfolio.riskProfile || "").toLowerCase()} profile (${portfolio.riskBand}). ` +
     `The book is built to fund ${goals || "the client's stated objectives"}, and the position mix reflects that horizon.`;
-  const topRisk = (clientEval.risks || []).slice().sort((a, b) => b.urgency - a.urgency)[0];
+  const positions = portfolio.positions || [];
+  const top = [...positions].sort((a, b) => b.weightPct - a.weightPct)[0];
   const summary =
-    `Health reads ${clientEval.healthBand} (${Math.round(clientEval.health)}/100). ` +
-    (topRisk ? `The item that matters this week: ${topRisk.text}` : `Nothing this week requires a decision before the next review.`);
+    `The book currently holds ${positions.length} position${positions.length === 1 ? "" : "s"}` +
+    (top ? `, led by ${top.instrumentId} at ${top.weightPct.toFixed(1)}% of the portfolio.` : ".");
   return {
     health: clientEval.health, healthBand: clientEval.healthBand,
     concentration: fallbackConcentration, scoreSource: "deterministic",

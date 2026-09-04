@@ -3,7 +3,8 @@ import assert from "node:assert/strict";
 import { templateNarration, narrateClient, validateAiScore, factsHash } from "./narrate.js";
 
 const p = { name: "Bergmann Family Office", mandate: "Advisory", riskProfile: "Balanced", riskBand: "8–14% vol",
-  goals: [{ name: "Zurich property acquisition", horizon: "Q2 2027" }, { name: "Retirement drawdown", horizon: "from 2034" }] };
+  goals: [{ name: "Zurich property acquisition", horizon: "Q2 2027" }, { name: "Retirement drawdown", horizon: "from 2034" }],
+  positions: [{ instrumentId: "TSM", weightPct: 12 }, { instrumentId: "DBS", weightPct: 8 }] };
 const ce = { health: 62, healthBand: "watch", risks: [{ text: "Concentration is live in Taiwan.", severity: "high", urgency: 80 }], actions: [] };
 
 const grounding = {
@@ -15,14 +16,15 @@ const grounding = {
   policyStance: null
 };
 
-test("templateNarration produces a thesis + summary with no imperative verbs", () => {
+test("templateNarration produces a thesis + summary with no imperative verbs or risk talk", () => {
   const { thesis, summary, health, healthBand, concentration, scoreSource } =
     templateNarration(ce, p, grounding.fallbackConcentration);
   assert.ok(thesis.length > 20 && summary.length > 20);
   for (const v of ["buy ", "sell ", "execute ", "switch "]) {
     assert.ok(!(`${thesis} ${summary}`.toLowerCase().includes(v)));
   }
-  assert.ok(/watch|strained|strong/.test(summary));
+  assert.ok(!/risk|urgent|this week|health/i.test(summary), "summary must describe the portfolio, not its risk/health state");
+  assert.ok(summary.includes("TSM"), "summary describes the current top holding");
   assert.equal(health, ce.health);
   assert.equal(healthBand, ce.healthBand);
   assert.deepEqual(concentration, grounding.fallbackConcentration);
