@@ -43,7 +43,7 @@ export function evaluateClient(portfolio, instruments, signals, prevSignals, cou
 
   const penalties = [
     { label: "Goal funding gap", penalty: goalGap * HEALTH_PENALTIES.goalGap },
-    { label: "Concentration", penalty: conc.pct * HEALTH_PENALTIES.concentration * (conc.pct > CONC_HARD ? 2 : 1) },
+    { label: "Concentration", penalty: conc.pct * HEALTH_PENALTIES.concentration * (conc.pct > CONC_HARD ? 1.3 : 1) },
     { label: "Country-risk exposure", penalty: exposureScore * HEALTH_PENALTIES.exposure },
     { label: "Lombard headroom", penalty: (portfolio.lombard && portfolio.lombard.headroomPct < 25) ? HEALTH_PENALTIES.lombard : 0 }
   ].filter(p => p.penalty > 0);

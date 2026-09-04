@@ -39,6 +39,16 @@ test("every finding and action has a non-empty resolvable cite", async () => {
   }
 });
 
+test("health discriminates across the demo book — spread ≥ 30, none pinned, ≥2 bands", async () => {
+  const data = await demoAdapter();
+  const cs = scoreCountries(SIGNALS, PREV_SIGNALS, market);
+  const hs = data.portfolios.map(p => evaluateClient(p, data.instruments, SIGNALS, PREV_SIGNALS, cs, null));
+  const vals = hs.map(e => e.health);
+  assert.ok(Math.max(...vals) - Math.min(...vals) >= 30, `spread ${JSON.stringify(vals)}`);
+  assert.ok(vals.every(v => v > 0 && v < 100), `pinned ${JSON.stringify(vals)}`);
+  assert.ok(new Set(hs.map(e => e.healthBand)).size >= 2, "band discriminates");
+});
+
 test("a concentration risk is flagged for the Bergmann book with high-ish urgency", async () => {
   const { e } = await ev("Advisory");
   const conc = e.risks.find(r => /concentration/i.test(r.text));
