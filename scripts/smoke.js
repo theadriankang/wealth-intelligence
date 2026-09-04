@@ -34,13 +34,21 @@ head("Unit tests");
   const files = walk("src");
 
   const out = (() => {
-    try { return execSync(`node --test ${files.map(f => JSON.stringify(f)).join(" ")} 2>&1`, { encoding: "utf8" }); }
+    // --test-reporter is pinned: node picks `spec` on some versions and `tap` on
+    // others, and the two print their summaries differently ("ℹ pass 48" vs
+    // "# pass 48"). Both are parsed below anyway, but asking for one is cheaper
+    // than guessing which node the next laptop has.
+    try { return execSync(`node --test --test-reporter=tap ${files.map(f => JSON.stringify(f)).join(" ")} 2>&1`, { encoding: "utf8" }); }
     catch (e) { return String(e.stdout || "") + String(e.stderr || ""); }
   })();
-  const num = re => { const m = out.match(re); return m ? Number(m[1]) : null; };
-  const passed = num(/^# pass (\d+)/m);
-  const failed = num(/^# fail (\d+)/m);
-  const total  = num(/^# tests (\d+)/m);
+  // Accept either reporter's summary: "# pass 48" (tap) or "ℹ pass 48" (spec).
+  const num = word => {
+    const m = out.match(new RegExp(`^[#\\u2139]\\s*${word}\\s+(\\d+)`, "m"));
+    return m ? Number(m[1]) : null;
+  };
+  const passed = num("pass");
+  const failed = num("fail");
+  const total  = num("tests");
 
   if (passed === null || failed === null) {
     bad("node --test", `could not read the summary from ${files.length} test file(s) — last line: ${out.trim().split("\n").pop()}`);
