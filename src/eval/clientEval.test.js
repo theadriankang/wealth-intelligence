@@ -4,7 +4,7 @@ import { demoAdapter } from "../adapters/demo.js";
 import { SIGNALS, PREV_SIGNALS } from "../signals/fixtures/signals.js";
 import * as market from "../market/index.js";
 import { scoreCountries } from "./countryScore.js";
-import { evaluateClient } from "./clientEval.js";
+import { evaluateClient, deImperative, IMPERATIVE } from "./clientEval.js";
 
 async function ev(mandateWanted) {
   const data = await demoAdapter();
@@ -66,4 +66,32 @@ test("a concentration risk is flagged for the Bergmann book with high-ish urgenc
   const conc = e.risks.find(r => /concentration/i.test(r.text));
   assert.ok(conc);
   assert.ok(conc.urgency >= 35);
+});
+
+test("deImperative rewrites each imperative verb to its safe replacement, and orders 'switch into' before bare 'switch'", () => {
+  const hasImperative = s => { IMPERATIVE.lastIndex = 0; return IMPERATIVE.test(s); };
+
+  // One assertion per verb, against the actual replacement strings in the source.
+  assert.equal(deImperative("Execute this trade"), "put to the client this trade");
+  assert.equal(deImperative("Switch into bonds"), "review a move to bonds");
+  assert.equal(deImperative("Switch strategy"), "review a move on strategy");
+  assert.equal(deImperative("Sell the position"), "reduce the position");
+  assert.equal(deImperative("Buy more shares"), "add more shares");
+
+  // None of the four verbs should survive (case-insensitively) in any rewritten output.
+  for (const s of [
+    "Execute this trade",
+    "Switch into bonds",
+    "Switch strategy",
+    "Sell the position",
+    "Buy more shares"
+  ]) {
+    assert.ok(!hasImperative(deImperative(s)), `still imperative: "${deImperative(s)}"`);
+  }
+
+  // Ordering: "switch into" must be rewritten before bare "switch" runs, or this would
+  // garble into something like "review a move on into bonds" instead of a clean rewrite.
+  const mixed = deImperative("Switch strategy or switch into bonds");
+  assert.equal(mixed, "review a move on strategy or review a move to bonds");
+  assert.ok(!hasImperative(mixed), `still imperative: "${mixed}"`);
 });

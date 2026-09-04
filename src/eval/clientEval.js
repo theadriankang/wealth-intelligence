@@ -4,8 +4,8 @@ import { reconcile } from "../model/houseview.js";
 import { HEALTH_PENALTIES, HEALTH_BANDS, CONC_SOFT, CONC_HARD, URGENCY } from "./rubric.js";
 
 const clamp = (v, lo = 0, hi = 100) => Math.max(lo, Math.min(hi, v));
-const IMPERATIVE = /\b(buy|sell|execute|switch)\b/gi;
-const deImperative = t => t
+export const IMPERATIVE = /\b(buy|sell|execute|switch)\b/gi;
+export const deImperative = t => t
   .replace(/\bexecute\b/gi, "put to the client")
   .replace(/\bswitch into\b/gi, "review a move to")
   .replace(/\bswitch\b/gi, "review a move on")
@@ -125,7 +125,7 @@ export function evaluateClient(portfolio, instruments, signals, prevSignals, cou
   for (const p of positions) {
     const d = positionRiskDelta(instruments[p.instrumentId], signals);
     const drives = portfolio.goals.filter(g => (g.driverIds || []).includes(p.instrumentId)).map(g => g.id);
-    if (d <= -6 && drives.length) {
+    if (d <= -FLAG_THRESHOLD && drives.length) {
       const iso = primaryCountry(instruments[p.instrumentId]);
       finding(opportunities, {
         text: `${instruments[p.instrumentId]?.name} improved ${Math.abs(Math.round(d))} points and funds ${drives.length} goal(s) — a chance to lock in progress at the review.`,
