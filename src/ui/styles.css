@@ -152,6 +152,11 @@ button{font:inherit; color:inherit}
 .head-prose{flex-basis:100%; display:flex; flex-direction:column; gap:4px; margin-top:2px}
 .head-prose .prose{margin:0; font-size:12px; line-height:1.5; color:var(--ink-2); max-width:72ch}
 .prose-shimmer{display:inline-block; color:var(--ink-4); animation:prose-pulse 1.3s ease-in-out infinite}
+.explain-list{margin:0 0 4px; padding-left:18px; font-size:12px; line-height:1.6; color:var(--ink-2); max-width:72ch}
+.explain-list li{margin-bottom:2px}
+.inspect-data{margin:2px 0 0; padding:10px 12px; background:var(--panel-2); border:1px solid var(--line);
+  border-radius:8px; font-family:var(--mono); font-size:10.5px; line-height:1.5; color:var(--ink-3);
+  max-height:260px; overflow:auto; white-space:pre-wrap; word-break:break-word}
 @keyframes prose-pulse{0%,100%{opacity:.35}50%{opacity:.85}}
 .hh .sw{width:24px; height:13px; border-radius:7px; background:var(--line); position:relative; flex:none}
 .hh .sw::after{content:""; position:absolute; top:2px; left:2px; width:9px; height:9px;

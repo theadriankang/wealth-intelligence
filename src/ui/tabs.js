@@ -11,31 +11,61 @@ const COMPLY = [
   { t:"Concentration policy", s:"watch", d:"Look-through single-country exposure sits above the soft mandate limit. RM acknowledgement required at the next review." }
 ];
 
-/** Risks + recommended actions — AI-scored for the open client, hash-gated, with a
- * deterministic fallback (clientEval.js's rule-based findings) when the model is unavailable
- * or its response doesn't validate. See eval/narrate.js. */
+/** Risks + opportunities + recommended actions — AI-scored for the open client, hash-gated,
+ * with a deterministic fallback (clientEval.js's rule-based findings) when the model is
+ * unavailable or its response doesn't validate. See eval/narrate.js.
+ *
+ * Trust/governance, made concrete rather than just claimed:
+ *  - Suitability: the mandate-fit line on every action is computed here, deterministically,
+ *    from portfolio.mandate — never asked of or trusted from the model.
+ *  - Human oversight: Accept/Reject on every action, tracked in S.aiActionState. Nothing here
+ *    executes anything; this is a record of what the RM decided, not an execution trigger.
+ *  - Traceability: the exact facts behind the current risks/actions are inspectable via the
+ *    "Inspect data used" toggle in the client header (paintHead), reading groundingUsed.
+ */
 export function paintActions() {
   const p = S.portfolio;
   const ev = S.evaluation?.clients?.[p.id];
   const risks = ev?.risks || [];
+  const opportunities = ev?.opportunities || [];
   const actions = ev?.actions || [];
   const src = ev?.scoreSource === "ai" ? "ai" : "deterministic";
+  const suitability = p.mandate === "Discretionary"
+    ? "Executable under standing authority" : "Requires client instruction before execution";
   document.getElementById("tn-act").textContent = actions.length;
   document.getElementById("actions").innerHTML = `
     <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px">
       <p style="margin:0; font-size:12.5px; color:var(--ink-3)">Risk findings and recommended
-        actions for this mandate — internal RM guidance, not client-facing advice.</p>
+        actions for this mandate — internal RM guidance, not client-facing advice. The RM reviews,
+        accepts, or rejects every item below; nothing here executes on its own.</p>
       <span class="mode ${src === "ai" ? "ai" : ""}">${src === "ai" ? "ai-scored" : "deterministic"}</span>
     </div>
     ${risks.length ? `<div class="blk"><h3>Risks</h3>
       ${risks.map(r => `<div class="tp"><span class="num" style="color:${
         r.severity === "high" ? "var(--warn)" : r.severity === "medium" ? "var(--ink-3)" : "var(--ink-4)"
-      }">●</span><p>${r.text}</p></div>`).join("")}</div>` : ""}
-    ${actions.map(a => `<article class="act">
-      <div class="act-h"><span class="kind">${a.kind}</span><div><h3>${a.title}</h3></div></div>
-      <div class="act-b"><p>${a.why}</p></div>
-    </article>`).join("")}
-    ${!risks.length && !actions.length ? `<p style="color:var(--ink-4); font-size:12px">Nothing flagged this week.</p>` : ""}`;
+      }">●</span><p>${r.text} <span class="kind" style="margin-left:4px">${r.category || "other"}</span></p></div>`).join("")}</div>` : ""}
+    ${opportunities.length ? `<div class="blk"><h3>Opportunities</h3>
+      ${opportunities.map(o => `<div class="tp"><span class="num" style="color:var(--good)">●</span><p>${o.text}</p></div>`).join("")}</div>` : ""}
+    ${actions.map((a, i) => {
+      const key = p.id + "|" + i;
+      const state = S.aiActionState[key] || "pending";
+      return `<article class="act">
+        <div class="act-h"><span class="kind">${a.kind}${a.category ? ` · ${a.category}` : ""}</span><div><h3>${a.title}</h3></div></div>
+        <div class="act-b"><p>${a.why}</p></div>
+        <div class="act-f">
+          <span class="sp">${suitability}${state !== "pending" ? ` · ${state}` : ""}</span>
+          <button class="ghost sm ${state === "accepted" ? "solid" : ""}" data-accept="${i}">Accept</button>
+          <button class="ghost sm ${state === "rejected" ? "solid" : ""}" data-reject="${i}">Reject</button>
+        </div>
+      </article>`;
+    }).join("")}
+    ${!risks.length && !opportunities.length && !actions.length ? `<p style="color:var(--ink-4); font-size:12px">Nothing flagged this week.</p>` : ""}`;
+  document.querySelectorAll("#actions [data-accept]").forEach(b => b.addEventListener("click", () => {
+    S.aiActionState[p.id + "|" + b.dataset.accept] = "accepted"; paintActions();
+  }));
+  document.querySelectorAll("#actions [data-reject]").forEach(b => b.addEventListener("click", () => {
+    S.aiActionState[p.id + "|" + b.dataset.reject] = "rejected"; paintActions();
+  }));
   M.once("actions", S.portfolio.id + "|" + src, M.actions);
 }
 

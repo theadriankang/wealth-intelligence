@@ -174,7 +174,10 @@ function refreshEvaluation() {
 
 function rmNotesFor(p) { return (p.relationship?.concerns || []); }
 
-/** Everything narrateClient needs to compute health/concentration, but no store import in narrate.js. */
+/** Everything narrateClient needs to compute health/concentration/risks/actions, but no store
+ * import in narrate.js. `jb` (tax domicile, life stage, objectives, source of wealth) only
+ * exists on the Julius Baer adapter's portfolios — undefined/absent on the demo adapter, so
+ * every field below degrades to null rather than throwing. */
 function buildGrounding() {
   const list = rows();
   const positions = list.map(r => ({
@@ -182,6 +185,8 @@ function buildGrounding() {
     name: r.name,
     weightPct: r.weightPct,
     riskDelta: r.riskDelta,
+    currency: r.inst?.currency ?? null,
+    liquidityTier: r.inst?.liquidityTier ?? null,
     countries: r.inst?.exposures?.length
       ? r.inst.exposures.map(e => ({ iso3: e.iso3, weight: e.weight }))
       : [{ iso3: r.iso3, weight: 1 }]
@@ -190,25 +195,33 @@ function buildGrounding() {
   const countrySignals = [...isos].filter(iso => S.signals[iso]).map(iso => ({
     iso3: iso, name: S.signals[iso].name || iso, riskDelta: S.signals[iso].riskDelta
   }));
+  const jb = S.portfolio.jb;
   return {
     household: S.household,
     positions,
     countrySignals,
     fallbackConcentration: concentration(),
-    policyStance: S.policyScan?.signal?.stanceScore ?? null
+    policyStance: S.policyScan?.signal?.stanceScore ?? null,
+    baseCurrency: S.portfolio.currency ?? null,
+    taxDomicile: jb?.taxDomicile ?? null,
+    lifeStage: jb?.lifeStage ?? null,
+    objectives: jb?.objectives ?? null,
+    sourceOfWealth: jb?.sourceOfWealth ?? null
   };
 }
 
 /**
  * Narration is the only LLM call: one client — the one on screen — and only when its facts
- * actually moved (positions, signals, the household toggle, or the policy scan). It now also
- * carries health and the risk-weighted concentration figure, not just prose — both fall back to
- * the deterministic values in `grounding`/`clientEval` if the call fails or the response doesn't
- * validate. Each evaluation mints fresh client objects with `thesis: null`, so the answer is
- * cached in `S.narratedHash` (portfolioId → { hash, health, healthBand, concentration,
- * scoreSource, thesis, summary }) and copied back onto the live object; an unchanged hash never
- * reaches the model. `inflight` makes that guarantee hold for calls that overlap in time, not
- * just in sequence.
+ * actually moved (positions, signals, the household toggle, or the policy scan). It carries
+ * health, the risk-weighted concentration figure, a bullet-point explanation, risk findings,
+ * opportunities, and recommended actions — all falling back to the deterministic values in
+ * `grounding`/`clientEval` if the call fails or the response doesn't validate. Each evaluation
+ * mints fresh client objects with these fields absent, so the answer is cached in
+ * `S.narratedHash` (portfolioId → { hash, health, healthBand, concentration, scoreSource,
+ * explanation, risks, opportunities, actions }) and copied back onto the live object; an
+ * unchanged hash never reaches the model. `inflight` makes that guarantee hold for calls that
+ * overlap in time, not just in sequence. `groundingUsed` is stashed on the live object too — the
+ * exact facts behind the current answer, for the traceability panel.
  */
 const inflight = new Set(); // `${portfolioId}|${hash}` — one narration per client per hash
 
@@ -221,15 +234,16 @@ async function maybeNarrateOpenClient() {
 
   const cached = S.narratedHash[id];
   if (cached?.hash === hash) {
-    if (ev.thesis !== cached.thesis) {
-      ev.thesis = cached.thesis; ev.summary = cached.summary;
+    ev.groundingUsed = grounding;
+    if (ev.explanation !== cached.explanation) {
+      ev.explanation = cached.explanation;
       ev.health = cached.health; ev.healthBand = cached.healthBand;
       ev.concentration = cached.concentration; ev.scoreSource = cached.scoreSource;
-      ev.risks = cached.risks; ev.actions = cached.actions;
-      // Health/thesis/summary live in the client header (paintHead), concentration in the
-      // globe overlay (paintEvidence), risks/actions in the Risks & Actions tab (paintActions)
-      // — renderAll() repaints all three; it's cheap and this branch is rare (only fires once
-      // per resolved narration, on a cache hit for a stale object).
+      ev.risks = cached.risks; ev.opportunities = cached.opportunities; ev.actions = cached.actions;
+      // Health/explanation live in the client header (paintHead), concentration in the globe
+      // overlay (paintEvidence), risks/opportunities/actions in the Risks & Actions tab
+      // (paintActions) — renderAll() repaints all three; it's cheap and this branch is rare
+      // (only fires once per resolved narration, on a cache hit for a stale object).
       renderAll();
     }
     return;
@@ -250,10 +264,11 @@ async function maybeNarrateOpenClient() {
   const live = S.evaluation?.clients?.[id];
   if (!live || factsHash(id, buildGrounding()) !== hash) return;
   S.narratedHash[id] = { hash, ...narrated };
-  live.thesis = narrated.thesis; live.summary = narrated.summary;
+  live.groundingUsed = grounding;
+  live.explanation = narrated.explanation;
   live.health = narrated.health; live.healthBand = narrated.healthBand;
   live.concentration = narrated.concentration; live.scoreSource = narrated.scoreSource;
-  live.risks = narrated.risks; live.actions = narrated.actions;
+  live.risks = narrated.risks; live.opportunities = narrated.opportunities; live.actions = narrated.actions;
   if (S.portfolio?.id === id) renderAll();
 }
 

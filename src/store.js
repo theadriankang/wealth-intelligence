@@ -11,7 +11,8 @@ export const S = {
   evaluation: null, narratedHash: {},
   clientFilter: "all", clientSearch: "", copilotOpen: false, copilotDraft: "",
   driverFilter: "all", profileFilter: "all", bookingFilter: "all", aumFilter: "all",
-  clientDrawerOpen: false, railDrawerOpen: false
+  clientDrawerOpen: false, railDrawerOpen: false,
+  inspectDataOpen: false, aiActionState: {}
 };
 
 export const positions = () => {

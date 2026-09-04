@@ -163,10 +163,15 @@ export function paintHead(onHousehold) {
       ${p.householdPositions ? `<button class="hh" id="hh-btn" aria-pressed="${S.household}"><span class="sw"></span>Household · ${(p.entities || []).length} entities</button>` : ""}
     </div>
     ${ev ? `<div class="head-prose">
-      <p class="prose">${ev.thesis ?? shimmer}</p>
-      <p class="prose">${ev.summary ?? shimmer}</p>
+      <ul class="explain-list">${(ev.explanation ?? [shimmer]).map(b => `<li>${b}</li>`).join("")}</ul>
+      <button class="ghost sm" id="inspect-data-btn" style="align-self:flex-start">${S.inspectDataOpen ? "Hide data used" : "Inspect data used"}</button>
+      ${S.inspectDataOpen ? `<pre class="inspect-data">${JSON.stringify(ev.groundingUsed ?? {}, null, 2)}</pre>` : ""}
     </div>` : ""}`;
   document.getElementById("hh-btn")?.addEventListener("click", onHousehold);
+  document.getElementById("inspect-data-btn")?.addEventListener("click", () => {
+    S.inspectDataOpen = !S.inspectDataOpen;
+    paintHead(onHousehold);
+  });
 }
 
 export function paintGoals(onPick) {
