@@ -1227,3 +1227,9 @@ button:disabled{opacity:.58; cursor:wait}
 .gt-more{margin-left:2px; font-family:var(--mono); font-size:10px; color:var(--ink-3);
   padding-left:8px}
 .gt-clients:hover .gt-more{display:block; padding:3px 0 0 3px}
+
+/* long-tail row in the exposure list */
+.gt-ln.gt-rest{border-top:1px solid rgba(25,33,45,.07); margin-top:3px; padding-top:5px}
+.gt-ln.gt-rest .gt-id{color:var(--ink-4); font-style:italic}
+/* never let the panel outgrow the globe pane */
+.gt-panel{max-height:min(560px, calc(100% - 24px)); overflow-y:auto}

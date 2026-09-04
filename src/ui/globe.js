@@ -221,11 +221,19 @@ function panelHtml(iso) {
       <span class="gt-bname">${esc(c.name)}<i>${c.weightPct.toFixed(1)}%</i></span>
     </button>`).join("");
 
-  const via = e.instrumentIds.map(id => {
-    const w = e.byInstrument?.[id] || 0;
-    return `<div class="gt-ln"><span class="gt-id">${esc(S.instruments[id]?.name || id)}</span>
-      <span class="gt-w">${w.toFixed(1)}%</span></div>`;
-  }).join("");
+  /* heaviest first, capped — a 27-row list is a wall, not an answer */
+  const ranked = e.instrumentIds
+    .map(id => ({ id, w: e.byInstrument?.[id] || 0 }))
+    .sort((a, b) => b.w - a.w);
+  const shown = ranked.slice(0, 5);
+  const rest = ranked.slice(5);
+  const restW = rest.reduce((t, r) => t + r.w, 0);
+
+  const via = shown.map(({ id, w }) =>
+    `<div class="gt-ln"><span class="gt-id">${esc(S.instruments[id]?.name || id)}</span>
+      <span class="gt-w">${w.toFixed(1)}%</span></div>`).join("")
+    + (rest.length ? `<div class="gt-ln gt-rest"><span class="gt-id">+${rest.length} smaller holdings</span>
+      <span class="gt-w">${restW.toFixed(1)}%</span></div>` : "");
 
   return `
     <div class="gt-hd">${flagMark(iso, s.name)}<span class="gt-n">${esc(s.name)}</span>
