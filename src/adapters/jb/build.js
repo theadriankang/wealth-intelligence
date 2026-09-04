@@ -178,6 +178,8 @@ export function buildJuliusBaer(src, opts = {}) {
         bookingCentre: c.booking_centre,
         liquidityNeeds: c.liquidity_needs,
         wealthBand: c.wealth_band,
+        pepStatus: c.pep_status,
+        reportingLanguage: c.reporting_language,
         portfolios: pfs.map(p => ({
           id: p.portfolio_id, name: p.portfolio_name, model: p.service_model,
           mandateCode: p.mandate_code, mandateName: p.mandate_name, currency: p.base_currency,

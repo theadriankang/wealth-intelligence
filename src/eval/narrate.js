@@ -4,12 +4,12 @@ import { HEALTH_BANDS } from "./rubric.js";
 const SYSTEM =
   "You write a relationship manager's internal client-facing explanation and score the " +
   "portfolio. Arrange only the facts given — never invent a position, signal, country, or life " +
-  "detail. `explanation` is a short bullet list (2-5 bullets, 100 words total): a client " +
-  "introduction, the investment thesis (mandate + what it funds), a general overview of the " +
-  "investments (broad theme, not specific positions or weights), and — only when the facts " +
-  "support it — one bullet naming tax domicile context or an upcoming funding goal. No risk, " +
-  "opportunity, urgency, or this-week language in `explanation`; that belongs in `risks`/" +
-  "`opportunities`/`actions`. " +
+  "detail. `overview` is a single flowing prose paragraph, 100 words or fewer, not a list or " +
+  "bullet points: a client introduction, the investment thesis (mandate + what it funds), a " +
+  "general overview of the investments (broad theme, not specific positions or weights), and — " +
+  "only when the facts support it — a clause naming tax domicile context or an upcoming funding " +
+  "goal. No risk, opportunity, urgency, or this-week language in `overview`; that belongs in " +
+  "`risks`/`opportunities`/`actions`. " +
   "For `risks`, consider client-specific alerts across drift (positions or goal funding moving " +
   "off the mandate/target line), concentration, liquidity (illiquid or gated holdings), currency " +
   "(FX exposure relative to the base currency), and collateral (lombard headroom) — tag each with " +
@@ -27,20 +27,30 @@ const SYSTEM =
   "refine and reprioritise them for the current facts rather than copying them verbatim, and " +
   "never invent a conversation that didn't happen. Return `relationship: null` only if no " +
   "relationship facts were given at all. " +
-  "Nowhere in the response — explanation, risks, opportunities, actions, or relationship — use " +
-  "the words buy / sell / execute / switch; these are internal findings and recommendations for " +
-  "the RM, never client-facing advice or trade instructions. Compute `health` and `concentration` " +
-  "from the numbers given, not qualitatively; `concentration.countries` must only contain country " +
-  "codes present in the facts. Return JSON only.";
+  "For `complianceChecks`, produce one item per compliance-relevant fact actually given — PEP " +
+  "status, tax domicile/reporting jurisdiction, KYC review timing, and look-through concentration " +
+  "against the mandate's bands — and no others; never invent a screening result, a counterparty " +
+  "count, or a check for something not in the facts. status is 'watch' only when the fact itself " +
+  "supports concern (e.g. pepStatus is Yes, or a position's weight exceeds a mandate band's " +
+  "maxSingle), otherwise 'clear'. " +
+  "For `impactNarrative`, one short prose paragraph (60 words or fewer, not a list) on what this " +
+  "specific client's mandate concretely involves this review — holdings count, mandate " +
+  "complexity, what's flagged — grounded only in this client's own facts, never a book-wide or " +
+  "generic operating-leverage claim. " +
+  "Nowhere in the response — overview, risks, opportunities, actions, relationship, " +
+  "complianceChecks, or impactNarrative — use the words buy / sell / execute / switch; these are " +
+  "internal findings and recommendations for the RM, never client-facing advice or trade " +
+  "instructions. Compute `health` and `concentration` from the numbers given, not qualitatively; " +
+  "`concentration.countries` must only contain country codes present in the facts. Return JSON only.";
 const SCHEMA = {
   health: "number 0-100 — overall portfolio health given the facts",
   concentration: {
     pct: "number 0-100 — risk-weighted concentration of deteriorating exposure",
     countries: "array of ISO3 codes present in the facts, most significant first"
   },
-  explanation: "array of 2-5 short bullet strings, 100 words or fewer combined — client intro, " +
+  overview: "string — a single prose paragraph, not a list, 100 words or fewer: client intro, " +
     "investment thesis, general portfolio overview, and optionally a tax-domicile or upcoming- " +
-    "goal bullet when relevant. No risk/opportunity/urgency/this-week language.",
+    "goal clause when relevant. No risk/opportunity/urgency/this-week language.",
   risks: "array of up to 4 objects { text: string, severity: 'high'|'medium'|'low', category: " +
     "'drift'|'concentration'|'liquidity'|'currency'|'collateral'|'other' } — concrete, client- " +
     "specific risk findings grounded in the facts given, most severe first",
@@ -54,20 +64,27 @@ const SCHEMA = {
     "client tends to behave/decide), concerns: array of up to 4 short strings (standing " +
     "concerns), talkingPoints: array of up to 4 short strings (for the next conversation), " +
     "objections: array of up to 3 objects { question: string (the likely objection, as the " +
-    "client might phrase it), answer: string (how to respond) } }"
+    "client might phrase it), answer: string (how to respond) } }",
+  complianceChecks: "array of up to 4 objects { item: string (e.g. 'PEP status', 'Tax domicile', " +
+    "'KYC review', 'Concentration policy'), status: 'clear'|'watch', detail: string (one sentence " +
+    "citing the specific fact behind it) } — one per compliance-relevant fact actually present in " +
+    "the facts given, no invented checks",
+  impactNarrative: "string — one prose paragraph, 60 words or fewer, on what this specific " +
+    "client's mandate concretely involves this review (holdings count, mandate complexity, " +
+    "what's flagged); never a book-wide or generic claim"
 };
 
 export function templateNarration(clientEval, portfolio, grounding) {
   const goalNames = (portfolio.goals || []).map(g => g.name).slice(0, 3).join(", ");
   const riskProfile = (portfolio.riskProfile || "the client's").toLowerCase();
-  const explanation = [
-    `A ${portfolio.mandate.toLowerCase()} mandate on a ${riskProfile} profile (${portfolio.riskBand}).`,
-    `Built to fund ${goalNames || "the client's stated objectives"}.`,
-    `Holds a diversified mix of investments consistent with that mandate.`
-  ];
-  if (grounding?.taxDomicile) explanation.push(`Tax domicile: ${grounding.taxDomicile}.`);
   const nextGoal = (portfolio.goals || [])[0];
-  if (nextGoal?.horizon) explanation.push(`Next funding goal: ${nextGoal.name} (${nextGoal.horizon}).`);
+  let overview =
+    `A ${portfolio.mandate.toLowerCase()} mandate on a ${riskProfile} profile (${portfolio.riskBand}), ` +
+    `built to fund ${goalNames || "the client's stated objectives"}. The portfolio holds a diversified ` +
+    `mix of investments consistent with that mandate`;
+  overview += grounding?.taxDomicile ? `, with a tax domicile of ${grounding.taxDomicile}` : "";
+  overview += nextGoal?.horizon ? `, and its next funding goal is ${nextGoal.name} (${nextGoal.horizon})` : "";
+  overview += ".";
 
   const risks = (clientEval.risks || []).slice(0, 4).map(r => ({ text: r.text, severity: r.severity, category: categoriseRisk(r) }));
   const opportunities = (clientEval.opportunities || []).slice(0, 3).map(o => ({ text: o.text }));
@@ -75,11 +92,41 @@ export function templateNarration(clientEval, portfolio, grounding) {
     kind: humanize(a.kind), category: categoriseAction(a), title: a.text, why: a.reason
   }));
   const relationship = fallbackRelationship(portfolio.relationship);
+  const complianceChecks = fallbackComplianceChecks(portfolio, grounding, clientEval);
+  const impactNarrative = fallbackImpactNarrative(portfolio, clientEval);
   return {
     health: clientEval.health, healthBand: clientEval.healthBand,
     concentration: grounding?.fallbackConcentration, scoreSource: "deterministic",
-    explanation, risks, opportunities, actions, relationship
+    overview, risks, opportunities, actions, relationship, complianceChecks, impactNarrative
   };
+}
+
+function fallbackComplianceChecks(portfolio, grounding, clientEval) {
+  const checks = [];
+  if (grounding?.pepStatus) {
+    const flagged = grounding.pepStatus.toLowerCase() === "yes";
+    checks.push({ item: "PEP status", status: flagged ? "watch" : "clear",
+      detail: flagged ? "Client is on record as a politically exposed person — enhanced due diligence applies."
+        : "No politically exposed person status on record." });
+  }
+  if (grounding?.taxDomicile) {
+    checks.push({ item: "Tax domicile", status: "clear", detail: `On record: ${grounding.taxDomicile}.` });
+  }
+  checks.push({ item: "KYC review", status: "clear", detail: `Next review due ${portfolio.reviewDate}.` });
+  const concentrationFlagged = (clientEval.risks || []).some(r => /concentration|chokepoint/i.test(r.text));
+  checks.push({ item: "Concentration policy", status: concentrationFlagged ? "watch" : "clear",
+    detail: concentrationFlagged ? "Look-through concentration is elevated against the mandate's typical limits."
+      : "Look-through concentration sits within typical mandate limits." });
+  return checks;
+}
+
+function fallbackImpactNarrative(portfolio, clientEval) {
+  const n = (portfolio.positions || []).length;
+  const flagged = (clientEval.risks || []).length;
+  return `Reviewing ${portfolio.ref}'s ${portfolio.mandate.toLowerCase()} mandate covers ${n} holding${n === 1 ? "" : "s"}` +
+    (flagged
+      ? `, with ${flagged} flagged exposure${flagged === 1 ? "" : "s"} pre-identified rather than assembled by hand.`
+      : ", with no exposures currently flagged for review.");
 }
 
 function fallbackRelationship(r) {
@@ -113,13 +160,12 @@ const HAS_IMPERATIVE = /\b(buy|sell|execute|switch)\b/i;
 const SEVERITIES = ["high", "medium", "low"];
 const RISK_CATEGORIES = ["drift", "concentration", "liquidity", "currency", "collateral", "other"];
 const ACTION_CATEGORIES = ["rebalancing", "tax-optimization", "life-event", "other"];
+const CHECK_STATUSES = ["clear", "watch"];
 
-/** Shape guard for a candidate AI response before it's trusted as health/concentration/explanation/risks/opportunities/actions. */
+/** Shape guard for a candidate AI response before it's trusted as health/concentration/overview/risks/opportunities/actions/complianceChecks/impactNarrative. */
 export function validateAiScore(data, countryCodes) {
   if (!data) return false;
-  if (!Array.isArray(data.explanation) || data.explanation.length < 1 || data.explanation.length > 5) return false;
-  if (data.explanation.some(b => !nonEmptyString(b) || HAS_IMPERATIVE.test(b))) return false;
-  if (data.explanation.reduce((n, b) => n + wordCount(b), 0) > 100) return false;
+  if (!nonEmptyString(data.overview) || HAS_IMPERATIVE.test(data.overview) || wordCount(data.overview) > 100) return false;
   if (typeof data.health !== "number" || !Number.isFinite(data.health) || data.health < 0 || data.health > 100) return false;
   const conc = data.concentration;
   if (!conc || typeof conc.pct !== "number" || !Number.isFinite(conc.pct) || conc.pct < 0 || conc.pct > 100) return false;
@@ -134,6 +180,10 @@ export function validateAiScore(data, countryCodes) {
     || !ACTION_CATEGORIES.includes(a.category)
     || HAS_IMPERATIVE.test(a.kind) || HAS_IMPERATIVE.test(a.title) || HAS_IMPERATIVE.test(a.why))) return false;
   if (data.relationship !== null && !validRelationship(data.relationship)) return false;
+  if (!Array.isArray(data.complianceChecks) || data.complianceChecks.length > 4) return false;
+  if (data.complianceChecks.some(c => !c || !nonEmptyString(c.item) || !CHECK_STATUSES.includes(c.status)
+    || !nonEmptyString(c.detail) || HAS_IMPERATIVE.test(c.detail))) return false;
+  if (!nonEmptyString(data.impactNarrative) || HAS_IMPERATIVE.test(data.impactNarrative) || wordCount(data.impactNarrative) > 60) return false;
   return true;
 }
 
@@ -176,6 +226,9 @@ export async function narrateClient(clientEval, portfolio, rmNotes = [], groundi
     lifeStage: grounding?.lifeStage ?? null,
     objectives: grounding?.objectives ?? null,
     sourceOfWealth: grounding?.sourceOfWealth ?? null,
+    pepStatus: grounding?.pepStatus ?? null,
+    mandateBands: grounding?.mandateBands ?? [],
+    kycReviewDue: portfolio.reviewDate ?? null,
     positions: grounding?.positions ?? [],
     countrySignals: grounding?.countrySignals ?? [],
     goals: (portfolio.goals || []).map(g => ({ name: g.name, horizon: g.horizon, baseFunded: g.baseFunded })),
@@ -207,9 +260,10 @@ export async function narrateClient(clientEval, portfolio, rmNotes = [], groundi
       health, healthBand,
       concentration: { pct: res.data.concentration.pct, countries: res.data.concentration.countries },
       scoreSource: "ai",
-      explanation: res.data.explanation,
+      overview: res.data.overview,
       risks: res.data.risks, opportunities: res.data.opportunities, actions: res.data.actions,
-      relationship: res.data.relationship
+      relationship: res.data.relationship,
+      complianceChecks: res.data.complianceChecks, impactNarrative: res.data.impactNarrative
     };
   }
   return fallback();

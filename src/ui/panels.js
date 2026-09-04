@@ -151,10 +151,10 @@ export function paintHead(onHousehold) {
   const healthDisplay = state === "ai" ? `${Math.round(ev.health)} · ${ev.healthBand}`
     : state === "loading" ? shimmer
     : `<span style="color:var(--ink-4)">Unavailable</span>`;
-  const explanationBlock = state === "ai"
-    ? `<ul class="explain-list">${(ev.explanation || []).map(b => `<li>${b}</li>`).join("")}</ul>`
-    : state === "loading" ? `<p class="prose-shimmer">Generating explanation…</p>`
-    : `<p style="color:var(--ink-4); font-size:12px">Explanation unavailable.</p>`;
+  const overviewBlock = state === "ai"
+    ? `<p class="prose">${ev.overview}</p>`
+    : state === "loading" ? `<p class="prose-shimmer">Generating overview…</p>`
+    : `<p style="color:var(--ink-4); font-size:12px">Overview unavailable.</p>`;
   document.getElementById("client-head").innerHTML = `
     <h2>${p.name}</h2><span class="ref">${p.ref}</span><span class="ref">${meta.source}</span>
     <span class="tag ${p.mandate === "Advisory" ? "adv" : "disc"}">${p.mandate} mandate</span>
@@ -168,7 +168,7 @@ export function paintHead(onHousehold) {
       ${p.householdPositions ? `<button class="hh" id="hh-btn" aria-pressed="${S.household}"><span class="sw"></span>Household · ${(p.entities || []).length} entities</button>` : ""}
     </div>
     <div class="head-prose">
-      ${explanationBlock}
+      ${overviewBlock}
       <button class="ghost sm" id="inspect-data-btn" style="align-self:flex-start">${S.inspectDataOpen ? "Hide data used" : "Inspect data used"}</button>
       ${S.inspectDataOpen ? `<pre class="inspect-data">${JSON.stringify(ev?.groundingUsed ?? {}, null, 2)}</pre>` : ""}
     </div>`;

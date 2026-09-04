@@ -274,35 +274,39 @@ function buildGrounding() {
     taxDomicile: jb?.taxDomicile ?? null,
     lifeStage: jb?.lifeStage ?? null,
     objectives: jb?.objectives ?? null,
-    sourceOfWealth: jb?.sourceOfWealth ?? null
+    sourceOfWealth: jb?.sourceOfWealth ?? null,
+    pepStatus: jb?.pepStatus ?? null,
+    mandateBands: jb?.mandateBands ?? []
   };
 }
 
 function copyNarratedFields(target, src) {
-  target.explanation = src.explanation;
+  target.overview = src.overview;
   target.health = src.health; target.healthBand = src.healthBand;
   target.concentration = src.concentration; target.scoreSource = src.scoreSource;
   target.risks = src.risks; target.opportunities = src.opportunities; target.actions = src.actions;
   target.relationship = src.relationship;
+  target.complianceChecks = src.complianceChecks; target.impactNarrative = src.impactNarrative;
 }
 
 /**
  * Narration is the one LLM call per portfolio — every portfolio in the book gets scored once at
  * boot (narrateAllPortfolios), and any portfolio's facts moving afterward (positions, signals,
  * the household toggle on whichever one is open, or the policy scan) re-asks just that one. It
- * carries health, the risk-weighted concentration figure, a bullet-point explanation, risk
- * findings, opportunities, recommended actions, and relationship notes — nothing here ever falls
- * back to showing a deterministic number: aiState() (store.js) reports "loading" until this
- * resolves, then "ai" on success or "unavailable" on failure, and every render site switches on
- * that instead of reading a number that might be a guess. The deterministic engine still runs
- * (it grounds the model's prompt and is what `grounding`/`clientEval` hand to it) — it's just
- * never displayed as if it were a live read. Each evaluation mints fresh client objects with
- * these fields absent, so the answer is cached in `S.narratedHash` (portfolioId → { hash,
- * health, healthBand, concentration, scoreSource, explanation, risks, opportunities, actions,
- * relationship }) and copied back onto the live object; an unchanged hash never reaches the
- * model. `inflight` makes that guarantee hold for calls that overlap in time, not just in
- * sequence. `groundingUsed` is stashed on the live object too — the exact facts behind the
- * current answer, for the traceability panel.
+ * carries health, the risk-weighted concentration figure, a prose overview, risk findings,
+ * opportunities, recommended actions, relationship notes, compliance checks, and the impact
+ * narrative — nothing here ever falls back to showing a deterministic number: aiState()
+ * (store.js) reports "loading" until this resolves, then "ai" on success or "unavailable" on
+ * failure, and every render site switches on that instead of reading a number that might be a
+ * guess. The deterministic engine still runs (it grounds the model's prompt and is what
+ * `grounding`/`clientEval` hand to it) — it's just never displayed as if it were a live read.
+ * Each evaluation mints fresh client objects with these fields absent, so the answer is cached
+ * in `S.narratedHash` (portfolioId → { hash, health, healthBand, concentration, scoreSource,
+ * overview, risks, opportunities, actions, relationship, complianceChecks, impactNarrative })
+ * and copied back onto the live object; an unchanged hash never reaches the model. `inflight`
+ * makes that guarantee hold for calls that overlap in time, not just in sequence.
+ * `groundingUsed` is stashed on the live object too — the exact facts behind the current
+ * answer, for the traceability panel.
  */
 const inflight = new Set(); // `${portfolioId}|${hash}` — one narration per client per hash
 
@@ -316,13 +320,14 @@ async function maybeNarratePortfolio(p) {
   const cached = S.narratedHash[id];
   if (cached?.hash === hash) {
     ev.groundingUsed = grounding;
-    if (ev.explanation !== cached.explanation) {
+    if (ev.overview !== cached.overview) {
       copyNarratedFields(ev, cached);
-      // Health/explanation live in the client header (paintHead), concentration in the globe
-      // overlay (paintEvidence), risks/opportunities/actions in the Risks & Actions tab, and
-      // relationship in the Conversation tab (paintConversation) — renderAll() repaints all of
-      // them; it's cheap and this branch is rare (only fires once per resolved narration, on a
-      // cache hit for a stale object). Only worth a repaint if this portfolio is the one open.
+      // Health/overview live in the client header (paintHead), concentration in the globe
+      // overlay (paintEvidence), risks/opportunities/actions in the Risks & Actions tab,
+      // relationship in the Conversation tab, and complianceChecks/impactNarrative in the
+      // Compliance/Impact tabs — renderAll() repaints all of them; it's cheap and this branch
+      // is rare (only fires once per resolved narration, on a cache hit for a stale object).
+      // Only worth a repaint if this portfolio is the one open.
       if (S.portfolio?.id === id) renderAll();
     }
     return;
