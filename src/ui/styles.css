@@ -1,25 +1,48 @@
 :root{
   color-scheme: dark;
-  --void:#0b0d10; --plane:#101317; --panel:#15181d; --panel-2:#1a1e24; --panel-3:#1f242b;
-  --line:#252a31; --line-soft:#1e2228;
-  --ink:#eef1f5; --ink-2:#a8b0ba; --ink-3:#6f7883; --ink-4:#4b535d;
-  --up-5:#f07a7a; --up-4:#e04f4f; --up-3:#c23a3a; --up-2:#8f3232; --up-1:#5c2a2a;
-  --dn-4:#6da7ec; --dn-3:#3987e5; --dn-2:#2a6fbd; --dn-1:#1c3a5e;
-  --sq-5:#f0a26a; --sq-4:#d97b2e; --sq-3:#b35a1c; --sq-2:#7a3f14; --sq-1:#432612;
-  --pol-h4:#e0a83c; --pol-h2:#8a6520; --pol-d2:#166b4e; --pol-d4:#2fb98a;
-  --flat:#3a3d42; --dim:#1b1f24; --mute-sel:#2a3038;
-  --crit:#d03b3b; --serious:#ec835a; --warn:#fab219; --good:#0ca30c;
-  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-  --sans:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --serif:"IBM Plex Serif",Georgia,serif;
+  /* ground + structure */
+  --black:#08090b; --near:#0d0e11; --raise:#131419;
+  --line:#1c1d22; --line-soft:#141519;
+  --void:var(--black); --plane:var(--near); --panel:var(--near); --panel-2:var(--raise); --panel-3:#191a20;
+  /* ink */
+  --ink:#eceded; --ink-2:#a0a2a8; --ink-3:#63656c; --ink-4:#3f4147;
+  /* the one luminous signal + its lone counter-pole */
+  --amber:#f5c542; --amber-2:#f0a03c; --ember:#e2683c; --cool:#5c7a8f;
+  --flat:#2a2c31; --dim:#141519; --mute-sel:#242730; --good:#4a9d8e;
+  /* deterioration ramp (heat) — palette.js reads these as P.UP */
+  --up-1:#4a3c1a; --up-2:#7a5f1f; --up-3:#b08a24; --up-4:#dcb02e; --up-5:#f5c542;
+  /* improvement ramp (steel) — palette.js reads these as P.DN */
+  --dn-1:#233038; --dn-2:#33474f; --dn-3:#48636d; --dn-4:#5c7a8f;
+  /* instability (ember) — P.SQ */
+  --sq-1:#3a2114; --sq-2:#6b3320; --sq-3:#9c4a2c; --sq-4:#c85f38; --sq-5:#e2683c;
+  /* policy, unvalenced: amber tightening / cool easing — P.POL_* */
+  --pol-h4:#f5c542; --pol-h2:#8a6f2a; --pol-d2:#33474f; --pol-d4:#5c7a8f;
+  /* severity — P.SEV */
+  --crit:#e2683c; --serious:#f0a03c; --warn:#f5c542; --good:#4a9d8e;
+  /* type */
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --disp:"Bricolage Grotesque","Archivo",system-ui,sans-serif;
+  --serif:"Spectral",Georgia,"Times New Roman",serif;
 }
 *{box-sizing:border-box}
 body{margin:0}
+.brand h1,.ch h2,.goal .pct,.econ .v,.evid .big,.memo .mh .t{font-family:var(--disp);letter-spacing:-.02em}
+.brand h1{font-weight:800;text-transform:uppercase}
 button{font:inherit; color:inherit}
 :focus-visible{outline:2px solid var(--dn-3); outline-offset:1px}
-.app{height:100dvh; min-height:700px; background:var(--void); color:var(--ink);
+.app{height:100dvh; min-height:700px;
+  background:
+    radial-gradient(ellipse 52% 40% at 50% -4%, rgba(245,197,66,.09), transparent 70%),
+    radial-gradient(ellipse 80% 60% at 50% 118%, rgba(0,0,0,.5), transparent 60%),
+    var(--black);
+  position:relative;
+  color:var(--ink);
   font-family:var(--sans); font-size:14px; line-height:1.45;
   display:grid; grid-template-rows:auto auto 1fr; overflow:hidden}
+.app::after{content:"";position:absolute;inset:0;pointer-events:none;z-index:0;opacity:.5;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E")}
+.app > *{position:relative;z-index:1}
 
 /* top bar */
 .bar{display:flex; align-items:center; gap:16px; padding:11px 18px;
