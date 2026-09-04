@@ -65,7 +65,10 @@ async function boot() {
       await mountGoogleGlobe(globeEl, { apiKey: CONFIG.GOOGLE_MAPS_API_KEY });
       document.querySelector(".globe-wrap")?.classList.add("using-google-globe");
     } else {
-      mountGlobe(globeEl, { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
+      mountGlobe(globeEl, {
+        onSelect: iso => { S.selIso = iso; refresh("globe"); },
+        onOpenClient: id => railHandlers.onOpenClient(id)
+      });
     }
   } catch (err) {
     console.warn("[globe] WebGL unavailable, rendering dashboard without globe canvas:", err);
