@@ -28,7 +28,11 @@ export function topExposures(limit = 10) {
 export async function fetchLiveTone(isos, { days = 14 } = {}) {
   if (!isos.length) return { readings: {}, failures: [], live: false };
   try {
-    const res = await fetch(`/api/gdelt?countries=${encodeURIComponent(isos.join(","))}&days=${days}`);
+    // A hung upstream must never leave the lens in a permanent "loading" state:
+    // without this the button sat enabled and unlabelled while a queued request
+    // crawled, which is indistinguishable from a broken feature.
+    const res = await fetch(`/api/gdelt?countries=${encodeURIComponent(isos.join(","))}&days=${days}`,
+      { signal: AbortSignal.timeout(25000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const out = await res.json();
     return { ...out, live: Object.keys(out.readings || {}).length > 0 };

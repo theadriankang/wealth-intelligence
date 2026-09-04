@@ -82,7 +82,7 @@ async function boot() {
   // kept in S.liveTone rather than merged into S.signals: the dataset stays the
   // sole authority for every portfolio number.
   if (!CONFIG.OFFLINE) {
-    const toneIsos = topExposures(10);
+    const toneIsos = topExposures(8);
     S.liveToneState = "loading";
     const applyTone = ({ readings, failures, live }) => {
       S.liveTone = readings || {};

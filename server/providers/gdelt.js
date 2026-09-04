@@ -29,7 +29,11 @@
 import { limited } from "./ratelimit.js";
 
 const BASE = "https://api.gdeltproject.org/api/v2/doc/doc";
-const PER_MIN = Number(process.env.GDELT_RATE_PER_MIN || 10);
+const PER_MIN = Number(process.env.GDELT_RATE_PER_MIN || 30);
+// One burst of ten, then a 15-minute silence, is gentler on GDELT than a
+// trickle — and it is the difference between the lens appearing at first paint
+// and appearing forty seconds later, which reads as broken.
+const BURST = Number(process.env.GDELT_BURST || 10);
 
 /** ISO 3166-1 alpha-3 -> FIPS 10-4, for every country the book actually touches. */
 export const FIPS = {
@@ -65,13 +69,13 @@ export function urlFor(iso3, days) {
  * The raw points come back too: a number a judge cannot inspect is a number they
  * have to take on trust, and this whole product argues against that.
  */
-export async function tone(iso3, { days = 14, timeoutMs = 15000 } = {}) {
+export async function tone(iso3, { days = 14, timeoutMs = 12000 } = {}) {
   const url = urlFor(iso3, days);
   if (!url) throw new Error(`no FIPS mapping for ${iso3} — add it to server/providers/gdelt.js`);
 
   const res = await limited("gdelt", PER_MIN, () =>
     fetch(url, { signal: AbortSignal.timeout(timeoutMs), headers: { accept: "application/json" } }),
-    { burst: 4, label: `GDELT ${iso3}` });
+    { burst: BURST, retries: 2, label: `GDELT ${iso3}` });
 
   if (!res.ok) throw new Error(`GDELT HTTP ${res.status} for ${iso3}`);
 
