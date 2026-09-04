@@ -5,7 +5,7 @@ import { fetchSignals, pollSignals } from "./signals/worldmonitor.js";
 import { FEED, LATE_FEED } from "./signals/fixtures/signals.js";
 import { initPalette } from "./ui/palette.js";
 import { shellHtml } from "./ui/shell.js";
-import { mountGlobe, paintGlobe } from "./ui/globe.js";
+import { mountGlobe, paintGlobe, sizeGlobe } from "./ui/globe.js";
 import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTicker,
   paintSituation, paintPositions } from "./ui/panels.js";
 import { paintActions, paintConversation } from "./ui/spine.js";
@@ -37,11 +37,21 @@ async function boot() {
     return;
   }
 
-  root.innerHTML = shellHtml();
-  initDrawers();
-  mountGlobe(document.getElementById("globe"), { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
-  wire();
-  renderAll();
+  const buildCockpit = () => {
+    root.innerHTML = shellHtml();
+    initDrawers();
+    mountGlobe(document.getElementById("globe"), { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
+    wire();
+    renderAll();
+    requestAnimationFrame(() => sizeGlobe());
+  };
+
+  if (CONFIG.TITLE_SCREEN && new URLSearchParams(location.search).get("view") !== "client") {
+    const { renderTitle } = await import("./ui/title.js");
+    renderTitle(root, buildCockpit);
+  } else {
+    buildCockpit();
+  }
 
   pollSignals([...isos], ({ signals, prevSignals }) => {
     S.signals = signals; S.prevSignals = prevSignals; renderAll();

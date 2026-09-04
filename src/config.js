@@ -4,5 +4,6 @@ export const CONFIG = {
   OFFLINE: false,               // true = never hit the network, fixtures only
   POLL_MS: 60000,
   ASOF: "04 Sep 2026, 08:40 SGT",
-  DEMO_BANNER: true             // show the "fabricated data" strip
+  DEMO_BANNER: true,            // show the "fabricated data" strip
+  TITLE_SCREEN: true            // show the full-bleed noir title screen before the cockpit
 };
