@@ -1,8 +1,9 @@
 import { S, rows, visibleRows, goals, goal, concentration, flagCountFor, positions } from "../store.js";
-import { P, LENSES, fmtD, css } from "./palette.js";
+import { P, LENSES, fmtD, css, BUCKETS, FUNDING_METHOD } from "./palette.js";
 import { POLICY, FEED } from "../signals/fixtures/signals.js";
 import { getMode } from "../signals/worldmonitor.js";
 import { reconcile, HOUSE_VIEW } from "../model/houseview.js";
+import * as M from "./motion.js";
 
 /* ---------- look-through bar: the visual proof a fund is not a country ---------- */
 export function lookThroughBar(inst, signals) {
@@ -30,6 +31,7 @@ export function paintBook(onPick) {
   }).join("");
   document.querySelectorAll("[data-cl]").forEach(b =>
     b.addEventListener("click", () => onPick(b.dataset.cl)));
+  M.once("book", S.portfolios.length, () => M.enter("#book .cl", { y: 6, delay: 22, duration: 340 }));
 }
 
 export function paintHead(onHousehold) {
@@ -52,21 +54,36 @@ export function paintHead(onHousehold) {
 }
 
 export function paintGoals(onPick) {
-  document.getElementById("goals").innerHTML = goals().map(g => {
+  const gs = goals();
+  const moved = gs.filter(g => g.change !== 0).length;
+
+  document.getElementById("goals").innerHTML = `
+    <div class="goal-lab">
+      <h2>Objectives</h2>
+      <span class="n">funding ratio</span>
+      <span class="n2">${gs.length} tracked · ${moved || "none"} moved</span>
+      <span class="method" tabindex="0" title="${FUNDING_METHOD}">method</span>
+    </div>
+    ` + gs.map(g => {
     const col = g.change < 0 ? P.UP[3] : g.change > 0 ? P.SEV.good : css("--ink-3");
     const bar = g.funded >= 95 ? P.SEV.good : g.funded >= 80 ? P.SEV.warn : P.UP[3];
+    const bk = BUCKETS[g.bucket] || { label: "Objective", cap: "" };
     return `<button class="goal" data-g="${g.id}" aria-pressed="${S.goalSel === g.id}">
-      <div class="gn">${g.name}</div><div class="gh">${g.horizon} · ${g.targetLabel}</div>
+      <div class="g-top">
+        <span class="bkt b-${g.bucket || "other"}" title="${bk.cap}">${bk.label}</span>
+        <span class="gh">${g.horizon}</span></div>
+      <div class="gn">${g.name}</div>
       <div class="gv"><span class="pct">${g.funded}%</span>
         <span class="chg" style="color:${col}">${g.change === 0 ? "no change" : fmtD(g.change) + " pts this week"}</span></div>
       <div class="track"><i style="width:${Math.min(100, g.funded)}%; background:${bar}"></i>
         <span class="prev" style="left:${Math.min(100, g.prevFunded)}%"></span></div>
-      <div class="gt2"><span>funded</span><span>${g.driverIds.length
-        ? g.driverIds.length + " driving positions" : "cash and near-cash"}</span></div>
+      <div class="gt2"><span>${g.targetLabel}</span><span>${g.driverIds.length
+        ? g.driverIds.length + " positions" : "cash-funded"}</span></div>
     </button>`;
   }).join("");
   document.querySelectorAll("[data-g]").forEach(b =>
     b.addEventListener("click", () => onPick(b.dataset.g)));
+  M.once("goals", S.portfolio.id + "|" + S.household, M.goals);
 }
 
 export function paintEvidence() {
@@ -77,6 +94,7 @@ export function paintEvidence() {
     const drv = g.contributions.slice(0, 3).map(c => c.instrumentId).join(" · ");
     document.getElementById("ev-s").innerHTML =
       `this week, driven by<br><span style="font-family:var(--mono);color:var(--ink-2)">${drv || "no market driver"}</span>`;
+    M.once("evid", "g:" + g.id + ":" + g.change, M.evidence);
     return;
   }
   const c = concentration();
@@ -84,6 +102,7 @@ export function paintEvidence() {
   document.getElementById("ev-v").textContent = c.pct + "%";
   document.getElementById("ev-s").innerHTML =
     `of deteriorating exposure in three countries<br><span style="font-family:var(--mono);color:var(--ink-2)">${c.countries.join(" · ")}</span>`;
+  M.once("evid", "c:" + S.portfolio.id + ":" + c.pct, M.evidence);
 }
 
 export function paintLegend() {
@@ -95,6 +114,7 @@ export function paintLegend() {
   document.getElementById("lg-lo").textContent = L.lo;
   document.getElementById("lg-mid").textContent = L.mid;
   document.getElementById("lg-hi").textContent = L.hi;
+  M.once("legend", S.lens, M.ramp);
 }
 
 export function paintTicker(feed = FEED) {
@@ -102,6 +122,7 @@ export function paintTicker(feed = FEED) {
     <span class="sv" style="background:${P.SEV[f[4]]}"></span>
     <b>${f[2]}</b> ${f[3]} <span class="src">${f[1]}</span></span>`;
   document.getElementById("ticker").innerHTML = feed.map(item).join("") + feed.map(item).join("");
+  M.tick();
   const tag = document.getElementById("mode-tag");
   const { mode } = getMode();
   tag.className = "mode " + mode;
@@ -186,6 +207,7 @@ export function paintPfRail({ onClearGoal, onClearSel, onOpenPosition }) {
   document.getElementById("clear-sel")?.addEventListener("click", onClearSel);
   document.querySelectorAll("#pfrail [data-t]").forEach(b =>
     b.addEventListener("click", () => onOpenPosition(b.dataset.t)));
+  M.once("rail", [S.portfolio.id, S.selIso, S.goalSel, S.household].join("|"), M.rail);
 }
 
 /** The three most consequential events across the countries this book touches. */

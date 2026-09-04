@@ -2,6 +2,7 @@ import { S, actionState, economics, flagged, positions, rows } from "../store.js
 import { P } from "./palette.js";
 import { ECONOMICS_BASELINE } from "../model/scoring.js";
 import { chokepointExposure } from "../model/lookthrough.js";
+import * as M from "./motion.js";
 
 const COMPLY = [
   { t:"Sanctions screening", s:"ok", d:"Holdings and known counterparties screened against consolidated lists. No designations, no new listings in the last 24 hours." },
@@ -52,14 +53,23 @@ export function paintActions(onChange) {
 
   document.querySelectorAll("[data-suit]").forEach(b => b.addEventListener("click", () => {
     const el = document.getElementById("suit-" + b.dataset.suit);
-    el.hidden = !el.hidden;
-    b.textContent = el.hidden ? "Suitability record" : "Hide record";
+    const open = el.hidden;
+    M.expand(el, open);
+    b.textContent = open ? "Hide record" : "Suitability record";
   }));
+  M.once("actions", S.portfolio.id, M.actions);
   document.querySelectorAll("[data-adv]").forEach(b => b.addEventListener("click", () => {
     const a = S.portfolio.actions.find(x => x.id === b.dataset.adv), st = actionState(a);
     S.actionState[S.portfolio.id + a.id] = S.portfolio.mandate === "Discretionary"
       ? "Executed" : st === "Drafted" ? "Discussed" : "Accepted";
     onChange();
+    // The state pill is the only thing that moved — say so, once.
+    requestAnimationFrame(() => {
+      const card = document.querySelectorAll("#actions .act")[
+        S.portfolio.actions.findIndex(x => x.id === a.id)];
+      const pill = card?.querySelector(".state");
+      if (pill) M.animate(pill, { scale: [1.14, 1], opacity: [0, 1], duration: 460, ease: M.EASE.out });
+    });
   }));
 }
 
@@ -81,6 +91,7 @@ export function paintConversation() {
       ${r.points.map((x, i) => `<div class="tp"><span class="num">${i + 1}</span><p>${x}</p></div>`).join("")}</div>
     <div class="blk"><h3>Likely objections</h3>
       ${r.objections.map(o => `<div class="obj"><p class="q">“${o[0]}”</p><p class="a">${o[1]}</p></div>`).join("")}</div>`;
+  M.once("conv", S.portfolio.id, () => M.enter("#conv .blk", { y: 10, delay: 60, duration: 420 }));
 }
 
 export function paintCompliance() {
@@ -106,6 +117,10 @@ export function paintCompliance() {
       <tbody>${recs.length ? recs.map(a => `<tr><td>${a.title}<div class="e">${a.target}</div></td>
         <td>${p.mandate}</td><td class="v">${actionState(a)}</td><td class="v">04 Sep 08:40</td></tr>`).join("")
         : `<tr><td colspan="4" style="color:var(--ink-4)">No records yet — generated when a proposal is put to the client or executed.</td></tr>`}</tbody></table></div>`;
+  M.once("comp", S.portfolio.id, () => {
+    M.enter("#comp .comp-hero, #comp .blk", { y: 10, delay: 60, duration: 420 });
+    M.enter("#comp .crow", { y: 5, delay: 26, duration: 340, from: 120 });
+  });
 }
 
 /** The operating-leverage tab: what this saves, stated as assumptions, not claims. */
@@ -139,4 +154,8 @@ export function paintEconomics() {
          ["Writing the file note", "The suitability record is generated as a by-product of the recommendation."],
          ["Triaging by memory", "The book is ordered by what actually moved, not by who called last."]]
         .map(x => `<div class="tp"><span class="num">·</span><p><strong style="color:var(--ink)">${x[0]}.</strong> ${x[1]}</p></div>`).join("")}</div>`;
+  M.once("econ", S.portfolio.id + "|" + e.affected, () => {
+    M.economics();
+    M.enter("#econ .blk", { y: 10, delay: 70, duration: 420, from: 160 });
+  });
 }

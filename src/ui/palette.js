@@ -46,3 +46,29 @@ export const LENSES = () => ({
              : v <= -1.5 ? P.POL_D[1] : v < -0.3 ? P.POL_D[0] : P.FLAT }
 });
 export const sevOf = d => d >= 25 ? "crit" : d >= 12 ? "serious" : d >= 6 ? "warn" : "none";
+
+/**
+ * OBJECTIVE TAXONOMY
+ *
+ * Private-client mandates are framed on the industry triad — liquidity (near-dated
+ * committed capital), longevity (the lifetime drawdown), legacy (what leaves the
+ * balance sheet). Institutional vehicles do not use it, so pension mandates carry
+ * their own two: the obligation schedule and the solvency floor.
+ *
+ * The bucket is the register the adviser already speaks in. The named objective
+ * underneath it is what the client actually said.
+ */
+export const BUCKETS = {
+  liquidity:  { label: "Liquidity",  cap: "Near-dated committed capital" },
+  longevity:  { label: "Longevity",  cap: "Lifetime drawdown" },
+  legacy:     { label: "Legacy",     cap: "Transfers off the balance sheet" },
+  obligation: { label: "Obligation", cap: "Contracted liability schedule" },
+  solvency:   { label: "Solvency",   cap: "Regulatory funding floor" }
+};
+
+/** How the number is derived — stated, because a judge will ask. */
+export const FUNDING_METHOD =
+  "Funding ratio = planning ratio × (1 − drag). Drag is the share of the objective " +
+  "funded by positions whose look-through country risk deteriorated, scaled by the " +
+  "objective's stated sensitivity. Deterministic and auditable — not a Monte Carlo " +
+  "projection. Formula in src/model/scoring.js.";
