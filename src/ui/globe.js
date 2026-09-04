@@ -43,7 +43,7 @@ export function mountGlobe(el, { onSelect }) {
 
   const reduced = matchMedia("(prefers-reduced-motion:reduce)").matches;
   globe.controls().autoRotate = !reduced;
-  globe.controls().autoRotateSpeed = 0.19;
+  globe.controls().autoRotateSpeed = 0.228;
   globe.controls().enableDamping = true;
   ["pointerdown", "wheel", "touchstart"].forEach(type =>
     el.addEventListener(type, () => { globe.controls().autoRotate = false; }, { passive:true }));

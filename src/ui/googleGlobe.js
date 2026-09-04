@@ -50,7 +50,7 @@ export async function mountGoogleGlobe(el, { apiKey }) {
   if (!reduced) {
     viewer.clock.onTick.addEventListener(() => {
       if (!viewer) return;
-      viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, -0.00008);
+      viewer.scene.camera.rotate(Cesium.Cartesian3.UNIT_Z, -0.000096);
     });
   }
 
