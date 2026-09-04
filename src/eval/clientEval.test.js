@@ -29,6 +29,7 @@ test("advisory actions never carry imperative trade verbs; discretionary disting
 
   const { e: disc } = await ev("Discretionary");
   assert.ok(disc.actions.some(a => a.mandateClass === "executable-under-mandate"));
+  assert.ok(disc.actions.some(a => a.mandateClass === "inform-only"));
 });
 
 test("every finding and action has a non-empty resolvable cite", async () => {
@@ -47,6 +48,17 @@ test("health discriminates across the demo book — spread ≥ 30, none pinned, 
   assert.ok(Math.max(...vals) - Math.min(...vals) >= 30, `spread ${JSON.stringify(vals)}`);
   assert.ok(vals.every(v => v > 0 && v < 100), `pinned ${JSON.stringify(vals)}`);
   assert.ok(new Set(hs.map(e => e.healthBand)).size >= 2, "band discriminates");
+});
+
+test("a goal that crossed 80% funding this week is a high-severity risk with urgency >= 55", async () => {
+  const data = await demoAdapter();
+  const p = data.portfolios.find(x => x.id === "sg2208");
+  const cs = scoreCountries(SIGNALS, PREV_SIGNALS, market);
+  const e = evaluateClient(p, data.instruments, SIGNALS, PREV_SIGNALS, cs, null);
+  const cross = e.risks.find(r => /dropped through 80% funding confidence/.test(r.text));
+  assert.ok(cross, "expected an 80% band-cross risk for sg2208");
+  assert.equal(cross.severity, "high");
+  assert.ok(cross.urgency >= 55, `urgency ${cross.urgency}`);
 });
 
 test("a concentration risk is flagged for the Bergmann book with high-ish urgency", async () => {

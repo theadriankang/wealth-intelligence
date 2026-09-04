@@ -1,7 +1,7 @@
 export const COUNTRY_WEIGHTS = { instability: 0.30, tone: 0.15, policy: 0.10, chokepoint: 0.15, volatility: 0.20, sentinel: 0.10 };
 export const COUNTRY_BANDS = { low: 25, elevated: 50, high: 72 };
 
-export const HEALTH_PENALTIES = { goalGap: 1.8, concentration: 0.15, exposure: 1.0, lombard: 16, mandateFit: 0.2 };
+export const HEALTH_PENALTIES = { goalGap: 1.8, concentration: 0.15, concHardMult: 1.3, exposure: 1.0, lombard: 16, mandateFit: 0.2 };
 export const HEALTH_BANDS = { strong: 75, watch: 50 };
 
 export const CONC_SOFT = 10;

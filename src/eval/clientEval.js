@@ -1,5 +1,5 @@
-import { positionRiskDelta, countryExposure, primaryCountry, chokepointExposure } from "../model/lookthrough.js";
-import { goalDelta, riskConcentration, flaggedPositions } from "../model/scoring.js";
+import { positionRiskDelta, primaryCountry, chokepointExposure } from "../model/lookthrough.js";
+import { goalDelta, riskConcentration, flaggedPositions, FLAG_THRESHOLD } from "../model/scoring.js";
 import { reconcile } from "../model/houseview.js";
 import { HEALTH_PENALTIES, HEALTH_BANDS, CONC_SOFT, CONC_HARD, URGENCY } from "./rubric.js";
 
@@ -8,6 +8,7 @@ const IMPERATIVE = /\b(buy|sell|execute|switch)\b/gi;
 const deImperative = t => t
   .replace(/\bexecute\b/gi, "put to the client")
   .replace(/\bswitch into\b/gi, "review a move to")
+  .replace(/\bswitch\b/gi, "review a move on")
   .replace(/\bsell\b/gi, "reduce")
   .replace(/\bbuy\b/gi, "add");
 
@@ -43,10 +44,12 @@ export function evaluateClient(portfolio, instruments, signals, prevSignals, cou
 
   const penalties = [
     { label: "Goal funding gap", penalty: goalGap * HEALTH_PENALTIES.goalGap },
-    { label: "Concentration", penalty: conc.pct * HEALTH_PENALTIES.concentration * (conc.pct > CONC_HARD ? 1.3 : 1) },
+    { label: "Concentration", penalty: conc.pct * HEALTH_PENALTIES.concentration * (conc.pct > CONC_HARD ? HEALTH_PENALTIES.concHardMult : 1) },
     { label: "Country-risk exposure", penalty: exposureScore * HEALTH_PENALTIES.exposure },
     { label: "Lombard headroom", penalty: (portfolio.lombard && portfolio.lombard.headroomPct < 25) ? HEALTH_PENALTIES.lombard : 0 }
   ].filter(p => p.penalty > 0);
+
+  if (!penalties.length) penalties.push({ label: "No material stress", penalty: 0 });
 
   const health = clamp(100 - penalties.reduce((a, p) => a + p.penalty, 0));
   const healthBand = health >= HEALTH_BANDS.strong ? "strong" : health >= HEALTH_BANDS.watch ? "watch" : "strained";
@@ -101,14 +104,19 @@ export function evaluateClient(portfolio, instruments, signals, prevSignals, cou
     severity: portfolio.lombard.headroomPct < 15 ? "high" : "medium",
     cite: [`goal:${portfolio.goals[0]?.id}`]
   });
-  // 5. house-view tension
+  // 5. house-view tension (either direction: a worsening signal against an overweight,
+  //    or an improving signal running ahead of a standing underweight)
   for (const p of positions) {
     const d = positionRiskDelta(instruments[p.instrumentId], signals);
-    if (d < 6) continue;
+    if (Math.abs(d) < FLAG_THRESHOLD) continue;
     const iso = primaryCountry(instruments[p.instrumentId]);
-    if (reconcile(iso, d).verdict === "tension") finding(risks, {
-      text: `${instruments[p.instrumentId]?.name} pulls against the house view on ${iso}. Name the disagreement rather than resolving it silently.`,
-      severity: "medium",
+    if (reconcile(iso, d).verdict !== "tension") continue;
+    const nm = instruments[p.instrumentId]?.name;
+    const text = d > 0
+      ? `${nm} pulls against the house view on ${iso}. Name the disagreement rather than resolving it silently.`
+      : `${nm}'s improving signal runs ahead of the house view on ${iso} (a standing underweight) — a review candidate, not a silent adjustment.`;
+    finding(risks, {
+      text, severity: "medium",
       cite: [`pos:${p.instrumentId}`, ...(signals[iso]?.events || []).map(e => e.id)],
       drivingIso: iso
     });
@@ -142,22 +150,23 @@ export function evaluateClient(portfolio, instruments, signals, prevSignals, cou
   const noteFor = i => `note:${portfolio.id}-concern-${i}`;
   const actions = [];
   let an = 0;
-  const action = (kind, text, urgency, reason, ids) => {
+  const action = (kind, text, urgency, reason, ids, { informOnly = false } = {}) => {
     const ids2 = ids.filter(id => cite[id]);
     if (!ids2.length) return;
+    const cls = informOnly ? "inform-only" : mandateClass;
     let t = text;
-    if (mandateClass !== "executable-under-mandate" && IMPERATIVE.test(text)) { IMPERATIVE.lastIndex = 0; t = deImperative(text); }
+    if (cls !== "executable-under-mandate" && IMPERATIVE.test(text)) { IMPERATIVE.lastIndex = 0; t = deImperative(text); }
     IMPERATIVE.lastIndex = 0;
-    actions.push({ id: `a${++an}`, text: t, kind, urgency, mandateClass, reason, cite: ids2 });
+    actions.push({ id: `a${++an}`, text: t, kind, urgency, mandateClass: cls, reason, cite: ids2 });
   };
   for (const r of risks) {
-    let text, reason = r.text;
+    let text, reason = r.text, informOnly = false;
     if (/concentration|chokepoint/i.test(r.text)) text = "Bring the concentrated sleeve back toward the mandate line — trim or hedge.";
     else if (/funding|band/i.test(r.text)) text = "Re-plan the affected goal or de-risk its drivers.";
     else if (/lombard/i.test(r.text)) text = "Restore lombard headroom — add collateral or reduce the drawdown.";
-    else if (/house view/i.test(r.text)) text = "Put the signal-vs-house-view disagreement to the client explicitly.";
+    else if (/house view/i.test(r.text)) { text = "Put the signal-vs-house-view disagreement to the client explicitly."; informOnly = true; }
     else text = "Review the flagged exposure at the next contact.";
-    action("reduce-risk", text, r.urgency, reason, r.cite);
+    action("reduce-risk", text, r.urgency, reason, r.cite, { informOnly });
   }
   for (const o of opportunities) {
     action("use-opportunity", `Raise ${o.text.split("—")[0].trim()} with the client as a positive.`, o.urgency, o.text, o.cite);
@@ -167,10 +176,10 @@ export function evaluateClient(portfolio, instruments, signals, prevSignals, cou
     const lc = concern.toLowerCase();
     if (/de-risk|progressively/.test(lc) && risks.some(r => /concentration|funding/i.test(r.text))) {
       action("fit-needs", `Honour the client's stated wish to de-risk progressively — bring a staged plan, not a single move.`,
-        clamp(URGENCY.severityBase.medium + URGENCY.horizonBoost), concern, [noteFor(i)]);
+        clamp(URGENCY.severityBase.medium + URGENCY.horizonBoost), concern, [noteFor(i)], { informOnly: true });
     } else if (/cost-sensitive|premium/.test(lc) && actions.some(a => /hedge/i.test(a.text))) {
       action("fit-needs", `Quantify the hedge premium up front — the client declined a collar on cost alone before.`,
-        URGENCY.severityBase.medium, concern, [noteFor(i)]);
+        clamp(URGENCY.severityBase.medium + URGENCY.horizonBoost), concern, [noteFor(i)], { informOnly: true });
     }
   });
 
