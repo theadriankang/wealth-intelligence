@@ -1,0 +1,7987 @@
+{
+ "CL-0001": {
+  "fingerprint": {
+   "client_id": "CL-0001",
+   "total_usd": 46571821.48,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Indonesia",
+     "weight_pct": 41.42,
+     "direction": "rising",
+     "provenance": "1 holdings",
+     "key": "region:Indonesia",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia",
+     "weight_pct": 12.64,
+     "direction": "rising",
+     "provenance": "2 holdings",
+     "key": "region:Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia ex-Japan",
+     "weight_pct": 8.53,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "region:Asia ex-Japan",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "North America",
+     "weight_pct": 5.09,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:North America",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Energy",
+     "weight_pct": 41.42,
+     "direction": "rising",
+     "provenance": "1 holdings",
+     "key": "sector:Energy",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 14.53,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Information Technology",
+     "weight_pct": 5.09,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Information Technology",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Macro",
+     "weight_pct": 4.15,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Macro",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Gold",
+     "weight_pct": 3.67,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Gold",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "IDR",
+     "weight_pct": 41.42,
+     "direction": "rising",
+     "provenance": "1 holdings",
+     "key": "currency:IDR",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "HKD",
+     "weight_pct": 3.57,
+     "direction": "new",
+     "provenance": "1 holdings",
+     "key": "currency:HKD",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Single Stock",
+     "weight_pct": 41.42,
+     "direction": "rising",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 20.42,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 9.07,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 8.53,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Short Duration",
+     "weight_pct": 5.46,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Hedge Fund",
+     "weight_pct": 4.15,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 3.72,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Precious Metals",
+     "weight_pct": 3.67,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Yield Enhancement",
+     "weight_pct": 3.57,
+     "direction": "new",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "single-name concentration",
+     "weight_pct": 41.42,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0101",
+     "key": "theme:single-name concentration",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "hedge fund liquidity terms",
+     "weight_pct": 4.15,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0303",
+     "key": "theme:hedge fund liquidity terms",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "gold",
+     "weight_pct": 3.67,
+     "direction": "n/a",
+     "provenance": "SYN-CM-0402",
+     "key": "theme:gold",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "tanker shipping",
+     "weight_pct": 3.57,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0505",
+     "key": "theme:tanker shipping",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "energy majors",
+     "weight_pct": 3.57,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0505",
+     "key": "theme:energy majors",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "indonesian coal",
+     "weight_pct": 3.57,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0505",
+     "key": "theme:indonesian coal",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "yield enhancement structures",
+     "weight_pct": 3.57,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0505",
+     "key": "theme:yield enhancement structures",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Bara Nusantara Energy Tbk",
+     "weight_pct": 41.42,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0101",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Developed Equity Index Fund",
+     "weight_pct": 15.33,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0001",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 89% / Illiquid 4%",
+     "weight_pct": 3.57,
+     "direction": "new",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 41644776.54,
+      "illiquid_usd": 1662483.99,
+      "total_usd": 46571821.48
+     }
+    },
+    {
+     "dimension": "collateral",
+     "value": "Lombard Credit Facility CF-0005 LTV 59.15% vs 70.0% trigger",
+     "weight_pct": 12.71,
+     "direction": "falling",
+     "provenance": "CF-0005",
+     "key": "collateral:lombard",
+     "extra": {
+      "trajectory": [
+       78.5,
+       75.68,
+       58.86,
+       62.18,
+       59.15
+      ],
+      "trigger": 70,
+      "gap_pp": 10.85,
+      "breached_ever": true,
+      "ccy": "SGD",
+      "drawn": 8000000
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "SGD 9,000,000 — Deposit on Singapore residential property purchase",
+     "weight_pct": 14.29,
+     "direction": "n/a",
+     "provenance": "CN-001",
+     "key": "liability:property",
+     "extra": {
+      "usd": 6656804.73372781,
+      "due_from": "2027-03-01",
+      "due_to": "2027-06-30",
+      "certainty": "Likely",
+      "kind": "property"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 14.53,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 51.78,
+     "driver": "theme: single-name concentration",
+     "driver_weight": 41.42,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "global oil supply and demand balance",
+     "tier": "structural",
+     "score": 41.42,
+     "driver": "sector: Energy",
+     "driver_weight": 41.42,
+     "sources": [
+      "iea.org",
+      "opec.org"
+     ]
+    },
+    {
+     "query": "OPEC production quota mechanics",
+     "tier": "structural",
+     "score": 41.42,
+     "driver": "sector: Energy",
+     "driver_weight": 41.42,
+     "sources": [
+      "iea.org",
+      "opec.org"
+     ]
+    },
+    {
+     "query": "IDR volatility and Bank Indonesia intervention",
+     "tier": "structural",
+     "score": 41.42,
+     "driver": "currency: IDR",
+     "driver_weight": 41.42,
+     "sources": [
+      "bi.go.id"
+     ]
+    },
+    {
+     "query": "Indonesia coal domestic market obligation and export levy",
+     "tier": "structural",
+     "score": 31.07,
+     "driver": "region: Indonesia",
+     "driver_weight": 41.42,
+     "sources": [
+      "bi.go.id",
+      "esdm.go.id"
+     ]
+    },
+    {
+     "query": "Indonesia capital controls and repatriation rules",
+     "tier": "structural",
+     "score": 31.07,
+     "driver": "region: Indonesia",
+     "driver_weight": 41.42,
+     "sources": [
+      "bi.go.id",
+      "esdm.go.id"
+     ]
+    },
+    {
+     "query": "IEA oil market report schedule",
+     "tier": "forward",
+     "score": 28.99,
+     "driver": "sector: Energy",
+     "driver_weight": 41.42,
+     "sources": [
+      "iea.org",
+      "opec.org"
+     ]
+    },
+    {
+     "query": "Bank Indonesia policy rate decisions",
+     "tier": "forward",
+     "score": 21.75,
+     "driver": "region: Indonesia",
+     "driver_weight": 41.42,
+     "sources": [
+      "bi.go.id",
+      "esdm.go.id"
+     ]
+    },
+    {
+     "query": "residential property purchase deposit timing and financing",
+     "tier": "structural",
+     "score": 16.43,
+     "driver": "liability: SGD 9,000,000 — Deposit on Singapore residential property purchase",
+     "driver_weight": 14.29,
+     "sources": [
+      "mas.gov.sg",
+      "hkma.gov.hk"
+     ]
+    },
+    {
+     "query": "Lombard lending advance rates and haircut policy",
+     "tier": "structural",
+     "score": 15.89,
+     "driver": "collateral: Lombard Credit Facility CF-0005 LTV 59.15% vs 70.0% trigger",
+     "driver_weight": 12.71,
+     "sources": [
+      "bis.org",
+      "finma.ch"
+     ]
+    },
+    {
+     "query": "margin call practice private banking collateral",
+     "tier": "structural",
+     "score": 15.89,
+     "driver": "collateral: Lombard Credit Facility CF-0005 LTV 59.15% vs 70.0% trigger",
+     "driver_weight": 12.71,
+     "sources": [
+      "bis.org",
+      "finma.ch"
+     ]
+    },
+    {
+     "query": "investment grade credit spread drivers",
+     "tier": "structural",
+     "score": 14.53,
+     "driver": "sector: Corporate",
+     "driver_weight": 14.53,
+     "sources": [
+      "bis.org"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0002": {
+  "fingerprint": {
+   "client_id": "CL-0002",
+   "total_usd": 46699200,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Singapore",
+     "weight_pct": 68.35,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "region:Singapore",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "North America",
+     "weight_pct": 20.21,
+     "direction": "rising",
+     "provenance": "4 holdings",
+     "key": "region:North America",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "South Asia",
+     "weight_pct": 3.63,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:South Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Information Technology",
+     "weight_pct": 88.56,
+     "direction": "stable",
+     "provenance": "5 holdings",
+     "key": "sector:Information Technology",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Private Equity",
+     "weight_pct": 68.35,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 10.67,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Single Stock",
+     "weight_pct": 9.23,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 3.63,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Yield Enhancement",
+     "weight_pct": 3.37,
+     "direction": "new",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "late-stage venture",
+     "weight_pct": 68.35,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0308",
+     "key": "theme:late-stage venture",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "enterprise software",
+     "weight_pct": 68.35,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0308",
+     "key": "theme:enterprise software",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "private equity secondaries",
+     "weight_pct": 68.35,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0308",
+     "key": "theme:private equity secondaries",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "single-name concentration",
+     "weight_pct": 9.23,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0102,SYN-ST-0103",
+     "key": "theme:single-name concentration",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "cloud infrastructure",
+     "weight_pct": 3.37,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0502",
+     "key": "theme:cloud infrastructure",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "AI capex",
+     "weight_pct": 3.37,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0502",
+     "key": "theme:AI capex",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "yield enhancement structures",
+     "weight_pct": 3.37,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0502",
+     "key": "theme:yield enhancement structures",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Unlisted Holding - Aranya Technologies Pte Ltd",
+     "weight_pct": 68.35,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0308",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 28% / Illiquid 72%",
+     "weight_pct": 71.72,
+     "direction": "falling",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 13207200,
+      "illiquid_usd": 33492000,
+      "total_usd": 46699200
+     }
+    },
+    {
+     "dimension": "collateral",
+     "value": "Lombard Credit Facility CF-0001 LTV 73.71% vs 75.0% trigger",
+     "weight_pct": 13.92,
+     "direction": "rising",
+     "provenance": "CF-0001",
+     "key": "collateral:lombard",
+     "extra": {
+      "trajectory": [
+       63.32,
+       59.72,
+       61.68,
+       75.64,
+       73.71
+      ],
+      "trigger": 75,
+      "gap_pp": 1.29,
+      "breached_ever": true,
+      "ccy": "USD",
+      "drawn": 6500000
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "USD 4,200,000 — Estimated Singapore tax on secondary share sale",
+     "weight_pct": 8.99,
+     "direction": "n/a",
+     "provenance": "CN-002",
+     "key": "liability:tax",
+     "extra": {
+      "usd": 4200000,
+      "due_from": "2027-01-01",
+      "due_to": "2027-04-30",
+      "certainty": "Conditional on the sale completing",
+      "kind": "tax"
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "USD 2,000,000 — Family trust establishment and funding",
+     "weight_pct": 4.28,
+     "direction": "n/a",
+     "provenance": "CN-003",
+     "key": "liability:trust",
+     "extra": {
+      "usd": 2000000,
+      "due_from": "2026-11-01",
+      "due_to": "2027-03-31",
+      "certainty": "Likely",
+      "kind": "trust"
+     }
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "AI datacentre capital expenditure cycle",
+     "tier": "structural",
+     "score": 88.56,
+     "driver": "sector: Information Technology",
+     "driver_weight": 88.56,
+     "sources": [
+      "iea.org",
+      "sia.org"
+     ]
+    },
+    {
+     "query": "semiconductor supply chain concentration",
+     "tier": "structural",
+     "score": 88.56,
+     "driver": "sector: Information Technology",
+     "driver_weight": 88.56,
+     "sources": [
+      "iea.org",
+      "sia.org"
+     ]
+    },
+    {
+     "query": "late stage venture secondary pricing preference shares",
+     "tier": "structural",
+     "score": 85.44,
+     "driver": "theme: late-stage venture",
+     "driver_weight": 68.35,
+     "sources": []
+    },
+    {
+     "query": "enterprise software private valuation multiples",
+     "tier": "structural",
+     "score": 85.44,
+     "driver": "theme: enterprise software",
+     "driver_weight": 68.35,
+     "sources": []
+    },
+    {
+     "query": "private equity secondary market pricing and discounts",
+     "tier": "structural",
+     "score": 85.44,
+     "driver": "theme: private equity secondaries",
+     "driver_weight": 68.35,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "uncalled commitment capital call mechanics",
+     "tier": "structural",
+     "score": 85.44,
+     "driver": "theme: private equity secondaries",
+     "driver_weight": 68.35,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 78.6,
+     "driver": "concentration: Unlisted Holding - Aranya Technologies Pte Ltd",
+     "driver_weight": 68.35,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "Singapore residential property additional buyer stamp duty",
+     "tier": "structural",
+     "score": 51.26,
+     "driver": "region: Singapore",
+     "driver_weight": 68.35,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS loan-to-value limits residential property",
+     "tier": "structural",
+     "score": 51.26,
+     "driver": "region: Singapore",
+     "driver_weight": 68.35,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS monetary policy statement schedule",
+     "tier": "forward",
+     "score": 35.88,
+     "driver": "region: Singapore",
+     "driver_weight": 68.35,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS property cooling measures",
+     "tier": "forward",
+     "score": 35.88,
+     "driver": "region: Singapore",
+     "driver_weight": 68.35,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "Lombard lending advance rates and haircut policy",
+     "tier": "structural",
+     "score": 17.4,
+     "driver": "collateral: Lombard Credit Facility CF-0001 LTV 73.71% vs 75.0% trigger",
+     "driver_weight": 13.92,
+     "sources": [
+      "bis.org",
+      "finma.ch"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0003": {
+  "fingerprint": {
+   "client_id": "CL-0003",
+   "total_usd": 22181135.66,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Europe",
+     "weight_pct": 77.62,
+     "direction": "falling",
+     "provenance": "6 holdings",
+     "key": "region:Europe",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "North America",
+     "weight_pct": 10.68,
+     "direction": "rising",
+     "provenance": "1 holdings",
+     "key": "region:North America",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia",
+     "weight_pct": 5.39,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Consumer Discretionary",
+     "weight_pct": 26.06,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "sector:Consumer Discretionary",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Industrials",
+     "weight_pct": 18.37,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Industrials",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Information Technology",
+     "weight_pct": 10.68,
+     "direction": "rising",
+     "provenance": "1 holdings",
+     "key": "sector:Information Technology",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 9.15,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Equity Long Short",
+     "weight_pct": 6.32,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Equity Long Short",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "EUR",
+     "weight_pct": 74.36,
+     "direction": "falling",
+     "provenance": "5 holdings",
+     "key": "currency:EUR",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "CHF",
+     "weight_pct": 3.26,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "currency:CHF",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 53.09,
+     "direction": "stable",
+     "provenance": "3 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Single Stock",
+     "weight_pct": 18.37,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 9.15,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 7.69,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Hedge Fund",
+     "weight_pct": 6.32,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Yield Enhancement",
+     "weight_pct": 5.39,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "single-name concentration",
+     "weight_pct": 18.37,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0107",
+     "key": "theme:single-name concentration",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "hedge fund liquidity terms",
+     "weight_pct": 6.32,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0304",
+     "key": "theme:hedge fund liquidity terms",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "asian bank equity",
+     "weight_pct": 5.39,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0506",
+     "key": "theme:asian bank equity",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "yield enhancement structures",
+     "weight_pct": 5.39,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0506",
+     "key": "theme:yield enhancement structures",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Luxury and Consumer Brands Fund",
+     "weight_pct": 26.06,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0010",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Nordvind Industrial AB",
+     "weight_pct": 18.37,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0107",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "European Equity Fund",
+     "weight_pct": 16.35,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0004",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "US Technology Leaders Fund",
+     "weight_pct": 10.68,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0003",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 88% / Illiquid 5%",
+     "weight_pct": 5.39,
+     "direction": "stable",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 19584535.66,
+      "illiquid_usd": 1195200,
+      "total_usd": 22181135.66
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "EUR 3,400,000 — German inheritance tax instalment",
+     "weight_pct": 16.74,
+     "direction": "n/a",
+     "provenance": "CN-004",
+     "key": "liability:tax",
+     "extra": {
+      "usd": 3712800.0000000005,
+      "due_from": "2026-10-01",
+      "due_to": "2026-12-31",
+      "certainty": "Confirmed",
+      "kind": "tax"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 9.15,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "EUR rate differential drivers",
+     "tier": "structural",
+     "score": 74.36,
+     "driver": "currency: EUR",
+     "driver_weight": 74.36,
+     "sources": [
+      "ecb.europa.eu"
+     ]
+    },
+    {
+     "query": "ECB monetary policy transmission euro area",
+     "tier": "structural",
+     "score": 58.22,
+     "driver": "region: Europe",
+     "driver_weight": 77.62,
+     "sources": [
+      "ecb.europa.eu"
+     ]
+    },
+    {
+     "query": "ECB governing council meeting calendar",
+     "tier": "forward",
+     "score": 40.75,
+     "driver": "region: Europe",
+     "driver_weight": 77.62,
+     "sources": [
+      "ecb.europa.eu"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 29.97,
+     "driver": "concentration: Global Luxury and Consumer Brands Fund",
+     "driver_weight": 26.06,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "Asian consumer discretionary demand drivers",
+     "tier": "structural",
+     "score": 26.06,
+     "driver": "sector: Consumer Discretionary",
+     "driver_weight": 26.06,
+     "sources": []
+    },
+    {
+     "query": "capital gains tax treatment of founder share sale",
+     "tier": "structural",
+     "score": 19.25,
+     "driver": "liability: EUR 3,400,000 — German inheritance tax instalment",
+     "driver_weight": 16.74,
+     "sources": [
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "global freight and shipping rate drivers",
+     "tier": "structural",
+     "score": 18.37,
+     "driver": "sector: Industrials",
+     "driver_weight": 18.37,
+     "sources": [
+      "unctad.org"
+     ]
+    },
+    {
+     "query": "AI datacentre capital expenditure cycle",
+     "tier": "structural",
+     "score": 10.68,
+     "driver": "sector: Information Technology",
+     "driver_weight": 10.68,
+     "sources": [
+      "iea.org",
+      "sia.org"
+     ]
+    },
+    {
+     "query": "semiconductor supply chain concentration",
+     "tier": "structural",
+     "score": 10.68,
+     "driver": "sector: Information Technology",
+     "driver_weight": 10.68,
+     "sources": [
+      "iea.org",
+      "sia.org"
+     ]
+    },
+    {
+     "query": "investment grade credit spread drivers",
+     "tier": "structural",
+     "score": 9.15,
+     "driver": "sector: Corporate",
+     "driver_weight": 9.15,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 9.15,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 9.15,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "US Treasury yield curve drivers",
+     "tier": "structural",
+     "score": 8.01,
+     "driver": "region: North America",
+     "driver_weight": 10.68,
+     "sources": [
+      "federalreserve.gov"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0004": {
+  "fingerprint": {
+   "client_id": "CL-0004",
+   "total_usd": 33453055.03,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Asia",
+     "weight_pct": 25.41,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": "region:Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "North America",
+     "weight_pct": 15.66,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "region:North America",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Singapore",
+     "weight_pct": 9.75,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Singapore",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Emerging Markets",
+     "weight_pct": 7.64,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Emerging Markets",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 30.03,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Sovereign",
+     "weight_pct": 23.3,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "sector:Sovereign",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Financials",
+     "weight_pct": 11.38,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Financials",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Real Estate",
+     "weight_pct": 9.75,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Real Estate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Utilities",
+     "weight_pct": 8.36,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Utilities",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Infrastructure",
+     "weight_pct": 5.39,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Infrastructure",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "SGD",
+     "weight_pct": 9.75,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "currency:SGD",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 30.03,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Government Bond",
+     "weight_pct": 15.66,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 14.05,
+     "direction": "rising",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Subordinated Perpetual",
+     "weight_pct": 11.38,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Real Estate Securities",
+     "weight_pct": 9.75,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Debt",
+     "weight_pct": 7.64,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Private Credit",
+     "weight_pct": 5.39,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 3.59,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "bank perpetual / AT1",
+     "weight_pct": 11.38,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0206",
+     "key": "theme:bank perpetual / AT1",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "private credit",
+     "weight_pct": 5.39,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0309",
+     "key": "theme:private credit",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Investment Grade Corporate Bond Fund",
+     "weight_pct": 16,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0203",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "US Treasury 2.375% due 2045",
+     "weight_pct": 15.66,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0201",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Asia Investment Grade Credit Fund",
+     "weight_pct": 14.03,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0204",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Pacific Rim Bank 4.75% Perpetual",
+     "weight_pct": 11.38,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0206",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 83% / Illiquid 0%",
+     "weight_pct": 0,
+     "direction": "new",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 27842455.03,
+      "illiquid_usd": 0,
+      "total_usd": 33453055.03
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "USD 1,450,000 — Annual retirement drawdown from Q2 2027",
+     "weight_pct": 4.33,
+     "direction": "n/a",
+     "provenance": "CN-005",
+     "key": "liability:other",
+     "extra": {
+      "usd": 1450000,
+      "due_from": "2027-04-01",
+      "due_to": "2045-04-01",
+      "certainty": "Confirmed",
+      "kind": "other"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 64.71,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 64.71,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 64.71,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "FOMC calendar",
+     "tier": "forward",
+     "score": 45.3,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 64.71,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "ECB calendar",
+     "tier": "forward",
+     "score": 45.3,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 64.71,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "investment grade credit spread drivers",
+     "tier": "structural",
+     "score": 30.03,
+     "driver": "sector: Corporate",
+     "driver_weight": 30.03,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "sovereign bond duration and inflation risk premium",
+     "tier": "structural",
+     "score": 23.3,
+     "driver": "sector: Sovereign",
+     "driver_weight": 23.3,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "Asian household wealth allocation and home bias",
+     "tier": "structural",
+     "score": 19.06,
+     "driver": "region: Asia",
+     "driver_weight": 25.41,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 18.4,
+     "driver": "concentration: Global Investment Grade Corporate Bond Fund",
+     "driver_weight": 16,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "AT1 perpetual call risk and extension",
+     "tier": "structural",
+     "score": 14.23,
+     "driver": "theme: bank perpetual / AT1",
+     "driver_weight": 11.38,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "bank perpetual coupon deferral mechanics",
+     "tier": "structural",
+     "score": 14.23,
+     "driver": "theme: bank perpetual / AT1",
+     "driver_weight": 11.38,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "Basel III treatment of additional tier 1 capital",
+     "tier": "structural",
+     "score": 14.23,
+     "driver": "theme: bank perpetual / AT1",
+     "driver_weight": 11.38,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "US Treasury yield curve drivers",
+     "tier": "structural",
+     "score": 11.75,
+     "driver": "region: North America",
+     "driver_weight": 15.66,
+     "sources": [
+      "federalreserve.gov"
+     ]
+    },
+    {
+     "query": "Basel capital requirements Asian banks",
+     "tier": "structural",
+     "score": 11.38,
+     "driver": "sector: Financials",
+     "driver_weight": 11.38,
+     "sources": [
+      "bis.org"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0005": {
+  "fingerprint": {
+   "client_id": "CL-0005",
+   "total_usd": 19400737.880000003,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Singapore",
+     "weight_pct": 19.72,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "region:Singapore",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Southeast Asia",
+     "weight_pct": 18.96,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": "region:Southeast Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Sovereign",
+     "weight_pct": 14,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "sector:Sovereign",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Health Care",
+     "weight_pct": 12.84,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Health Care",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 12.54,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Energy",
+     "weight_pct": 11.13,
+     "direction": "rising",
+     "provenance": "1 holdings",
+     "key": "sector:Energy",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Consumer Staples",
+     "weight_pct": 10.17,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Consumer Staples",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Utilities",
+     "weight_pct": 10.09,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Utilities",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "SGD",
+     "weight_pct": 38.68,
+     "direction": "falling",
+     "provenance": "4 holdings",
+     "key": "currency:SGD",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 48.78,
+     "direction": "rising",
+     "provenance": "4 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Government Bond",
+     "weight_pct": 14,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 12.54,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Single Stock",
+     "weight_pct": 10.17,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 8.8,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 5.72,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "single-name concentration",
+     "weight_pct": 10.17,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0105",
+     "key": "theme:single-name concentration",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Developed Equity Index Fund",
+     "weight_pct": 14.72,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0001",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Singapore Government Securities 2.75% due 2036",
+     "weight_pct": 14,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0211",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Healthcare Equity Fund",
+     "weight_pct": 12.84,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0006",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Investment Grade Corporate Bond Fund",
+     "weight_pct": 12.54,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0203",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Energy Majors Equity Fund",
+     "weight_pct": 11.13,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0008",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Sunrise Palm Resources Ltd",
+     "weight_pct": 10.17,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0105",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Listed Infrastructure Fund",
+     "weight_pct": 10.09,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0009",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 94% / Illiquid 0%",
+     "weight_pct": 0,
+     "direction": "new",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 18291270.42,
+      "illiquid_usd": 0,
+      "total_usd": 19400737.880000003
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "SGD 180,000 — Children's university fees, Australia",
+     "weight_pct": 0.69,
+     "direction": "n/a",
+     "provenance": "CN-006",
+     "key": "liability:education",
+     "extra": {
+      "usd": 133136.0946745562,
+      "due_from": "2026-09-01",
+      "due_to": "2031-09-01",
+      "certainty": "Confirmed",
+      "kind": "education"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 26.54,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "MAS SGD NEER policy band mechanics",
+     "tier": "structural",
+     "score": 38.68,
+     "driver": "currency: SGD",
+     "driver_weight": 38.68,
+     "sources": [
+      "mas.gov.sg"
+     ]
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 26.54,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 26.54,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "FOMC calendar",
+     "tier": "forward",
+     "score": 18.58,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 26.54,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "ECB calendar",
+     "tier": "forward",
+     "score": 18.58,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 26.54,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 16.93,
+     "driver": "concentration: Global Developed Equity Index Fund",
+     "driver_weight": 14.72,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "Singapore residential property additional buyer stamp duty",
+     "tier": "structural",
+     "score": 14.79,
+     "driver": "region: Singapore",
+     "driver_weight": 19.72,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS loan-to-value limits residential property",
+     "tier": "structural",
+     "score": 14.79,
+     "driver": "region: Singapore",
+     "driver_weight": 19.72,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "ASEAN cross-border capital flows",
+     "tier": "structural",
+     "score": 14.22,
+     "driver": "region: Southeast Asia",
+     "driver_weight": 18.96,
+     "sources": [
+      "bis.org",
+      "adb.org"
+     ]
+    },
+    {
+     "query": "sovereign bond duration and inflation risk premium",
+     "tier": "structural",
+     "score": 14,
+     "driver": "sector: Sovereign",
+     "driver_weight": 14,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "healthcare policy and drug pricing risk",
+     "tier": "structural",
+     "score": 12.84,
+     "driver": "sector: Health Care",
+     "driver_weight": 12.84,
+     "sources": []
+    },
+    {
+     "query": "investment grade credit spread drivers",
+     "tier": "structural",
+     "score": 12.54,
+     "driver": "sector: Corporate",
+     "driver_weight": 12.54,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "global oil supply and demand balance",
+     "tier": "structural",
+     "score": 11.13,
+     "driver": "sector: Energy",
+     "driver_weight": 11.13,
+     "sources": [
+      "iea.org",
+      "opec.org"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0006": {
+  "fingerprint": {
+   "client_id": "CL-0006",
+   "total_usd": 18072993.490000002,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Singapore",
+     "weight_pct": 47.53,
+     "direction": "falling",
+     "provenance": "3 holdings",
+     "key": "region:Singapore",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Southeast Asia",
+     "weight_pct": 14.16,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Southeast Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia",
+     "weight_pct": 11.53,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia ex-Japan",
+     "weight_pct": 6.59,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Asia ex-Japan",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Real Estate",
+     "weight_pct": 25.06,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "sector:Real Estate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Sovereign",
+     "weight_pct": 22.54,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Sovereign",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 14.25,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "SGD",
+     "weight_pct": 73.23,
+     "direction": "falling",
+     "provenance": "5 holdings",
+     "key": "currency:SGD",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Government Bond",
+     "weight_pct": 22.54,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 20.76,
+     "direction": "rising",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Real Estate Securities",
+     "weight_pct": 13.53,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Private Real Estate",
+     "weight_pct": 11.53,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 11.46,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Private Credit",
+     "weight_pct": 7.79,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 6.46,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 5.93,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "private real estate",
+     "weight_pct": 11.53,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0305",
+     "key": "theme:private real estate",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "private credit",
+     "weight_pct": 7.79,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0302",
+     "key": "theme:private credit",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Singapore Government Securities 2.75% due 2036",
+     "weight_pct": 22.54,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0211",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "ASEAN Equity Fund",
+     "weight_pct": 14.16,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0023",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Singapore REIT Income Fund",
+     "weight_pct": 13.53,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0024",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Asia Real Estate Opportunity Fund III",
+     "weight_pct": 11.53,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0305",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "SGD Fixed Deposit 3M",
+     "weight_pct": 11.46,
+     "direction": "n/a",
+     "provenance": "SYN-CA-0602",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 69% / Illiquid 12%",
+     "weight_pct": 11.53,
+     "direction": "stable",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 12508972.19,
+      "illiquid_usd": 2084615.38,
+      "total_usd": 18072993.490000002
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "USD 5,000,000 — US university fees, two children",
+     "weight_pct": 27.67,
+     "direction": "n/a",
+     "provenance": "CN-007",
+     "key": "liability:education",
+     "extra": {
+      "usd": 5000000,
+      "due_from": "2026-09-01",
+      "due_to": "2030-09-01",
+      "certainty": "Confirmed",
+      "kind": "education"
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "USD 3,000,000 — Private equity capital calls",
+     "weight_pct": 16.6,
+     "direction": "n/a",
+     "provenance": "CN-008",
+     "key": "liability:capital call",
+     "extra": {
+      "usd": 3000000,
+      "due_from": "2026-10-01",
+      "due_to": "2028-03-31",
+      "certainty": "Likely",
+      "kind": "capital call"
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "Uncalled USD 3,000,000 — Meridian Private Equity Fund VII",
+     "weight_pct": 16.6,
+     "direction": "n/a",
+     "provenance": "COM-003",
+     "key": "liability:capital call",
+     "extra": {
+      "usd": 3000000,
+      "window": "2026 Q4 to 2028 Q1",
+      "certainty": "Committed"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 29,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "MAS SGD NEER policy band mechanics",
+     "tier": "structural",
+     "score": 73.23,
+     "driver": "currency: SGD",
+     "driver_weight": 73.23,
+     "sources": [
+      "mas.gov.sg"
+     ]
+    },
+    {
+     "query": "Singapore residential property additional buyer stamp duty",
+     "tier": "structural",
+     "score": 35.65,
+     "driver": "region: Singapore",
+     "driver_weight": 47.53,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS loan-to-value limits residential property",
+     "tier": "structural",
+     "score": 35.65,
+     "driver": "region: Singapore",
+     "driver_weight": 47.53,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "international education cost inflation",
+     "tier": "structural",
+     "score": 31.82,
+     "driver": "liability: USD 5,000,000 — US university fees, two children",
+     "driver_weight": 27.67,
+     "sources": []
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 29,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 29,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 25.92,
+     "driver": "concentration: Singapore Government Securities 2.75% due 2036",
+     "driver_weight": 22.54,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "commercial real estate valuation lag and cap rates",
+     "tier": "structural",
+     "score": 25.06,
+     "driver": "sector: Real Estate",
+     "driver_weight": 25.06,
+     "sources": [
+      "bis.org",
+      "hkma.gov.hk"
+     ]
+    },
+    {
+     "query": "MAS monetary policy statement schedule",
+     "tier": "forward",
+     "score": 24.95,
+     "driver": "region: Singapore",
+     "driver_weight": 47.53,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS property cooling measures",
+     "tier": "forward",
+     "score": 24.95,
+     "driver": "region: Singapore",
+     "driver_weight": 47.53,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "sovereign bond duration and inflation risk premium",
+     "tier": "structural",
+     "score": 22.54,
+     "driver": "sector: Sovereign",
+     "driver_weight": 22.54,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "FOMC calendar",
+     "tier": "forward",
+     "score": 20.3,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 29,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "ECB calendar",
+     "tier": "forward",
+     "score": 20.3,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 29,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0007": {
+  "fingerprint": {
+   "client_id": "CL-0007",
+   "total_usd": 40019276,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "North America",
+     "weight_pct": 21.69,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "region:North America",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Europe",
+     "weight_pct": 7.05,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Europe",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Gold",
+     "weight_pct": 24.04,
+     "direction": "rising",
+     "provenance": "3 holdings",
+     "key": "sector:Gold",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Sovereign",
+     "weight_pct": 18.04,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "sector:Sovereign",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 10.94,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Macro",
+     "weight_pct": 6.98,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Macro",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Industrials",
+     "weight_pct": 6.54,
+     "direction": "rising",
+     "provenance": "1 holdings",
+     "key": "sector:Industrials",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "EUR",
+     "weight_pct": 7.05,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "currency:EUR",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 36.01,
+     "direction": "stable",
+     "provenance": "4 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Precious Metals",
+     "weight_pct": 18.93,
+     "direction": "rising",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Government Bond",
+     "weight_pct": 12.36,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 10.94,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Hedge Fund",
+     "weight_pct": 6.98,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Inflation Linked",
+     "weight_pct": 5.68,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Capital Protected",
+     "weight_pct": 5.1,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 4,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "gold",
+     "weight_pct": 24.04,
+     "direction": "n/a",
+     "provenance": "SYN-CM-0401,SYN-CM-0402,SYN-SP-0504",
+     "key": "theme:gold",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "hedge fund liquidity terms",
+     "weight_pct": 6.98,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0303",
+     "key": "theme:hedge fund liquidity terms",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "capital protected notes",
+     "weight_pct": 5.1,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0504",
+     "key": "theme:capital protected notes",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Developed Equity Index Fund",
+     "weight_pct": 13.08,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0001",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "US Treasury 4.125% due 2028",
+     "weight_pct": 12.36,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0202",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Investment Grade Corporate Bond Fund",
+     "weight_pct": 10.94,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0203",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Physical Gold Allocated Account",
+     "weight_pct": 10.4,
+     "direction": "n/a",
+     "provenance": "SYN-CM-0401",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 88% / Illiquid 5%",
+     "weight_pct": 5.1,
+     "direction": "stable",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 35184876,
+      "illiquid_usd": 2042000,
+      "total_usd": 40019276
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "USD 12,000,000 — Initial endowment of charitable foundation",
+     "weight_pct": 29.99,
+     "direction": "n/a",
+     "provenance": "CN-009",
+     "key": "liability:philanthropy",
+     "extra": {
+      "usd": 12000000,
+      "due_from": "2027-01-01",
+      "due_to": "2027-12-31",
+      "certainty": "Likely",
+      "kind": "philanthropy"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 28.98,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "charitable foundation funding structures",
+     "tier": "structural",
+     "score": 34.49,
+     "driver": "liability: USD 12,000,000 — Initial endowment of charitable foundation",
+     "driver_weight": 29.99,
+     "sources": []
+    },
+    {
+     "query": "gold price drivers real yields and central bank demand",
+     "tier": "structural",
+     "score": 30.05,
+     "driver": "theme: gold",
+     "driver_weight": 24.04,
+     "sources": [
+      "gold.org"
+     ]
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 28.98,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 28.98,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "gold demand drivers central bank buying",
+     "tier": "structural",
+     "score": 24.04,
+     "driver": "sector: Gold",
+     "driver_weight": 24.04,
+     "sources": [
+      "gold.org",
+      "imf.org"
+     ]
+    },
+    {
+     "query": "FOMC calendar",
+     "tier": "forward",
+     "score": 20.29,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 28.98,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "ECB calendar",
+     "tier": "forward",
+     "score": 20.29,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 28.98,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "sovereign bond duration and inflation risk premium",
+     "tier": "structural",
+     "score": 18.04,
+     "driver": "sector: Sovereign",
+     "driver_weight": 18.04,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "US Treasury yield curve drivers",
+     "tier": "structural",
+     "score": 16.27,
+     "driver": "region: North America",
+     "driver_weight": 21.69,
+     "sources": [
+      "federalreserve.gov"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 15.04,
+     "driver": "concentration: Global Developed Equity Index Fund",
+     "driver_weight": 13.08,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "FOMC meeting calendar and dot plot",
+     "tier": "forward",
+     "score": 11.39,
+     "driver": "region: North America",
+     "driver_weight": 21.69,
+     "sources": [
+      "federalreserve.gov"
+     ]
+    },
+    {
+     "query": "investment grade credit spread drivers",
+     "tier": "structural",
+     "score": 10.94,
+     "driver": "sector: Corporate",
+     "driver_weight": 10.94,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "hedge fund gates side pockets redemption notice",
+     "tier": "structural",
+     "score": 8.73,
+     "driver": "theme: hedge fund liquidity terms",
+     "driver_weight": 6.98,
+     "sources": [
+      "iosco.org"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0008": {
+  "fingerprint": {
+   "client_id": "CL-0008",
+   "total_usd": 11952546.03,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Singapore",
+     "weight_pct": 45.69,
+     "direction": "falling",
+     "provenance": "4 holdings",
+     "key": "region:Singapore",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Southeast Asia",
+     "weight_pct": 10.47,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Southeast Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia ex-Japan",
+     "weight_pct": 8.31,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Asia ex-Japan",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Sovereign",
+     "weight_pct": 17.04,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "sector:Sovereign",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 15.32,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Real Estate",
+     "weight_pct": 8.18,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Real Estate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Health Care",
+     "weight_pct": 6.85,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Health Care",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Gold",
+     "weight_pct": 4.29,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Gold",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "SGD",
+     "weight_pct": 56.16,
+     "direction": "falling",
+     "provenance": "5 holdings",
+     "key": "currency:SGD",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 18.78,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Government Bond",
+     "weight_pct": 17.04,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 15.93,
+     "direction": "rising",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Short Duration",
+     "weight_pct": 15.32,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 13.61,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Real Estate Securities",
+     "weight_pct": 8.18,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Single Stock",
+     "weight_pct": 6.85,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Precious Metals",
+     "weight_pct": 4.29,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "single-name concentration",
+     "weight_pct": 6.85,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0109",
+     "key": "theme:single-name concentration",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "gold",
+     "weight_pct": 4.29,
+     "direction": "n/a",
+     "provenance": "SYN-CM-0402",
+     "key": "theme:gold",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Singapore Government Securities 2.75% due 2036",
+     "weight_pct": 17.04,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0211",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Developed Equity Index Fund",
+     "weight_pct": 15.93,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0001",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Short Duration USD Bond Fund",
+     "weight_pct": 15.32,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0208",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "SGD Fixed Deposit 3M",
+     "weight_pct": 13.61,
+     "direction": "n/a",
+     "provenance": "SYN-CA-0602",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "ASEAN Equity Fund",
+     "weight_pct": 10.47,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0023",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 86% / Illiquid 0%",
+     "weight_pct": 0,
+     "direction": "new",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 10325327.1,
+      "illiquid_usd": 0,
+      "total_usd": 11952546.03
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "SGD 420,000 — University fees, two children",
+     "weight_pct": 2.6,
+     "direction": "n/a",
+     "provenance": "CN-010",
+     "key": "liability:education",
+     "extra": {
+      "usd": 310650.8875739645,
+      "due_from": "2027-01-01",
+      "due_to": "2033-01-01",
+      "certainty": "Confirmed",
+      "kind": "education"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 32.36,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "MAS SGD NEER policy band mechanics",
+     "tier": "structural",
+     "score": 56.16,
+     "driver": "currency: SGD",
+     "driver_weight": 56.16,
+     "sources": [
+      "mas.gov.sg"
+     ]
+    },
+    {
+     "query": "Singapore residential property additional buyer stamp duty",
+     "tier": "structural",
+     "score": 34.27,
+     "driver": "region: Singapore",
+     "driver_weight": 45.69,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS loan-to-value limits residential property",
+     "tier": "structural",
+     "score": 34.27,
+     "driver": "region: Singapore",
+     "driver_weight": 45.69,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 32.36,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 32.36,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "MAS monetary policy statement schedule",
+     "tier": "forward",
+     "score": 23.99,
+     "driver": "region: Singapore",
+     "driver_weight": 45.69,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS property cooling measures",
+     "tier": "forward",
+     "score": 23.99,
+     "driver": "region: Singapore",
+     "driver_weight": 45.69,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "FOMC calendar",
+     "tier": "forward",
+     "score": 22.65,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 32.36,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "ECB calendar",
+     "tier": "forward",
+     "score": 22.65,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 32.36,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 19.6,
+     "driver": "concentration: Singapore Government Securities 2.75% due 2036",
+     "driver_weight": 17.04,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "sovereign bond duration and inflation risk premium",
+     "tier": "structural",
+     "score": 17.04,
+     "driver": "sector: Sovereign",
+     "driver_weight": 17.04,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "investment grade credit spread drivers",
+     "tier": "structural",
+     "score": 15.32,
+     "driver": "sector: Corporate",
+     "driver_weight": 15.32,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "commercial real estate valuation lag and cap rates",
+     "tier": "structural",
+     "score": 8.18,
+     "driver": "sector: Real Estate",
+     "driver_weight": 8.18,
+     "sources": [
+      "bis.org",
+      "hkma.gov.hk"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0009": {
+  "fingerprint": {
+   "client_id": "CL-0009",
+   "total_usd": 31613603.44,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Europe",
+     "weight_pct": 80,
+     "direction": "falling",
+     "provenance": "5 holdings",
+     "key": "region:Europe",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Industrials",
+     "weight_pct": 17.19,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Industrials",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 14.45,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "EUR",
+     "weight_pct": 70.86,
+     "direction": "falling",
+     "provenance": "4 holdings",
+     "key": "currency:EUR",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "CHF",
+     "weight_pct": 9.14,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "currency:CHF",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 42.99,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Single Stock",
+     "weight_pct": 17.19,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 16.22,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 9.63,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Private Equity",
+     "weight_pct": 7.16,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Short Duration",
+     "weight_pct": 4.83,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "single-name concentration",
+     "weight_pct": 17.19,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0107",
+     "key": "theme:single-name concentration",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "private equity secondaries",
+     "weight_pct": 7.16,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0301",
+     "key": "theme:private equity secondaries",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "EUR Call Deposit",
+     "weight_pct": 33.85,
+     "direction": "n/a",
+     "provenance": "SYN-CA-0604",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Nordvind Industrial AB",
+     "weight_pct": 17.19,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0107",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "European Equity Fund",
+     "weight_pct": 10.2,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0004",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 93% / Illiquid 7%",
+     "weight_pct": 7.16,
+     "direction": "stable",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 29351603.44,
+      "illiquid_usd": 2262000,
+      "total_usd": 31613603.44
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "Uncalled USD 1,100,000 — Meridian Private Equity Fund VII",
+     "weight_pct": 3.48,
+     "direction": "n/a",
+     "provenance": "COM-004",
+     "key": "liability:capital call",
+     "extra": {
+      "usd": 1100000,
+      "window": "2027 Q1 to 2028 Q2",
+      "certainty": "Committed"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 14.45,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "EUR rate differential drivers",
+     "tier": "structural",
+     "score": 70.86,
+     "driver": "currency: EUR",
+     "driver_weight": 70.86,
+     "sources": [
+      "ecb.europa.eu"
+     ]
+    },
+    {
+     "query": "ECB monetary policy transmission euro area",
+     "tier": "structural",
+     "score": 60,
+     "driver": "region: Europe",
+     "driver_weight": 80,
+     "sources": [
+      "ecb.europa.eu"
+     ]
+    },
+    {
+     "query": "ECB governing council meeting calendar",
+     "tier": "forward",
+     "score": 42,
+     "driver": "region: Europe",
+     "driver_weight": 80,
+     "sources": [
+      "ecb.europa.eu"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 38.93,
+     "driver": "concentration: EUR Call Deposit",
+     "driver_weight": 33.85,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "global freight and shipping rate drivers",
+     "tier": "structural",
+     "score": 17.19,
+     "driver": "sector: Industrials",
+     "driver_weight": 17.19,
+     "sources": [
+      "unctad.org"
+     ]
+    },
+    {
+     "query": "investment grade credit spread drivers",
+     "tier": "structural",
+     "score": 14.45,
+     "driver": "sector: Corporate",
+     "driver_weight": 14.45,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 14.45,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 14.45,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "FOMC calendar",
+     "tier": "forward",
+     "score": 10.11,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 14.45,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "ECB calendar",
+     "tier": "forward",
+     "score": 10.11,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 14.45,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "CHF safe haven flows SNB policy",
+     "tier": "structural",
+     "score": 9.14,
+     "driver": "currency: CHF",
+     "driver_weight": 9.14,
+     "sources": [
+      "snb.ch"
+     ]
+    },
+    {
+     "query": "private equity secondary market pricing and discounts",
+     "tier": "structural",
+     "score": 8.95,
+     "driver": "theme: private equity secondaries",
+     "driver_weight": 7.16,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "uncalled commitment capital call mechanics",
+     "tier": "structural",
+     "score": 8.95,
+     "driver": "theme: private equity secondaries",
+     "driver_weight": 7.16,
+     "sources": [
+      "bis.org"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0010": {
+  "fingerprint": {
+   "client_id": "CL-0010",
+   "total_usd": 8182936.1,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Singapore",
+     "weight_pct": 27.9,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "region:Singapore",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "South Asia",
+     "weight_pct": 9.2,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:South Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Sovereign",
+     "weight_pct": 36.74,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "sector:Sovereign",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Utilities",
+     "weight_pct": 13.67,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Utilities",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Health Care",
+     "weight_pct": 12.18,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Health Care",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Infrastructure",
+     "weight_pct": 7.35,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Infrastructure",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "SGD",
+     "weight_pct": 27.9,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "currency:SGD",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 40.39,
+     "direction": "rising",
+     "provenance": "3 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Government Bond",
+     "weight_pct": 21.57,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Inflation Linked",
+     "weight_pct": 15.16,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 9.2,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Private Credit",
+     "weight_pct": 7.35,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 6.33,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "private credit",
+     "weight_pct": 7.35,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0309",
+     "key": "theme:private credit",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Singapore Government Securities 2.75% due 2036",
+     "weight_pct": 21.57,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0211",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Inflation-Linked Bond Fund",
+     "weight_pct": 15.16,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0212",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Developed Equity Index Fund",
+     "weight_pct": 14.54,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0001",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Listed Infrastructure Fund",
+     "weight_pct": 13.67,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0009",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Healthcare Equity Fund",
+     "weight_pct": 12.18,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0006",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 86% / Illiquid 0%",
+     "weight_pct": 0,
+     "direction": "new",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 7063984.62,
+      "illiquid_usd": 0,
+      "total_usd": 8182936.1
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 36.74,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "sovereign bond duration and inflation risk premium",
+     "tier": "structural",
+     "score": 36.74,
+     "driver": "sector: Sovereign",
+     "driver_weight": 36.74,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 36.74,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 36.74,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "MAS SGD NEER policy band mechanics",
+     "tier": "structural",
+     "score": 27.9,
+     "driver": "currency: SGD",
+     "driver_weight": 27.9,
+     "sources": [
+      "mas.gov.sg"
+     ]
+    },
+    {
+     "query": "FOMC calendar",
+     "tier": "forward",
+     "score": 25.72,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 36.74,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "ECB calendar",
+     "tier": "forward",
+     "score": 25.72,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 36.74,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 24.81,
+     "driver": "concentration: Singapore Government Securities 2.75% due 2036",
+     "driver_weight": 21.57,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "Singapore residential property additional buyer stamp duty",
+     "tier": "structural",
+     "score": 20.92,
+     "driver": "region: Singapore",
+     "driver_weight": 27.9,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS loan-to-value limits residential property",
+     "tier": "structural",
+     "score": 20.92,
+     "driver": "region: Singapore",
+     "driver_weight": 27.9,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS monetary policy statement schedule",
+     "tier": "forward",
+     "score": 14.65,
+     "driver": "region: Singapore",
+     "driver_weight": 27.9,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS property cooling measures",
+     "tier": "forward",
+     "score": 14.65,
+     "driver": "region: Singapore",
+     "driver_weight": 27.9,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "regulated utility allowed returns and rate sensitivity",
+     "tier": "structural",
+     "score": 13.67,
+     "driver": "sector: Utilities",
+     "driver_weight": 13.67,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "healthcare policy and drug pricing risk",
+     "tier": "structural",
+     "score": 12.18,
+     "driver": "sector: Health Care",
+     "driver_weight": 12.18,
+     "sources": []
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0011": {
+  "fingerprint": {
+   "client_id": "CL-0011",
+   "total_usd": 35335041.43,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Singapore",
+     "weight_pct": 51.15,
+     "direction": "stable",
+     "provenance": "4 holdings",
+     "key": "region:Singapore",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia",
+     "weight_pct": 20.42,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Southeast Asia",
+     "weight_pct": 4.83,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Southeast Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Real Estate",
+     "weight_pct": 51.42,
+     "direction": "stable",
+     "provenance": "3 holdings",
+     "key": "sector:Real Estate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 19.56,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Sovereign",
+     "weight_pct": 13.45,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Sovereign",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "SGD",
+     "weight_pct": 76.4,
+     "direction": "stable",
+     "provenance": "6 holdings",
+     "key": "currency:SGD",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Private Real Estate",
+     "weight_pct": 20.42,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Direct Real Estate",
+     "weight_pct": 18.32,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Government Bond",
+     "weight_pct": 13.45,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Real Estate Securities",
+     "weight_pct": 12.69,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 11.01,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Private Credit",
+     "weight_pct": 8.54,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 6.7,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 4.83,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 4.04,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "private real estate",
+     "weight_pct": 20.42,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0305",
+     "key": "theme:private real estate",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "direct property",
+     "weight_pct": 18.32,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0306",
+     "key": "theme:direct property",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "private credit",
+     "weight_pct": 8.54,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0302",
+     "key": "theme:private credit",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Asia Real Estate Opportunity Fund III",
+     "weight_pct": 20.42,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0305",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Direct Property - Sentosa Cove Residence",
+     "weight_pct": 18.32,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0306",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Singapore Government Securities 2.75% due 2036",
+     "weight_pct": 13.45,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0211",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Singapore REIT Income Fund",
+     "weight_pct": 12.69,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0024",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Investment Grade Corporate Bond Fund",
+     "weight_pct": 11.01,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0203",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 46% / Illiquid 39%",
+     "weight_pct": 38.74,
+     "direction": "stable",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 16262307.7,
+      "illiquid_usd": 13687869.82,
+      "total_usd": 35335041.43
+     }
+    },
+    {
+     "dimension": "collateral",
+     "value": "Property Backed Term Loan CF-0004 LTV 32.29% vs 80.0% trigger",
+     "weight_pct": 12.56,
+     "direction": "stable",
+     "provenance": "CF-0004",
+     "key": "collateral:lombard",
+     "extra": {
+      "trajectory": [
+       31.58,
+       31.18,
+       32.06,
+       32.16,
+       32.29
+      ],
+      "trigger": 80,
+      "gap_pp": 47.71,
+      "breached_ever": false,
+      "ccy": "SGD",
+      "drawn": 6000000
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "SGD 2,800,000 — Estate duty and legal costs on succession planning",
+     "weight_pct": 5.86,
+     "direction": "n/a",
+     "provenance": "CN-011",
+     "key": "liability:other",
+     "extra": {
+      "usd": 2071005.9171597632,
+      "due_from": "2026-12-01",
+      "due_to": "2027-12-31",
+      "certainty": "Likely",
+      "kind": "other"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 24.47,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "MAS SGD NEER policy band mechanics",
+     "tier": "structural",
+     "score": 76.4,
+     "driver": "currency: SGD",
+     "driver_weight": 76.4,
+     "sources": [
+      "mas.gov.sg"
+     ]
+    },
+    {
+     "query": "commercial real estate valuation lag and cap rates",
+     "tier": "structural",
+     "score": 51.42,
+     "driver": "sector: Real Estate",
+     "driver_weight": 51.42,
+     "sources": [
+      "bis.org",
+      "hkma.gov.hk"
+     ]
+    },
+    {
+     "query": "Singapore residential property additional buyer stamp duty",
+     "tier": "structural",
+     "score": 38.36,
+     "driver": "region: Singapore",
+     "driver_weight": 51.15,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS loan-to-value limits residential property",
+     "tier": "structural",
+     "score": 38.36,
+     "driver": "region: Singapore",
+     "driver_weight": 51.15,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS monetary policy statement schedule",
+     "tier": "forward",
+     "score": 26.85,
+     "driver": "region: Singapore",
+     "driver_weight": 51.15,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "MAS property cooling measures",
+     "tier": "forward",
+     "score": 26.85,
+     "driver": "region: Singapore",
+     "driver_weight": 51.15,
+     "sources": [
+      "mas.gov.sg",
+      "iras.gov.sg"
+     ]
+    },
+    {
+     "query": "private real estate fund valuation lag",
+     "tier": "structural",
+     "score": 25.53,
+     "driver": "theme: private real estate",
+     "driver_weight": 20.42,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 24.47,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 24.47,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 23.48,
+     "driver": "concentration: Asia Real Estate Opportunity Fund III",
+     "driver_weight": 20.42,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "direct property valuation and transaction liquidity",
+     "tier": "structural",
+     "score": 22.9,
+     "driver": "theme: direct property",
+     "driver_weight": 18.32,
+     "sources": [
+      "rvd.gov.hk"
+     ]
+    },
+    {
+     "query": "investment grade credit spread drivers",
+     "tier": "structural",
+     "score": 19.56,
+     "driver": "sector: Corporate",
+     "driver_weight": 19.56,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "FOMC calendar",
+     "tier": "forward",
+     "score": 17.13,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 24.47,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0012": {
+  "fingerprint": {
+   "client_id": "CL-0012",
+   "total_usd": 28028704.720000003,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Asia",
+     "weight_pct": 24.13,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": "region:Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "North America",
+     "weight_pct": 20.76,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "region:North America",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Hong Kong",
+     "weight_pct": 15.01,
+     "direction": "stable",
+     "provenance": "3 holdings",
+     "key": "region:Hong Kong",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Singapore",
+     "weight_pct": 4.36,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Singapore",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 31.74,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Sovereign",
+     "weight_pct": 20.76,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "sector:Sovereign",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Real Estate",
+     "weight_pct": 9.43,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "sector:Real Estate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Financials",
+     "weight_pct": 9.06,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Financials",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Utilities",
+     "weight_pct": 5.99,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Utilities",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Industrials",
+     "weight_pct": 5.83,
+     "direction": "rising",
+     "provenance": "1 holdings",
+     "key": "sector:Industrials",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Infrastructure",
+     "weight_pct": 4.29,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Infrastructure",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "HKD",
+     "weight_pct": 9.94,
+     "direction": "rising",
+     "provenance": "2 holdings",
+     "key": "currency:HKD",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "SGD",
+     "weight_pct": 4.36,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "currency:SGD",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 31.74,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Government Bond",
+     "weight_pct": 20.76,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Subordinated Perpetual",
+     "weight_pct": 14.12,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 11.93,
+     "direction": "rising",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 6.97,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Single Stock",
+     "weight_pct": 5.83,
+     "direction": "rising",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Real Estate Securities",
+     "weight_pct": 4.36,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Private Credit",
+     "weight_pct": 4.29,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "bank perpetual / AT1",
+     "weight_pct": 14.12,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0206,SYN-FI-0207",
+     "key": "theme:bank perpetual / AT1",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "single-name concentration",
+     "weight_pct": 5.83,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0104",
+     "key": "theme:single-name concentration",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "private credit",
+     "weight_pct": 4.29,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0309",
+     "key": "theme:private credit",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "US Treasury 2.375% due 2045",
+     "weight_pct": 20.76,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0201",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Investment Grade Corporate Bond Fund",
+     "weight_pct": 16.66,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0203",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Asia Investment Grade Credit Fund",
+     "weight_pct": 15.08,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0204",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 82% / Illiquid 0%",
+     "weight_pct": 0,
+     "direction": "new",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 22868304.720000003,
+      "illiquid_usd": 0,
+      "total_usd": 28028704.720000003
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "USD 1,280,000 — Living expenses and medical care",
+     "weight_pct": 4.57,
+     "direction": "n/a",
+     "provenance": "CN-012",
+     "key": "liability:other",
+     "extra": {
+      "usd": 1280000,
+      "due_from": "2026-01-01",
+      "due_to": "2038-01-01",
+      "certainty": "Confirmed",
+      "kind": "other"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 66.62,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 66.62,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 66.62,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "FOMC calendar",
+     "tier": "forward",
+     "score": 46.63,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 66.62,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "ECB calendar",
+     "tier": "forward",
+     "score": 46.63,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 66.62,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "investment grade credit spread drivers",
+     "tier": "structural",
+     "score": 31.74,
+     "driver": "sector: Corporate",
+     "driver_weight": 31.74,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 23.87,
+     "driver": "concentration: US Treasury 2.375% due 2045",
+     "driver_weight": 20.76,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "sovereign bond duration and inflation risk premium",
+     "tier": "structural",
+     "score": 20.76,
+     "driver": "sector: Sovereign",
+     "driver_weight": 20.76,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "Asian household wealth allocation and home bias",
+     "tier": "structural",
+     "score": 18.1,
+     "driver": "region: Asia",
+     "driver_weight": 24.13,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "AT1 perpetual call risk and extension",
+     "tier": "structural",
+     "score": 17.65,
+     "driver": "theme: bank perpetual / AT1",
+     "driver_weight": 14.12,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "bank perpetual coupon deferral mechanics",
+     "tier": "structural",
+     "score": 17.65,
+     "driver": "theme: bank perpetual / AT1",
+     "driver_weight": 14.12,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "Basel III treatment of additional tier 1 capital",
+     "tier": "structural",
+     "score": 17.65,
+     "driver": "theme: bank perpetual / AT1",
+     "driver_weight": 14.12,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "US Treasury yield curve drivers",
+     "tier": "structural",
+     "score": 15.57,
+     "driver": "region: North America",
+     "driver_weight": 20.76,
+     "sources": [
+      "federalreserve.gov"
+     ]
+    },
+    {
+     "query": "Hong Kong residential property price index drivers",
+     "tier": "structural",
+     "score": 11.26,
+     "driver": "region: Hong Kong",
+     "driver_weight": 15.01,
+     "sources": [
+      "hkma.gov.hk",
+      "rvd.gov.hk"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0013": {
+  "fingerprint": {
+   "client_id": "CL-0013",
+   "total_usd": 36952084.120000005,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "North America",
+     "weight_pct": 67.17,
+     "direction": "rising",
+     "provenance": "5 holdings",
+     "key": "region:North America",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Greater China",
+     "weight_pct": 8.93,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "region:Greater China",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia ex-Japan",
+     "weight_pct": 6.72,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "region:Asia ex-Japan",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Information Technology",
+     "weight_pct": 57.06,
+     "direction": "rising",
+     "provenance": "4 holdings",
+     "key": "sector:Information Technology",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 5.5,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "HKD",
+     "weight_pct": 8.93,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "currency:HKD",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 32.54,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Single Stock",
+     "weight_pct": 27.54,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 15.65,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Yield Enhancement",
+     "weight_pct": 7.09,
+     "direction": "new",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Private Equity",
+     "weight_pct": 6.53,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Short Duration",
+     "weight_pct": 5.5,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 5.14,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "single-name concentration",
+     "weight_pct": 27.54,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0102,SYN-ST-0103",
+     "key": "theme:single-name concentration",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "cloud infrastructure",
+     "weight_pct": 7.09,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0502",
+     "key": "theme:cloud infrastructure",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "AI capex",
+     "weight_pct": 7.09,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0502",
+     "key": "theme:AI capex",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "yield enhancement structures",
+     "weight_pct": 7.09,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0502",
+     "key": "theme:yield enhancement structures",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "private equity secondaries",
+     "weight_pct": 6.53,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0301",
+     "key": "theme:private equity secondaries",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "US Technology Leaders Fund",
+     "weight_pct": 22.43,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0003",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Helios Cloud Systems Inc",
+     "weight_pct": 15.4,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0103",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Meridian Semiconductor Corp",
+     "weight_pct": 12.14,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0102",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "US Large Cap Core Fund",
+     "weight_pct": 10.11,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0002",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 86% / Illiquid 14%",
+     "weight_pct": 13.62,
+     "direction": "rising",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 31919284.12,
+      "illiquid_usd": 5032800,
+      "total_usd": 36952084.120000005
+     }
+    },
+    {
+     "dimension": "collateral",
+     "value": "Lombard Credit Facility CF-0003 LTV 20.39% vs 75.0% trigger",
+     "weight_pct": 11.37,
+     "direction": "falling",
+     "provenance": "CF-0003",
+     "key": "collateral:lombard",
+     "extra": {
+      "trajectory": [
+       23.24,
+       21.95,
+       22.73,
+       20.93,
+       20.39
+      ],
+      "trigger": 75,
+      "gap_pp": 54.61,
+      "breached_ever": false,
+      "ccy": "USD",
+      "drawn": 4200000
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 5.5,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "AI datacentre capital expenditure cycle",
+     "tier": "structural",
+     "score": 57.06,
+     "driver": "sector: Information Technology",
+     "driver_weight": 57.06,
+     "sources": [
+      "iea.org",
+      "sia.org"
+     ]
+    },
+    {
+     "query": "semiconductor supply chain concentration",
+     "tier": "structural",
+     "score": 57.06,
+     "driver": "sector: Information Technology",
+     "driver_weight": 57.06,
+     "sources": [
+      "iea.org",
+      "sia.org"
+     ]
+    },
+    {
+     "query": "US Treasury yield curve drivers",
+     "tier": "structural",
+     "score": 50.38,
+     "driver": "region: North America",
+     "driver_weight": 67.17,
+     "sources": [
+      "federalreserve.gov"
+     ]
+    },
+    {
+     "query": "FOMC meeting calendar and dot plot",
+     "tier": "forward",
+     "score": 35.26,
+     "driver": "region: North America",
+     "driver_weight": 67.17,
+     "sources": [
+      "federalreserve.gov"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 34.42,
+     "driver": "theme: single-name concentration",
+     "driver_weight": 27.54,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "Lombard lending advance rates and haircut policy",
+     "tier": "structural",
+     "score": 14.21,
+     "driver": "collateral: Lombard Credit Facility CF-0003 LTV 20.39% vs 75.0% trigger",
+     "driver_weight": 11.37,
+     "sources": [
+      "bis.org",
+      "finma.ch"
+     ]
+    },
+    {
+     "query": "margin call practice private banking collateral",
+     "tier": "structural",
+     "score": 14.21,
+     "driver": "collateral: Lombard Credit Facility CF-0003 LTV 20.39% vs 75.0% trigger",
+     "driver_weight": 11.37,
+     "sources": [
+      "bis.org",
+      "finma.ch"
+     ]
+    },
+    {
+     "query": "HKD peg convertibility undertaking",
+     "tier": "structural",
+     "score": 8.93,
+     "driver": "currency: HKD",
+     "driver_weight": 8.93,
+     "sources": [
+      "hkma.gov.hk"
+     ]
+    },
+    {
+     "query": "HIBOR SOFR spread mechanics",
+     "tier": "structural",
+     "score": 8.93,
+     "driver": "currency: HKD",
+     "driver_weight": 8.93,
+     "sources": [
+      "hkma.gov.hk"
+     ]
+    },
+    {
+     "query": "cloud infrastructure capex and depreciation cycle",
+     "tier": "structural",
+     "score": 8.86,
+     "driver": "theme: cloud infrastructure",
+     "driver_weight": 7.09,
+     "sources": []
+    },
+    {
+     "query": "AI capital expenditure sustainability debate",
+     "tier": "structural",
+     "score": 8.86,
+     "driver": "theme: AI capex",
+     "driver_weight": 7.09,
+     "sources": []
+    },
+    {
+     "query": "worst-of fixed coupon note downside risk",
+     "tier": "structural",
+     "score": 8.86,
+     "driver": "theme: yield enhancement structures",
+     "driver_weight": 7.09,
+     "sources": [
+      "sfc.hk",
+      "mas.gov.sg"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0014": {
+  "fingerprint": {
+   "client_id": "CL-0014",
+   "total_usd": 26488970.55,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Hong Kong",
+     "weight_pct": 54.83,
+     "direction": "stable",
+     "provenance": "5 holdings",
+     "key": "region:Hong Kong",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia",
+     "weight_pct": 31.33,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "region:Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Greater China",
+     "weight_pct": 13.84,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Greater China",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Real Estate",
+     "weight_pct": 49.03,
+     "direction": "stable",
+     "provenance": "4 holdings",
+     "key": "sector:Real Estate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Financials",
+     "weight_pct": 17.57,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "sector:Financials",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 13.76,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "HKD",
+     "weight_pct": 55.81,
+     "direction": "rising",
+     "provenance": "5 holdings",
+     "key": "currency:HKD",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Subordinated Perpetual",
+     "weight_pct": 30.43,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Direct Real Estate",
+     "weight_pct": 19.58,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 13.84,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "High Yield Credit",
+     "weight_pct": 13.76,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Single Stock",
+     "weight_pct": 9.54,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Accumulator",
+     "weight_pct": 7.05,
+     "direction": "new",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 5.8,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "bank perpetual / AT1",
+     "weight_pct": 30.43,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0206,SYN-FI-0207",
+     "key": "theme:bank perpetual / AT1",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "direct property",
+     "weight_pct": 19.58,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0307",
+     "key": "theme:direct property",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "single-name concentration",
+     "weight_pct": 9.54,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0106",
+     "key": "theme:single-name concentration",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "hong kong property developers",
+     "weight_pct": 7.05,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0503",
+     "key": "theme:hong kong property developers",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "accumulator structures",
+     "weight_pct": 7.05,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0503",
+     "key": "theme:accumulator structures",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Direct Property - Mid-Levels Apartment",
+     "weight_pct": 19.58,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0307",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Pacific Rim Bank 4.75% Perpetual",
+     "weight_pct": 17.57,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0206",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Greater China Equity Fund",
+     "weight_pct": 13.84,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0021",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Asia High Yield Bond Fund",
+     "weight_pct": 13.76,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0205",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Golden Harbour Properties 5.25% Perpetual",
+     "weight_pct": 12.87,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0207",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 43% / Illiquid 27%",
+     "weight_pct": 26.62,
+     "direction": "rising",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 11376113.96,
+      "illiquid_usd": 7051856.59,
+      "total_usd": 26488970.55
+     }
+    },
+    {
+     "dimension": "collateral",
+     "value": "Lombard Credit Facility CF-0002 LTV 69.41% vs 70.0% trigger",
+     "weight_pct": 28.04,
+     "direction": "rising",
+     "provenance": "CF-0002",
+     "key": "collateral:lombard",
+     "extra": {
+      "trajectory": [
+       53.93,
+       53.53,
+       65.62,
+       67.96,
+       69.41
+      ],
+      "trigger": 70,
+      "gap_pp": 0.59,
+      "breached_ever": false,
+      "ccy": "HKD",
+      "drawn": 58000000
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "HKD 60,000,000 — Mid-Levels redevelopment equity contribution",
+     "weight_pct": 29,
+     "direction": "n/a",
+     "provenance": "CN-013",
+     "key": "liability:property",
+     "extra": {
+      "usd": 7682458.386683739,
+      "due_from": "2026-11-01",
+      "due_to": "2027-06-30",
+      "certainty": "Confirmed",
+      "kind": "property"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 44.19,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "HKD peg convertibility undertaking",
+     "tier": "structural",
+     "score": 55.81,
+     "driver": "currency: HKD",
+     "driver_weight": 55.81,
+     "sources": [
+      "hkma.gov.hk"
+     ]
+    },
+    {
+     "query": "HIBOR SOFR spread mechanics",
+     "tier": "structural",
+     "score": 55.81,
+     "driver": "currency: HKD",
+     "driver_weight": 55.81,
+     "sources": [
+      "hkma.gov.hk"
+     ]
+    },
+    {
+     "query": "commercial real estate valuation lag and cap rates",
+     "tier": "structural",
+     "score": 49.03,
+     "driver": "sector: Real Estate",
+     "driver_weight": 49.03,
+     "sources": [
+      "bis.org",
+      "hkma.gov.hk"
+     ]
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 44.19,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 44.19,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "Hong Kong residential property price index drivers",
+     "tier": "structural",
+     "score": 41.12,
+     "driver": "region: Hong Kong",
+     "driver_weight": 54.83,
+     "sources": [
+      "hkma.gov.hk",
+      "rvd.gov.hk"
+     ]
+    },
+    {
+     "query": "Hong Kong redevelopment project approval and financing",
+     "tier": "structural",
+     "score": 41.12,
+     "driver": "region: Hong Kong",
+     "driver_weight": 54.83,
+     "sources": [
+      "hkma.gov.hk",
+      "rvd.gov.hk"
+     ]
+    },
+    {
+     "query": "AT1 perpetual call risk and extension",
+     "tier": "structural",
+     "score": 38.04,
+     "driver": "theme: bank perpetual / AT1",
+     "driver_weight": 30.43,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "bank perpetual coupon deferral mechanics",
+     "tier": "structural",
+     "score": 38.04,
+     "driver": "theme: bank perpetual / AT1",
+     "driver_weight": 30.43,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "Basel III treatment of additional tier 1 capital",
+     "tier": "structural",
+     "score": 38.04,
+     "driver": "theme: bank perpetual / AT1",
+     "driver_weight": 30.43,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "Lombard lending advance rates and haircut policy",
+     "tier": "structural",
+     "score": 35.05,
+     "driver": "collateral: Lombard Credit Facility CF-0002 LTV 69.41% vs 70.0% trigger",
+     "driver_weight": 28.04,
+     "sources": [
+      "bis.org",
+      "finma.ch"
+     ]
+    },
+    {
+     "query": "margin call practice private banking collateral",
+     "tier": "structural",
+     "score": 35.05,
+     "driver": "collateral: Lombard Credit Facility CF-0002 LTV 69.41% vs 70.0% trigger",
+     "driver_weight": 28.04,
+     "sources": [
+      "bis.org",
+      "finma.ch"
+     ]
+    },
+    {
+     "query": "residential property purchase deposit timing and financing",
+     "tier": "structural",
+     "score": 33.35,
+     "driver": "liability: HKD 60,000,000 — Mid-Levels redevelopment equity contribution",
+     "driver_weight": 29,
+     "sources": [
+      "mas.gov.sg",
+      "hkma.gov.hk"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0015": {
+  "fingerprint": {
+   "client_id": "CL-0015",
+   "total_usd": 14985635.85,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "North America",
+     "weight_pct": 29.73,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "region:North America",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia ex-Japan",
+     "weight_pct": 9.28,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "region:Asia ex-Japan",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Japan",
+     "weight_pct": 7.59,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "region:Japan",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Information Technology",
+     "weight_pct": 29.73,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "sector:Information Technology",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Equity Long Short",
+     "weight_pct": 11.9,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "sector:Equity Long Short",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Macro",
+     "weight_pct": 10.03,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Macro",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 4.07,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "JPY",
+     "weight_pct": 7.59,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "currency:JPY",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 27.35,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Hedge Fund",
+     "weight_pct": 21.94,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Yield Enhancement",
+     "weight_pct": 12.84,
+     "direction": "new",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Single Stock",
+     "weight_pct": 9.98,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 9.28,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Diversified Commodities",
+     "weight_pct": 7.54,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 7.01,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Short Duration",
+     "weight_pct": 4.07,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "hedge fund liquidity terms",
+     "weight_pct": 21.94,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0303,SYN-AL-0304",
+     "key": "theme:hedge fund liquidity terms",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "energy majors",
+     "weight_pct": 12.84,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0501",
+     "key": "theme:energy majors",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "offshore oil services",
+     "weight_pct": 12.84,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0501",
+     "key": "theme:offshore oil services",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "cloud infrastructure",
+     "weight_pct": 12.84,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0501",
+     "key": "theme:cloud infrastructure",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "yield enhancement structures",
+     "weight_pct": 12.84,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0501",
+     "key": "theme:yield enhancement structures",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "single-name concentration",
+     "weight_pct": 9.98,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0102",
+     "key": "theme:single-name concentration",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "US Technology Leaders Fund",
+     "weight_pct": 19.76,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0003",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Fixed Coupon Note ref. Basket A, 8.50% p.a., 12M",
+     "weight_pct": 12.84,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0501",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Harborline Long Short Equity Fund",
+     "weight_pct": 11.9,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0304",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Tanjong Global Macro Fund",
+     "weight_pct": 10.03,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0303",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 65% / Illiquid 13%",
+     "weight_pct": 12.84,
+     "direction": "new",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 9774235.85,
+      "illiquid_usd": 1924200,
+      "total_usd": 14985635.85
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 4.07,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "AI datacentre capital expenditure cycle",
+     "tier": "structural",
+     "score": 29.73,
+     "driver": "sector: Information Technology",
+     "driver_weight": 29.73,
+     "sources": [
+      "iea.org",
+      "sia.org"
+     ]
+    },
+    {
+     "query": "semiconductor supply chain concentration",
+     "tier": "structural",
+     "score": 29.73,
+     "driver": "sector: Information Technology",
+     "driver_weight": 29.73,
+     "sources": [
+      "iea.org",
+      "sia.org"
+     ]
+    },
+    {
+     "query": "hedge fund gates side pockets redemption notice",
+     "tier": "structural",
+     "score": 27.43,
+     "driver": "theme: hedge fund liquidity terms",
+     "driver_weight": 21.94,
+     "sources": [
+      "iosco.org"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 22.72,
+     "driver": "concentration: US Technology Leaders Fund",
+     "driver_weight": 19.76,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "US Treasury yield curve drivers",
+     "tier": "structural",
+     "score": 22.3,
+     "driver": "region: North America",
+     "driver_weight": 29.73,
+     "sources": [
+      "federalreserve.gov"
+     ]
+    },
+    {
+     "query": "integrated oil major cashflow breakeven",
+     "tier": "structural",
+     "score": 16.05,
+     "driver": "theme: energy majors",
+     "driver_weight": 12.84,
+     "sources": [
+      "iea.org"
+     ]
+    },
+    {
+     "query": "offshore oil services day rates",
+     "tier": "structural",
+     "score": 16.05,
+     "driver": "theme: offshore oil services",
+     "driver_weight": 12.84,
+     "sources": [
+      "iea.org"
+     ]
+    },
+    {
+     "query": "cloud infrastructure capex and depreciation cycle",
+     "tier": "structural",
+     "score": 16.05,
+     "driver": "theme: cloud infrastructure",
+     "driver_weight": 12.84,
+     "sources": []
+    },
+    {
+     "query": "worst-of fixed coupon note downside risk",
+     "tier": "structural",
+     "score": 16.05,
+     "driver": "theme: yield enhancement structures",
+     "driver_weight": 12.84,
+     "sources": [
+      "sfc.hk",
+      "mas.gov.sg"
+     ]
+    },
+    {
+     "query": "structured product suitability disclosure requirements",
+     "tier": "structural",
+     "score": 16.05,
+     "driver": "theme: yield enhancement structures",
+     "driver_weight": 12.84,
+     "sources": [
+      "sfc.hk",
+      "mas.gov.sg"
+     ]
+    },
+    {
+     "query": "FOMC meeting calendar and dot plot",
+     "tier": "forward",
+     "score": 15.61,
+     "driver": "region: North America",
+     "driver_weight": 29.73,
+     "sources": [
+      "federalreserve.gov"
+     ]
+    },
+    {
+     "query": "equity long short net exposure and crowding",
+     "tier": "structural",
+     "score": 11.9,
+     "driver": "sector: Equity Long Short",
+     "driver_weight": 11.9,
+     "sources": []
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0016": {
+  "fingerprint": {
+   "client_id": "CL-0016",
+   "total_usd": 14508066.73,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Japan",
+     "weight_pct": 43.59,
+     "direction": "stable",
+     "provenance": "3 holdings",
+     "key": "region:Japan",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "North America",
+     "weight_pct": 10.3,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:North America",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Health Care",
+     "weight_pct": 26.97,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": "sector:Health Care",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 21.83,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "JPY",
+     "weight_pct": 43.59,
+     "direction": "stable",
+     "provenance": "3 holdings",
+     "key": "currency:JPY",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 47.62,
+     "direction": "rising",
+     "provenance": "4 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Single Stock",
+     "weight_pct": 20.1,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 13.41,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Short Duration",
+     "weight_pct": 8.41,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 7.8,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "single-name concentration",
+     "weight_pct": 20.1,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0108",
+     "key": "theme:single-name concentration",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Kanto Pharma Holdings KK",
+     "weight_pct": 20.1,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0108",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Japan Equity Fund",
+     "weight_pct": 15.68,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0005",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Developed Equity Index Fund",
+     "weight_pct": 14.76,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0001",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Investment Grade Corporate Bond Fund",
+     "weight_pct": 13.41,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0203",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "US Large Cap Core Fund",
+     "weight_pct": 10.3,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0002",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 100% / Illiquid 0%",
+     "weight_pct": 0,
+     "direction": "new",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 14508066.73,
+      "illiquid_usd": 0,
+      "total_usd": 14508066.73
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "JPY 18,000,000 — Support for elderly parents in Japan",
+     "weight_pct": 0.78,
+     "direction": "n/a",
+     "provenance": "CN-014",
+     "key": "liability:other",
+     "extra": {
+      "usd": 113207.54716981133,
+      "due_from": "2026-01-01",
+      "due_to": "2034-01-01",
+      "certainty": "Confirmed",
+      "kind": "other"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 21.83,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "JPY carry trade and intervention history",
+     "tier": "structural",
+     "score": 43.59,
+     "driver": "currency: JPY",
+     "driver_weight": 43.59,
+     "sources": [
+      "boj.or.jp"
+     ]
+    },
+    {
+     "query": "Bank of Japan yield curve control and JGB market",
+     "tier": "structural",
+     "score": 32.69,
+     "driver": "region: Japan",
+     "driver_weight": 43.59,
+     "sources": [
+      "boj.or.jp"
+     ]
+    },
+    {
+     "query": "healthcare policy and drug pricing risk",
+     "tier": "structural",
+     "score": 26.97,
+     "driver": "sector: Health Care",
+     "driver_weight": 26.97,
+     "sources": []
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 25.13,
+     "driver": "theme: single-name concentration",
+     "driver_weight": 20.1,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "Bank of Japan policy meeting calendar",
+     "tier": "forward",
+     "score": 22.88,
+     "driver": "region: Japan",
+     "driver_weight": 43.59,
+     "sources": [
+      "boj.or.jp"
+     ]
+    },
+    {
+     "query": "investment grade credit spread drivers",
+     "tier": "structural",
+     "score": 21.83,
+     "driver": "sector: Corporate",
+     "driver_weight": 21.83,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 21.83,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 21.83,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "FOMC calendar",
+     "tier": "forward",
+     "score": 15.28,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 21.83,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "ECB calendar",
+     "tier": "forward",
+     "score": 15.28,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 21.83,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "US Treasury yield curve drivers",
+     "tier": "structural",
+     "score": 7.73,
+     "driver": "region: North America",
+     "driver_weight": 10.3,
+     "sources": [
+      "federalreserve.gov"
+     ]
+    },
+    {
+     "query": "FOMC meeting calendar and dot plot",
+     "tier": "forward",
+     "score": 5.41,
+     "driver": "region: North America",
+     "driver_weight": 10.3,
+     "sources": [
+      "federalreserve.gov"
+     ]
+    },
+    {
+     "query": "private client cash flow planning horizon",
+     "tier": "structural",
+     "score": 1.15,
+     "driver": "liability: JPY 18,000,000 — Support for elderly parents in Japan",
+     "driver_weight": 0.78,
+     "sources": []
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0017": {
+  "fingerprint": {
+   "client_id": "CL-0017",
+   "total_usd": 87902980,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "North America",
+     "weight_pct": 15.9,
+     "direction": "stable",
+     "provenance": "3 holdings",
+     "key": "region:North America",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Europe",
+     "weight_pct": 4.58,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Europe",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia ex-Japan",
+     "weight_pct": 4.52,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Asia ex-Japan",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia",
+     "weight_pct": 3.74,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 24.14,
+     "direction": "falling",
+     "provenance": "4 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Macro",
+     "weight_pct": 6.35,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Macro",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Sovereign",
+     "weight_pct": 5.06,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Sovereign",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Equity Long Short",
+     "weight_pct": 4.06,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Equity Long Short",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Information Technology",
+     "weight_pct": 4.04,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Information Technology",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Gold",
+     "weight_pct": 3.4,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": "sector:Gold",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "EUR",
+     "weight_pct": 4.58,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "currency:EUR",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 28.15,
+     "direction": "rising",
+     "provenance": "5 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Private Equity",
+     "weight_pct": 13.72,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Private Credit",
+     "weight_pct": 13.72,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Hedge Fund",
+     "weight_pct": 10.41,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 10.38,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 6.12,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Government Bond",
+     "weight_pct": 5.06,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 3.98,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Precious Metals",
+     "weight_pct": 3.4,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "private equity secondaries",
+     "weight_pct": 13.72,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0301",
+     "key": "theme:private equity secondaries",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "private credit",
+     "weight_pct": 13.72,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0302,SYN-AL-0309",
+     "key": "theme:private credit",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "hedge fund liquidity terms",
+     "weight_pct": 10.41,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0303,SYN-AL-0304",
+     "key": "theme:hedge fund liquidity terms",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "gold",
+     "weight_pct": 3.4,
+     "direction": "n/a",
+     "provenance": "SYN-CM-0402",
+     "key": "theme:gold",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Meridian Private Equity Fund VII",
+     "weight_pct": 13.72,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0301",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Orchard Private Credit Fund II",
+     "weight_pct": 10.87,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0302",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Developed Equity Index Fund",
+     "weight_pct": 10.83,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0001",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 62% / Illiquid 14%",
+     "weight_pct": 13.72,
+     "direction": "stable",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 54624980,
+      "illiquid_usd": 12064000,
+      "total_usd": 87902980
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "USD 900,000 — G3 education programme",
+     "weight_pct": 1.02,
+     "direction": "n/a",
+     "provenance": "CN-015",
+     "key": "liability:education",
+     "extra": {
+      "usd": 900000,
+      "due_from": "2026-09-01",
+      "due_to": "2034-09-01",
+      "certainty": "Confirmed",
+      "kind": "education"
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "USD 15,800,000 — Outstanding private markets commitments",
+     "weight_pct": 17.97,
+     "direction": "n/a",
+     "provenance": "CN-016",
+     "key": "liability:capital call",
+     "extra": {
+      "usd": 15800000,
+      "due_from": "2026-10-01",
+      "due_to": "2028-06-30",
+      "certainty": "Confirmed",
+      "kind": "capital call"
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "Uncalled USD 14,000,000 — Meridian Private Equity Fund VII",
+     "weight_pct": 15.93,
+     "direction": "n/a",
+     "provenance": "COM-001",
+     "key": "liability:capital call",
+     "extra": {
+      "usd": 14000000,
+      "window": "2026 Q4 to 2028 Q2",
+      "certainty": "Committed"
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "Uncalled USD 1,800,000 — Global Infrastructure Debt Fund",
+     "weight_pct": 2.05,
+     "direction": "n/a",
+     "provenance": "COM-002",
+     "key": "liability:capital call",
+     "extra": {
+      "usd": 1800000,
+      "window": "2026 Q4 to 2027 Q3",
+      "certainty": "Committed"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 18.34,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "investment grade credit spread drivers",
+     "tier": "structural",
+     "score": 24.14,
+     "driver": "sector: Corporate",
+     "driver_weight": 24.14,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "private fund capital call default consequences",
+     "tier": "structural",
+     "score": 20.67,
+     "driver": "liability: USD 15,800,000 — Outstanding private markets commitments",
+     "driver_weight": 17.97,
+     "sources": []
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 18.34,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 18.34,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "private equity secondary market pricing and discounts",
+     "tier": "structural",
+     "score": 17.15,
+     "driver": "theme: private equity secondaries",
+     "driver_weight": 13.72,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "uncalled commitment capital call mechanics",
+     "tier": "structural",
+     "score": 17.15,
+     "driver": "theme: private equity secondaries",
+     "driver_weight": 13.72,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "private credit fund gating and redemption suspension",
+     "tier": "structural",
+     "score": 17.15,
+     "driver": "theme: private credit",
+     "driver_weight": 13.72,
+     "sources": [
+      "iosco.org",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "private credit NAV valuation lag",
+     "tier": "structural",
+     "score": 17.15,
+     "driver": "theme: private credit",
+     "driver_weight": 13.72,
+     "sources": [
+      "iosco.org",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 15.78,
+     "driver": "concentration: Meridian Private Equity Fund VII",
+     "driver_weight": 13.72,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "hedge fund gates side pockets redemption notice",
+     "tier": "structural",
+     "score": 13.01,
+     "driver": "theme: hedge fund liquidity terms",
+     "driver_weight": 10.41,
+     "sources": [
+      "iosco.org"
+     ]
+    },
+    {
+     "query": "FOMC calendar",
+     "tier": "forward",
+     "score": 12.84,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 18.34,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "ECB calendar",
+     "tier": "forward",
+     "score": 12.84,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 18.34,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "US Treasury yield curve drivers",
+     "tier": "structural",
+     "score": 11.93,
+     "driver": "region: North America",
+     "driver_weight": 15.9,
+     "sources": [
+      "federalreserve.gov"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0018": {
+  "fingerprint": {
+   "client_id": "CL-0018",
+   "total_usd": 22597824.970000003,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Europe",
+     "weight_pct": 53.2,
+     "direction": "falling",
+     "provenance": "4 holdings",
+     "key": "region:Europe",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Greater China",
+     "weight_pct": 8.11,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Greater China",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Hong Kong",
+     "weight_pct": 3.4,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Hong Kong",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 22.98,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Consumer Discretionary",
+     "weight_pct": 16.28,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "sector:Consumer Discretionary",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Gold",
+     "weight_pct": 14.04,
+     "direction": "rising",
+     "provenance": "2 holdings",
+     "key": "sector:Gold",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "EUR",
+     "weight_pct": 53.2,
+     "direction": "falling",
+     "provenance": "4 holdings",
+     "key": "currency:EUR",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "HKD",
+     "weight_pct": 11.51,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": "currency:HKD",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 42.29,
+     "direction": "stable",
+     "provenance": "3 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 22.98,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Precious Metals",
+     "weight_pct": 14.04,
+     "direction": "rising",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 12.58,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 8.11,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "gold",
+     "weight_pct": 14.04,
+     "direction": "n/a",
+     "provenance": "SYN-CM-0401,SYN-CM-0402",
+     "key": "theme:gold",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Luxury and Consumer Brands Fund",
+     "weight_pct": 16.28,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0010",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "EUR Investment Grade Bond Fund",
+     "weight_pct": 14.37,
+     "direction": "n/a",
+     "provenance": "SYN-FI-0209",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "European Equity Fund",
+     "weight_pct": 13.37,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0004",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Developed Equity Index Fund",
+     "weight_pct": 12.64,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0001",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Physical Gold Allocated Account",
+     "weight_pct": 10.64,
+     "direction": "n/a",
+     "provenance": "SYN-CM-0401",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 100% / Illiquid 0%",
+     "weight_pct": 0,
+     "direction": "new",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 22597824.970000003,
+      "illiquid_usd": 0,
+      "total_usd": 22597824.970000003
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "EUR 850,000 — Italian succession planning and notarial costs",
+     "weight_pct": 4.11,
+     "direction": "n/a",
+     "provenance": "CN-020",
+     "key": "liability:other",
+     "extra": {
+      "usd": 928200.0000000001,
+      "due_from": "2027-06-01",
+      "due_to": "2028-06-30",
+      "certainty": "Likely",
+      "kind": "other"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 22.98,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "EUR rate differential drivers",
+     "tier": "structural",
+     "score": 53.2,
+     "driver": "currency: EUR",
+     "driver_weight": 53.2,
+     "sources": [
+      "ecb.europa.eu"
+     ]
+    },
+    {
+     "query": "ECB monetary policy transmission euro area",
+     "tier": "structural",
+     "score": 39.9,
+     "driver": "region: Europe",
+     "driver_weight": 53.2,
+     "sources": [
+      "ecb.europa.eu"
+     ]
+    },
+    {
+     "query": "ECB governing council meeting calendar",
+     "tier": "forward",
+     "score": 27.93,
+     "driver": "region: Europe",
+     "driver_weight": 53.2,
+     "sources": [
+      "ecb.europa.eu"
+     ]
+    },
+    {
+     "query": "investment grade credit spread drivers",
+     "tier": "structural",
+     "score": 22.98,
+     "driver": "sector: Corporate",
+     "driver_weight": 22.98,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 22.98,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 22.98,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 18.72,
+     "driver": "concentration: Global Luxury and Consumer Brands Fund",
+     "driver_weight": 16.28,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "gold price drivers real yields and central bank demand",
+     "tier": "structural",
+     "score": 17.55,
+     "driver": "theme: gold",
+     "driver_weight": 14.04,
+     "sources": [
+      "gold.org"
+     ]
+    },
+    {
+     "query": "Asian consumer discretionary demand drivers",
+     "tier": "structural",
+     "score": 16.28,
+     "driver": "sector: Consumer Discretionary",
+     "driver_weight": 16.28,
+     "sources": []
+    },
+    {
+     "query": "FOMC calendar",
+     "tier": "forward",
+     "score": 16.09,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 22.98,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "ECB calendar",
+     "tier": "forward",
+     "score": 16.09,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 22.98,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "gold demand drivers central bank buying",
+     "tier": "structural",
+     "score": 14.04,
+     "driver": "sector: Gold",
+     "driver_weight": 14.04,
+     "sources": [
+      "gold.org",
+      "imf.org"
+     ]
+    },
+    {
+     "query": "HKD peg convertibility undertaking",
+     "tier": "structural",
+     "score": 11.51,
+     "driver": "currency: HKD",
+     "driver_weight": 11.51,
+     "sources": [
+      "hkma.gov.hk"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0019": {
+  "fingerprint": {
+   "client_id": "CL-0019",
+   "total_usd": 32214266.33,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "Asia",
+     "weight_pct": 12.9,
+     "direction": "new",
+     "provenance": "1 holdings",
+     "key": "region:Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Hong Kong",
+     "weight_pct": 11.41,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Hong Kong",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "North America",
+     "weight_pct": 9.28,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "region:North America",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia Pacific",
+     "weight_pct": 8.88,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Asia Pacific",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Emerging Markets",
+     "weight_pct": 6.61,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "region:Emerging Markets",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia ex-Japan",
+     "weight_pct": 6.16,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "region:Asia ex-Japan",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Industrials",
+     "weight_pct": 20.3,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": "sector:Industrials",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 9.06,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Energy",
+     "weight_pct": 8.94,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Energy",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Sovereign",
+     "weight_pct": 6.61,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": "sector:Sovereign",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Macro",
+     "weight_pct": 6,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "sector:Macro",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "HKD",
+     "weight_pct": 24.31,
+     "direction": "rising",
+     "provenance": "2 holdings",
+     "key": "currency:HKD",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 31.51,
+     "direction": "falling",
+     "provenance": "3 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 15.05,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Yield Enhancement",
+     "weight_pct": 12.9,
+     "direction": "new",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Single Stock",
+     "weight_pct": 11.41,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 9.06,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 7.45,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Debt",
+     "weight_pct": 6.61,
+     "direction": "falling",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Hedge Fund",
+     "weight_pct": 6,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "tanker shipping",
+     "weight_pct": 12.9,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0505",
+     "key": "theme:tanker shipping",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "energy majors",
+     "weight_pct": 12.9,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0505",
+     "key": "theme:energy majors",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "indonesian coal",
+     "weight_pct": 12.9,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0505",
+     "key": "theme:indonesian coal",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "yield enhancement structures",
+     "weight_pct": 12.9,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0505",
+     "key": "theme:yield enhancement structures",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "single-name concentration",
+     "weight_pct": 11.41,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0104",
+     "key": "theme:single-name concentration",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "hedge fund liquidity terms",
+     "weight_pct": 6,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0303",
+     "key": "theme:hedge fund liquidity terms",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Developed Equity Index Fund",
+     "weight_pct": 13.3,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0001",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Fixed Coupon Note ref. Basket C, 9.20% p.a., 12M",
+     "weight_pct": 12.9,
+     "direction": "n/a",
+     "provenance": "SYN-SP-0505",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Pacific Orient Shipping Ltd",
+     "weight_pct": 11.41,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0104",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 81% / Illiquid 13%",
+     "weight_pct": 12.9,
+     "direction": "new",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 26124856.34,
+      "illiquid_usd": 4156209.99,
+      "total_usd": 32214266.33
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "USD 5,000,000 — Seed capital for Singapore family office entity",
+     "weight_pct": 15.52,
+     "direction": "n/a",
+     "provenance": "CN-017",
+     "key": "liability:other",
+     "extra": {
+      "usd": 5000000,
+      "due_from": "2027-01-01",
+      "due_to": "2027-12-31",
+      "certainty": "Likely",
+      "kind": "other"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 15.67,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "HKD peg convertibility undertaking",
+     "tier": "structural",
+     "score": 24.31,
+     "driver": "currency: HKD",
+     "driver_weight": 24.31,
+     "sources": [
+      "hkma.gov.hk"
+     ]
+    },
+    {
+     "query": "HIBOR SOFR spread mechanics",
+     "tier": "structural",
+     "score": 24.31,
+     "driver": "currency: HKD",
+     "driver_weight": 24.31,
+     "sources": [
+      "hkma.gov.hk"
+     ]
+    },
+    {
+     "query": "global freight and shipping rate drivers",
+     "tier": "structural",
+     "score": 20.3,
+     "driver": "sector: Industrials",
+     "driver_weight": 20.3,
+     "sources": [
+      "unctad.org"
+     ]
+    },
+    {
+     "query": "private client cash flow planning horizon",
+     "tier": "structural",
+     "score": 17.85,
+     "driver": "liability: USD 5,000,000 — Seed capital for Singapore family office entity",
+     "driver_weight": 15.52,
+     "sources": []
+    },
+    {
+     "query": "tanker war risk insurance premium",
+     "tier": "structural",
+     "score": 16.13,
+     "driver": "theme: tanker shipping",
+     "driver_weight": 12.9,
+     "sources": [
+      "unctad.org",
+      "iea.org"
+     ]
+    },
+    {
+     "query": "chokepoint transit volumes and rerouting cost",
+     "tier": "structural",
+     "score": 16.13,
+     "driver": "theme: tanker shipping",
+     "driver_weight": 12.9,
+     "sources": [
+      "unctad.org",
+      "iea.org"
+     ]
+    },
+    {
+     "query": "integrated oil major cashflow breakeven",
+     "tier": "structural",
+     "score": 16.13,
+     "driver": "theme: energy majors",
+     "driver_weight": 12.9,
+     "sources": [
+      "iea.org"
+     ]
+    },
+    {
+     "query": "Newcastle thermal coal price drivers",
+     "tier": "structural",
+     "score": 16.13,
+     "driver": "theme: indonesian coal",
+     "driver_weight": 12.9,
+     "sources": [
+      "iea.org",
+      "esdm.go.id"
+     ]
+    },
+    {
+     "query": "Indonesia coal export policy",
+     "tier": "structural",
+     "score": 16.13,
+     "driver": "theme: indonesian coal",
+     "driver_weight": 12.9,
+     "sources": [
+      "iea.org",
+      "esdm.go.id"
+     ]
+    },
+    {
+     "query": "worst-of fixed coupon note downside risk",
+     "tier": "structural",
+     "score": 16.13,
+     "driver": "theme: yield enhancement structures",
+     "driver_weight": 12.9,
+     "sources": [
+      "sfc.hk",
+      "mas.gov.sg"
+     ]
+    },
+    {
+     "query": "structured product suitability disclosure requirements",
+     "tier": "structural",
+     "score": 16.13,
+     "driver": "theme: yield enhancement structures",
+     "driver_weight": 12.9,
+     "sources": [
+      "sfc.hk",
+      "mas.gov.sg"
+     ]
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 15.67,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 15.67,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ },
+ "CL-0020": {
+  "fingerprint": {
+   "client_id": "CL-0020",
+   "total_usd": 19059758.28,
+   "snapshot": "2026-08-26",
+   "elements": [
+    {
+     "dimension": "region",
+     "value": "North America",
+     "weight_pct": 13.98,
+     "direction": "rising",
+     "provenance": "1 holdings",
+     "key": "region:North America",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Singapore",
+     "weight_pct": 11.93,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Singapore",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "South Asia",
+     "weight_pct": 9.87,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:South Asia",
+     "extra": {}
+    },
+    {
+     "dimension": "region",
+     "value": "Asia ex-Japan",
+     "weight_pct": 9.38,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "region:Asia ex-Japan",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Health Care",
+     "weight_pct": 29.36,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": "sector:Health Care",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Corporate",
+     "weight_pct": 14.13,
+     "direction": "falling",
+     "provenance": "2 holdings",
+     "key": "sector:Corporate",
+     "extra": {}
+    },
+    {
+     "dimension": "sector",
+     "value": "Information Technology",
+     "weight_pct": 13.98,
+     "direction": "rising",
+     "provenance": "1 holdings",
+     "key": "sector:Information Technology",
+     "extra": {}
+    },
+    {
+     "dimension": "currency",
+     "value": "SGD",
+     "weight_pct": 11.93,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": "currency:SGD",
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Developed Market Equity",
+     "weight_pct": 43.9,
+     "direction": "rising",
+     "provenance": "3 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Emerging Market Equity",
+     "weight_pct": 19.25,
+     "direction": "stable",
+     "provenance": "2 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Single Stock",
+     "weight_pct": 11.93,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Short Duration",
+     "weight_pct": 8,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Private Equity",
+     "weight_pct": 6.33,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Investment Grade Credit",
+     "weight_pct": 6.13,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "structure",
+     "value": "Deposit",
+     "weight_pct": 4.46,
+     "direction": "stable",
+     "provenance": "1 holdings",
+     "key": null,
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "single-name concentration",
+     "weight_pct": 11.93,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0109",
+     "key": "theme:single-name concentration",
+     "extra": {}
+    },
+    {
+     "dimension": "theme",
+     "value": "private equity secondaries",
+     "weight_pct": 6.33,
+     "direction": "n/a",
+     "provenance": "SYN-AL-0301",
+     "key": "theme:private equity secondaries",
+     "extra": {}
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Healthcare Equity Fund",
+     "weight_pct": 17.43,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0006",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "US Technology Leaders Fund",
+     "weight_pct": 13.98,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0003",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Global Developed Equity Index Fund",
+     "weight_pct": 12.49,
+     "direction": "n/a",
+     "provenance": "SYN-EQ-0001",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "N"
+     }
+    },
+    {
+     "dimension": "concentration",
+     "value": "Verdant Health Group Ltd",
+     "weight_pct": 11.93,
+     "direction": "n/a",
+     "provenance": "SYN-ST-0109",
+     "key": "theme:single-name concentration",
+     "extra": {
+      "limit_applies": "Y"
+     }
+    },
+    {
+     "dimension": "liquidity",
+     "value": "Daily 94% / Illiquid 6%",
+     "weight_pct": 6.33,
+     "direction": "stable",
+     "provenance": "holdings.liquidity_tier",
+     "key": null,
+     "extra": {
+      "daily_usd": 17853358.28,
+      "illiquid_usd": 1206400,
+      "total_usd": 19059758.28
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "USD 3,600,000 — Hong Kong property purchase",
+     "weight_pct": 18.89,
+     "direction": "n/a",
+     "provenance": "CN-018",
+     "key": "liability:property",
+     "extra": {
+      "usd": 3600000,
+      "due_from": "2027-04-01",
+      "due_to": "2027-12-31",
+      "certainty": "Likely",
+      "kind": "property"
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "USD 2,500,000 — Healthcare foundation seed funding",
+     "weight_pct": 13.12,
+     "direction": "n/a",
+     "provenance": "CN-019",
+     "key": "liability:philanthropy",
+     "extra": {
+      "usd": 2500000,
+      "due_from": "2028-01-01",
+      "due_to": "2028-12-31",
+      "certainty": "Aspirational",
+      "kind": "philanthropy"
+     }
+    },
+    {
+     "dimension": "liability",
+     "value": "Uncalled USD 900,000 — Meridian Private Equity Fund VII",
+     "weight_pct": 4.72,
+     "direction": "n/a",
+     "provenance": "COM-005",
+     "key": "liability:capital call",
+     "extra": {
+      "usd": 900000,
+      "window": "2027 Q1 to 2028 Q3",
+      "certainty": "Committed"
+     }
+    },
+    {
+     "dimension": "rate",
+     "value": "long duration fixed income",
+     "weight_pct": 14.13,
+     "direction": "n/a",
+     "provenance": "asset_class=Fixed Income",
+     "key": "rate:long duration",
+     "extra": {}
+    }
+   ]
+  },
+  "agenda": {
+   "items": [
+    {
+     "query": "healthcare policy and drug pricing risk",
+     "tier": "structural",
+     "score": 29.36,
+     "driver": "sector: Health Care",
+     "driver_weight": 29.36,
+     "sources": []
+    },
+    {
+     "query": "residential property purchase deposit timing and financing",
+     "tier": "structural",
+     "score": 21.72,
+     "driver": "liability: USD 3,600,000 — Hong Kong property purchase",
+     "driver_weight": 18.89,
+     "sources": [
+      "mas.gov.sg",
+      "hkma.gov.hk"
+     ]
+    },
+    {
+     "query": "single stock concentration risk hedging for private clients",
+     "tier": "structural",
+     "score": 20.04,
+     "driver": "concentration: Global Healthcare Equity Fund",
+     "driver_weight": 17.43,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "property cooling measures",
+     "tier": "forward",
+     "score": 15.21,
+     "driver": "liability: USD 3,600,000 — Hong Kong property purchase",
+     "driver_weight": 18.89,
+     "sources": [
+      "mas.gov.sg",
+      "hkma.gov.hk"
+     ]
+    },
+    {
+     "query": "charitable foundation funding structures",
+     "tier": "structural",
+     "score": 15.09,
+     "driver": "liability: USD 2,500,000 — Healthcare foundation seed funding",
+     "driver_weight": 13.12,
+     "sources": []
+    },
+    {
+     "query": "investment grade credit spread drivers",
+     "tier": "structural",
+     "score": 14.13,
+     "driver": "sector: Corporate",
+     "driver_weight": 14.13,
+     "sources": [
+      "bis.org"
+     ]
+    },
+    {
+     "query": "long duration bond price sensitivity to yields",
+     "tier": "structural",
+     "score": 14.13,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 14.13,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    },
+    {
+     "query": "AI datacentre capital expenditure cycle",
+     "tier": "structural",
+     "score": 13.98,
+     "driver": "sector: Information Technology",
+     "driver_weight": 13.98,
+     "sources": [
+      "iea.org",
+      "sia.org"
+     ]
+    },
+    {
+     "query": "semiconductor supply chain concentration",
+     "tier": "structural",
+     "score": 13.98,
+     "driver": "sector: Information Technology",
+     "driver_weight": 13.98,
+     "sources": [
+      "iea.org",
+      "sia.org"
+     ]
+    },
+    {
+     "query": "MAS SGD NEER policy band mechanics",
+     "tier": "structural",
+     "score": 11.93,
+     "driver": "currency: SGD",
+     "driver_weight": 11.93,
+     "sources": [
+      "mas.gov.sg"
+     ]
+    },
+    {
+     "query": "US Treasury yield curve drivers",
+     "tier": "structural",
+     "score": 10.49,
+     "driver": "region: North America",
+     "driver_weight": 13.98,
+     "sources": [
+      "federalreserve.gov"
+     ]
+    },
+    {
+     "query": "FOMC calendar",
+     "tier": "forward",
+     "score": 9.89,
+     "driver": "rate: long duration fixed income",
+     "driver_weight": 14.13,
+     "sources": [
+      "federalreserve.gov",
+      "ecb.europa.eu",
+      "bis.org"
+     ]
+    }
+   ],
+   "gaps": []
+  }
+ }
+}

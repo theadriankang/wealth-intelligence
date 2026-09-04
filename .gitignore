@@ -7,3 +7,7 @@ dist
 .vercel
 .env*
 *.bak
+
+# pipeline artefacts: bundles are rebuildable, recordings are machine-local
+out/
+.cache/

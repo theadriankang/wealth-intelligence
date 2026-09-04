@@ -188,13 +188,18 @@ async function runPolicySentinel() {
   renderAll();
   const btn = document.getElementById("policy-scan-btn");
   if (btn) btn.textContent = "Scanning policy...";
-  S.policyScan = await runPolicyScan();
-  S.policyScanState = "idle";
-  since = 0;
-  refreshEvaluation();
-  renderAll();
-  maybeNarrateOpenClient();
-  openPolicyTrial();
+  try {
+    S.policyScan = await runPolicyScan();
+    since = 0;
+    refreshEvaluation();
+    maybeNarrateOpenClient();
+    openPolicyTrial();
+  } catch (err) {
+    console.error("policy scan failed", err);
+  } finally {
+    S.policyScanState = "idle";
+    renderAll();
+  }
 }
 
 export function renderAll() {
