@@ -114,7 +114,7 @@ function refresh(what) {
 }
 
 /** The whole evaluation, recomputed from current signals. Pure — no I/O, no LLM. */
-export function refreshEvaluation() {
+function refreshEvaluation() {
   S.evaluation = runEvaluation({
     portfolios: S.portfolios, instruments: S.instruments,
     signals: S.signals, prevSignals: S.prevSignals,
@@ -127,31 +127,44 @@ function rmNotesFor(p) { return (p.relationship?.concerns || []); }
 /**
  * Narration is the only LLM call: one client — the one on screen — and only when its
  * facts actually moved. Each evaluation mints fresh client objects with `thesis: null`,
- * so the prose is cached here against the eval hash and carried across polls; an
- * unchanged hash re-paints from cache and never reaches the model.
+ * so the prose is cached in `S.narratedHash` (portfolioId → {hash, thesis, summary})
+ * and copied back onto the live object; an unchanged hash never reaches the model.
+ * `inflight` makes that guarantee hold for calls that overlap in time, not just in sequence.
  */
-const narration = {}; // portfolioId → { hash, thesis, summary }
+const inflight = new Set(); // `${portfolioId}|${hash}` — one narration per client per hash
 
 async function maybeNarrateOpenClient() {
   const id = S.portfolio?.id;
   const ev = S.evaluation?.clients?.[id];
   if (!ev) return;
   const hash = S.evaluation.hash[id];
-  const cached = narration[id];
-  if (cached && cached.hash === hash) {
+
+  const cached = S.narratedHash[id];
+  if (cached?.hash === hash) {
     if (ev.thesis !== cached.thesis) {
       ev.thesis = cached.thesis; ev.summary = cached.summary;
       paintExplanation();
     }
     return;
   }
-  const { thesis, summary } = await narrateClient(ev, S.portfolio, rmNotesFor(S.portfolio));
-  // The open client may have changed while the model was thinking — drop a stale answer.
-  if (S.portfolio?.id !== id || S.evaluation?.hash?.[id] !== hash) return;
-  ev.thesis = thesis; ev.summary = summary;
-  narration[id] = { hash, thesis, summary };
-  S.narratedHash[id] = hash;
-  paintExplanation();
+
+  const key = `${id}|${hash}`;
+  if (inflight.has(key)) return; // same client, same facts, already asking
+  inflight.add(key);
+  let narrated;
+  try {
+    narrated = await narrateClient(ev, S.portfolio, rmNotesFor(S.portfolio));
+  } finally {
+    inflight.delete(key);
+  }
+
+  // A poll may have rebuilt S.evaluation mid-await: `ev` can be an orphan, and an answer
+  // for superseded facts is discarded — the poll's own call covers the new hash.
+  const live = S.evaluation?.clients?.[id];
+  if (!live || S.evaluation.hash[id] !== hash) return;
+  S.narratedHash[id] = { hash, thesis: narrated.thesis, summary: narrated.summary };
+  live.thesis = narrated.thesis; live.summary = narrated.summary;
+  if (S.portfolio?.id === id) paintExplanation();
 }
 
 function onUrgentPick({ portfolioId, actionId }) {
