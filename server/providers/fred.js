@@ -5,7 +5,14 @@
  *
  * https://api.stlouisfed.org/fred/series/observations
  */
+import { limited } from "./ratelimit.js";
+
 const BASE = "https://api.stlouisfed.org/fred/series/observations";
+
+// FRED allows 120 requests/minute. The quant lane requests one series per call
+// and 20 clients share many of the same series, so bursts are real even though
+// the cache absorbs repeats. 90 keeps a margin.
+const FRED_PER_MIN = Number(process.env.FRED_RATE_PER_MIN || 90);
 
 export const hasKey = () => !!process.env.FRED_API_KEY;
 
@@ -16,7 +23,8 @@ export async function observations(seriesId, { limit = 120, timeoutMs = 15000 } 
     series_id: seriesId, api_key: key, file_type: "json",
     sort_order: "desc", limit: String(limit)
   })}`;
-  const r = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
+  const r = await limited("fred", FRED_PER_MIN, () => fetch(url, { signal: AbortSignal.timeout(timeoutMs) }),
+    { burst: 20, label: `FRED ${seriesId}` });
   if (!r.ok) throw new Error(`FRED HTTP ${r.status}: ${(await r.text()).slice(0, 160)}`);
   const json = await r.json();
   // FRED writes "." for a missing observation. Dropping them is correct; filling

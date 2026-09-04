@@ -8,9 +8,13 @@
  *      call each, free key). Same numbers either way; FRED is the source in both.
  *   2. series with only a WorldMonitor endpoint -> grouped so one call serves
  *      every series that shares it.
- *   3. no key at all -> every series is a FAILURE with a stated reason. Nothing
+ *   3. nothing works -> every series is a FAILURE with a stated reason. Nothing
  *      is filled in, defaulted, or carried over from the dataset. A missing
  *      number that says it is missing is worth more than a plausible invention.
+ *
+ * The WorldMonitor lane no longer short-circuits on a missing key: there is no
+ * key to obtain (see worldmonitor.js), so it attempts the public endpoint and
+ * reports whatever the server actually says. FRED carries the lane in practice.
  */
 import { TTL } from "./cache.js";
 import * as WM from "./worldmonitor.js";
@@ -39,7 +43,10 @@ export async function fetchQuant(planSeries, { cache, limit = 120 } = {}) {
   if (fredBacked.length) {
     const ids = fredBacked.map(s => s.fred);
     try {
-      if (WM.hasKey()) {
+      // FRED first. WorldMonitor's batch endpoint is the nicer call — one request
+      // for 20 series — but its REST gateway 404s in production (#4724), so
+      // preferring it means trading a working lane for a broken one.
+      if (!FRED.hasKey() && WM.hasKey()) {
         const { value, cached, at } = await cache.through(
           { provider: "worldmonitor", endpoint: "economic/get-fred-series-batch", params: { ids: [...ids].sort(), limit } },
           TTL.quant, () => WM.fredBatch(ids, { limit })
@@ -68,7 +75,7 @@ export async function fetchQuant(planSeries, { cache, limit = 120 } = {}) {
           } catch (err) { fail(s, err.message); }
         }));
       } else {
-        for (const s of fredBacked) fail(s, "no quant provider key (set WORLDMONITOR_API_KEY or FRED_API_KEY)");
+        for (const s of fredBacked) fail(s, "no quant provider available (set FRED_API_KEY — free at fred.stlouisfed.org)");
       }
     } catch (err) {
       for (const s of fredBacked) fail(s, err.message);
@@ -85,7 +92,6 @@ export async function fetchQuant(planSeries, { cache, limit = 120 } = {}) {
 
   for (const [g, members] of groups) {
     const [svc, rpc, params] = JSON.parse(g);
-    if (!WM.hasKey()) { for (const s of members) fail(s, "WORLDMONITOR_API_KEY not set — no free fallback for this series"); continue; }
     try {
       const { value, cached, at } = await cache.through(
         { provider: "worldmonitor", endpoint: `${svc}/${rpc}`, params }, TTL.quant,
