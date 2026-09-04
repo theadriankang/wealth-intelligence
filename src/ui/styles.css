@@ -579,7 +579,7 @@ table.prov td.e{font-family:var(--mono); font-size:10.5px; color:var(--ink-4); w
 .ts-foot{display:flex; gap:16px; flex-wrap:wrap; padding:16px 26px; border-top:1px solid var(--line);
   font-family:var(--mono); font-size:10px; color:var(--ink-4); position:relative; z-index:2}
 .ts-foot b{color:var(--amber-2); font-weight:500}
-.title-screen:not(.static) .ts-kicker{animation:rise .5s ease .05s both}
-.title-screen:not(.static) .ts-title{animation:rise .5s ease .15s both}
-.title-screen:not(.static) .ts-thesis{animation:rise .5s ease .27s both}
-.title-screen:not(.static) .ts-enter{animation:rise .5s ease .4s both}
+.title-screen:not(.static) .ts-kicker{opacity:0; transform:translateY(10px); animation:rise .5s ease .05s both}
+.title-screen:not(.static) .ts-title{opacity:0; transform:translateY(10px); animation:rise .5s ease .15s both}
+.title-screen:not(.static) .ts-thesis{opacity:0; transform:translateY(10px); animation:rise .5s ease .27s both}
+.title-screen:not(.static) .ts-enter{opacity:0; transform:translateY(10px); animation:rise .5s ease .4s both}
