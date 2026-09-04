@@ -5,12 +5,18 @@ import { goalDelta, riskConcentration, flaggedPositions, rmEconomics, FLAG_THRES
 export const S = {
   instruments: {}, portfolios: [], signals: {}, prevSignals: {},
   portfolio: null, lens: "d", selIso: null, goalSel: null, tab: "pf",
+  route: "dashboard", clientScopeId: null,
   household: false, live: false, actionState: {}, meta: {},
-  policyScan: null, policyScanState: "idle"
+  policyScan: null, policyScanState: "idle",
+  clientFilter: "all", clientSearch: "", copilotOpen: false, copilotDraft: "",
+  driverFilter: "all", profileFilter: "all", bookingFilter: "all", aumFilter: "all",
+  clientDrawerOpen: false, railDrawerOpen: false
 };
 
-export const positions = () =>
-  (S.household && S.portfolio.householdPositions) ? S.portfolio.householdPositions : S.portfolio.positions;
+export const positions = () => {
+  if (S.route === "dashboard" && !S.clientScopeId) return S.portfolios.flatMap(p => p.positions || []);
+  return (S.household && S.portfolio.householdPositions) ? S.portfolio.householdPositions : S.portfolio.positions;
+};
 
 export const rows = () => positions().map(p => {
   const inst = S.instruments[p.instrumentId];

@@ -5,12 +5,13 @@ import { fetchSignals, pollSignals } from "./signals/worldmonitor.js";
 import { FEED, LATE_FEED } from "./signals/fixtures/signals.js";
 import { initPalette } from "./ui/palette.js";
 import { shellHtml } from "./ui/shell.js";
+import { installLiquidGlass, applyLiquidGlass } from "./ui/glass.js";
+import { mountSilk } from "./ui/silk.js";
 import { mountGlobe, paintGlobe, sizeGlobe } from "./ui/globe.js";
-import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTicker, paintPfRail }
+import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTicker, paintPfRail, paintCopilot }
   from "./ui/panels.js";
 import { paintActions, paintConversation, paintCompliance, paintEconomics } from "./ui/tabs.js";
 import { initDrawers, openPosition, openBrief, openPolicyTrial } from "./ui/drawers.js";
-import { renderClientView } from "./ui/clientview.js";
 import * as M from "./ui/motion.js";
 import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
 
@@ -25,35 +26,60 @@ async function boot() {
   Object.assign(S, data);
   S.portfolio = S.portfolios[0];
   S.policyScan = FALLBACK_SCAN;
+  const usesDatasetSignals = data.meta?.source === "julius-baer";
 
   // Live signals where possible; fixtures otherwise. Never blocks the first paint.
   const isos = new Set();
   for (const p of S.portfolios) for (const pos of p.positions) {
     for (const e of S.instruments[pos.instrumentId]?.exposures || []) isos.add(e.iso3);
   }
-  const sig = await fetchSignals([...isos], { offline: CONFIG.OFFLINE });
-  S.signals = sig.signals; S.prevSignals = sig.prevSignals; S.live = sig.live;
-
-  if (new URLSearchParams(location.search).get("view") === "client") {
-    renderClientView(root);
-    return;
+  if (usesDatasetSignals) {
+    S.signals = data.signals;
+    S.prevSignals = data.prevSignals;
+    S.live = false;
+    feed = feedFromSignals(data.signals);
+  } else {
+    const sig = await fetchSignals([...isos], { offline: CONFIG.OFFLINE });
+    S.signals = sig.signals; S.prevSignals = sig.prevSignals; S.live = sig.live;
   }
+  readRouteFromLocation();
 
   root.innerHTML = shellHtml();
+  installLiquidGlass();
+  mountSilk(document.getElementById("silk-bg"), {
+    speed: 5,
+    scale: 1,
+    color: "#7B7481",
+    noiseIntensity: 1.5,
+    rotation: 0
+  });
   initDrawers();
-  mountGlobe(document.getElementById("globe"), { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
+  try {
+    mountGlobe(document.getElementById("globe"), { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
+  } catch (err) {
+    console.warn("[globe] WebGL unavailable, rendering dashboard without globe canvas:", err);
+    document.getElementById("globe").innerHTML = `<div class="globe-fallback">
+      <div class="fallback-orbit"></div>
+      <div class="fallback-core">Global exposure map unavailable</div>
+    </div>`;
+  }
   wire();
   renderAll();
   M.boot();
 
-  pollSignals([...isos], ({ signals, prevSignals }) => {
-    S.signals = signals; S.prevSignals = prevSignals; renderAll();
-  }, CONFIG.POLL_MS, { offline: CONFIG.OFFLINE });
+  if (!usesDatasetSignals) {
+    pollSignals([...isos], ({ signals, prevSignals }) => {
+      S.signals = signals; S.prevSignals = prevSignals; renderAll();
+    }, CONFIG.POLL_MS, { offline: CONFIG.OFFLINE });
+  }
 }
 
 function wire() {
   document.getElementById("brief-btn").addEventListener("click", openBrief);
   document.getElementById("policy-scan-btn").addEventListener("click", runPolicySentinel);
+  document.getElementById("open-client-rail")?.addEventListener("click", () => { S.clientDrawerOpen = true; S.railDrawerOpen = false; syncDrawers(); });
+  document.getElementById("open-priority-rail")?.addEventListener("click", () => { S.railDrawerOpen = true; S.clientDrawerOpen = false; syncDrawers(); });
+  document.getElementById("close-client-rail")?.addEventListener("click", () => { S.clientDrawerOpen = false; syncDrawers(); });
 
   document.querySelectorAll("[data-lens]").forEach(b => b.addEventListener("click", () => {
     S.lens = b.dataset.lens;
@@ -75,7 +101,7 @@ function wire() {
   setInterval(() => {
     since++;
     document.getElementById("live-t").textContent =
-      "live · updated " + (since < 60 ? since + "s" : Math.floor(since / 60) + "m") + " ago";
+      "portfolio + intelligence · updated " + (since < 60 ? since + "s" : Math.floor(since / 60) + "m") + " ago";
   }, 1000);
 
   // Simulated arrivals so the demo shows liveness even on fixtures.
@@ -86,6 +112,7 @@ function wire() {
       since = 0; paintTicker(feed);
     }, 21000);
   }
+  addEventListener("popstate", () => { readRouteFromLocation(); renderAll(); });
 }
 
 function refresh(what) {
@@ -95,17 +122,47 @@ function refresh(what) {
 
 const railHandlers = {
   onClearGoal: () => { S.goalSel = null; renderAll(); },
-  onClearSel: () => { S.selIso = null; refresh("globe"); },
+  onClearSel: () => { S.selIso = null; S.clientScopeId = null; refresh("globe"); },
+  onSelectIso: iso => { S.selIso = iso; S.railDrawerOpen = false; refresh("globe"); },
+  onOpenClient: id => {
+    S.portfolio = S.portfolios.find(p => p.id === id) || S.portfolio;
+    S.clientScopeId = null; S.selIso = null; S.goalSel = null; S.household = false; S.railDrawerOpen = false;
+    navigateToClient(id);
+  },
   onOpenPosition: openPosition,
   onRunPolicyScan: runPolicySentinel,
-  onOpenPolicyTrial: openPolicyTrial
+  onOpenPolicyTrial: openPolicyTrial,
+  onCopilotToggle: () => { S.copilotOpen = !S.copilotOpen; renderAll(); }
 };
+
+function readRouteFromLocation() {
+  const match = location.pathname.match(/^\/clients\/([^/]+)/);
+  S.route = match ? "client" : "dashboard";
+  if (!match) S.tab = "pf";
+  if (match) {
+    const id = decodeURIComponent(match[1]);
+    S.portfolio = S.portfolios.find(p => p.id === id) || S.portfolio;
+    S.clientScopeId = null;
+  }
+}
+
+function navigateToClient(id) {
+  history.pushState(null, "", `/clients/${encodeURIComponent(id)}`);
+  readRouteFromLocation();
+  renderAll();
+}
+
+function syncRouteClass() {
+  const app = document.querySelector(".app");
+  app?.classList.toggle("dashboard-view", S.route === "dashboard");
+  app?.classList.toggle("client-workbench", S.route === "client");
+}
 
 async function runPolicySentinel() {
   S.policyScanState = "running";
   renderAll();
   const btn = document.getElementById("policy-scan-btn");
-  if (btn) btn.textContent = "Scanning policy...";
+  if (btn) btn.textContent = "Scanning portfolio...";
   S.policyScan = await runPolicyScan();
   S.policyScanState = "idle";
   since = 0;
@@ -114,14 +171,15 @@ async function runPolicySentinel() {
 }
 
 export function renderAll() {
+  syncRouteClass();
   const policyBtn = document.getElementById("policy-scan-btn");
   if (policyBtn) {
-    policyBtn.textContent = S.policyScanState === "running" ? "Scanning policy..." : "Run live policy scan";
+    policyBtn.textContent = S.policyScanState === "running" ? "Scanning portfolio..." : "Run portfolio scan";
     policyBtn.disabled = S.policyScanState === "running";
   }
   paintBook(id => {
     S.portfolio = S.portfolios.find(p => p.id === id);
-    S.selIso = null; S.goalSel = null; S.household = false;
+    S.clientScopeId = id; S.goalSel = null; S.household = false; S.clientDrawerOpen = false;
     renderAll();
   });
   paintHead(() => { S.household = !S.household; S.selIso = null; renderAll(); });
@@ -133,8 +191,31 @@ export function renderAll() {
   paintLegend(); paintGlobe(); paintEvidence();
   paintTicker(feed);
   paintPfRail(railHandlers);
+  document.getElementById("close-priority-rail")?.addEventListener("click", () => { S.railDrawerOpen = false; syncDrawers(); });
+  syncDrawers();
+  paintCopilot({ onToggle: railHandlers.onCopilotToggle });
   paintActions(renderAll);
   paintConversation();
   paintCompliance();
   paintEconomics();
+  applyLiquidGlass();
+}
+
+function syncDrawers() {
+  document.querySelector(".mission-stage")?.classList.toggle("client-open", !!S.clientDrawerOpen);
+  document.querySelector(".mission-stage")?.classList.toggle("rail-open", !!S.railDrawerOpen);
+}
+
+function feedFromSignals(signals) {
+  const seen = new Set();
+  const events = [];
+  for (const s of Object.values(signals)) {
+    for (const e of s.events || []) {
+      if (seen.has(e.id)) continue;
+      seen.add(e.id);
+      const sev = e.severity === "Severe" ? "crit" : e.severity === "High" ? "serious" : "warn";
+      events.push([(e.at || "").slice(5), e.source || "event_log.csv", e.region || s.name, e.text || e.value || "Signal update", sev]);
+    }
+  }
+  return events.sort((a, b) => b[0].localeCompare(a[0])).slice(0, 12);
 }

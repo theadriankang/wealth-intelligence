@@ -1,0 +1,19 @@
+{
+  "sourceRepo": "https://github.com/Singhacks-2026/juliusbaer.git",
+  "commit": "f57729305c6470b7421c2a1dde9f1f02d9f7cd5c",
+  "syncedAt": "2026-09-04T12:18:00.000Z",
+  "files": [
+    "clients.csv",
+    "portfolios.csv",
+    "holdings.csv",
+    "instruments.csv",
+    "credit_facilities.csv",
+    "planned_cash_needs.csv",
+    "commitments.csv",
+    "event_log.csv",
+    "market_context.csv",
+    "mandates.csv",
+    "transactions.csv",
+    "rm_notes.json"
+  ]
+}
