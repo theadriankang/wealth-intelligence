@@ -13,7 +13,8 @@ export const S = {
   clientFilter: "all", clientSearch: "", copilotOpen: false, copilotDraft: "",
   clientSort: "urgency-desc", filtersOpen: false,
   driverFilter: "all", profileFilter: "all", bookingFilter: "all", aumFilter: "all",
-  clientDrawerOpen: false, railDrawerOpen: false
+  clientDrawerOpen: false, railDrawerOpen: false,
+  inspectDataOpen: false, aiActionState: {}
 };
 
 export const positions = () => {
@@ -69,3 +70,16 @@ export { FLAG_THRESHOLD };
 export const countryScore = iso3 => S.evaluation?.countries?.[iso3] || null;
 export const clientEval = () => S.evaluation?.clients?.[S.portfolio?.id] || null;
 export const urgentTasks = () => S.evaluation?.urgent || [];
+
+/**
+ * "loading" — narration hasn't resolved for this portfolio yet (never attempted, or in flight).
+ * "ai" — the model answered and validated; this portfolio's AI-scored figures are trustworthy.
+ * "unavailable" — narration was attempted and failed or didn't validate. Never silently shown as
+ * a deterministic number — the deterministic engine still runs (it grounds the model's prompt
+ * and is the plan-B computation), but nothing it produces is displayed as if it were a live read.
+ */
+export const aiState = portfolioId => {
+  const cached = S.narratedHash[portfolioId];
+  if (!cached) return "loading";
+  return cached.scoreSource === "ai" ? "ai" : "unavailable";
+};

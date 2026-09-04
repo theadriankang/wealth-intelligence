@@ -1,4 +1,5 @@
-import { S, actionState, economics, flagged, positions } from "../store.js";
+import { S, actionState, economics, flagged, positions, rows, aiState } from "../store.js";
+import { P } from "./palette.js";
 import { ECONOMICS_BASELINE } from "../model/scoring.js";
 import { chokepointExposure } from "../model/lookthrough.js";
 import * as M from "./motion.js";
@@ -73,143 +74,103 @@ function effectTiles(a) {
   </button>`).join("")}</div>`;
 }
 
-export function paintActions(onChange) {
-  const p = S.portfolio, actions = p.actions || [], disc = p.mandate === "Discretionary";
-  const counts = {
-    all: actions.length,
-    high: actions.filter(isHigh).length,
-    pending: actions.filter(isPending).length,
-    accepted: actions.filter(a => ["Accepted", "Executed"].includes(status(a))).length
-  };
-  document.getElementById("tn-act").textContent = counts.pending;
-  const shown = filteredActions(actions);
-  const markup = `<div class="tab-page actions-page">
-    <div class="tab-titlebar"><div><h2>Risks & Actions</h2><p>${disc ? "Executable items under the current mandate, with audit records attached." : "Client decisions needed before execution, ordered for review."}</p></div></div>
-    <div class="ra-summary">${[
-      ["all", "Total actions", counts.all],
-      ["high", "High priority", counts.high],
-      ["pending", "Pending", counts.pending],
-      ["accepted", "Accepted", counts.accepted]
-    ].map(([k, t, v]) => `<button class="ra-counter" data-action-filter="${k}" aria-pressed="${UI.actionFilter === k}" type="button"><span>${t}</span><b>${v}</b></button>`).join("")}</div>
-    <div class="decision-list">${shown.length ? shown.map(a => {
-      const open = UI.expandedAction === a.id, st = status(a);
-      return `<article class="decision-card sev-${severity(a)} ${open ? "open" : ""}" data-card-action="${a.id}">
-        <div class="decision-head">
-          <span class="kind k-${a.kind.toLowerCase()}">${esc(a.kind)}</span>
-          <div><h3>${esc(a.title)}</h3><p>${esc(a.target)}</p></div>
-          <span class="state ${st.toLowerCase()}">${esc(st)}</span>
-          <button class="chev" data-expand-action="${a.id}" aria-label="Toggle action details" type="button">›</button>
-        </div>
-        <div class="decision-core">
-          <div>${visualFor(a)}</div>
-          ${effectTiles(a)}
-        </div>
-        ${open ? `<div class="decision-detail">
-          <p>${esc(a.why)}</p>
-          ${a.evidence ? `<dl>${Object.entries(a.evidence).map(([k,v]) => `<dt>${esc(k)}</dt><dd>${esc(typeof v === "number" ? pct(v) : v)}</dd>`).join("")}</dl>` : ""}
-          ${a.suitability ? `<dl>${Object.entries(a.suitability).map(([k,v]) => `<dt>${esc(k)}</dt><dd>${esc(v)}</dd>`).join("")}</dl>` : ""}
-        </div>` : ""}
+/** Risks + opportunities + recommended actions — AI-scored for the open client, hash-gated,
+ * with a deterministic fallback (clientEval.js's rule-based findings) when the model is
+ * unavailable or its response doesn't validate. See eval/narrate.js.
+ *
+ * Trust/governance, made concrete rather than just claimed:
+ *  - Suitability: the mandate-fit line on every action is computed here, deterministically,
+ *    from portfolio.mandate — never asked of or trusted from the model.
+ *  - Human oversight: Accept/Reject on every action, tracked in S.aiActionState. Nothing here
+ *    executes anything; this is a record of what the RM decided, not an execution trigger.
+ *  - Traceability: the exact facts behind the current risks/actions are inspectable via the
+ *    "Inspect data used" toggle in the client header (paintHead), reading groundingUsed.
+ */
+export function paintActions() {
+  const p = S.portfolio;
+  const ev = S.evaluation?.clients?.[p.id];
+  const state = aiState(p.id);
+  const risks = state === "ai" ? (ev.risks || []) : [];
+  const opportunities = state === "ai" ? (ev.opportunities || []) : [];
+  const actions = state === "ai" ? (ev.actions || []) : [];
+  const suitability = p.mandate === "Discretionary"
+    ? "Executable under standing authority" : "Requires client instruction before execution";
+  document.getElementById("tn-act").textContent = actions.length;
+  const statusLine = state === "loading" ? `<p class="prose-shimmer">Scoring this client…</p>`
+    : state === "unavailable" ? `<p style="color:var(--ink-4); font-size:12px">AI scoring unavailable for this client.</p>`
+    : !risks.length && !opportunities.length && !actions.length ? `<p style="color:var(--ink-4); font-size:12px">Nothing flagged this week.</p>` : "";
+  document.getElementById("actions").innerHTML = `
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px">
+      <p style="margin:0; font-size:12.5px; color:var(--ink-3)">Risk findings and recommended
+        actions for this mandate — internal RM guidance, not client-facing advice. The RM reviews,
+        accepts, or rejects every item below; nothing here executes on its own.</p>
+      ${state === "ai" ? `<span class="mode ai">ai-scored</span>` : ""}
+    </div>
+    ${statusLine}
+    ${risks.length ? `<div class="blk"><h3>Risks</h3>
+      ${risks.map(r => `<div class="tp"><span class="num" style="color:${
+        r.severity === "high" ? "var(--warn)" : r.severity === "medium" ? "var(--ink-3)" : "var(--ink-4)"
+      }">●</span><p>${r.text} <span class="kind" style="margin-left:4px">${r.category || "other"}</span></p></div>`).join("")}</div>` : ""}
+    ${opportunities.length ? `<div class="blk"><h3>Opportunities</h3>
+      ${opportunities.map(o => `<div class="tp"><span class="num" style="color:var(--good)">●</span><p>${o.text}</p></div>`).join("")}</div>` : ""}
+    ${actions.map((a, i) => {
+      const key = p.id + "|" + i;
+      const acState = S.aiActionState[key] || "pending";
+      return `<article class="act">
+        <div class="act-h"><span class="kind">${a.kind}${a.category ? ` · ${a.category}` : ""}</span><div><h3>${a.title}</h3></div></div>
+        <div class="act-b"><p>${a.why}</p></div>
         <div class="act-f">
-          <button class="ghost sm" data-suit="${a.id}">Suitability record</button>
-          <span class="sp">${disc ? "Mandate authority checked" : "Client instruction required where applicable"}</span>
-          ${st === "Executed" ? "" : `<button class="ghost sm ${st === "Drafted" ? "solid" : ""}" data-adv="${a.id}">${disc ? "Execute" : st === "Drafted" ? "Put to client" : "Record acceptance"}</button>`}
+          <span class="sp">${suitability}${acState !== "pending" ? ` · ${acState}` : ""}</span>
+          <button class="ghost sm ${acState === "accepted" ? "solid" : ""}" data-accept="${i}">Accept</button>
+          <button class="ghost sm ${acState === "rejected" ? "solid" : ""}" data-reject="${i}">Reject</button>
         </div>
       </article>`;
-    }).join("") : `<div class="empty-state">No actions match this filter.</div>`}</div>
-  </div>`;
-  document.querySelectorAll("#actions").forEach(el => { el.innerHTML = markup; });
-
-  document.querySelectorAll("#actions").forEach(root => { root.onclick = e => {
-    const filter = e.target.closest("[data-action-filter]");
-    if (filter) {
-      UI.actionFilter = UI.actionFilter === filter.dataset.actionFilter && filter.dataset.actionFilter !== "all" ? "all" : filter.dataset.actionFilter;
-      paintActions(onChange);
-      return;
-    }
-    const metric = e.target.closest("[data-metric]");
-    if (metric) {
-      UI.expandedMetric = UI.expandedMetric === metric.dataset.metric ? null : metric.dataset.metric;
-      paintActions(onChange);
-      return;
-    }
-    const adv = e.target.closest("[data-adv]");
-    if (adv) {
-      const a = S.portfolio.actions.find(x => x.id === adv.dataset.adv), st = actionState(a);
-      if (!a) return;
-      S.actionState[S.portfolio.id + a.id] = S.portfolio.mandate === "Discretionary" ? "Executed" : st === "Drafted" ? "Discussed" : "Accepted";
-      onChange();
-      return;
-    }
-    const expand = e.target.closest("[data-expand-action],[data-suit],[data-card-action]");
-    if (!expand) return;
-    const id = expand.dataset.expandAction || expand.dataset.suit || expand.dataset.cardAction;
-    UI.expandedAction = UI.expandedAction === id ? null : id;
-    paintActions(onChange);
-  }; });
-  M.once("actions", S.portfolio.id, M.actions);
+    }).join("")}`;
+  document.querySelectorAll("#actions [data-accept]").forEach(b => b.addEventListener("click", () => {
+    S.aiActionState[p.id + "|" + b.dataset.accept] = "accepted"; paintActions();
+  }));
+  document.querySelectorAll("#actions [data-reject]").forEach(b => b.addEventListener("click", () => {
+    S.aiActionState[p.id + "|" + b.dataset.reject] = "rejected"; paintActions();
+  }));
+  M.once("actions", S.portfolio.id + "|" + state, M.actions);
 }
 
-function concernParts(text, i) {
-  const lower = text.toLowerCase();
-  const cat = lower.includes("cost") || lower.includes("premium") ? "Cost sensitivity"
-    : lower.includes("liquid") || lower.includes("sale") ? "Liquidity / exit"
-    : lower.includes("sell") || lower.includes("call") ? "Relationship" : "Client context";
-  return { cat, title: text.split(/[.—-]/)[0].slice(0, 58), text, icon: ["!", "↗", "◇"][i % 3] };
-}
-
+/** Relationship, standing concerns, talking points, and likely objections — AI-drafted for the
+ * open client (same one narrateClient call as Explanation/Risks & Actions), reprioritising the
+ * underlying relationship record for the current facts rather than reciting it. Deterministic
+ * fallback is that same static relationship record, reshaped. No number here to fake, but the
+ * same loading/unavailable states apply so stale/guessed content is never shown as current. */
 export function paintConversation() {
-  const p = S.portfolio, r = p.relationship;
-  if (!r) { document.getElementById("conv").innerHTML = `<div class="empty-state">No relationship record for this mandate.</div>`; return; }
-  const focus = {
-    last: r.last ? `${r.last.topics || "No interaction detail available."}` : "No last-contact detail in the dataset.",
-    today: r.behaviour || "No relationship tone summary is available in the dataset.",
-    next: `Next review: ${p.reviewDate || "not scheduled in the dataset."}`
-  }[UI.convFocus];
-  document.getElementById("conv").innerHTML = `<div class="tab-page conversation-page">
-    <section class="conv-top">
-      <div class="glass-panel timeline-panel">
-        <h2>Relationship Timeline</h2>
-        <div class="timeline">
-          ${[
-            ["last", "Last Contact", r.last ? `${r.last.date} · ${r.last.channel}` : "No record"],
-            ["today", "Today", TODAY],
-            ["next", "Next Review", p.reviewDate || "Not scheduled"]
-          ].map(([k,t,v]) => `<button class="tl-node" data-conv-focus="${k}" aria-pressed="${UI.convFocus === k}" type="button"><span></span><b>${t}</b><em>${esc(v)}</em></button>`).join("")}
-        </div>
-        <p class="focus-note">${esc(focus)}</p>
-      </div>
-      <div class="glass-panel lead-panel"><span class="lead-icon">◎</span><p>Relationship Lead</p><h3>${esc(p.rm || S.operator?.name || "Relationship Manager")}</h3><small>Senior Adviser</small></div>
-      <div class="glass-panel sentiment-panel"><p>Recent Relationship Tone</p><h3>${r.behaviour ? "Recorded RM note" : "Not scored"}</h3><small>${r.behaviour ? esc(r.behaviour.slice(0, 95)) : "No sentiment history in the dataset."}</small></div>
-    </section>
-    <section class="glass-panel"><h2>Standing Concerns</h2><div class="concern-grid">
-      ${(r.concerns || []).length ? r.concerns.map((x,i) => {
-        const c = concernParts(x, i), open = UI.expandedConcern === String(i);
-        return `<button class="concern-card" data-concern="${i}" type="button"><span>${c.icon}</span><div><em>${esc(c.cat)}</em><b>${esc(c.title)}</b><p>${esc(open ? c.text : c.text.slice(0, 118))}</p></div></button>`;
-      }).join("") : `<div class="empty-state">No standing concerns recorded.</div>`}
-    </div></section>
-    <section class="brief-grid">
-      <div class="glass-panel"><h2>Talking Points for Next Conversation</h2>${(r.points || []).length ? r.points.map((x,i) => `<button class="brief-row" data-point="${i}" type="button"><span>${i + 1}</span><div><b>${esc(x.split(":")[0].slice(0, 48))}</b><p>${esc(UI.expandedPoint === String(i) ? x : x.slice(0, 96))}</p></div><em>›</em></button>`).join("") : `<div class="empty-state">No talking points recorded.</div>`}</div>
-      <div class="glass-panel"><h2>Likely Objections</h2>${(r.objections || []).length ? r.objections.map((o,i) => `<button class="objection-card" data-objection="${i}" type="button"><span>”</span><div><b>“${esc(o[0])}”</b>${UI.expandedObjection === String(i) ? `<p>${esc(o[1])}</p>` : `<p>Suggested response</p>`}</div><em>›</em></button>`).join("") : `<div class="empty-state">No objections or suggested responses recorded.</div>`}</div>
-    </section>
-  </div>`;
-  document.querySelectorAll("[data-conv-focus]").forEach(b => b.addEventListener("click", () => { UI.convFocus = b.dataset.convFocus; paintConversation(); }));
-  document.querySelectorAll("[data-concern]").forEach(b => b.addEventListener("click", () => { UI.expandedConcern = UI.expandedConcern === b.dataset.concern ? null : b.dataset.concern; paintConversation(); }));
-  document.querySelectorAll("[data-point]").forEach(b => b.addEventListener("click", () => { UI.expandedPoint = UI.expandedPoint === b.dataset.point ? null : b.dataset.point; paintConversation(); }));
-  document.querySelectorAll("[data-objection]").forEach(b => b.addEventListener("click", () => { UI.expandedObjection = UI.expandedObjection === b.dataset.objection ? null : b.dataset.objection; paintConversation(); }));
-  M.once("conv", S.portfolio.id, () => M.enter("#conv .glass-panel", { y: 10, delay: 50, duration: 360 }));
-}
-
-function complianceChecks(p) {
-  const cks = [];
-  const actionRisk = (p.actions || []).filter(a => isHigh(a));
-  cks.push({ id:"actions", t:"Recommendation policy", s:actionRisk.length ? "watch" : "clear", d:actionRisk.length ? `${actionRisk.length} high-priority recommendation${actionRisk.length > 1 ? "s" : ""} need RM acknowledgement.` : "No high-priority recommendations are open." });
-  const L = p.lombard;
-  if (L) cks.push({ id:"collateral", t:"Collateral headroom", s:L.headroomPct < 25 ? "watch" : "clear", d:`Headroom is ${pct(L.headroomPct)}${Number.isFinite(L.prevHeadroomPct) ? `, previously ${pct(L.prevHeadroomPct)}` : ""}.` });
-  const cp = chokepointExposure(positions(), S.instruments);
-  const top = Object.values(cp).sort((a,b) => b.weightPct - a.weightPct)[0];
-  cks.push({ id:"physical", t:"Physical concentration", s:top?.weightPct > 20 ? "watch" : "clear", d:top ? `${top.name} represents ${top.weightPct.toFixed(1)}% of look-through exposure.` : "No chokepoint exposure in the selected scope." });
-  cks.push({ id:"review", t:"Review schedule", s:p.reviewDate ? "clear" : "watch", d:p.reviewDate ? `Next review is recorded for ${p.reviewDate}.` : "No next-review date is recorded." });
-  return cks;
+  const p = S.portfolio;
+  const state = aiState(p.id);
+  const ev = S.evaluation?.clients?.[p.id];
+  const el = document.getElementById("conv");
+  if (state === "loading") {
+    el.innerHTML = `<div class="blk"><p class="prose-shimmer">Preparing conversation notes…</p></div>`;
+    return;
+  }
+  if (state === "unavailable") {
+    el.innerHTML = `<div class="blk"><p style="color:var(--ink-4)">Conversation notes unavailable.</p></div>`;
+    return;
+  }
+  const r = ev.relationship;
+  if (!r) {
+    el.innerHTML = `<div class="blk"><p>No relationship record for this mandate.</p></div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="blk"><h3>Relationship <span class="mode ai" style="margin-left:6px">ai-scored</span></h3>
+      <div class="meta-row" style="margin-bottom:11px">
+        <div class="fct"><span class="k">Next review</span><span class="v">${p.reviewDate}</span></div>
+        <div class="fct"><span class="k">Adviser</span><span class="v">${p.rm}</span></div></div>
+      <p>${r.summary}</p></div>
+    <div class="blk"><h3>Standing concerns</h3>
+      ${r.concerns.map(x => `<div class="tp"><span class="num">·</span><p>${x}</p></div>`).join("")}</div>
+    <div class="blk"><h3>Talking points for the next conversation</h3>
+      ${r.talkingPoints.map((x, i) => `<div class="tp"><span class="num">${i + 1}</span><p>${x}</p></div>`).join("")}</div>
+    <div class="blk"><h3>Likely objections</h3>
+      ${r.objections.map(o => `<div class="obj"><p class="q">“${o.question}”</p><p class="a">${o.answer}</p></div>`).join("")}</div>`;
+  M.once("conv", p.id + "|" + state, () => M.enter("#conv .blk", { y: 10, delay: 60, duration: 420 }));
 }
 
 export function paintCompliance() {
