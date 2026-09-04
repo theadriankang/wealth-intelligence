@@ -24,7 +24,7 @@ export function renderClientView(root) {
          from you before your next review.`}</p>
 
     ${gs.map(g => {
-      const col = g.funded >= 95 ? "#2f7d4f" : g.funded >= 80 ? "#b8862b" : "#b4463f";
+      const col = g.funded >= 95 ? "#1f6f5c" : g.funded >= 80 ? "#b8862b" : "#8a3324";
       return `<div class="cv-goal">
         <span class="n">${g.name}</span>
         <span class="p" style="color:${col}">${g.funded}%</span>
