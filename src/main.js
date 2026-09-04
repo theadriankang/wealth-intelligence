@@ -77,6 +77,7 @@ async function boot() {
   refreshEvaluation();
   renderAll();
   M.boot();
+  narrateAllPortfolios(); // fire-and-forget: scores the whole book once, doesn't block first paint
 
   if (!usesDatasetSignals) {
     pollSignals([...isos], ({ signals, prevSignals }) => {
@@ -174,10 +175,21 @@ function refreshEvaluation() {
 
 function rmNotesFor(p) { return (p.relationship?.concerns || []); }
 
+/** Runs `fn` with `S.portfolio` temporarily pointed at `p`, then restores it. Synchronous only —
+ * lets buildGrounding()/rows()/positions() work for any portfolio, not just the one on screen,
+ * without threading a portfolio argument through every store selector they call. */
+function withPortfolioContext(p, fn) {
+  const old = S.portfolio;
+  S.portfolio = p;
+  try { return fn(); } finally { S.portfolio = old; }
+}
+
 /** Everything narrateClient needs to compute health/concentration/risks/actions, but no store
  * import in narrate.js. `jb` (tax domicile, life stage, objectives, source of wealth) only
  * exists on the Julius Baer adapter's portfolios — undefined/absent on the demo adapter, so
- * every field below degrades to null rather than throwing. */
+ * every field below degrades to null rather than throwing. Reads S.portfolio (via
+ * withPortfolioContext for any portfolio other than the one on screen) and S.household — the
+ * household toggle only ever applies to whichever portfolio is actually open. */
 function buildGrounding() {
   const list = rows();
   const positions = list.map(r => ({
@@ -210,41 +222,52 @@ function buildGrounding() {
   };
 }
 
+function copyNarratedFields(target, src) {
+  target.explanation = src.explanation;
+  target.health = src.health; target.healthBand = src.healthBand;
+  target.concentration = src.concentration; target.scoreSource = src.scoreSource;
+  target.risks = src.risks; target.opportunities = src.opportunities; target.actions = src.actions;
+  target.relationship = src.relationship;
+}
+
 /**
- * Narration is the only LLM call: one client — the one on screen — and only when its facts
- * actually moved (positions, signals, the household toggle, or the policy scan). It carries
- * health, the risk-weighted concentration figure, a bullet-point explanation, risk findings,
- * opportunities, and recommended actions — all falling back to the deterministic values in
- * `grounding`/`clientEval` if the call fails or the response doesn't validate. Each evaluation
- * mints fresh client objects with these fields absent, so the answer is cached in
- * `S.narratedHash` (portfolioId → { hash, health, healthBand, concentration, scoreSource,
- * explanation, risks, opportunities, actions }) and copied back onto the live object; an
- * unchanged hash never reaches the model. `inflight` makes that guarantee hold for calls that
- * overlap in time, not just in sequence. `groundingUsed` is stashed on the live object too — the
- * exact facts behind the current answer, for the traceability panel.
+ * Narration is the one LLM call per portfolio — every portfolio in the book gets scored once at
+ * boot (narrateAllPortfolios), and any portfolio's facts moving afterward (positions, signals,
+ * the household toggle on whichever one is open, or the policy scan) re-asks just that one. It
+ * carries health, the risk-weighted concentration figure, a bullet-point explanation, risk
+ * findings, opportunities, recommended actions, and relationship notes — nothing here ever falls
+ * back to showing a deterministic number: aiState() (store.js) reports "loading" until this
+ * resolves, then "ai" on success or "unavailable" on failure, and every render site switches on
+ * that instead of reading a number that might be a guess. The deterministic engine still runs
+ * (it grounds the model's prompt and is what `grounding`/`clientEval` hand to it) — it's just
+ * never displayed as if it were a live read. Each evaluation mints fresh client objects with
+ * these fields absent, so the answer is cached in `S.narratedHash` (portfolioId → { hash,
+ * health, healthBand, concentration, scoreSource, explanation, risks, opportunities, actions,
+ * relationship }) and copied back onto the live object; an unchanged hash never reaches the
+ * model. `inflight` makes that guarantee hold for calls that overlap in time, not just in
+ * sequence. `groundingUsed` is stashed on the live object too — the exact facts behind the
+ * current answer, for the traceability panel.
  */
 const inflight = new Set(); // `${portfolioId}|${hash}` — one narration per client per hash
 
-async function maybeNarrateOpenClient() {
-  const id = S.portfolio?.id;
+async function maybeNarratePortfolio(p) {
+  const id = p?.id;
   const ev = S.evaluation?.clients?.[id];
   if (!ev) return;
-  const grounding = buildGrounding();
+  const grounding = withPortfolioContext(p, buildGrounding);
   const hash = factsHash(id, grounding);
 
   const cached = S.narratedHash[id];
   if (cached?.hash === hash) {
     ev.groundingUsed = grounding;
     if (ev.explanation !== cached.explanation) {
-      ev.explanation = cached.explanation;
-      ev.health = cached.health; ev.healthBand = cached.healthBand;
-      ev.concentration = cached.concentration; ev.scoreSource = cached.scoreSource;
-      ev.risks = cached.risks; ev.opportunities = cached.opportunities; ev.actions = cached.actions;
+      copyNarratedFields(ev, cached);
       // Health/explanation live in the client header (paintHead), concentration in the globe
-      // overlay (paintEvidence), risks/opportunities/actions in the Risks & Actions tab
-      // (paintActions) — renderAll() repaints all three; it's cheap and this branch is rare
-      // (only fires once per resolved narration, on a cache hit for a stale object).
-      renderAll();
+      // overlay (paintEvidence), risks/opportunities/actions in the Risks & Actions tab, and
+      // relationship in the Conversation tab (paintConversation) — renderAll() repaints all of
+      // them; it's cheap and this branch is rare (only fires once per resolved narration, on a
+      // cache hit for a stale object). Only worth a repaint if this portfolio is the one open.
+      if (S.portfolio?.id === id) renderAll();
     }
     return;
   }
@@ -254,7 +277,7 @@ async function maybeNarrateOpenClient() {
   inflight.add(key);
   let narrated;
   try {
-    narrated = await narrateClient(ev, S.portfolio, rmNotesFor(S.portfolio), grounding);
+    narrated = await narrateClient(ev, p, rmNotesFor(p), grounding);
   } finally {
     inflight.delete(key);
   }
@@ -262,14 +285,30 @@ async function maybeNarrateOpenClient() {
   // A poll (or a household toggle) may have moved the facts mid-await: an answer for
   // superseded facts is discarded — whatever triggered the change makes its own call.
   const live = S.evaluation?.clients?.[id];
-  if (!live || factsHash(id, buildGrounding()) !== hash) return;
+  if (!live || factsHash(id, withPortfolioContext(p, buildGrounding)) !== hash) return;
   S.narratedHash[id] = { hash, ...narrated };
   live.groundingUsed = grounding;
-  live.explanation = narrated.explanation;
-  live.health = narrated.health; live.healthBand = narrated.healthBand;
-  live.concentration = narrated.concentration; live.scoreSource = narrated.scoreSource;
-  live.risks = narrated.risks; live.opportunities = narrated.opportunities; live.actions = narrated.actions;
+  copyNarratedFields(live, narrated);
   if (S.portfolio?.id === id) renderAll();
+}
+
+function maybeNarrateOpenClient() {
+  if (!S.portfolio) return;
+  return maybeNarratePortfolio(S.portfolio);
+}
+
+/** Fired once at boot: scores every portfolio in the book so an RM opening any client sees an
+ * AI reading already in hand rather than waiting on one, capped at a small concurrency so 20+
+ * portfolios don't fire 20+ simultaneous LLM calls. Never awaited by boot() itself — the first
+ * paint isn't blocked; each portfolio's card/header flips from "loading" to its answer as its
+ * own call resolves, via the renderAll() inside maybeNarratePortfolio. */
+async function narrateAllPortfolios(concurrency = 4) {
+  const queue = [...S.portfolios];
+  const worker = async () => {
+    let p;
+    while ((p = queue.shift())) await maybeNarratePortfolio(p);
+  };
+  await Promise.all(Array.from({ length: Math.min(concurrency, queue.length) }, worker));
 }
 
 function syncRouteClass() {

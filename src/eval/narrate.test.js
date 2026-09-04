@@ -4,7 +4,12 @@ import { templateNarration, narrateClient, validateAiScore, factsHash } from "./
 
 const p = { name: "Bergmann Family Office", ref: "PF-0003", mandate: "Advisory", riskProfile: "Balanced", riskBand: "8–14% vol",
   goals: [{ name: "Zurich property acquisition", horizon: "Q2 2027" }, { name: "Retirement drawdown", horizon: "from 2034" }],
-  positions: [{ instrumentId: "TSM", weightPct: 12 }, { instrumentId: "DBS", weightPct: 8 }] };
+  positions: [{ instrumentId: "TSM", weightPct: 12 }, { instrumentId: "DBS", weightPct: 8 }],
+  relationship: {
+    last: { date: "12 Aug 2026", channel: "video call" }, behaviour: "Cautious, prefers written follow-up.",
+    concerns: ["Wants the Zurich purchase de-risked."], points: ["Confirm the 2027 timeline still holds."],
+    objections: [["Why not just hold more cash?", "Cash drags on the funding goal over a 25-year horizon."]]
+  } };
 const ce = {
   health: 62, healthBand: "watch",
   risks: [{ text: "Concentration is live in Taiwan.", severity: "high", urgency: 80 }],
@@ -33,7 +38,7 @@ const grounding = {
 };
 
 test("templateNarration produces bullet-point explanation, no imperative verbs or risk talk", () => {
-  const { explanation, health, healthBand, concentration, scoreSource, risks, opportunities, actions } =
+  const { explanation, health, healthBand, concentration, scoreSource, risks, opportunities, actions, relationship } =
     templateNarration(ce, p, grounding);
   assert.ok(Array.isArray(explanation) && explanation.length >= 2 && explanation.length <= 5);
   const joined = explanation.join(" ");
@@ -51,6 +56,14 @@ test("templateNarration produces bullet-point explanation, no imperative verbs o
   assert.deepEqual(risks, [{ text: ce.risks[0].text, severity: ce.risks[0].severity, category: "concentration" }]);
   assert.deepEqual(opportunities, [{ text: ce.opportunities[0].text }]);
   assert.deepEqual(actions, [{ kind: "Reduce Risk", category: "rebalancing", title: ce.actions[0].text, why: ce.actions[0].reason }]);
+  assert.equal(relationship.concerns.length, 1);
+  assert.equal(relationship.talkingPoints.length, 1);
+  assert.deepEqual(relationship.objections, [{ question: p.relationship.objections[0][0], answer: p.relationship.objections[0][1] }]);
+});
+
+test("templateNarration returns relationship: null when the portfolio has no relationship record", () => {
+  const { relationship } = templateNarration(ce, { ...p, relationship: undefined }, grounding);
+  assert.equal(relationship, null);
 });
 
 test("templateNarration omits the tax-domicile bullet when grounding has none", () => {
@@ -68,12 +81,13 @@ test("narrateClient falls back to the template when the LLM is unavailable", asy
   assert.equal(r.risks.length, 1);
   assert.equal(r.opportunities.length, 1);
   assert.equal(r.actions.length, 1);
+  assert.equal(r.relationship.concerns.length, 1);
 });
 
 const base = () => ({
   explanation: ["A balanced mandate built to fund two goals."],
   health: 55, concentration: { pct: 40, countries: ["TWN"] },
-  risks: [], opportunities: [], actions: []
+  risks: [], opportunities: [], actions: [], relationship: null
 });
 
 test("validateAiScore accepts a well-formed AI response", () => {
@@ -130,6 +144,37 @@ test("validateAiScore rejects a non-numeric concentration percentage", () => {
 
 test("validateAiScore rejects an explanation over the 100-word cap", () => {
   const data = { ...base(), explanation: [Array(101).fill("word").join(" ")] };
+  assert.equal(validateAiScore(data, ["TWN"]), false);
+});
+
+const validRelationship = {
+  summary: "Last spoke in August, video call; the client prefers written follow-up.",
+  concerns: ["Wants the Zurich purchase de-risked."],
+  talkingPoints: ["Confirm the 2027 timeline still holds."],
+  objections: [{ question: "Why not just hold more cash?", answer: "Cash drags on the funding goal over a 25-year horizon." }]
+};
+
+test("validateAiScore accepts a well-formed relationship object", () => {
+  assert.equal(validateAiScore({ ...base(), ...aiExtras, relationship: validRelationship }, ["TWN"]), true);
+});
+
+test("validateAiScore rejects a relationship missing a required field", () => {
+  const { summary, ...noSummary } = validRelationship;
+  assert.equal(validateAiScore({ ...base(), relationship: noSummary }, ["TWN"]), false);
+});
+
+test("validateAiScore rejects a relationship with too many concerns", () => {
+  const data = { ...base(), relationship: { ...validRelationship, concerns: Array(5).fill("A concern.") } };
+  assert.equal(validateAiScore(data, ["TWN"]), false);
+});
+
+test("validateAiScore rejects an objection missing an answer", () => {
+  const data = { ...base(), relationship: { ...validRelationship, objections: [{ question: "Why?" }] } };
+  assert.equal(validateAiScore(data, ["TWN"]), false);
+});
+
+test("validateAiScore rejects an imperative verb inside relationship content", () => {
+  const data = { ...base(), relationship: { ...validRelationship, summary: "Recommend the client sell before the review." } };
   assert.equal(validateAiScore(data, ["TWN"]), false);
 });
 

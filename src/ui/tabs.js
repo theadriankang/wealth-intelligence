@@ -1,4 +1,4 @@
-import { S, actionState, economics, flagged, positions, rows } from "../store.js";
+import { S, actionState, economics, flagged, positions, rows, aiState } from "../store.js";
 import { P } from "./palette.js";
 import { ECONOMICS_BASELINE } from "../model/scoring.js";
 import { chokepointExposure } from "../model/lookthrough.js";
@@ -26,20 +26,24 @@ const COMPLY = [
 export function paintActions() {
   const p = S.portfolio;
   const ev = S.evaluation?.clients?.[p.id];
-  const risks = ev?.risks || [];
-  const opportunities = ev?.opportunities || [];
-  const actions = ev?.actions || [];
-  const src = ev?.scoreSource === "ai" ? "ai" : "deterministic";
+  const state = aiState(p.id);
+  const risks = state === "ai" ? (ev.risks || []) : [];
+  const opportunities = state === "ai" ? (ev.opportunities || []) : [];
+  const actions = state === "ai" ? (ev.actions || []) : [];
   const suitability = p.mandate === "Discretionary"
     ? "Executable under standing authority" : "Requires client instruction before execution";
   document.getElementById("tn-act").textContent = actions.length;
+  const statusLine = state === "loading" ? `<p class="prose-shimmer">Scoring this client…</p>`
+    : state === "unavailable" ? `<p style="color:var(--ink-4); font-size:12px">AI scoring unavailable for this client.</p>`
+    : !risks.length && !opportunities.length && !actions.length ? `<p style="color:var(--ink-4); font-size:12px">Nothing flagged this week.</p>` : "";
   document.getElementById("actions").innerHTML = `
     <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px">
       <p style="margin:0; font-size:12.5px; color:var(--ink-3)">Risk findings and recommended
         actions for this mandate — internal RM guidance, not client-facing advice. The RM reviews,
         accepts, or rejects every item below; nothing here executes on its own.</p>
-      <span class="mode ${src === "ai" ? "ai" : ""}">${src === "ai" ? "ai-scored" : "deterministic"}</span>
+      ${state === "ai" ? `<span class="mode ai">ai-scored</span>` : ""}
     </div>
+    ${statusLine}
     ${risks.length ? `<div class="blk"><h3>Risks</h3>
       ${risks.map(r => `<div class="tp"><span class="num" style="color:${
         r.severity === "high" ? "var(--warn)" : r.severity === "medium" ? "var(--ink-3)" : "var(--ink-4)"
@@ -48,46 +52,62 @@ export function paintActions() {
       ${opportunities.map(o => `<div class="tp"><span class="num" style="color:var(--good)">●</span><p>${o.text}</p></div>`).join("")}</div>` : ""}
     ${actions.map((a, i) => {
       const key = p.id + "|" + i;
-      const state = S.aiActionState[key] || "pending";
+      const acState = S.aiActionState[key] || "pending";
       return `<article class="act">
         <div class="act-h"><span class="kind">${a.kind}${a.category ? ` · ${a.category}` : ""}</span><div><h3>${a.title}</h3></div></div>
         <div class="act-b"><p>${a.why}</p></div>
         <div class="act-f">
-          <span class="sp">${suitability}${state !== "pending" ? ` · ${state}` : ""}</span>
-          <button class="ghost sm ${state === "accepted" ? "solid" : ""}" data-accept="${i}">Accept</button>
-          <button class="ghost sm ${state === "rejected" ? "solid" : ""}" data-reject="${i}">Reject</button>
+          <span class="sp">${suitability}${acState !== "pending" ? ` · ${acState}` : ""}</span>
+          <button class="ghost sm ${acState === "accepted" ? "solid" : ""}" data-accept="${i}">Accept</button>
+          <button class="ghost sm ${acState === "rejected" ? "solid" : ""}" data-reject="${i}">Reject</button>
         </div>
       </article>`;
-    }).join("")}
-    ${!risks.length && !opportunities.length && !actions.length ? `<p style="color:var(--ink-4); font-size:12px">Nothing flagged this week.</p>` : ""}`;
+    }).join("")}`;
   document.querySelectorAll("#actions [data-accept]").forEach(b => b.addEventListener("click", () => {
     S.aiActionState[p.id + "|" + b.dataset.accept] = "accepted"; paintActions();
   }));
   document.querySelectorAll("#actions [data-reject]").forEach(b => b.addEventListener("click", () => {
     S.aiActionState[p.id + "|" + b.dataset.reject] = "rejected"; paintActions();
   }));
-  M.once("actions", S.portfolio.id + "|" + src, M.actions);
+  M.once("actions", S.portfolio.id + "|" + state, M.actions);
 }
 
+/** Relationship, standing concerns, talking points, and likely objections — AI-drafted for the
+ * open client (same one narrateClient call as Explanation/Risks & Actions), reprioritising the
+ * underlying relationship record for the current facts rather than reciting it. Deterministic
+ * fallback is that same static relationship record, reshaped. No number here to fake, but the
+ * same loading/unavailable states apply so stale/guessed content is never shown as current. */
 export function paintConversation() {
-  const r = S.portfolio.relationship;
-  if (!r) { document.getElementById("conv").innerHTML =
-    `<div class="blk"><p>No relationship record for this mandate.</p></div>`; return; }
-  document.getElementById("conv").innerHTML = `
-    <div class="blk"><h3>Relationship</h3>
+  const p = S.portfolio;
+  const state = aiState(p.id);
+  const ev = S.evaluation?.clients?.[p.id];
+  const el = document.getElementById("conv");
+  if (state === "loading") {
+    el.innerHTML = `<div class="blk"><p class="prose-shimmer">Preparing conversation notes…</p></div>`;
+    return;
+  }
+  if (state === "unavailable") {
+    el.innerHTML = `<div class="blk"><p style="color:var(--ink-4)">Conversation notes unavailable.</p></div>`;
+    return;
+  }
+  const r = ev.relationship;
+  if (!r) {
+    el.innerHTML = `<div class="blk"><p>No relationship record for this mandate.</p></div>`;
+    return;
+  }
+  el.innerHTML = `
+    <div class="blk"><h3>Relationship <span class="mode ai" style="margin-left:6px">ai-scored</span></h3>
       <div class="meta-row" style="margin-bottom:11px">
-        <div class="fct"><span class="k">Last contact</span><span class="v">${r.last.date} · ${r.last.channel}</span></div>
-        <div class="fct"><span class="k">Next review</span><span class="v">${S.portfolio.reviewDate}</span></div>
-        <div class="fct"><span class="k">Adviser</span><span class="v">${S.portfolio.rm}</span></div></div>
-      <p><strong style="color:var(--ink)">Discussed:</strong> ${r.last.topics}</p>
-      <p>${r.behaviour}</p></div>
+        <div class="fct"><span class="k">Next review</span><span class="v">${p.reviewDate}</span></div>
+        <div class="fct"><span class="k">Adviser</span><span class="v">${p.rm}</span></div></div>
+      <p>${r.summary}</p></div>
     <div class="blk"><h3>Standing concerns</h3>
       ${r.concerns.map(x => `<div class="tp"><span class="num">·</span><p>${x}</p></div>`).join("")}</div>
     <div class="blk"><h3>Talking points for the next conversation</h3>
-      ${r.points.map((x, i) => `<div class="tp"><span class="num">${i + 1}</span><p>${x}</p></div>`).join("")}</div>
+      ${r.talkingPoints.map((x, i) => `<div class="tp"><span class="num">${i + 1}</span><p>${x}</p></div>`).join("")}</div>
     <div class="blk"><h3>Likely objections</h3>
-      ${r.objections.map(o => `<div class="obj"><p class="q">“${o[0]}”</p><p class="a">${o[1]}</p></div>`).join("")}</div>`;
-  M.once("conv", S.portfolio.id, () => M.enter("#conv .blk", { y: 10, delay: 60, duration: 420 }));
+      ${r.objections.map(o => `<div class="obj"><p class="q">“${o.question}”</p><p class="a">${o.answer}</p></div>`).join("")}</div>`;
+  M.once("conv", p.id + "|" + state, () => M.enter("#conv .blk", { y: 10, delay: 60, duration: 420 }));
 }
 
 export function paintCompliance() {

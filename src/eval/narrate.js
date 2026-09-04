@@ -21,11 +21,17 @@ const SYSTEM =
   "life stage, and objectives given — rebalancing suggestions need the reasoning attached; tax- " +
   "aware opportunities need the tax domicile fact; life-event actions (retirement, business sale, " +
   "philanthropy, education, succession) need the life stage or objectives fact, not a guess. " +
-  "Nowhere in the response — explanation, risks, opportunities, or actions — use the words buy / " +
-  "sell / execute / switch; these are internal findings and recommendations for the RM, never " +
-  "client-facing advice or trade instructions. Compute `health` and `concentration` from the " +
-  "numbers given, not qualitatively; `concentration.countries` must only contain country codes " +
-  "present in the facts. Return JSON only.";
+  "For `relationship`, ground `summary`/`concerns`/`talkingPoints`/`objections` in the " +
+  "relationship facts given (last contact, topics discussed, behaviour, standing concerns, " +
+  "talking points, objections) plus the client's goals/tax domicile/life stage/objectives — " +
+  "refine and reprioritise them for the current facts rather than copying them verbatim, and " +
+  "never invent a conversation that didn't happen. Return `relationship: null` only if no " +
+  "relationship facts were given at all. " +
+  "Nowhere in the response — explanation, risks, opportunities, actions, or relationship — use " +
+  "the words buy / sell / execute / switch; these are internal findings and recommendations for " +
+  "the RM, never client-facing advice or trade instructions. Compute `health` and `concentration` " +
+  "from the numbers given, not qualitatively; `concentration.countries` must only contain country " +
+  "codes present in the facts. Return JSON only.";
 const SCHEMA = {
   health: "number 0-100 — overall portfolio health given the facts",
   concentration: {
@@ -43,7 +49,12 @@ const SCHEMA = {
   actions: "array of up to 4 objects { kind: string (one or two words, e.g. 'Rebalance', 'Tax " +
     "review', 'Client conversation'), category: 'rebalancing'|'tax-optimization'|'life-event'|" +
     "'other', title: string (a short recommended action), why: string (one sentence grounding it " +
-    "in mandate, risk profile, tax domicile, life stage, or objectives) }"
+    "in mandate, risk profile, tax domicile, life stage, or objectives) }",
+  relationship: "null, or an object { summary: string (1-2 sentences: last contact and how this " +
+    "client tends to behave/decide), concerns: array of up to 4 short strings (standing " +
+    "concerns), talkingPoints: array of up to 4 short strings (for the next conversation), " +
+    "objections: array of up to 3 objects { question: string (the likely objection, as the " +
+    "client might phrase it), answer: string (how to respond) } }"
 };
 
 export function templateNarration(clientEval, portfolio, grounding) {
@@ -63,10 +74,21 @@ export function templateNarration(clientEval, portfolio, grounding) {
   const actions = (clientEval.actions || []).slice(0, 4).map(a => ({
     kind: humanize(a.kind), category: categoriseAction(a), title: a.text, why: a.reason
   }));
+  const relationship = fallbackRelationship(portfolio.relationship);
   return {
     health: clientEval.health, healthBand: clientEval.healthBand,
     concentration: grounding?.fallbackConcentration, scoreSource: "deterministic",
-    explanation, risks, opportunities, actions
+    explanation, risks, opportunities, actions, relationship
+  };
+}
+
+function fallbackRelationship(r) {
+  if (!r) return null;
+  return {
+    summary: `Last contact ${r.last?.date || "unknown"} via ${r.last?.channel || "unspecified channel"}. ${r.behaviour || ""}`.trim(),
+    concerns: (r.concerns || []).slice(0, 4),
+    talkingPoints: (r.points || []).slice(0, 4),
+    objections: (r.objections || []).slice(0, 3).map(o => ({ question: o[0], answer: o[1] }))
   };
 }
 
@@ -111,6 +133,17 @@ export function validateAiScore(data, countryCodes) {
   if (data.actions.some(a => !a || !nonEmptyString(a.kind) || !nonEmptyString(a.title) || !nonEmptyString(a.why)
     || !ACTION_CATEGORIES.includes(a.category)
     || HAS_IMPERATIVE.test(a.kind) || HAS_IMPERATIVE.test(a.title) || HAS_IMPERATIVE.test(a.why))) return false;
+  if (data.relationship !== null && !validRelationship(data.relationship)) return false;
+  return true;
+}
+
+function validRelationship(r) {
+  if (!r || !nonEmptyString(r.summary) || HAS_IMPERATIVE.test(r.summary)) return false;
+  if (!Array.isArray(r.concerns) || r.concerns.length > 4 || r.concerns.some(c => !nonEmptyString(c) || HAS_IMPERATIVE.test(c))) return false;
+  if (!Array.isArray(r.talkingPoints) || r.talkingPoints.length > 4 || r.talkingPoints.some(t => !nonEmptyString(t) || HAS_IMPERATIVE.test(t))) return false;
+  if (!Array.isArray(r.objections) || r.objections.length > 3) return false;
+  if (r.objections.some(o => !o || !nonEmptyString(o.question) || !nonEmptyString(o.answer)
+    || HAS_IMPERATIVE.test(o.question) || HAS_IMPERATIVE.test(o.answer))) return false;
   return true;
 }
 
@@ -149,6 +182,15 @@ export async function narrateClient(clientEval, portfolio, rmNotes = [], groundi
     lombard: portfolio.lombard ? { headroomPct: portfolio.lombard.headroomPct } : null,
     risks: (clientEval.risks || []).map(r => ({ text: r.text, severity: r.severity })),
     opportunities: (clientEval.opportunities || []).map(o => o.text),
+    relationship: portfolio.relationship ? {
+      lastContactDate: portfolio.relationship.last?.date ?? null,
+      lastContactChannel: portfolio.relationship.last?.channel ?? null,
+      topicsDiscussed: portfolio.relationship.last?.topics ?? null,
+      behaviour: portfolio.relationship.behaviour ?? null,
+      standingConcerns: portfolio.relationship.concerns ?? [],
+      talkingPoints: portfolio.relationship.points ?? [],
+      likelyObjections: (portfolio.relationship.objections ?? []).map(o => ({ question: o[0], answer: o[1] }))
+    } : null,
     rmNotes
   };
   let res;
@@ -166,7 +208,8 @@ export async function narrateClient(clientEval, portfolio, rmNotes = [], groundi
       concentration: { pct: res.data.concentration.pct, countries: res.data.concentration.countries },
       scoreSource: "ai",
       explanation: res.data.explanation,
-      risks: res.data.risks, opportunities: res.data.opportunities, actions: res.data.actions
+      risks: res.data.risks, opportunities: res.data.opportunities, actions: res.data.actions,
+      relationship: res.data.relationship
     };
   }
   return fallback();

@@ -1,4 +1,4 @@
-import { S, rows, visibleRows, goals, goal, concentration, flagCountFor, positions, flagged } from "../store.js";
+import { S, rows, visibleRows, goals, goal, flagCountFor, positions, flagged, aiState } from "../store.js";
 import { P, LENSES, fmtD, css, BUCKETS, FUNDING_METHOD } from "./palette.js";
 import { POLICY, FEED } from "../signals/fixtures/signals.js";
 import { getMode } from "../signals/worldmonitor.js";
@@ -35,6 +35,14 @@ function clientHasIso(p, iso) {
     S.instruments[pos.instrumentId]?.exposures?.some(e => e.iso3 === iso));
 }
 
+/**
+ * Structural client facts (flagged positions, goals, review timing, lombard headroom, affected
+ * countries) plus the client's attention state. There is no deterministic risk-score formula
+ * here any more — urgency/band come from the AI alone via aiState()/S.narratedHash. Until a
+ * portfolio has been scored, band is "loading"; if scoring fails or the response doesn't
+ * validate, band is "unavailable". Neither state has a numeric urgency — the UI shows a state,
+ * not a guessed number.
+ */
 function clientMeta(p) {
   return withPortfolio(p, () => {
     const fl = flagged();
@@ -44,35 +52,24 @@ function clientMeta(p) {
     const affected = [...new Set((p.positions || []).flatMap(pos =>
       S.instruments[pos.instrumentId]?.exposures?.map(e => e.iso3) || []))]
       .filter(iso => (S.signals[iso]?.riskDelta || 0) >= 6).slice(0, 3);
-    const concentrationRisk = Math.min(15, Math.round(Math.max(...(p.positions || []).map(x => x.weightPct || 0), 0)));
-    const liquidityRisk = Math.min(25, Math.round(((p.meta?.nearCashNeeds || 0) + (p.meta?.privateCommitments || 0)) ? 25 - Math.min(22, (p.meta?.dailyLiquidityPct || 0) / 3) : 4));
-    const collateralRisk = p.lombard ? Math.max(0, Math.min(25, Math.round(25 - (p.lombard.headroomPct || 0) * .8))) : 0;
-    const mandateRisk = Math.min(20, Math.round(fl.length * 4 + (p.mandate === "Execution only" ? 4 : 0)));
-    const complianceRisk = Math.min(10, dueSoon ? 10 : /Sep|Oct|Nov/i.test(p.reviewDate) ? 5 : 1);
-    const eventRisk = Math.min(5, affected.length * 2 + (p.meta?.eventCount ? 1 : 0));
-    const breakdown = { collateralRisk, liquidityRisk, mandateRisk, concentrationRisk, complianceRisk, eventRisk };
-    const deterministicScore = Math.min(100, Math.round(Object.values(breakdown).reduce((s, v) => s + v, 0)));
-    // Reuse this client's cached AI health, opportunistically, if it's been scored before (the
-    // RM opened it and narration resolved) — no new AI call here, just a read of what's cached.
-    // The deterministic breakdown above (and the badge itself) still drives sorting and filters.
-    const cachedAi = S.narratedHash[p.id];
-    const scoreSource = cachedAi?.scoreSource === "ai" && typeof cachedAi.health === "number" ? "ai" : "deterministic";
-    const score = scoreSource === "ai" ? Math.round(100 - cachedAi.health) : deterministicScore;
-    const band = score >= 80 ? "critical" : score >= 60 ? "high" : score >= 35 ? "medium" : "low";
     const worst = fl[0];
+    const scoreState = aiState(p.id); // "loading" | "ai" | "unavailable"
+    const cachedAi = S.narratedHash[p.id];
+    const urgency = scoreState === "ai" ? Math.round(100 - cachedAi.health) : null;
+    const band = scoreState === "ai"
+      ? (urgency >= 80 ? "critical" : urgency >= 60 ? "high" : urgency >= 35 ? "medium" : "low")
+      : scoreState;
     const reason = ltv && p.lombard.currentLtv ? `LTV ${p.lombard.currentLtv.toFixed(2)}% vs ${p.lombard.marginCallLtv.toFixed(0)}% trigger`
       : ltv ? `Collateral headroom at ${p.lombard.headroomPct}%`
       : worst ? `${worst.instrumentId} pressure +${worst.riskDelta.toFixed(0)}`
       : dueSoon ? `Review due ${p.reviewDate}` : "No urgent client action";
     const driver = ltv ? "Collateral/Leverage"
-      : liquidityRisk >= 18 ? "Liquidity"
-      : mandateRisk >= 12 ? "Mandate/Suitability"
-      : concentrationRisk >= 12 ? "Concentration"
-      : complianceRisk >= 8 ? "Compliance/KYC"
-      : eventRisk >= 3 ? "Event Exposure" : "Concentration";
+      : worst ? "Concentration"
+      : dueSoon ? "Compliance/KYC"
+      : affected.length ? "Event Exposure" : "Concentration";
     const next = band === "critical" ? "Open review" : dueSoon ? "Prepare brief" : ltv ? "Check collateral" : "Monitor";
     const source = p.sourceOfWealth ? p.sourceOfWealth.split(" - ")[0] : "Private client";
-    return { fl, gs, dueSoon, ltv, affected, urgency:score, band, category:band, reason, driver, next, source, breakdown, scoreSource };
+    return { fl, gs, dueSoon, ltv, affected, urgency, band, category: band, reason, driver, next, source, scoreSource: scoreState };
   });
 }
 
@@ -94,7 +91,7 @@ function clientMatches(p, meta) {
 export function paintBook(onPick) {
   const metas = new Map(S.portfolios.map(p => [p.id, clientMeta(p)]));
   const filtered = S.portfolios.filter(p => clientMatches(p, metas.get(p.id)))
-    .sort((a, b) => metas.get(b.id).urgency - metas.get(a.id).urgency);
+    .sort((a, b) => (metas.get(b.id).urgency ?? -1) - (metas.get(a.id).urgency ?? -1));
   document.getElementById("book-n").textContent = `${SCALE.total} synthetic clients`;
   document.getElementById("book-foot").innerHTML = `Sorted by attention score, then nearest deadline. Synthetic demo data as of 26 Aug 2026.`;
   const input = document.getElementById("client-search");
@@ -111,12 +108,13 @@ export function paintBook(onPick) {
   document.getElementById("book").innerHTML = filtered.map(p => {
     const m = metas.get(p.id);
     const tone = m.band;
+    const badgeLabel = m.band === "loading" ? "Scoring…" : m.band === "unavailable" ? "Unavailable" : `${m.urgency} · ${m.band}`;
     return `<button class="cl rm-client ${tone}" data-cl="${p.id}" aria-current="${p.id === S.portfolio.id}">
       <span class="client-dot"></span><span class="nm">${p.name}</span>
-      <span class="badge ${m.band}">${m.urgency} · ${m.band}${m.scoreSource === "ai" ? ` <span class="mode ai">AI</span>` : ""}</span>
+      <span class="badge ${m.band}">${badgeLabel}</span>
       <span class="rf">${m.source}</span>
       <span class="riskline">${p.aum} · ${p.riskProfile}</span>
-      <span class="reason">${m.driver}: ${m.reason}</span><span class="mini-trend" title="Collateral ${m.breakdown.collateralRisk}/25 · Liquidity ${m.breakdown.liquidityRisk}/25 · Mandate ${m.breakdown.mandateRisk}/20 · Concentration ${m.breakdown.concentrationRisk}/15 · KYC ${m.breakdown.complianceRisk}/10 · Events ${m.breakdown.eventRisk}/5">${m.fl.length} alerts</span>
+      <span class="reason">${m.driver}: ${m.reason}</span><span class="mini-trend">${m.fl.length} alerts</span>
       <span class="next">${m.next} · ${p.reviewDate}</span>
     </button>`;
   }).join("") || `<div class="empty-state">No clients match ${active.length ? active.join(" · ") : "the current search"}.</div>`;
@@ -149,24 +147,31 @@ export function paintHead(onHousehold) {
   const p = S.portfolio, L = p.lombard;
   const meta = clientMeta(p);
   const ev = S.evaluation?.clients?.[p.id];
-  const src = ev?.scoreSource === "ai" ? "ai" : "deterministic";
+  const state = aiState(p.id);
+  const healthDisplay = state === "ai" ? `${Math.round(ev.health)} · ${ev.healthBand}`
+    : state === "loading" ? shimmer
+    : `<span style="color:var(--ink-4)">Unavailable</span>`;
+  const explanationBlock = state === "ai"
+    ? `<ul class="explain-list">${(ev.explanation || []).map(b => `<li>${b}</li>`).join("")}</ul>`
+    : state === "loading" ? `<p class="prose-shimmer">Generating explanation…</p>`
+    : `<p style="color:var(--ink-4); font-size:12px">Explanation unavailable.</p>`;
   document.getElementById("client-head").innerHTML = `
     <h2>${p.name}</h2><span class="ref">${p.ref}</span><span class="ref">${meta.source}</span>
     <span class="tag ${p.mandate === "Advisory" ? "adv" : "disc"}">${p.mandate} mandate</span>
     <div class="facts">
       <div class="fct"><span class="k">${S.household ? "Household" : "AUM"}</span><span class="v">${p.currency} ${S.household ? (p.householdAum || p.aum) : p.aum}</span></div>
       <div class="fct"><span class="k">Risk profile</span><span class="v">${p.riskProfile} · ${p.riskBand}</span></div>
-      ${ev ? `<div class="fct"><span class="k">Health</span><span class="v">${Math.round(ev.health)} · ${ev.healthBand}
-        <span class="mode ${src === "ai" ? "ai" : ""}" style="margin-left:6px">${src === "ai" ? "ai-scored" : "deterministic"}</span></span></div>` : ""}
+      <div class="fct"><span class="k">Health</span><span class="v">${healthDisplay}
+        ${state === "ai" ? `<span class="mode ai" style="margin-left:6px">ai-scored</span>` : ""}</span></div>
       ${L ? `<div class="fct"><span class="k">Lombard headroom</span><span class="v" style="color:${L.headroomPct < 25 ? P.SEV.warn : "inherit"}">${L.headroomPct}% <span style="color:var(--ink-4)">from ${L.prevHeadroomPct}%</span></span></div>` : ""}
       <div class="fct"><span class="k">Next review</span><span class="v">${p.reviewDate}</span></div>
       ${p.householdPositions ? `<button class="hh" id="hh-btn" aria-pressed="${S.household}"><span class="sw"></span>Household · ${(p.entities || []).length} entities</button>` : ""}
     </div>
-    ${ev ? `<div class="head-prose">
-      <ul class="explain-list">${(ev.explanation ?? [shimmer]).map(b => `<li>${b}</li>`).join("")}</ul>
+    <div class="head-prose">
+      ${explanationBlock}
       <button class="ghost sm" id="inspect-data-btn" style="align-self:flex-start">${S.inspectDataOpen ? "Hide data used" : "Inspect data used"}</button>
-      ${S.inspectDataOpen ? `<pre class="inspect-data">${JSON.stringify(ev.groundingUsed ?? {}, null, 2)}</pre>` : ""}
-    </div>` : ""}`;
+      ${S.inspectDataOpen ? `<pre class="inspect-data">${JSON.stringify(ev?.groundingUsed ?? {}, null, 2)}</pre>` : ""}
+    </div>`;
   document.getElementById("hh-btn")?.addEventListener("click", onHousehold);
   document.getElementById("inspect-data-btn")?.addEventListener("click", () => {
     S.inspectDataOpen = !S.inspectDataOpen;
@@ -203,14 +208,22 @@ export function paintEvidence() {
     M.once("evid", "g:" + g.id + ":" + g.change, M.evidence);
     return;
   }
-  const c = ev?.concentration ?? concentration();
-  const src = ev?.scoreSource === "ai" ? "ai" : "deterministic";
+  const state = aiState(S.portfolio.id);
   document.getElementById("ev-k").textContent = "Risk-weighted concentration";
-  document.getElementById("ev-v").textContent = c.pct + "%";
-  document.getElementById("ev-s").innerHTML =
-    `of deteriorating exposure in three countries<br><span style="font-family:var(--mono);color:var(--ink-2)">${c.countries.join(" · ")}</span>
-    <span class="mode ${src === "ai" ? "ai" : ""}" style="margin-left:6px">${src === "ai" ? "ai-scored" : "deterministic"}</span>`;
-  M.once("evid", "c:" + S.portfolio.id + ":" + c.pct, M.evidence);
+  if (state === "ai") {
+    const c = ev.concentration;
+    document.getElementById("ev-v").textContent = c.pct + "%";
+    document.getElementById("ev-s").innerHTML =
+      `of deteriorating exposure in three countries<br><span style="font-family:var(--mono);color:var(--ink-2)">${c.countries.join(" · ")}</span>
+      <span class="mode ai" style="margin-left:6px">ai-scored</span>`;
+  } else if (state === "loading") {
+    document.getElementById("ev-v").innerHTML = shimmer;
+    document.getElementById("ev-s").innerHTML = `<span style="color:var(--ink-4)">Scoring in progress</span>`;
+  } else {
+    document.getElementById("ev-v").textContent = "—";
+    document.getElementById("ev-s").innerHTML = `<span style="color:var(--ink-4)">Unavailable</span>`;
+  }
+  M.once("evid", "c:" + S.portfolio.id + ":" + state, M.evidence);
 }
 
 export function paintLegend() {
@@ -236,11 +249,12 @@ export function paintTicker(feed = FEED) {
 
 export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle }) {
   const p = S.portfolio, meta = clientMeta(p), L = LENSES().d;
-  const urgent = S.portfolios.filter(x => clientHasIso(x, S.selIso)).map(x => ({ p:x, m:clientMeta(x) })).sort((a,b)=>b.m.urgency-a.m.urgency).slice(0,5);
+  const urgent = S.portfolios.filter(x => clientHasIso(x, S.selIso)).map(x => ({ p:x, m:clientMeta(x) }))
+    .sort((a,b) => (b.m.urgency ?? -1) - (a.m.urgency ?? -1)).slice(0,5);
   const digest = S.selIso ? S.signals[S.selIso]?.events || [] : topEventsRaw(4);
   const top = meta.fl[0];
   const scan = S.policyScan || currentPolicyScan();
-  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div><div class="urgent-list">${urgent.map(({p,m}) => `<article class="urgent-mini"><div><h3>${p.name}</h3><p>${m.reason}</p><span>${p.aum} · ${p.reviewDate}</span></div><b class="${m.band}">${m.urgency}${m.scoreSource === "ai" ? ` <span class="mode ai">AI</span>` : ""}</b><button class="ghost sm" data-cl="${p.id}">Open review</button></article>`).join("")}</div><button class="ghost solid" id="priority-open">View all urgent reviews</button></section>
+  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div><div class="urgent-list">${urgent.map(({p,m}) => `<article class="urgent-mini"><div><h3>${p.name}</h3><p>${m.reason}</p><span>${p.aum} · ${p.reviewDate}</span></div><b class="${m.band}">${m.band === "loading" ? "…" : m.band === "unavailable" ? "n/a" : m.urgency}</b><button class="ghost sm" data-cl="${p.id}">Open review</button></article>`).join("")}</div><button class="ghost solid" id="priority-open">View all urgent reviews</button></section>
     <section class="priority-card"><div class="sec-h"><h2>Live Intelligence</h2><button class="ghost sm" id="clear-sel">Reset view</button></div><div class="situation-list">${digest.map(e => signalCard(e)).join("")}</div><div class="policy-mini"><span>Policy Sentinel</span><b>${scan.signal.stance}</b><button class="ghost sm" id="rail-policy-open">Evidence</button></div></section>
     <section class="priority-card positions-mini"><div class="sec-h"><h2>Positions by pressure</h2><span class="count">top 4</span></div>${visibleRows().slice(0,4).map(r => `<button class="mini-pos" data-t="${r.instrumentId}"><span class="tickr">${r.instrumentId}</span><span>${r.name}</span><b style="color:${L.col(r.riskDelta)}">${fmtD(r.riskDelta)}</b></button>`).join("")}</section>
     <section class="priority-card copilot-card"><div class="sec-h"><h2>AI Copilot</h2><span class="spark">✦</span></div><p>Ask about this client, a holding, or a market signal.</p><button class="suggest" data-coprompt="Prepare a call brief for ${p.name}">Prepare call brief</button><button class="suggest" data-coprompt="Show liquidity risks for ${p.name}">Show liquidity risks</button><button class="ghost solid" id="open-copilot">Open copilot</button></section>`;
