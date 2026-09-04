@@ -393,10 +393,6 @@ table.prov td.e{font-family:var(--mono); font-size:10.5px; color:var(--ink-4); w
 @media (max-width:900px){.pf{grid-template-columns:1fr; grid-template-rows:minmax(260px,44%) 1fr}
   .legend{display:none} .eff{grid-template-columns:1fr}}
 
-/* display face — placed last so it wins over equal-specificity component rules */
-.brand h1,.ch h2,.goal .pct,.econ .v,.evid .big,.memo .mh .t{font-family:var(--disp);letter-spacing:-.02em}
-.brand h1{font-weight:800;text-transform:uppercase}
-
 @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
 
 /* ===== added in the repo build ===== */
@@ -466,3 +462,6 @@ table.prov td.e{font-family:var(--mono); font-size:10.5px; color:var(--ink-4); w
 .cv .back{display:inline-block; margin-bottom:26px; font-size:12px; color:#5d6470;
   text-decoration:none; border:1px solid #dcdad4; border-radius:6px; padding:5px 11px; background:#fff}
 
+/* display face — placed last so it wins over equal-specificity component rules */
+.brand h1,.ch h2,.goal .pct,.econ .v,.evid .big,.memo .mh .t{font-family:var(--disp);letter-spacing:-.02em}
+.brand h1{font-weight:800;text-transform:uppercase}
