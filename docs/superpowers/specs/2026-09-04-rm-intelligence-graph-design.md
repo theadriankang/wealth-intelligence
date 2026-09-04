@@ -1,3 +1,9 @@
+> **⚠️ SUPERSEDED (2026-09-04) by `2026-09-04-rm-intelligence-evaluation-design.md`.**
+> Never implemented. The composite-scoring-rubric evaluation model, the every-60s
+> book-wide run, the client-side execution, the 4-segment spine, and the AI globe lens
+> replace the on-demand server pipeline and full-screen takeover described below.
+> Kept for history only.
+
 # RM Intelligence Graph — design
 
 **Date:** 2026-09-04

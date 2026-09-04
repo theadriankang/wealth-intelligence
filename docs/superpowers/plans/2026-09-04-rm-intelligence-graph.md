@@ -1,3 +1,6 @@
+> **⚠️ SUPERSEDED (2026-09-04). Never executed.** Replaced by the plan for
+> `docs/superpowers/specs/2026-09-04-rm-intelligence-evaluation-design.md`. Kept for history.
+
 # RM Intelligence Graph Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
