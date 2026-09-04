@@ -27,8 +27,6 @@
 }
 *{box-sizing:border-box}
 body{margin:0}
-.brand h1,.ch h2,.goal .pct,.econ .v,.evid .big,.memo .mh .t{font-family:var(--disp);letter-spacing:-.02em}
-.brand h1{font-weight:800;text-transform:uppercase}
 button{font:inherit; color:inherit}
 :focus-visible{outline:2px solid var(--dn-3); outline-offset:1px}
 .app{height:100dvh; min-height:700px;
@@ -394,6 +392,11 @@ table.prov td.e{font-family:var(--mono); font-size:10.5px; color:var(--ink-4); w
 @media (max-width:1200px){.book{display:none} .stage{grid-template-columns:1fr} .evid{display:none}}
 @media (max-width:900px){.pf{grid-template-columns:1fr; grid-template-rows:minmax(260px,44%) 1fr}
   .legend{display:none} .eff{grid-template-columns:1fr}}
+
+/* display face — placed last so it wins over equal-specificity component rules */
+.brand h1,.ch h2,.goal .pct,.econ .v,.evid .big,.memo .mh .t{font-family:var(--disp);letter-spacing:-.02em}
+.brand h1{font-weight:800;text-transform:uppercase}
+
 @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
 
 /* ===== added in the repo build ===== */
