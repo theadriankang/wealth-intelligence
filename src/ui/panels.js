@@ -203,7 +203,6 @@ export function paintBook(onPick) {
     if (el) el.value = value || "all";
   }
   const active = activeClientFilters();
-  if (fs) fs.textContent = active.length ? active.join(" · ") : "No active filters";
   document.getElementById("book").innerHTML = filtered.map(p => {
     const m = metas.get(p.id);
     const tone = m.band;
