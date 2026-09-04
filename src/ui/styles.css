@@ -694,6 +694,12 @@ button:disabled{opacity:.58; cursor:wait}
   background:var(--panel); color:var(--ink-2); padding:6px 7px; font:inherit; font-size:10px;
   letter-spacing:0; text-transform:none; outline:0}
 .filter-panel select:focus{border-color:var(--dn-3); color:var(--ink)}
+.snapshot-picker{display:flex; align-items:center; gap:7px; font-family:var(--mono); font-size:10px;
+  letter-spacing:.05em; text-transform:uppercase; color:var(--ink-4)}
+.snapshot-picker select{border:1px solid var(--line); border-radius:6px; background:var(--panel);
+  color:var(--ink-2); padding:5px 8px; font:inherit; font-size:10.5px; letter-spacing:0;
+  text-transform:none; outline:0; cursor:pointer}
+.snapshot-picker select:focus{border-color:var(--dn-3); color:var(--ink)}
 .book-list{min-height:0}
 .rm-client{grid-template-columns:10px minmax(0,1fr) auto; gap:5px 9px; padding:12px 12px;
   margin:0 4px; border-radius:7px}

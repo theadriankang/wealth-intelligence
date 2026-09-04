@@ -9,6 +9,10 @@ export const shellHtml = () => `
       <span class="mode" id="mode-tag">…</span></div>
     <div class="rm-id">Priscilla Ong · Asia Desk</div>
     <div class="spacer"></div>
+    <label class="snapshot-picker" id="snapshot-picker" hidden>
+      <span>Snapshot</span>
+      <select id="snapshot-select"></select>
+    </label>
   </header>
 
   <div class="tick-strip liquid-glass">
