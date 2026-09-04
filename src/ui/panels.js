@@ -51,7 +51,13 @@ function clientMeta(p) {
     const complianceRisk = Math.min(10, dueSoon ? 10 : /Sep|Oct|Nov/i.test(p.reviewDate) ? 5 : 1);
     const eventRisk = Math.min(5, affected.length * 2 + (p.meta?.eventCount ? 1 : 0));
     const breakdown = { collateralRisk, liquidityRisk, mandateRisk, concentrationRisk, complianceRisk, eventRisk };
-    const score = Math.min(100, Math.round(Object.values(breakdown).reduce((s, v) => s + v, 0)));
+    const deterministicScore = Math.min(100, Math.round(Object.values(breakdown).reduce((s, v) => s + v, 0)));
+    // Reuse this client's cached AI health, opportunistically, if it's been scored before (the
+    // RM opened it and narration resolved) — no new AI call here, just a read of what's cached.
+    // The deterministic breakdown above (and the badge itself) still drives sorting and filters.
+    const cachedAi = S.narratedHash[p.id];
+    const scoreSource = cachedAi?.scoreSource === "ai" && typeof cachedAi.health === "number" ? "ai" : "deterministic";
+    const score = scoreSource === "ai" ? Math.round(100 - cachedAi.health) : deterministicScore;
     const band = score >= 80 ? "critical" : score >= 60 ? "high" : score >= 35 ? "medium" : "low";
     const worst = fl[0];
     const reason = ltv && p.lombard.currentLtv ? `LTV ${p.lombard.currentLtv.toFixed(2)}% vs ${p.lombard.marginCallLtv.toFixed(0)}% trigger`
@@ -66,7 +72,7 @@ function clientMeta(p) {
       : eventRisk >= 3 ? "Event Exposure" : "Concentration";
     const next = band === "critical" ? "Open review" : dueSoon ? "Prepare brief" : ltv ? "Check collateral" : "Monitor";
     const source = p.sourceOfWealth ? p.sourceOfWealth.split(" - ")[0] : "Private client";
-    return { fl, gs, dueSoon, ltv, affected, urgency:score, band, category:band, reason, driver, next, source, breakdown };
+    return { fl, gs, dueSoon, ltv, affected, urgency:score, band, category:band, reason, driver, next, source, breakdown, scoreSource };
   });
 }
 
@@ -107,7 +113,7 @@ export function paintBook(onPick) {
     const tone = m.band;
     return `<button class="cl rm-client ${tone}" data-cl="${p.id}" aria-current="${p.id === S.portfolio.id}">
       <span class="client-dot"></span><span class="nm">${p.name}</span>
-      <span class="badge ${m.band}">${m.urgency} · ${m.band}</span>
+      <span class="badge ${m.band}">${m.urgency} · ${m.band}${m.scoreSource === "ai" ? ` <span class="mode ai">AI</span>` : ""}</span>
       <span class="rf">${m.source}</span>
       <span class="riskline">${p.aum} · ${p.riskProfile}</span>
       <span class="reason">${m.driver}: ${m.reason}</span><span class="mini-trend" title="Collateral ${m.breakdown.collateralRisk}/25 · Liquidity ${m.breakdown.liquidityRisk}/25 · Mandate ${m.breakdown.mandateRisk}/20 · Concentration ${m.breakdown.concentrationRisk}/15 · KYC ${m.breakdown.complianceRisk}/10 · Events ${m.breakdown.eventRisk}/5">${m.fl.length} alerts</span>
@@ -229,7 +235,7 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
   const digest = S.selIso ? S.signals[S.selIso]?.events || [] : topEventsRaw(4);
   const top = meta.fl[0];
   const scan = S.policyScan || currentPolicyScan();
-  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div><div class="urgent-list">${urgent.map(({p,m}) => `<article class="urgent-mini"><div><h3>${p.name}</h3><p>${m.reason}</p><span>${p.aum} · ${p.reviewDate}</span></div><b class="${m.band}">${m.urgency}</b><button class="ghost sm" data-cl="${p.id}">Open review</button></article>`).join("")}</div><button class="ghost solid" id="priority-open">View all urgent reviews</button></section>
+  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div><div class="urgent-list">${urgent.map(({p,m}) => `<article class="urgent-mini"><div><h3>${p.name}</h3><p>${m.reason}</p><span>${p.aum} · ${p.reviewDate}</span></div><b class="${m.band}">${m.urgency}${m.scoreSource === "ai" ? ` <span class="mode ai">AI</span>` : ""}</b><button class="ghost sm" data-cl="${p.id}">Open review</button></article>`).join("")}</div><button class="ghost solid" id="priority-open">View all urgent reviews</button></section>
     <section class="priority-card"><div class="sec-h"><h2>Live Intelligence</h2><button class="ghost sm" id="clear-sel">Reset view</button></div><div class="situation-list">${digest.map(e => signalCard(e)).join("")}</div><div class="policy-mini"><span>Policy Sentinel</span><b>${scan.signal.stance}</b><button class="ghost sm" id="rail-policy-open">Evidence</button></div></section>
     <section class="priority-card positions-mini"><div class="sec-h"><h2>Positions by pressure</h2><span class="count">top 4</span></div>${visibleRows().slice(0,4).map(r => `<button class="mini-pos" data-t="${r.instrumentId}"><span class="tickr">${r.instrumentId}</span><span>${r.name}</span><b style="color:${L.col(r.riskDelta)}">${fmtD(r.riskDelta)}</b></button>`).join("")}</section>
     <section class="priority-card copilot-card"><div class="sec-h"><h2>AI Copilot</h2><span class="spark">✦</span></div><p>Ask about this client, a holding, or a market signal.</p><button class="suggest" data-coprompt="Prepare a call brief for ${p.name}">Prepare call brief</button><button class="suggest" data-coprompt="Show liquidity risks for ${p.name}">Show liquidity risks</button><button class="ghost solid" id="open-copilot">Open copilot</button></section>`;

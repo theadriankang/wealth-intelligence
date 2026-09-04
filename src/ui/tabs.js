@@ -11,66 +11,32 @@ const COMPLY = [
   { t:"Concentration policy", s:"watch", d:"Look-through single-country exposure sits above the soft mandate limit. RM acknowledgement required at the next review." }
 ];
 
-export function paintActions(onChange) {
-  const p = S.portfolio, disc = p.mandate === "Discretionary";
-  document.getElementById("tn-act").textContent =
-    p.actions.filter(a => actionState(a) === "Drafted").length;
+/** Risks + recommended actions — AI-scored for the open client, hash-gated, with a
+ * deterministic fallback (clientEval.js's rule-based findings) when the model is unavailable
+ * or its response doesn't validate. See eval/narrate.js. */
+export function paintActions() {
+  const p = S.portfolio;
+  const ev = S.evaluation?.clients?.[p.id];
+  const risks = ev?.risks || [];
+  const actions = ev?.actions || [];
+  const src = ev?.scoreSource === "ai" ? "ai" : "deterministic";
+  document.getElementById("tn-act").textContent = actions.length;
   document.getElementById("actions").innerHTML = `
-    <p style="margin:0 0 15px; font-size:12.5px; color:var(--ink-3); line-height:1.6; max-width:62ch">
-      ${disc
-        ? "This is a <strong style='color:var(--ink-2)'>discretionary</strong> mandate — actions execute under standing authority and are reported to the client, with a suitability record generated at execution."
-        : "This is an <strong style='color:var(--ink-2)'>advisory</strong> mandate — nothing executes without the client's decision. Each proposal carries the suitability record that must exist before it is put to them."}</p>
-    ${p.actions.map(a => {
-      const st = actionState(a), k = a.kind.toLowerCase();
-      return `<article class="act">
-        <div class="act-h"><span class="kind k-${k}">${a.kind}</span>
-          <div><h3>${a.title}</h3><div class="sub">${a.target}</div></div>
-          <span class="state ${st.toLowerCase()}">${st}</span></div>
-        <div class="act-b"><p>${a.why}</p>
-          <div class="eff">
-            <div><div class="k">Effect on goal</div><div class="v">${a.effect[0]}</div></div>
-            <div><div class="k">Cost</div><div class="v">${a.effect[1]}</div></div>
-            <div><div class="k">Tax</div><div class="v">${a.effect[2]}</div></div>
-          </div></div>
-        <div class="suit" id="suit-${a.id}" hidden>
-          <dl><dt>Objective</dt><dd>${a.suitability.objective}</dd>
-            <dt>Risk fit</dt><dd>${a.suitability.riskFit}</dd>
-            <dt>Knowledge</dt><dd>${a.suitability.knowledge}</dd>
-            <dt>Concentration</dt><dd>${a.suitability.concentration}</dd>
-            <dt>Costs</dt><dd>${a.suitability.costs}</dd></dl>
-          <div class="stamp">Record generated automatically · ${p.ref} · 04 Sep 2026 08:40 SGT · ${p.rm}</div>
-        </div>
-        <div class="act-f">
-          <button class="ghost sm" data-suit="${a.id}">Suitability record</button>
-          <span class="sp">${disc
-            ? (st === "Executed" ? "Executed under standing authority" : "Executable without client instruction")
-            : st === "Drafted" ? "Requires client decision before execution"
-            : st === "Discussed" ? "Raised with the client — awaiting decision" : "Client accepted"}</span>
-          ${st === "Executed" ? "" : `<button class="ghost sm ${st === "Drafted" ? "solid" : ""}"
-            data-adv="${a.id}">${disc ? "Execute" : st === "Drafted" ? "Put to client" : "Record acceptance"}</button>`}
-        </div></article>`;
-    }).join("")}`;
-
-  document.querySelectorAll("[data-suit]").forEach(b => b.addEventListener("click", () => {
-    const el = document.getElementById("suit-" + b.dataset.suit);
-    const open = el.hidden;
-    M.expand(el, open);
-    b.textContent = open ? "Hide record" : "Suitability record";
-  }));
-  M.once("actions", S.portfolio.id, M.actions);
-  document.querySelectorAll("[data-adv]").forEach(b => b.addEventListener("click", () => {
-    const a = S.portfolio.actions.find(x => x.id === b.dataset.adv), st = actionState(a);
-    S.actionState[S.portfolio.id + a.id] = S.portfolio.mandate === "Discretionary"
-      ? "Executed" : st === "Drafted" ? "Discussed" : "Accepted";
-    onChange();
-    // The state pill is the only thing that moved — say so, once.
-    requestAnimationFrame(() => {
-      const card = document.querySelectorAll("#actions .act")[
-        S.portfolio.actions.findIndex(x => x.id === a.id)];
-      const pill = card?.querySelector(".state");
-      if (pill) M.animate(pill, { scale: [1.14, 1], opacity: [0, 1], duration: 460, ease: M.EASE.out });
-    });
-  }));
+    <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px">
+      <p style="margin:0; font-size:12.5px; color:var(--ink-3)">Risk findings and recommended
+        actions for this mandate — internal RM guidance, not client-facing advice.</p>
+      <span class="mode ${src === "ai" ? "ai" : ""}">${src === "ai" ? "ai-scored" : "deterministic"}</span>
+    </div>
+    ${risks.length ? `<div class="blk"><h3>Risks</h3>
+      ${risks.map(r => `<div class="tp"><span class="num" style="color:${
+        r.severity === "high" ? "var(--warn)" : r.severity === "medium" ? "var(--ink-3)" : "var(--ink-4)"
+      }">●</span><p>${r.text}</p></div>`).join("")}</div>` : ""}
+    ${actions.map(a => `<article class="act">
+      <div class="act-h"><span class="kind">${a.kind}</span><div><h3>${a.title}</h3></div></div>
+      <div class="act-b"><p>${a.why}</p></div>
+    </article>`).join("")}
+    ${!risks.length && !actions.length ? `<p style="color:var(--ink-4); font-size:12px">Nothing flagged this week.</p>` : ""}`;
+  M.once("actions", S.portfolio.id + "|" + src, M.actions);
 }
 
 export function paintConversation() {

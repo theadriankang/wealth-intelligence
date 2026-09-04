@@ -225,9 +225,11 @@ async function maybeNarrateOpenClient() {
       ev.thesis = cached.thesis; ev.summary = cached.summary;
       ev.health = cached.health; ev.healthBand = cached.healthBand;
       ev.concentration = cached.concentration; ev.scoreSource = cached.scoreSource;
+      ev.risks = cached.risks; ev.actions = cached.actions;
       // Health/thesis/summary live in the client header (paintHead), concentration in the
-      // globe overlay (paintEvidence) — renderAll() repaints both; it's cheap and this branch
-      // is rare (only fires once per resolved narration, on a cache hit for a stale object).
+      // globe overlay (paintEvidence), risks/actions in the Risks & Actions tab (paintActions)
+      // — renderAll() repaints all three; it's cheap and this branch is rare (only fires once
+      // per resolved narration, on a cache hit for a stale object).
       renderAll();
     }
     return;
@@ -251,6 +253,7 @@ async function maybeNarrateOpenClient() {
   live.thesis = narrated.thesis; live.summary = narrated.summary;
   live.health = narrated.health; live.healthBand = narrated.healthBand;
   live.concentration = narrated.concentration; live.scoreSource = narrated.scoreSource;
+  live.risks = narrated.risks; live.actions = narrated.actions;
   if (S.portfolio?.id === id) renderAll();
 }
 
@@ -292,7 +295,7 @@ export function renderAll() {
   document.getElementById("close-priority-rail")?.addEventListener("click", () => { S.railDrawerOpen = false; syncDrawers(); });
   syncDrawers();
   paintCopilot({ onToggle: railHandlers.onCopilotToggle });
-  paintActions(renderAll);
+  paintActions();
   paintConversation();
   paintCompliance();
   paintEconomics();
