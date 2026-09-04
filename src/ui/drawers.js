@@ -30,6 +30,13 @@ function openDrawer(html, wide = false) {
   M.drawer(drawer());
 }
 
+/** Stub — Task 12 fills this with goals, positions and the relationship record. */
+export function openPortfolioDetail() {
+  openDrawer(`<div class="dr-h"><div><div style="font-size:15px;font-weight:600">Full portfolio</div></div>
+    <button class="x" aria-label="Close">×</button></div>
+    <div class="dr-body"><p class="lede">Portfolio detail — goals, positions, relationship.</p></div>`, true);
+}
+
 export function openPosition(id) {
   const r = rows().find(x => x.instrumentId === id);
   if (!r) return;

@@ -1,5 +1,5 @@
-import { S, rows, visibleRows, goals, goal, concentration, flagCountFor, positions } from "../store.js";
-import { P, LENSES, fmtD, css, BUCKETS, FUNDING_METHOD } from "./palette.js";
+import { S, goals, concentration, flagCountFor, positions } from "../store.js";
+import { P, LENSES, fmtD, css } from "./palette.js";
 import { POLICY, FEED } from "../signals/fixtures/signals.js";
 import { getMode } from "../signals/worldmonitor.js";
 import { reconcile, HOUSE_VIEW } from "../model/houseview.js";
@@ -53,32 +53,6 @@ export function paintHead(onHousehold) {
   document.getElementById("hh-btn")?.addEventListener("click", onHousehold);
 }
 
-export function paintGoals(onPick) {
-  document.getElementById("seg-goals").innerHTML = `
-    <div class="seg-h"><span class="seg-n">02</span><h3>Goals at risk</h3>
-      <span class="c">${S.goalSel ? "1 filtered" : goals().length + " tracked"}</span></div>
-    ` + `<div class="goal-stack">` + goals().map(g => {
-    const col = g.change < 0 ? P.UP[3] : g.change > 0 ? P.SEV.good : css("--ink-3");
-    const bar = g.funded >= 95 ? P.SEV.good : g.funded >= 80 ? P.SEV.warn : P.UP[3];
-    const bk = BUCKETS[g.bucket] || { label: "Objective", cap: "" };
-    return `<button class="goal" data-g="${g.id}" aria-pressed="${S.goalSel === g.id}">
-      <div class="g-top">
-        <span class="bkt b-${g.bucket || "other"}" title="${bk.cap}">${bk.label}</span>
-        <span class="gh">${g.horizon}</span></div>
-      <div class="gn">${g.name}</div>
-      <div class="gv"><span class="pct">${g.funded}%</span>
-        <span class="chg" style="color:${col}">${g.change === 0 ? "no change" : fmtD(g.change) + " pts this week"}</span></div>
-      <div class="track"><i style="width:${Math.min(100, g.funded)}%; background:${bar}"></i>
-        <span class="prev" style="left:${Math.min(100, g.prevFunded)}%"></span></div>
-      <div class="gt2"><span>${g.targetLabel}</span><span>${g.driverIds.length
-        ? g.driverIds.length + " positions" : "cash-funded"}</span></div>
-    </button>`;
-  }).join("") + `</div>`;
-  document.querySelectorAll("[data-g]").forEach(b =>
-    b.addEventListener("click", () => onPick(b.dataset.g)));
-  M.once("goals", S.portfolio.id + "|" + S.household, M.goals);
-}
-
 export function paintEvidence() {
   const g = S.goalSel ? goals().find(x => x.id === S.goalSel) : null;
   if (g) {
@@ -125,7 +99,7 @@ export function paintTicker(feed = FEED) {
     : "Signals fetched from the live World Monitor feed.";
 }
 
-/* segment 01 — Situation: what changed overnight, house-view tension, policy radar */
+/* segment 02 — Situation: the global picture — overnight change, house-view tension, policy radar */
 export function paintSituation() {
   const sel = S.selIso ? S.signals[S.selIso] : null;
   const hv = sel ? reconcile(S.selIso, sel.riskDelta) : null;
@@ -135,8 +109,8 @@ export function paintSituation() {
     : topEvents(3);
 
   document.getElementById("seg-situation").innerHTML = `
-    <div class="seg-h"><span class="seg-n">01</span><h3>Situation</h3>
-      <span class="c">${sel ? sel.name : "overnight"}</span></div>
+    <div class="seg-h"><span class="seg-n">02</span><h3>Situation</h3>
+      <span class="c">${sel ? sel.name : "the global picture"}</span></div>
     <div class="digest">${digest.map(e => `<article class="dg"><time>${e[0]}</time>
       <div><p>${e[2]}</p><span class="src">${e[1]}</span></div></article>`).join("")}</div>
     ${hv ? `<div class="hv ${hv.verdict}">
@@ -164,40 +138,6 @@ export function paintSituation() {
         </div></article>`;
       }).join("")}
     </div>`;
-}
-
-/* segment 03 — Positions under pressure (+ goal-filter notice) */
-export function paintPositions({ onClearGoal, onClearSel, onOpenPosition }) {
-  const L = LENSES().d, list = visibleRows(), all = rows();
-  const maxw = Math.max(...all.map(r => r.weightPct));
-  const g = goal();
-
-  document.getElementById("seg-positions").innerHTML = `
-    <div class="seg-h"><span class="seg-n">03</span><h3>Positions under pressure</h3>
-      <span class="c">${list.length} of ${all.length}</span></div>
-    ${g ? `<div class="filter-note">Showing only the positions funding
-      <strong>${g.name}</strong> (${g.horizon}). The globe is filtered to match.
-      <button class="ghost sm" id="clear-goal">Clear</button></div>` : ""}
-    ${S.selIso ? `<div class="filter-note">Filtered to ${S.selIso}.
-      <button class="ghost sm" id="clear-sel">Show all</button></div>` : ""}
-    ${list.map(r => `<button class="card" data-t="${r.instrumentId}"
-      style="border-left-color:${L.col(r.riskDelta)}">
-      <div class="c-top"><span class="tickr">${r.instrumentId}</span>
-        <span class="cname">${r.name}</span>
-        <span class="delta" style="color:${L.col(r.riskDelta)}">${fmtD(r.riskDelta)}</span></div>
-      <div class="c-mid">
-        <span class="geo">${r.multi ? r.inst.exposures.length + " markets" : r.iso3}</span>
-        ${r.assetClass !== "equity" ? `<span class="ac-badge">${r.assetClass}</span>` : ""}
-        <span class="wt"><i style="width:${r.weightPct / maxw * 100}%"></i></span>
-        <span class="wtv">${r.weightPct.toFixed(1)}%</span></div>
-      ${lookThroughBar(r.inst, S.signals)}
-    </button>`).join("")}`;
-
-  document.getElementById("clear-goal")?.addEventListener("click", onClearGoal);
-  document.getElementById("clear-sel")?.addEventListener("click", onClearSel);
-  document.querySelectorAll("#seg-positions [data-t]").forEach(b =>
-    b.addEventListener("click", () => onOpenPosition(b.dataset.t)));
-  M.once("rail", [S.portfolio.id, S.selIso, S.goalSel, S.household].join("|"), M.rail);
 }
 
 /** The three most consequential events across the countries this book touches. */
