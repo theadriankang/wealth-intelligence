@@ -225,9 +225,10 @@ async function maybeNarrateOpenClient() {
       ev.thesis = cached.thesis; ev.summary = cached.summary;
       ev.health = cached.health; ev.healthBand = cached.healthBand;
       ev.concentration = cached.concentration; ev.scoreSource = cached.scoreSource;
-      // TODO: no health-dial/thesis surface exists in this UI yet (segments.js is gone) —
-      // paintEvidence() still picks up `concentration`/`scoreSource` for the globe overlay.
-      paintEvidence();
+      // Health/thesis/summary live in the client header (paintHead), concentration in the
+      // globe overlay (paintEvidence) — renderAll() repaints both; it's cheap and this branch
+      // is rare (only fires once per resolved narration, on a cache hit for a stale object).
+      renderAll();
     }
     return;
   }
@@ -250,7 +251,7 @@ async function maybeNarrateOpenClient() {
   live.thesis = narrated.thesis; live.summary = narrated.summary;
   live.health = narrated.health; live.healthBand = narrated.healthBand;
   live.concentration = narrated.concentration; live.scoreSource = narrated.scoreSource;
-  if (S.portfolio?.id === id) paintEvidence();
+  if (S.portfolio?.id === id) renderAll();
 }
 
 function syncRouteClass() {

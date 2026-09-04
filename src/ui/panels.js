@@ -137,20 +137,29 @@ function activeClientFilters() {
   ].filter(Boolean);
 }
 
+const shimmer = `<span class="prose-shimmer">…</span>`;
+
 export function paintHead(onHousehold) {
   const p = S.portfolio, L = p.lombard;
   const meta = clientMeta(p);
+  const ev = S.evaluation?.clients?.[p.id];
+  const src = ev?.scoreSource === "ai" ? "ai" : "deterministic";
   document.getElementById("client-head").innerHTML = `
     <h2>${p.name}</h2><span class="ref">${p.ref}</span><span class="ref">${meta.source}</span>
     <span class="tag ${p.mandate === "Advisory" ? "adv" : "disc"}">${p.mandate} mandate</span>
     <div class="facts">
       <div class="fct"><span class="k">${S.household ? "Household" : "AUM"}</span><span class="v">${p.currency} ${S.household ? (p.householdAum || p.aum) : p.aum}</span></div>
       <div class="fct"><span class="k">Risk profile</span><span class="v">${p.riskProfile} · ${p.riskBand}</span></div>
-      <div class="fct"><span class="k">Attention</span><span class="v">${meta.urgency} · ${meta.band}</span></div>
+      ${ev ? `<div class="fct"><span class="k">Health</span><span class="v">${Math.round(ev.health)} · ${ev.healthBand}
+        <span class="mode ${src === "ai" ? "ai" : ""}" style="margin-left:6px">${src === "ai" ? "ai-scored" : "deterministic"}</span></span></div>` : ""}
       ${L ? `<div class="fct"><span class="k">Lombard headroom</span><span class="v" style="color:${L.headroomPct < 25 ? P.SEV.warn : "inherit"}">${L.headroomPct}% <span style="color:var(--ink-4)">from ${L.prevHeadroomPct}%</span></span></div>` : ""}
       <div class="fct"><span class="k">Next review</span><span class="v">${p.reviewDate}</span></div>
       ${p.householdPositions ? `<button class="hh" id="hh-btn" aria-pressed="${S.household}"><span class="sw"></span>Household · ${(p.entities || []).length} entities</button>` : ""}
-    </div>`;
+    </div>
+    ${ev ? `<div class="head-prose">
+      <p class="prose">${ev.thesis ?? shimmer}</p>
+      <p class="prose">${ev.summary ?? shimmer}</p>
+    </div>` : ""}`;
   document.getElementById("hh-btn")?.addEventListener("click", onHousehold);
 }
 

@@ -147,6 +147,12 @@ button{font:inherit; color:inherit}
   border:1px solid var(--line); border-radius:6px; padding:5px 10px; cursor:pointer;
   background:transparent}
 .hh[aria-pressed="true"]{background:var(--panel-3); color:var(--ink); border-color:var(--ink-4)}
+
+/* AI-scored explanation: thesis (what the book is built to do) + summary (general overview). */
+.head-prose{flex-basis:100%; display:flex; flex-direction:column; gap:4px; margin-top:2px}
+.head-prose .prose{margin:0; font-size:12px; line-height:1.5; color:var(--ink-2); max-width:72ch}
+.prose-shimmer{display:inline-block; color:var(--ink-4); animation:prose-pulse 1.3s ease-in-out infinite}
+@keyframes prose-pulse{0%,100%{opacity:.35}50%{opacity:.85}}
 .hh .sw{width:24px; height:13px; border-radius:7px; background:var(--line); position:relative; flex:none}
 .hh .sw::after{content:""; position:absolute; top:2px; left:2px; width:9px; height:9px;
   border-radius:50%; background:var(--ink-3); transition:transform .16s ease}
