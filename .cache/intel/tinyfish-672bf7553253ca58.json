@@ -1,0 +1,69 @@
+{
+ "at": 1788537423752,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "private credit fund gating and redemption suspension",
+   "d": [
+    "iosco.org",
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.iosco.org",
+   "snippet": "In general, as suspensions, redemption gates are suitable to all types of funds to avoid a full fund suspension and provide some liquidity to redeeming ...",
+   "title": "[PDF] Guidance for Open-ended Funds for Effective Implementation of the ...",
+   "url": "https://www.iosco.org/library/pubdocs/pdf/IOSCOPD771.pdf"
+  },
+  {
+   "position": 2,
+   "site_name": "www.iosco.org",
+   "snippet": "funds seem aware of the market liquidity of their portfolio positions, and they generally can make use of suspensions and gating to manage investor redemptions.",
+   "title": "[PDF] FR27/2015 Report on the third IOSCO Hedge Fund Survey",
+   "url": "https://www.iosco.org/library/pubdocs/pdf/ioscopd515.pdf"
+  },
+  {
+   "date": "Mar 1, 2021",
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "All prime funds may impose redemption gates or liquidity fees, ie suspend redemptions or make them costlier, when their weekly liquid assets ...",
+   "title": "Investor size, liquidity and prime money market fund stress - the BIS",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt2103b.htm"
+  },
+  {
+   "date": "Jul 12, 2024",
+   "position": 4,
+   "site_name": "www.iosco.org",
+   "snippet": "They also imposed a stronger reporting to the SEC and allowed a fund to suspend redemptions if it has “broken the buck” (e.g., re- priced its ...",
+   "title": "[PDF] FR07/12 Policy Recommendations for Money Market Funds - IOSCO",
+   "url": "https://www.iosco.org/library/pubdocs/pdf/ioscopd392.pdf"
+  },
+  {
+   "date": "May 29, 2015",
+   "position": 5,
+   "site_name": "www.iosco.org",
+   "snippet": "• Temporary Suspension and/or “Gating” of Redemptions. Faced with an emergency situation, a US regulated fund might seek relief from the SEC ...",
+   "title": "[PDF] Investment Company Institute (ICI).pdf - IOSCO",
+   "url": "https://www.iosco.org/library/pubdocs/479/pdf/Investment%2520Company%2520Institute%2520(ICI).pdf"
+  },
+  {
+   "date": "Jan 1, 2010",
+   "position": 6,
+   "site_name": "www.iosco.org",
+   "snippet": "Closed-end fund and redemption gates. During 2008, many hedge funds used gates and suspensions to effectively avoid liquidity mismatches. ...",
+   "title": "[PDF] Review of the Differentiated Nature and Scope of Financial Regulation",
+   "url": "https://www.iosco.org/library/pubdocs/pdf/ioscopd315.pdf"
+  },
+  {
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "The JDCC also defines suspension criteria and regularly monitors participants for their financial standing and ability to conduct business.",
+   "title": "[PDF] Payment, clearing and settlement systems in Japan - CPSS",
+   "url": "https://www.bis.org/publ/cpss105_jp.pdf"
+  }
+ ]
+}

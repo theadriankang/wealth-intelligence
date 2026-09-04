@@ -1,0 +1,96 @@
+{
+ "at": 1788537482416,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "tanker war risk insurance premium",
+   "d": [
+    "unctad.org",
+    "iea.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Mar 10, 2026",
+   "position": 1,
+   "site_name": "unctad.org",
+   "snippet": "Freight rates for oil tankers and war risk insurance premiums are surging, while marine fuel costs are also rising, increasing shipping ...",
+   "title": "Hormuz shipping disruptions raise risks for energy, fertilizers and ...",
+   "url": "https://unctad.org/news/hormuz-shipping-disruptions-raise-risks-energy-fertilizers-and-vulnerable-economies"
+  },
+  {
+   "date": "Apr 28, 2026",
+   "position": 2,
+   "site_name": "unctad.org",
+   "snippet": "... tanker freight rates, marine fuel costs and war-risk insurance premiums rose sharply. By 1 April, UNCTAD warned that the shock was feeding ...",
+   "title": "Hormuz disruption shows why early-warning data matters - UNCTAD",
+   "url": "https://unctad.org/news/hormuz-disruption-shows-why-early-warning-data-matters"
+  },
+  {
+   "date": "Mar 10, 2026",
+   "position": 3,
+   "site_name": "unctad.org",
+   "snippet": "Higher energy, fertilizer and transport costs – including freight rates, bunker fuel prices and insurance premiums – may increase food costs ...",
+   "title": "Strait of Hormuz disruptions: Implications for global trade ... - UNCTAD",
+   "url": "https://unctad.org/publication/strait-hormuz-disruptions-implications-global-trade-and-development"
+  },
+  {
+   "date": "Mar 10, 2026",
+   "position": 4,
+   "site_name": "unctad.org",
+   "snippet": "War risk insurance premiums are surging, adding to the shipping cost. War-risk premium 0.25% Premium increase +100% Premium increase +300% Cost ...",
+   "title": "[PDF] Implications for Global Trade and Development - UNCTAD",
+   "url": "https://unctad.org/system/files/official-document/osgttinf2026d1_en.pdf"
+  },
+  {
+   "date": "Sep 28, 2025",
+   "position": 5,
+   "site_name": "unctad.org",
+   "snippet": "War risk insurance premiums have reportedly surged from 0.07 to 2 per cent of a ship's value … tanker fleet expansion of approximately 5 per ...",
+   "title": "[PDF] Review of maritime transport 2025 - UNCTAD",
+   "url": "https://unctad.org/system/files/official-document/rmt2025_en.pdf"
+  },
+  {
+   "date": "Feb 12, 2024",
+   "position": 6,
+   "site_name": "unctad.org",
+   "snippet": "Cost of insurance and coverage impacted War risk premiums for vessels transiting through the Red Sea have increased while the Joint War ...",
+   "title": "[PDF] Impact to global trade of disruption of shipping routes in the Red Sea ...",
+   "url": "https://unctad.org/system/files/official-document/osginf2024d2_en.pdf"
+  },
+  {
+   "date": "Feb 22, 2024",
+   "position": 7,
+   "site_name": "unctad.org",
+   "snippet": "This combination translates into longer cargo travel distances, rising trade costs and insurance premiums. Furthermore, greenhouse gas ...",
+   "title": "Unprecedented shipping disruptions raise risk to global trade ...",
+   "url": "https://unctad.org/news/unprecedented-shipping-disruptions-raise-risk-global-trade-unctad-warns"
+  },
+  {
+   "date": "Jul 2, 2024",
+   "position": 8,
+   "site_name": "unctad.org",
+   "snippet": "Panama Canal tolls and increased war risk insurance premiums, among other factors. A record weekly spike of $500 was observed … fleet of ...",
+   "title": "[PDF] Review of maritime transport 2024 - UNCTAD",
+   "url": "https://unctad.org/system/files/official-document/rmt2024_en.pdf"
+  },
+  {
+   "date": "Mar 12, 2026",
+   "position": 9,
+   "site_name": "www.iea.org",
+   "snippet": "The IEA Oil Market Report (OMR) is one of the world's most authoritative and timely sources of data, forecasts and analysis on the global ...",
+   "title": "Oil Market Report - March 2026 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/oil-market-report-march-2026"
+  },
+  {
+   "date": "Feb 15, 2024",
+   "position": 10,
+   "site_name": "unctad.org",
+   "snippet": "Since November 2023, escalating attacks on ships in the Red Sea have been compounding disruptions in the Black Sea caused by the war in Ukraine ...",
+   "title": "Impact to global trade of disruption of shipping routes in the Red Sea ...",
+   "url": "https://unctad.org/publication/navigating-troubled-waters-impact-global-trade-disruption-shipping-routes-red-sea-black"
+  }
+ ]
+}

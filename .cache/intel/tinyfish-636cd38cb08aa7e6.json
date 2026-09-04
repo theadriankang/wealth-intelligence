@@ -1,0 +1,89 @@
+{
+ "at": 1788537519988,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "AI datacentre capital expenditure cycle",
+   "d": [
+    "iea.org",
+    "sia.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Apr 16, 2026",
+   "position": 1,
+   "site_name": "www.iea.org",
+   "snippet": "Driven by data centre investments, the capital expenditure of five large technology companies surged to more than $400 billion in 2025 and ...",
+   "title": "Data centre electricity use surged in 2025, even with tightening ... - IEA",
+   "url": "https://www.iea.org/news/data-centre-electricity-use-surged-in-2025-even-with-tightening-bottlenecks-driving-a-scramble-for-solutions"
+  },
+  {
+   "position": 2,
+   "site_name": "www.iea.org",
+   "snippet": "An AI- focused data centre is 10 times more capital-intensive than an aluminium smelter, which means curtailing its operations to provide flexibility to the ...",
+   "title": "Executive summary – Energy and AI – Analysis - IEA",
+   "url": "https://www.iea.org/reports/energy-and-ai/executive-summary"
+  },
+  {
+   "position": 3,
+   "site_name": "www.iea.org",
+   "snippet": "While the technology sector moves quickly and a data centre can be operational in two to three years, the broader energy system requires longer lead times to ...",
+   "title": "Energy demand from AI - IEA",
+   "url": "https://www.iea.org/reports/energy-and-ai/energy-demand-from-ai"
+  },
+  {
+   "position": 4,
+   "site_name": "www.iea.org",
+   "snippet": "data centres is projected to grow from 460 TWh in 2024 to over 1 000 TWh in 2030 and 1 300 TWh in 2035 in the Base Case.",
+   "title": "Energy supply for AI - IEA",
+   "url": "https://www.iea.org/reports/energy-and-ai/energy-supply-for-ai"
+  },
+  {
+   "position": 5,
+   "site_name": "www.iea.org",
+   "snippet": "spending on AI grew to reach USD 84 billion in 2024, or three times the level of energy-related venture capital (VC) funding.",
+   "title": "Executive summary – World Energy Investment 2025 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/world-energy-investment-2025/executive-summary"
+  },
+  {
+   "position": 6,
+   "site_name": "www.iea.org",
+   "snippet": "Cycle Assessment Calculator Explore and compare the lifecycle emissions of conventional and electric cars and the effect of changing variables such as vehicle ...",
+   "title": "Data and statistics - IEA",
+   "url": "https://www.iea.org/data-and-statistics/data-explorers"
+  },
+  {
+   "position": 7,
+   "site_name": "www.iea.org",
+   "snippet": "The emergence of AI has both raised concerns that AI-fuelled data centre growth might fuel climate change and also raised expectations that AI applications ...",
+   "title": "AI and climate change – Energy and AI – Analysis - IEA",
+   "url": "https://www.iea.org/reports/energy-and-ai/ai-and-climate-change"
+  },
+  {
+   "date": "Feb 6, 2026",
+   "position": 8,
+   "site_name": "www.iea.org",
+   "snippet": "artificial intelligence (AI), data centres, This year the forecast period has been expanded to five years, 2026-2030, compared with the ...",
+   "title": "Electricity 2026 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/electricity-2026"
+  },
+  {
+   "position": 9,
+   "site_name": "www.iea.org",
+   "snippet": "Spending on energy innovation has widespread pay-offs. Public and corporate energy R&D spending have risen in recent years, at around 6% per year in real terms.",
+   "title": "Executive summary – The State of Energy Innovation 2025 - IEA",
+   "url": "https://www.iea.org/reports/the-state-of-energy-innovation-2025/executive-summary"
+  },
+  {
+   "date": "Nov 12, 2025",
+   "position": 10,
+   "site_name": "www.iea.org",
+   "snippet": "As always, the World Energy Outlook provides unrivalled insights into the consequences of different energy policy and investment choices.",
+   "title": "World Energy Outlook 2025 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/world-energy-outlook-2025"
+  }
+ ]
+}

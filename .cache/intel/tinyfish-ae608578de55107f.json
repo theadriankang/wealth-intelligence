@@ -1,0 +1,91 @@
+{
+ "at": 1788536998132,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "ASEAN cross-border capital flows",
+   "d": [
+    "bis.org",
+    "adb.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.adb.org",
+   "snippet": "This paper examines capital controls in two ways. First, it assesses whether capital controls have an economic justification within the context of an ...",
+   "title": "Liberalizing Cross-Border Capital Flows: How Effective Are ...",
+   "url": "https://www.adb.org/publications/liberalizing-cross-border-capital-flows-how-effective-are-institutional-arrangements"
+  },
+  {
+   "position": 2,
+   "site_name": "www.adb.org",
+   "snippet": "ASEAN countries thus face the imperative of dismantling restrictions on cross-border capital flows while making sure that they are protected from the volatility",
+   "title": "[PDF] Managing Capital Flows in an Economic Community",
+   "url": "https://www.adb.org/sites/default/files/publication/156233/adbi-wp378.pdf"
+  },
+  {
+   "date": "Jul 29, 2019",
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "Cross-border payments … the size and volatility of capital flows will only intensify. All these challenges make for a complicated policy ...",
+   "title": "Comprehensive approaches to monetary and financial policy ...",
+   "url": "https://www.bis.org/speeches/20190729-comprehensive-approaches-monetary-and-financial-policy-making-asean-5-countries"
+  },
+  {
+   "date": "Jul 7, 2015",
+   "position": 4,
+   "site_name": "www.bis.org",
+   "snippet": "In capital markets, ASEAN has made good progress in integration, starting with Thailand, Malaysia and Singapore.",
+   "title": "Ravi Menon: ASEAN financial integration - where are we, where next?",
+   "url": "https://www.bis.org/review/r150707c.htm"
+  },
+  {
+   "position": 5,
+   "site_name": "www.adb.org",
+   "snippet": "ASEAN+3 Bond Market Forum was established in 2010 to foster standardization of market practices and harmonization of regulations relating to cross-border bond ...",
+   "title": "ASEAN+3: Information on Transaction Flows and Settlement ...",
+   "url": "https://www.adb.org/publications/asean3-information-transaction-flows-and-settlement-infrastructures"
+  },
+  {
+   "date": "Oct 11, 2002",
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "Cross-border payments. East Asia has become a very large net capital exporter. Before the crisis, in 1995-1996, ASEAN countries and Korea ran a ...",
+   "title": "Capital flows in East Asia since the crisis - the BIS",
+   "url": "https://www.bis.org/speeches/20021010-capital-flows-east-asia-crisis"
+  },
+  {
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "cross-border financial integration is much more than capital flows. It also embraces trade linkages, incipient flows, remittances, price arbitrage, and risk",
+   "title": "[PDF] Cross-border Financial Linkages: Challenges for Monetary Policy ...",
+   "url": "https://www.bis.org/publications/paper-82-cross-border-financial-linkages-challenges-monetary-policy-and-financial-stability.pdf"
+  },
+  {
+   "position": 8,
+   "site_name": "www.adb.org",
+   "snippet": "High liquidity and low interest rates in advanced economies led to large capital outflows, leaving ASEAN economies, need to close their ranks and boost",
+   "title": "[PDF] The ASEAN Economy in the Regional Context",
+   "url": "https://www.adb.org/sites/default/files/publication/152830/reiwp-145.pdf"
+  },
+  {
+   "date": "Jul 10, 2008",
+   "position": 9,
+   "site_name": "www.adb.org",
+   "snippet": "The expected impact of this TA was to develop the domestic and regional bond markets in the ASEAN+3 region and thereby reduce their financial ...",
+   "title": "[PDF] Developing Securitization Markets in ASEAN+3 Region",
+   "url": "https://www.adb.org/sites/default/files/project-documents//41233-012-tcr.pdf"
+  },
+  {
+   "date": "Mar 7, 2011",
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "Preliminary data indicate that the cross-border lending of international banks to emerging Asia rose by $77 billion in the third quarter of 2010 ...",
+   "title": "Capital flows to the emerging market economies: a perspective on ...",
+   "url": "https://www.bis.org/speeches/sp110307.htm"
+  }
+ ]
+}

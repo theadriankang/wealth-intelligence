@@ -1,0 +1,95 @@
+{
+ "at": 1788537303288,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Hong Kong redevelopment project approval and financing",
+   "d": [
+    "hkma.gov.hk",
+    "rvd.gov.hk"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Mar 31, 2026",
+   "position": 1,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "The Scheme provides subsidy for eligible bond issuers and loan borrowers to cover their expenses on bond issuance and external review services.",
+   "title": "Bond Market Development - Hong Kong Monetary Authority",
+   "url": "https://www.hkma.gov.hk/eng/key-functions/international-financial-centre/bond-market-development/"
+  },
+  {
+   "date": "Jun 17, 2026",
+   "position": 2,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "The DEVB and ITIB presented on the key development projects and financing needs of the Northern Metropolis over the next three years.",
+   "title": "Northern Metropolis Financial Advisory Taskforce holds inaugural ...",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/06/20260617-6/"
+  },
+  {
+   "date": "Apr 12, 2017",
+   "position": 3,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "IFFO's mission is to facilitate infrastructure investment and financing by working with key stakeholders. At present, infrastructure investment ...",
+   "title": "A Promising Future for Infrastructure Investment and Financing",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2017/04/20170412/"
+  },
+  {
+   "date": "Feb 27, 2025",
+   "position": 4,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "In the coming five years, the Government will issue about HK$150-195 billion worth of bonds each year under the Government Sustainable Bond ...",
+   "title": "2025-26 Budget – Government bond issuance, supply chain financing",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2025/02/20250227/"
+  },
+  {
+   "date": "Mar 7, 2024",
+   "position": 5,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "The new project will seek to explore innovative financial market infrastructure (FMI) that will facilitate seamless interbank settlement of ...",
+   "title": "HKMA unveils Project Ensemble to support the development of the ...",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2024/03/20240307-5/"
+  },
+  {
+   "date": "Jan 19, 2026",
+   "position": 6,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "“Project Cargox Recommendation Report”, which presents 20 recommendations and a roadmap for modernising the trade finance landscape in Hong ...",
+   "title": "HKMA publishes Project Cargo x Recommendation Report",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/01/20260119-3/"
+  },
+  {
+   "date": "Oct 30, 2025",
+   "position": 7,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "By September 2025, CDI had facilitated over 71,000 loan applications and reviews, with an estimated over HK$58.1 billion in approved credit.",
+   "title": "Building Highways and Bridges for Hong Kong's Digital Economy",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2025/10/20251030/"
+  },
+  {
+   "date": "Jul 15, 2021",
+   "position": 8,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "IFFO is a platform established in July 2016 by the Hong Kong Monetary Authority (HKMA) to facilitate infrastructure investments and their ...",
+   "title": "HKMA Infrastructure Financing Facilitation Office",
+   "url": "https://www.hkma.gov.hk/eng/key-functions/international-financial-centre/hkma-infrastructure-financing-facilitation-office/"
+  },
+  {
+   "date": "Nov 11, 2024",
+   "position": 9,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "The Hong Kong Monetary Authority (HKMA), has joined hands with multilateral organisations, including the Asian Development Bank (ADB), ...",
+   "title": "HKMA and Multilateral Organisations Enhance Strategic Partnership ...",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2024/11/20241111-3/"
+  },
+  {
+   "position": 10,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "Proceeds raised under the GSBP are credited to the Capital Works Reserve Fund (CWRF) to provide funding for green and sustainable projects. The GSBP intends to:.",
+   "title": "Government Sustainable Bond Programme",
+   "url": "https://www.hkma.gov.hk/eng/key-functions/international-financial-centre/bond-market-development/government-sustainable-bond-programme/"
+  }
+ ]
+}

@@ -1,0 +1,91 @@
+{
+ "at": 1788537183125,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "MAS loan-to-value limits residential property",
+   "d": [
+    "mas.gov.sg",
+    "iras.gov.sg"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Explains housing loan rules, including maximum limits on loan tenure, loan-to-value ratio, mortgage servicing ratio and total debt ...",
+   "title": "Regulations and Guidance - Monetary Authority of Singapore",
+   "url": "https://www.mas.gov.sg/regulation/explainers"
+  },
+  {
+   "position": 2,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Explains mortgage equity withdrawal loan rules, including loan-to-value limits, tenure cap and other applicable rules such as total debt servicing ratio.",
+   "title": "Notice 825 Residential Property Loans",
+   "url": "https://www.mas.gov.sg/regulation/notices/notice-825"
+  },
+  {
+   "date": "Apr 7, 2020",
+   "position": 3,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Borrowers are not subject to TDSR and LTV limits when they refinance their loans for owner-occupied residential properties.",
+   "title": "MAS Clarifies Loan-to-Value and Total Debt Servicing Ratio Rules ...",
+   "url": "https://www.mas.gov.sg/news/media-releases/2020/mas-clarifies-ltvand-tdsr-rules-for-residential-mortgages-and-mortgage-equity-withdrawal-loans"
+  },
+  {
+   "date": "Jul 5, 2018",
+   "position": 4,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "For example, if an individual borrows $150,000 to purchase a property valued at $1,000,000, the LTV is 15%. LTV Limits and Minimum Downpayment ...",
+   "title": "Loan Tenure and Loan-to-Value Limits",
+   "url": "https://www.mas.gov.sg/regulation/explainers/new-housing-loans/loan-tenure-and-loan-to-value-limits"
+  },
+  {
+   "position": 5,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Currently, MAS' housing loan rules cap the loan-to-value (LTV) limit at 80%. s of private residential properties has also been reduced from 10% to 5%.",
+   "title": "MAS Issues Revised Housing Loan Rules",
+   "url": "https://www.mas.gov.sg/news/media-releases/2005/mas-issues-revised-housing-loan-rules"
+  },
+  {
+   "position": 6,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "For these loans, the LTV limit is (i) 15%-25% for a borrower with one or more outstanding residential property loans and (ii) 55% for a borrower with no ...",
+   "title": "Macroprudential Policies in Singapore",
+   "url": "https://www.mas.gov.sg/publications/macroprudential-policies-in-singapore"
+  },
+  {
+   "date": "Jan 13, 2011",
+   "position": 7,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "MAS plans to require FIs to comply with an LTV limit on MWLs, and to aggregate loans from moneylenders used to pay for residential property ...",
+   "title": "[PDF] Rules on Residential Property Loans",
+   "url": "https://www.mas.gov.sg/-/media/MAS/resource/publications/consult_papers/2011/Consultation_paper_on_rules_on_residential_property_loans_13_Jan.pdf"
+  },
+  {
+   "date": "Oct 6, 2012",
+   "position": 8,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "The maximum tenure of all new residential property loans will be capped at 35 years. In addition, loans exceeding 30 years tenure will face ...",
+   "title": "MAS Restricts Loan Tenure for Residential Properties",
+   "url": "https://www.mas.gov.sg/news/media-releases/2012/mas-restricts-loan-tenure-for-residential-properties"
+  },
+  {
+   "date": "Jun 29, 2013",
+   "position": 9,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "In January 2013, MAS lowered the LTV limits for housing loans to individuals with one outstanding housing loan from 60% to 50%, and to ...",
+   "title": "MAS Introduces Debt Servicing Framework for Property Loans",
+   "url": "https://www.mas.gov.sg/news/media-releases/2013/mas-introduces-debt-servicing-framework-for-property-loans"
+  },
+  {
+   "position": 10,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Explains housing loan rules, including maximum limits on loan tenure, loan-to-value ratio, mortgage servicing ratio and total debt servicing ratio.",
+   "title": "Rules for New Housing Loans - Monetary Authority of Singapore",
+   "url": "https://www.mas.gov.sg/regulation/explainers/new-housing-loans"
+  }
+ ]
+}

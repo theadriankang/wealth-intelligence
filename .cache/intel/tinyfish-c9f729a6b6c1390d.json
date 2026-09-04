@@ -1,0 +1,60 @@
+{
+ "at": 1788537424972,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "hedge fund gates side pockets redemption notice",
+   "d": [
+    "iosco.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.iosco.org",
+   "snippet": "side pocket requires notification to regulator of use; specific rules concerning the use of redemption gates, which deal with thresholds for when redemption ...",
+   "title": "[PDF] Liquidity Management Tools in Collective Investment Schemes",
+   "url": "https://www.iosco.org/library/pubdocs/pdf/ioscopd517.pdf"
+  },
+  {
+   "date": "Mar 11, 2011",
+   "position": 2,
+   "site_name": "www.iosco.org",
+   "snippet": "Gating Mechanism Gates allow the responsible entity to manage redemption requests in open-ended CIS. By using a gate, the responsible entity ...",
+   "title": "[PDF] Principles on Suspensions of Redemptions in Collective Investment ...",
+   "url": "https://www.iosco.org/library/pubdocs/pdf/ioscopd349.pdf"
+  },
+  {
+   "position": 3,
+   "site_name": "www.iosco.org",
+   "snippet": "LTAFs are required to have notice periods. redemption periods may need to be less frequent or notice periods longer depending on the underlying asset mix. ...",
+   "title": "[PDF] Guidance for Open-ended Funds for Effective Implementation of the ...",
+   "url": "https://www.iosco.org/library/pubdocs/pdf/IOSCOPD771.pdf"
+  },
+  {
+   "date": "Oct 17, 2016",
+   "position": 4,
+   "site_name": "www.iosco.org",
+   "snippet": "side pocket arrangements are more commonly used in hedge funds as opposed to conventional public/retail CIS.",
+   "title": "[PDF] Dubai Financial Services Authority - IOSCO",
+   "url": "https://www.iosco.org/library/pubdocs/542/pdf/Dubai%20Financial%20Services%20Authority.pdf"
+  },
+  {
+   "position": 5,
+   "site_name": "www.iosco.org",
+   "snippet": "Exceptional measures include side pockets or suspensions. CIS's should not be managed in such a way that the investment strategy relies on the availability of ...",
+   "title": "[PDF] European Fund and Asset Management Association (EFAMA) - IOSCO",
+   "url": "https://www.iosco.org/library/pubdocs/405/pdf/European%20Fund%20and%20Asset%20Management%20Association%20(EFAMA).pdf"
+  },
+  {
+   "date": "Apr 4, 2014",
+   "position": 6,
+   "site_name": "www.iosco.org",
+   "snippet": "investment funds may use one or more liquidity management tools, such as in kind redemption, temporary suspensions, gates and side-pockets.",
+   "title": "[PDF] sifma   - IOSCO",
+   "url": "https://www.iosco.org/library/pubdocs/435/pdf/Securities%20Industry%20and%20Financial%20Markets%20Association%20(SIFMA)%20Asset%20Management%20Group.pdf"
+  }
+ ]
+}

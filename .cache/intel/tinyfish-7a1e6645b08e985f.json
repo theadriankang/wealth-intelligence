@@ -1,0 +1,93 @@
+{
+ "at": 1788537315820,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "margin call practice private banking collateral",
+   "d": [
+    "bis.org",
+    "finma.ch"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Feb 10, 2022",
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "First, this revealed the scale of the shock on margin call. The total initial margin required by CCPs increased by over 70% (roughly $300 ...",
+   "title": "Learning from the dash for cash – findings and next steps ... - the BIS",
+   "url": "https://www.bis.org/speeches/20220210-learning-dash-cash-findings-and-next-steps-margining-practices"
+  },
+  {
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "Collateral transfers, for instance, could include continuous verification of counterparty collateral criteria, such as eligibility to satisfy margin calls.",
+   "title": "III. The next-generation monetary and financial system - the BIS",
+   "url": "https://www.bis.org/publications/aer-2025/next-generation-monetary-financial-system"
+  },
+  {
+   "date": "Mar 9, 1999",
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "Appropriate haircuts and margin call practices.While the use of collateral reduces credit risk, market participants remain exposed to credit ...",
+   "title": "Implications of repo markets for central banks - the BIS",
+   "url": "https://www.bis.org/publications/cgfs-paper-10-implications-repo-markets-central-banks"
+  },
+  {
+   "position": 4,
+   "site_name": "www.bis.org",
+   "snippet": "The sound practices set out here specifically address the following areas: realise the value of collateral in the event of a failure to meet a margin call or a ...",
+   "title": "[PDF] Sound Practices for Banks' Interactions with Highly Leveraged ...",
+   "url": "https://www.bis.org/publ/bcbs46.pdf"
+  },
+  {
+   "date": "Sep 29, 2017",
+   "position": 5,
+   "site_name": "www.bis.org",
+   "snippet": "To minimize the probability of loss, the collateral should be safe. However, since the collateral need not be actually realized except in the ...",
+   "title": "Erkki Liikanen: Central banking and the risk management ... - the BIS",
+   "url": "https://www.bis.org/review/r170929b.htm"
+  },
+  {
+   "date": "Jan 31, 2019",
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "This demand for securities is fuelled by regulatory requirements, by the need for collateral to cover margin calls in order to trade over-the- ...",
+   "title": "The possible triangle - frictionless movement of payments, securities ...",
+   "url": "https://www.bis.org/speeches/20190131-possible-triangle-frictionless-movement-payments-securities-and-collateral-across-europe"
+  },
+  {
+   "date": "May 23, 2024",
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "However, margin calls in cleared markets necessitate liquidity risk management, as shown recently in the case of British pension funds, or in ...",
+   "title": "Banks' liquidity in volatile macroeconomic and market environments",
+   "url": "https://www.bis.org/speeches/20240523-banks-liquidity-volatile-macroeconomic-and-market-environments"
+  },
+  {
+   "date": "Jun 15, 2026",
+   "position": 8,
+   "site_name": "www.bis.org",
+   "snippet": "Most jurisdictions accept domestic government bonds as collateral, but acceptance of private sector or foreign issued collateral is ...",
+   "title": "The evolution of central banks' lending operations - the BIS",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt2606b.htm"
+  },
+  {
+   "position": 9,
+   "site_name": "www.bis.org",
+   "snippet": "The LCR attempts to address many of the shortcomings including running customer cash balances off at 100%, assuming margin lending rolls at 50%, treating ...",
+   "title": "[PDF] liquidity-stress-testing-survey-theory-empirics-and-current-industry ...",
+   "url": "https://www.bis.org/publications/liquidity-stress-testing-survey-theory-empirics-and-current-industry-and-supervisory-practices.pdf"
+  },
+  {
+   "date": "Nov 25, 2013",
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "In 2008, these fire sales created adverse feedback loops of mark-to-market losses, margin calls, and further liquidations. The unwinding of the ...",
+   "title": "Shadow banking and systemic risk regulation - the BIS",
+   "url": "https://www.bis.org/speeches/20131125-shadow-banking-and-systemic-risk-regulation"
+  }
+ ]
+}

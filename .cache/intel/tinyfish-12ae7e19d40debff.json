@@ -1,0 +1,91 @@
+{
+ "at": 1788537300708,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "commercial real estate valuation lag and cap rates",
+   "d": [
+    "bis.org",
+    "hkma.gov.hk"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Sep 23, 2015",
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "Abstract. This paper uses a unique dataset to empirically test the implications of limited transparency in decentralized asset markets.",
+   "title": "[PDF] Learning externalities in opaque asset markets",
+   "url": "https://www.bis.org/events/confresearchnetwork1510/ruf_paper.pdf"
+  },
+  {
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "Financial institutions should limit the growth rate of lending to the real estate industry equal to or below that of total lending except for lending to public ...",
+   "title": "[PDF] Is macroprudential policy instrument blunt?",
+   "url": "https://www.bis.org/publ/work536.pdf"
+  },
+  {
+   "date": "Feb 19, 2026",
+   "position": 3,
+   "site_name": "vpr.hkma.gov.hk",
+   "snippet": "Our leadership in private markets servicing drove 12 percent year-over-year growth in private markets servic- ing fee revenue in 2025, ...",
+   "title": "[PDF] 2025 Annual Report - Register of AIs & LROs",
+   "url": "https://vpr.hkma.gov.hk/statics/assets/doc/100219/ar_25/ar_25_eng.pdf"
+  },
+  {
+   "position": 4,
+   "site_name": "www.bis.org",
+   "snippet": "Assets under management include fixed income securities, equities and commercial real estate. The worldwide growth of the institutional asset management ...",
+   "title": "[PDF] Incentive structures in institutional asset management and their ...",
+   "url": "https://www.bis.org/publications/cgfs-paper-21-incentive-structures-institutional-asset-management-and-their-implications-financial-markets.pdf"
+  },
+  {
+   "date": "Apr 5, 2022",
+   "position": 5,
+   "site_name": "vpr.hkma.gov.hk",
+   "snippet": "We have a multiyear strategy designed to optimize and advance our competitive position within these two franchises, aimed at creating long-term.",
+   "title": "[PDF] ACCELERATING GROWTH - Register of AIs & LROs",
+   "url": "https://vpr.hkma.gov.hk/statics/assets/doc/100219/ar_21/ar_21_eng.pdf"
+  },
+  {
+   "date": "Dec 6, 2021",
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "Financial markets can support the transition to a more sustainable and fairer economy by influencing firms' funding costs.",
+   "title": "Achievements and challenges in ESG markets - the BIS",
+   "url": "https://www.bis.org/publications/achievements-and-challenges-esg-markets"
+  },
+  {
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "In an empirical investigation using VAR analysis, we find that expectations of lower short-term rates dampens measured risks and stimulate cross-border banking ...",
+   "title": "[PDF] Capital Flows and the Risk-Taking Channel of Monetary Policy",
+   "url": "https://www.bis.org/publications/working-paper-400-capital-flows-and-risk-taking-channel-monetary-policy.pdf"
+  },
+  {
+   "date": "Dec 1, 2025",
+   "position": 8,
+   "site_name": "www.bis.org",
+   "snippet": "The articles in this special edition of the BIS Quarterly Review leverage new data from the 2025. BIS Triennial Survey to examine how structural ...",
+   "title": "[PDF] BIS Quarterly Review, December 2025",
+   "url": "https://www.bis.org/publications/qr-202512.pdf"
+  },
+  {
+   "position": 9,
+   "site_name": "www.bis.org",
+   "snippet": "Papers in this volume were prepared for a meeting of senior officials from central banks held at the Bank for International Settlements on 28 – 29 January ...",
+   "title": "[PDF] Inflation mechanisms, expectations and monetary policy - the BIS",
+   "url": "https://www.bis.org/publications/paper-89-inflation-mechanisms-expectations-and-monetary-policy.pdf"
+  },
+  {
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "commercial real estate that exhibits higher loss rate volatility (i.e. higher asset correlation) compared to other types of SL. HVCRE includes: •. Commercial ...",
+   "title": "[PDF] part 2 - Bank for International Settlements",
+   "url": "https://www.bis.org/publ/bcbs107b.pdf"
+  }
+ ]
+}

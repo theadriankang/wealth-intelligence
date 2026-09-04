@@ -1,0 +1,89 @@
+{
+ "at": 1788536895680,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "enterprise software private valuation multiples",
+   "d": []
+  }
+ },
+ "value": [
+  {
+   "date": "Jan 5, 2026",
+   "position": 1,
+   "site_name": "aventis-advisors.com",
+   "snippet": "From 2015 to 2019, multiples remained relatively stable, typically ranging from 2–4x EV/Revenue and 15–20x EV/EBITDA.",
+   "title": "Software Valuation Multiples: 2015-2026",
+   "url": "https://aventis-advisors.com/software-valuation-multiples/"
+  },
+  {
+   "date": "Feb 5, 2026",
+   "position": 2,
+   "site_name": "www.axial.net",
+   "snippet": "Larger tech companies generally command higher multiples. This “size premium” reflects greater stability, proven scalability, and stronger buyer ...",
+   "title": "Technology Company Valuation Multiples (with Industry ...",
+   "url": "https://www.axial.net/forum/tech-company-valuation-multiples/"
+  },
+  {
+   "date": "Aug 6, 2025",
+   "position": 3,
+   "site_name": "www.saas-capital.com",
+   "snippet": "Data for bootstrapped companies yields a predicted private SaaS company valuation multiple of 4.8x while data for equity-backed companies ...",
+   "title": "SaaS Valuation Multiples: Understanding the New Normal",
+   "url": "https://www.saas-capital.com/blog-posts/saas-valuation-multiples-understanding-the-new-normal/"
+  },
+  {
+   "position": 4,
+   "site_name": "breakingintowallstreet.com",
+   "snippet": "A valuation multiple equals a company's Equity Value (Market Cap) or Enterprise Value divided by a financial or operational metric, such as Revenue, EBITDA, or ...",
+   "title": "Valuation Multiples: Full Tutorial, Excel, and Video",
+   "url": "https://breakingintowallstreet.com/kb/valuation/valuation-multiples/"
+  },
+  {
+   "position": 5,
+   "site_name": "www.quora.com",
+   "snippet": "",
+   "title": "What is a reasonable valuation multiple for a niche enterprise software ...",
+   "url": "https://www.quora.com/What-is-a-reasonable-valuation-multiple-for-a-niche-enterprise-software-company-in-a-relatively-small-market-What-is-the-approximate-range-of-multiples"
+  },
+  {
+   "position": 6,
+   "site_name": "www.quora.com",
+   "snippet": "",
+   "title": "What is the valuation multiple for a software and professional services ...",
+   "url": "https://www.quora.com/What-is-the-valuation-multiple-for-a-software-and-professional-services-company"
+  },
+  {
+   "date": "Aug 9, 2026",
+   "position": 7,
+   "site_name": "multiples.vc",
+   "snippet": "Software multiples in August 2026 show clear segmentation across infrastructure, vertical, and horizontal categories, ERP Software 3.6x 13.6x",
+   "title": "Public Software Valuation Multiples — August 2026",
+   "url": "https://multiples.vc/insights/software-saas-valuation-multiples"
+  },
+  {
+   "date": "Jan 16, 2025",
+   "position": 8,
+   "site_name": "grata.com",
+   "snippet": "Enterprise value multiples, on the other hand, consider the entire capital structure of a company, including debt and equity.",
+   "title": "Business Valuation Multiples: A Comprehensive Guide",
+   "url": "https://grata.com/resources/business-valuation-multiples"
+  },
+  {
+   "position": 9,
+   "site_name": "globalscopepartners.com",
+   "snippet": "The valuation multiples for software companies (public) swing up and down, rising 10x and then falling even faster.",
+   "title": "Valuation Multiples for Software Companies",
+   "url": "https://globalscopepartners.com/software-valuation-multiples/"
+  },
+  {
+   "date": "Apr 29, 2026",
+   "position": 10,
+   "site_name": "eqvista.com",
+   "snippet": "Here is the list of EBITDA multiples across industries. EBITDA multiples are ratio of company's Enterprise Value to its EBITDA.",
+   "title": "EBITDA Multiples Across Industries (2026)",
+   "url": "https://eqvista.com/ebitda-multiples-by-industry/"
+  }
+ ]
+}

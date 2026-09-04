@@ -1,0 +1,90 @@
+{
+ "at": 1788537191505,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "private real estate fund valuation lag",
+   "d": [
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Sep 23, 2015",
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "The estimated spatial lag (from 0.365 for GMM to 0.391 based on NLS) decreases in magnitude compared to Model I if we condition on property- ...",
+   "title": "[PDF] Learning externalities in opaque asset markets",
+   "url": "https://www.bis.org/events/confresearchnetwork1510/ruf_paper.pdf"
+  },
+  {
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "Equity prices in industrial countries continued to rise strongly last year and reached new heights by April 1998. The only notable exceptions to this trend.",
+   "title": "[PDF] V. Asset prices and the asset management industry",
+   "url": "https://www.bis.org/publ/ar98b05.pdf"
+  },
+  {
+   "date": "Jun 30, 2024",
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "Opaque valuations and infrequent updates of these valuations might create a lagged reaction of private markets to a potential correction in ...",
+   "title": "I. Laying a robust macro-financial foundation for the future - the BIS",
+   "url": "https://www.bis.org/publications/aer-2024/laying-robust-macro-financial-foundation-future"
+  },
+  {
+   "position": 4,
+   "site_name": "www.bis.org",
+   "snippet": "We find that the S&P500 and the real estate markets experienced two main bubble periods each, with the only overlap occurring after the COVID-19 crisis. Next, ...",
+   "title": "[PDF] Asset price bubbles and systemic risk in money market funds",
+   "url": "https://www.bis.org/publications/working-paper-1358-asset-price-bubbles-and-systemic-risk-money-market-funds.pdf"
+  },
+  {
+   "position": 5,
+   "site_name": "www.bis.org",
+   "snippet": "As such, the. CRE market typically lags the macroeconomic cycle by several months, according to Berry (2020). 4. To be consistent with existing studies of cross ...",
+   "title": "[PDF] Cross-border commercial real estate investment in Asia-Pacific",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt2009b.pdf"
+  },
+  {
+   "date": "Apr 22, 2026",
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "Valuations may lag reality. Underwriting standards have weakened. reflecting concerns about asset quality, valuation discipline and liquidity. ...",
+   "title": "This time is different? | Bank for International Settlements - the BIS",
+   "url": "https://www.bis.org/speeches/20260422-time-different"
+  },
+  {
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "A low PBR indicates, among other things, investor scepticism about the capacity of a bank's business model to create value from the underlying assets and ...",
+   "title": "[PDF] Profitability, valuation and resilience of global banks – a tight link",
+   "url": "https://www.bis.org/publications/working-paper-1144-profitability-valuation-and-resilience-global-banks-tight-link.pdf"
+  },
+  {
+   "date": "Sep 16, 2024",
+   "position": 8,
+   "site_name": "www.bis.org",
+   "snippet": "PE firms' ownership of life insurers' equity still lagging behind the levels prevailing in the United States (Graph 4.C).",
+   "title": "Shifting landscapes: life insurance and financial stability - the BIS",
+   "url": "https://www.bis.org/publications/shifting-landscapes-life-insurance-and-financial-stability"
+  },
+  {
+   "date": "Dec 6, 2021",
+   "position": 9,
+   "site_name": "www.bis.org",
+   "snippet": "This special feature discusses the systemic risks and policy implications of open-ended bond funds. During recent episodes of stress, ...",
+   "title": "Open-ended bond funds: systemic risks and policy implications",
+   "url": "https://www.bis.org/publications/open-ended-bond-funds-systemic-risks-and-policy-implications"
+  },
+  {
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "The increasing exposure of institutional investors to alternative investments (hedge funds, commodities, real estate, infrastructure, emerging market assets, ...",
+   "title": "[PDF] Institutional investors, global savings and asset allocation - the BIS",
+   "url": "https://www.bis.org/publications/cgfs-paper-27-institutional-investors-global-savings-and-asset-allocation.pdf"
+  }
+ ]
+}

@@ -1,0 +1,90 @@
+{
+ "at": 1788537020580,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "international education cost inflation",
+   "d": []
+  }
+ },
+ "value": [
+  {
+   "date": "Nov 26, 2025",
+   "position": 1,
+   "site_name": "educationdata.org",
+   "snippet": "While graduate tuition costs have grown at an average annual rate of 2.88% since AY 2010-11, the annual tuition inflation rate is 0.47%.",
+   "title": "College Tuition Inflation [2025]: Rate Increase Statistics",
+   "url": "https://educationdata.org/college-tuition-inflation-rate"
+  },
+  {
+   "position": 2,
+   "site_name": "am.jpmorgan.com",
+   "snippet": "College tuition costs have increased more quickly than any other household expense since 1983, rising an average of 5.8% each year.",
+   "title": "College tuition",
+   "url": "https://am.jpmorgan.com/us/en/asset-management/adv/investment-strategies/college-planning-essentials/viewer/college-costs/cpe-ccinflation/"
+  },
+  {
+   "date": "Sep 24, 2025",
+   "position": 3,
+   "site_name": "www.usnews.com",
+   "snippet": "Adjusted for inflation · Tuition and fees at private National Universities have increased about 32%. · Out-of-state tuition and fees at public ...",
+   "title": "20 Years of Tuition Costs at National Universities",
+   "url": "https://www.usnews.com/education/best-colleges/paying-for-college/articles/see-20-years-of-tuition-growth-at-national-universities"
+  },
+  {
+   "date": "May 5, 2026",
+   "position": 4,
+   "site_name": "www.forbes.com",
+   "snippet": "According to the Education Data Initiative, the cost of college in the 21st century has increased 41.7% faster than the cost of inflation, with ...",
+   "title": "College Tuition Inflation: Compare The Cost Of College Over Time",
+   "url": "https://www.forbes.com/advisor/student-loans/college-tuition-inflation/"
+  },
+  {
+   "date": "Feb 28, 2023",
+   "position": 5,
+   "site_name": "www.brookings.edu",
+   "snippet": "Academic year inflation, from July to June, hit 5.3% and 8.5% in 2020-21 and 2021-22, respectively. But institutions adopted moderate price ...",
+   "title": "Inflation affects the price of everything—including a college education",
+   "url": "https://www.brookings.edu/articles/inflation-affects-the-price-of-everything-including-a-college-education/"
+  },
+  {
+   "position": 6,
+   "site_name": "research.com",
+   "snippet": "Tuition inflation in international business programs outpaces general higher education, rising over 7% annually in 2024; rising at about 3.2% annually in ...",
+   "title": "2026 International Business Tuition Inflation Report - Research.com",
+   "url": "https://research.com/degrees/international-business-tuition-inflation-report-how-fast-are-program-costs-rising"
+  },
+  {
+   "date": "Jun 29, 2026",
+   "position": 7,
+   "site_name": "www.facebook.com",
+   "snippet": "US Colleges See 17% Drop in New International Students, Costing Economy $1.1 BILLION! The U.S. higher education system just took a ...",
+   "title": "Universities are losing money over loss of international - Facebook",
+   "url": "https://www.facebook.com/EdSource/posts/universities-are-losing-money-over-loss-of-international-students-learn-more-bel/1425131856304372/"
+  },
+  {
+   "date": "Aug 13, 2025",
+   "position": 8,
+   "site_name": "www.bankrate.com",
+   "snippet": "College tuition inflation consistently outpaces general inflation, averaging eight percent annually compared to the general inflation rate.",
+   "title": "College Tuition Inflation: The Rising Price Of Education | Bankrate",
+   "url": "https://www.bankrate.com/loans/student-loans/college-tuition-inflation/"
+  },
+  {
+   "position": 9,
+   "site_name": "digitalcommons.lib.uconn.edu",
+   "snippet": "Differential tuition is an additional fee charged over and above the regular tuition, either by residential status, majors or fields of study, year of study ...",
+   "title": "[PDF] Impact of Differential Tuition on International Students",
+   "url": "https://digitalcommons.lib.uconn.edu/cgi/viewcontent.cgi?article=1245&context=jcihe"
+  },
+  {
+   "date": "Feb 17, 2026",
+   "position": 10,
+   "site_name": "www.youtube.com",
+   "snippet": "Tina Tehranchian, senior wealth advisor at CI Assante Wealth Management Ltd., joins BNN Bloomberg to discuss ways to finance higher ...",
+   "title": "The cost of higher education has been going up higher than inflation",
+   "url": "https://www.youtube.com/watch?v=OAiq4KfkExs"
+  }
+ ]
+}

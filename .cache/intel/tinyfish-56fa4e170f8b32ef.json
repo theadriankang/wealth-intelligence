@@ -1,0 +1,82 @@
+{
+ "at": 1788537512483,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "charitable foundation funding structures",
+   "d": []
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.fidelitycharitable.org",
+   "snippet": "A private foundation is typically controlled and funded by an individual or family: The Bill & Melinda Gates Foundation is a well-known example. grants to ...",
+   "title": "What is a Private Foundation?",
+   "url": "https://www.fidelitycharitable.org/guidance/philanthropy/private-foundations.html"
+  },
+  {
+   "date": "Jul 11, 2024",
+   "position": 2,
+   "site_name": "1900wealth.com",
+   "snippet": "Public Charities — These receive funding from multiple sources, including the public, government grants, and private donations. Initial funding ...",
+   "title": "Strategies for Creating and Managing a Charitable ...",
+   "url": "https://1900wealth.com/strategies-for-creating-and-managing-a-charitable-foundation/"
+  },
+  {
+   "position": 3,
+   "site_name": "minnesotanonprofits.org",
+   "snippet": "There are seven different categories. Program Grants are given. Operating Grants are used to support the general operations. Capital Grants are used to upgrade ...",
+   "title": "Types of Grants and Investments Explained",
+   "url": "https://minnesotanonprofits.org/resources-tools/topics/fundraising-grantseeking/types-of-grants-and-investments-explained"
+  },
+  {
+   "date": "Feb 26, 2025",
+   "position": 4,
+   "site_name": "www.fluxx.io",
+   "snippet": "Private foundations have full autonomy over their funding choices, public foundations distribute grants based on donor or community needs, and ...",
+   "title": "What Is a Private Foundation? Structure, Grants, and ...",
+   "url": "https://www.fluxx.io/blog/what-is-a-private-foundation-structure-grants-and-management-tools"
+  },
+  {
+   "position": 5,
+   "site_name": "crewefoundationservices.com",
+   "snippet": "The most common vehicles are donor advised funds, private foundations, private operating foundations, supporting organizations and charitable trusts,",
+   "title": "Exploring Different Types of Charitable Foundations",
+   "url": "https://crewefoundationservices.com/insights/exploring-different-types-of-charitable-foundations/"
+  },
+  {
+   "date": "Aug 7, 2024",
+   "position": 6,
+   "site_name": "libguides.usc.edu",
+   "snippet": "Community Foundation: A community foundation is composed primarily of permanent funds established by many separate donors",
+   "title": "Types of Grant Funding - WRIT 340",
+   "url": "https://libguides.usc.edu/c.php?g=411183&p=2803568"
+  },
+  {
+   "date": "Jun 28, 2026",
+   "position": 7,
+   "site_name": "www.irs.gov",
+   "snippet": "A private foundation cannot make a grant for a purpose not described in section 170(c)(2)(B) of the Internal Revenue Code.",
+   "title": "Grants to noncharitable organizations",
+   "url": "https://www.irs.gov/charities-non-profits/private-foundations/grants-to-noncharitable-organizations"
+  },
+  {
+   "date": "Jun 12, 2026",
+   "position": 8,
+   "site_name": "www.sdfoundation.org",
+   "snippet": "A private foundation is a charitable organization usually funded by an individual, family or business. It typically makes grants to nonprofit ...",
+   "title": "How to Start a Private Foundation: Steps, Costs & ...",
+   "url": "https://www.sdfoundation.org/news-events/sdf-news/how-to-start-a-private-foundation/"
+  },
+  {
+   "date": "Oct 3, 2024",
+   "position": 9,
+   "site_name": "www.boardeffect.com",
+   "snippet": "Discover effective strategies for nonprofits to secure grant funding, enhance community impact and streamline application processes.",
+   "title": "10 types of nonprofit grants & how to qualify for funding",
+   "url": "https://www.boardeffect.com/blog/types-of-nonprofit-grants/"
+  }
+ ]
+}

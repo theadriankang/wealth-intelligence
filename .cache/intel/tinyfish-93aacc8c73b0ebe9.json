@@ -1,0 +1,90 @@
+{
+ "at": 1788537491154,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Indonesia coal export policy",
+   "d": [
+    "iea.org",
+    "esdm.go.id"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Jun 9, 2024",
+   "position": 1,
+   "site_name": "www.iea.org",
+   "snippet": "Previously, Indonesia had banned coal exports for a month to guarantee coal supplies to national power plants. With the reopening of coal ...",
+   "title": "Re-opening of the Coal Export – Policies - IEA",
+   "url": "https://www.iea.org/policies/18700-re-opening-of-the-coal-export"
+  },
+  {
+   "position": 2,
+   "site_name": "www.iea.org",
+   "snippet": "Indonesia's imports of oil have rapidly increased in recent years. This resource-rich nation is the world's fourth-largest producer of coal and Southeast ...",
+   "title": "Coal - Indonesia - Countries & Regions - IEA",
+   "url": "https://www.iea.org/countries/indonesia/coal"
+  },
+  {
+   "position": 3,
+   "site_name": "www.esdm.go.id",
+   "snippet": "The Indonesian government has decided to ban coal export in the period 1-31 January 2022 for holders of Mining Business License (IUP), Operation-Production ...",
+   "title": "Preventing Power Outages, Gov't Temporarily Bans Coal Export",
+   "url": "https://www.esdm.go.id/en/media-center/news-archives/preventing-power-outages-govt-temporarily-bans-coal-export"
+  },
+  {
+   "date": "Oct 22, 2019",
+   "position": 4,
+   "site_name": "jurnal.tekmira.esdm.go.id",
+   "snippet": "The Government of Indonesia issued the National Energy Policy (NEP) to target 25% of coal use of the national energy mix in 2050. The NEP ...",
+   "title": "[PDF] the availability of indonesian coal to meet the 2050 demand",
+   "url": "https://jurnal.tekmira.esdm.go.id/index.php/imj/article/view/689/849"
+  },
+  {
+   "date": "Mar 19, 2024",
+   "position": 5,
+   "site_name": "www.iea.org",
+   "snippet": "Indonesian government has, as of late April 2022, progressively banned the export of nickel ore, requiring nickel to be processed domestically ...",
+   "title": "Prohibition of the export of nickel ore – Policies - IEA",
+   "url": "https://www.iea.org/policies/16084-prohibition-of-the-export-of-nickel-ore"
+  },
+  {
+   "date": "Jan 31, 2022",
+   "position": 6,
+   "site_name": "www.esdm.go.id",
+   "snippet": "Starting February 1st, 2022, the government reopens coal exports for companies that have met the DMO requirement and/or those that have agreed ...",
+   "title": "Indonesia Re-opens Coal Export - Kementerian ESDM",
+   "url": "https://www.esdm.go.id/en/media-center/news-archives/ekspor-batubara-kembali-dibuka"
+  },
+  {
+   "position": 7,
+   "site_name": "www.iea.org",
+   "snippet": "Indonesia, the largest exporter and supplier to China, saw the biggest decrease, reducing exports by almost 50 Mt. In percentage terms, however, Colombia led ...",
+   "title": "Executive summary – Coal 2025 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/coal-2025/executive-summary"
+  },
+  {
+   "position": 8,
+   "site_name": "www.iea.org",
+   "snippet": "No longer an oil exporter, Indonesia is still highly dependent on fossil fuels. Exports of coal and natural gas make up nearly 20% of net goods exports.",
+   "title": "An Energy Sector Roadmap to Net Zero Emissions in Indonesia - IEA",
+   "url": "https://www.iea.org/reports/an-energy-sector-roadmap-to-net-zero-emissions-in-indonesia/executive-summary"
+  },
+  {
+   "position": 9,
+   "site_name": "www.iea.org",
+   "snippet": "Coal imports and exports. Being durable and relatively easy to transport and handle, coal is one of the most widely-traded fossil fuels. The vast majority is ...",
+   "title": "Coal - Australia - Countries & Regions - IEA",
+   "url": "https://www.iea.org/countries/australia/coal"
+  },
+  {
+   "position": 10,
+   "site_name": "www.iea.org",
+   "snippet": "Coal imports and exports. Being durable and relatively easy to transport and handle, coal is one of the most widely-traded fossil fuels. The vast majority is ...",
+   "title": "Coal - Poland - Countries & Regions - IEA",
+   "url": "https://www.iea.org/countries/poland/coal"
+  }
+ ]
+}

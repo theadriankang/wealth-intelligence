@@ -1,0 +1,93 @@
+{
+ "at": 1788537483643,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "chokepoint transit volumes and rerouting cost",
+   "d": [
+    "unctad.org",
+    "iea.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "unctad.org",
+   "snippet": "Freight rates surged in 2024 due to rerouting, port congestion and rising operational costs. ... rerouted vessels and rising shipping volumes.",
+   "title": "Review of Maritime Transport 2024 | UN Trade and Development ...",
+   "url": "https://unctad.org/publication/review-maritime-transport-2024"
+  },
+  {
+   "date": "Mar 10, 2026",
+   "position": 2,
+   "site_name": "unctad.org",
+   "snippet": "The Strait of Hormuz is one of the world's most critical maritime chokepoints, carrying around a quarter of global seaborne oil trade and ...",
+   "title": "Strait of Hormuz disruptions: Implications for global trade ... - UNCTAD",
+   "url": "https://unctad.org/publication/strait-hormuz-disruptions-implications-global-trade-and-development"
+  },
+  {
+   "date": "Jul 2, 2024",
+   "position": 3,
+   "site_name": "unctad.org",
+   "snippet": "The escalating costs arising from maritime chokepoint disruptions translate into higher shipping rates that are inevitably passed on to ...",
+   "title": "[PDF] Review of maritime transport 2024 - UNCTAD",
+   "url": "https://unctad.org/system/files/official-document/rmt2024_en.pdf"
+  },
+  {
+   "date": "Oct 22, 2024",
+   "position": 4,
+   "site_name": "unctad.org",
+   "snippet": "Disruptions at major maritime chokepoints. Key shipping routes have faced significant disruptions, causing delays, rerouting, and higher costs.",
+   "title": "Vulnerability of supply chains exposed as global maritime ...",
+   "url": "https://unctad.org/news/vulnerability-supply-chains-exposed-global-maritime-chokepoints-come-under-pressure"
+  },
+  {
+   "date": "Sep 24, 2025",
+   "position": 5,
+   "site_name": "unctad.org",
+   "snippet": "Rerouting's climate cost: Longer routes have increased carbon emissions. Rerouting ships has lengthened voyages, cut effective capacity and ...",
+   "title": "Review of Maritime Transport 2025: Staying the course in turbulent ...",
+   "url": "https://unctad.org/publication/review-maritime-transport-2025"
+  },
+  {
+   "date": "Sep 24, 2025",
+   "position": 6,
+   "site_name": "unctad.org",
+   "snippet": "Vessel rerouting pushed up ton-miles (the distance each ton of cargo travels) to a record 6% in 2024, nearly three times faster than trade ...",
+   "title": "Maritime trade under pressure – growth set to stall in 2025 - UNCTAD",
+   "url": "https://unctad.org/news/maritime-trade-under-pressure-growth-set-stall-2025"
+  },
+  {
+   "date": "Oct 22, 2024",
+   "position": 7,
+   "site_name": "unctad.org",
+   "snippet": "Freight rates have skyrocketed in 2024 due to rerouted vessels, port congestion and higher operational costs. Strengthening international ...",
+   "title": "High freight rates strain global supply chains, threaten vulnerable ...",
+   "url": "https://unctad.org/news/high-freight-rates-strain-global-supply-chains-threaten-vulnerable-economies"
+  },
+  {
+   "date": "Sep 28, 2025",
+   "position": 8,
+   "site_name": "unctad.org",
+   "snippet": "UNCTAD forecasts that maritime trade volume will expand at an annual growth rate of 0.5 per cent in 2025, with containerized trade volume ...",
+   "title": "[PDF] Review of maritime transport 2025 - UNCTAD",
+   "url": "https://unctad.org/system/files/official-document/rmt2025_en.pdf"
+  },
+  {
+   "position": 9,
+   "site_name": "unctad.org",
+   "snippet": "The Review of Maritime Transport has been published annually since 1968. The flagship report provides an analysis of structural and cyclical changes ...",
+   "title": "Review of Maritime Transport | UN Trade and Development (UNCTAD)",
+   "url": "https://unctad.org/topic/transport-and-trade-logistics/review-of-maritime-transport"
+  },
+  {
+   "position": 10,
+   "site_name": "www.iea.org",
+   "snippet": "The Strait of Hormuz, through which an average of 20 million barrels per day (mb/d) of crude oil and oil products were shipped in 2025, is one of the world's ...",
+   "title": "Strait of Hormuz - About - IEA",
+   "url": "https://www.iea.org/about/oil-security-and-emergency-response/strait-of-hormuz"
+  }
+ ]
+}

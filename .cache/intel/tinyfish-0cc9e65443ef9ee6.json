@@ -1,0 +1,58 @@
+{
+ "at": 1788537524960,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "MAS SGD NEER policy band mechanics",
+   "d": [
+    "mas.gov.sg"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "MAS formulates monetary policy by setting a path for the S$NEER policy band to ensure price stability in the medium term.",
+   "title": "What is MAS' monetary policy framework and its rationale?",
+   "url": "https://www.mas.gov.sg/monetary-policy/singapores-monetary-policy-framework/faqs/section-2"
+  },
+  {
+   "date": "Feb 27, 2025",
+   "position": 2,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "MAS can adjust the width of the policy band to set the upper and lower bounds within which the S$NEER can move at any point in time. In the next ...",
+   "title": "How does MAS carry out monetary policy?",
+   "url": "https://www.mas.gov.sg/monetary-policy/economics-edu-inflation/inflation/how-does-mas-carry-out-monetary-policy"
+  },
+  {
+   "position": 3,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "MAS' monetary policy settings, as defined by the slope, width and mid-point of the Singapore dollar nominal effective exchange rate (S$NEER) policy band,",
+   "title": "How does MAS carry out its monetary policy?",
+   "url": "https://www.mas.gov.sg/monetary-policy/singapores-monetary-policy-framework/faqs/section-4"
+  },
+  {
+   "position": 4,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Since the beginning of 2001, although the policy band was unchanged, the NEER was allowed to trend downwards to the lower half of the band, reflecting a shift",
+   "title": "[PDF] Annual Report 2000/2001 - Monetary Authority of Singapore",
+   "url": "https://www.mas.gov.sg/-/media/mas/resource/about_us/annual_reports/monetary-authority-of-singapore-annual-report-2000-2001.pdf"
+  },
+  {
+   "position": 5,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "MAS widened the policy band to allow for greater flexibility in managing the exchange rate. After the initial shock, financial markets stabilised.",
+   "title": "[PDF] MAS Annual Report 2001/2002 - Monetary Authority of Singapore",
+   "url": "https://www.mas.gov.sg/-/media/mas/about-mas/reporting/annual-reports/past-ar-pdf/20012002.pdf"
+  },
+  {
+   "position": 6,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "MAS tightened the monetary policy stance in April 2012 by increasing slightly the slope of the S$ nominal effective exchange rate (S$NEER) policy band,",
+   "title": "[PDF] Monetary Authority of Singapore - likedatosocanmeh",
+   "url": "https://www.mas.gov.sg/-/media/mas/about-mas/reporting/annual-reports/past-ar-pdf/20122013.pdf"
+  }
+ ]
+}

@@ -1,0 +1,90 @@
+{
+ "at": 1788537358167,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "cloud infrastructure capex and depreciation cycle",
+   "d": []
+  }
+ },
+ "value": [
+  {
+   "date": "Jan 29, 2025",
+   "position": 1,
+   "site_name": "www.splunk.com",
+   "snippet": "Next, use the following formula to determine CapEx: CapEx = current period PP&E – prior period PP&E + current period depreciation. This ...",
+   "title": "CapEx vs. OpEx for Cloud, IT Spending, and Business ...",
+   "url": "https://www.splunk.com/en_us/blog/learn/capex-vs-opex.html"
+  },
+  {
+   "date": "1 year ago",
+   "position": 2,
+   "site_name": "davefriedman.substack.com",
+   "snippet": "The author assumes straight-line depreciation: 25% of capex in 30-year buildings, 40% in 10-year MEP systems, 35% in GPUs with a 4-year life. s ...",
+   "title": "The AI capex cycle: doom, discipline, or differentiation?",
+   "url": "https://davefriedman.substack.com/p/the-ai-capex-cycle-doom-discipline"
+  },
+  {
+   "date": "Dec 16, 2025",
+   "position": 3,
+   "site_name": "billbennett.co.nz",
+   "snippet": "Assets owned, depreciated over the cloud replaces a CapEx problem (large initial spend, slow cycles) with an OpEx governance problem ( ...",
+   "title": "CapEx vs. OpEx in Cloud Computing - Bill Bennett",
+   "url": "https://billbennett.co.nz/technology-depreciates/"
+  },
+  {
+   "date": "Apr 19, 2023",
+   "position": 4,
+   "site_name": "relutech.com",
+   "snippet": "CapEx Purchase: You can pay cash and own the server outright, depreciating it over a pre-determined time frame. Refresh Cycles: Companies may ...",
+   "title": "CapEx vs OpEx: Considerations for Moving to the Cloud",
+   "url": "https://relutech.com/blogs/cloud-migration/capex-vs-opex-considerations-for-moving-to-the-cloud"
+  },
+  {
+   "position": 5,
+   "site_name": "breakingintowallstreet.com",
+   "snippet": "The key point here is that the CapEx reduces the company's cash flows, but not its “Earnings” or Net Income – only the Depreciation after the fact affects that.",
+   "title": "CapEx & Depreciation: Michael Burry vs. AI and Big Tech",
+   "url": "https://breakingintowallstreet.com/kb/accounting/capex-depreciation/"
+  },
+  {
+   "date": "Feb 13, 2025",
+   "position": 6,
+   "site_name": "platformonomics.com",
+   "snippet": "We recorded a Q4 2024 expense of approximately $920 million from accelerated depreciation and related charges and expect this will also decrease ...",
+   "title": "Follow the CAPEX: Cloud Table Stakes 2024 Retrospective",
+   "url": "https://platformonomics.com/2025/02/follow-the-capex-cloud-table-stakes-2024-retrospective/"
+  },
+  {
+   "date": "Oct 23, 2025",
+   "position": 7,
+   "site_name": "www.ridgewayfs.com",
+   "snippet": "capex represents the largest financial commitment and depreciation flows. Historically, cloud providers depreciated servers over three to four ...",
+   "title": "Cloud Infrastructure Accounting and Finance",
+   "url": "https://www.ridgewayfs.com/cloud-infrastructure-financial-challenges/"
+  },
+  {
+   "date": "Jun 25, 2026",
+   "position": 8,
+   "site_name": "www.edwardconard.com",
+   "snippet": "AI infrastructure revenues across major cloud providers narrowly cover depreciation costs when compute assets are written down over 6 years.",
+   "title": "AI revenues nearly match depreciation of $120B CapEx",
+   "url": "https://www.edwardconard.com/macro-roundup/the-state-of-the-aieconomy/"
+  },
+  {
+   "position": 9,
+   "site_name": "www.reddit.com",
+   "snippet": "",
+   "title": "AI infrastructure depreciates way faster than people realise, and enterprise ...",
+   "url": "https://www.reddit.com/r/investing/comments/1v2lj65/ai_infrastructure_depreciates_way_faster_than/"
+  },
+  {
+   "position": 10,
+   "site_name": "www.linkedin.com",
+   "snippet": "",
+   "title": "Ryan Lemand, PhD's Post",
+   "url": "https://www.linkedin.com/posts/ryanlemand_big-techs-depreciation-expenses-have-exploded-activity-7363155202440331264-Lv80"
+  }
+ ]
+}

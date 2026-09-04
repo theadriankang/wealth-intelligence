@@ -1,0 +1,92 @@
+{
+ "at": 1788537185606,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "MAS monetary policy statement schedule",
+   "d": [
+    "mas.gov.sg",
+    "iras.gov.sg"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Jul 1, 2025",
+   "position": 1,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Monetary Policy Statement · NLT 14 Oct 2026. Statement for Oct 2026 ; Macroeconomic Review · NLT 14 Oct 2026. Issue for Oct 2026, same day as MPS.",
+   "title": "Advance Release Calendar - Monetary Authority of Singapore",
+   "url": "https://www.mas.gov.sg/monetary-policy/advance-release-calendar"
+  },
+  {
+   "date": "Jan 29, 2024",
+   "position": 2,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "MAS' regular monetary policy announcements are scheduled in January, April, July and October. Find current and past issues of MAS' monetary ...",
+   "title": "Monetary Policy Statements",
+   "url": "https://www.mas.gov.sg/monetary-policy/mas-monetary-policy-statements"
+  },
+  {
+   "date": "Apr 14, 2026",
+   "position": 3,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "1. In its January 2026 monetary policy review, MAS maintained the rate of appreciation of the Singapore dollar nominal effective exchange rate ( ...",
+   "title": "MAS Monetary Policy Statement - April 2026",
+   "url": "https://www.mas.gov.sg/news/monetary-policy-statements/2026/mas-monetary-policy-statement-14apr26"
+  },
+  {
+   "position": 4,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "MAS' monetary policy stance is announced to the public every three months, in January, April, July and October.",
+   "title": "How does MAS carry out its monetary policy?",
+   "url": "https://www.mas.gov.sg/monetary-policy/singapores-monetary-policy-framework/faqs/section-4"
+  },
+  {
+   "position": 5,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Read the Monetary Policy Statement for July 2026. Monetary Policy Statements Published Date: 14 April 2026",
+   "title": "News - Monetary Authority of Singapore",
+   "url": "https://www.mas.gov.sg/news?content_type=Monetary%20Policy%20Statements"
+  },
+  {
+   "date": "Jul 27, 2026",
+   "position": 6,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "MAS Core Inflation is forecast to step up in July and remain elevated into early next year. Items inflation are projected to average 1.5–2.5%. ...",
+   "title": "MAS Monetary Policy Statement - July 2026",
+   "url": "https://www.mas.gov.sg/news/monetary-policy-statements/2026/mas-monetary-policy-statement-27jul26"
+  },
+  {
+   "position": 7,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "The forecasts for MAS Core Inflation and CPI-All Items inflation for 2026 have both been raised to 1.0–2.0%, from 0.5–1.5% in the October 2025 Monetary Policy ...",
+   "title": "MAS Monetary Policy Statement - January 2026",
+   "url": "https://www.mas.gov.sg/news/monetary-policy-statements/2026/mas-monetary-policy-statement-29jan26"
+  },
+  {
+   "position": 8,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "MAS' most recent Monetary Policy Statement. Statements are released in January, April, July and October. Published four times a year, in conjunction with the ...",
+   "title": "Monetary Policy - Monetary Authority of Singapore",
+   "url": "https://www.mas.gov.sg/monetary-policy"
+  },
+  {
+   "date": "Jul 27, 2026",
+   "position": 9,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Since 2024, MAS has been releasing monetary policy monetary statements four times a year, in January, April, July and October. First release of ...",
+   "title": "Past Monetary Policy Decisions - Monetary Authority of Singapore",
+   "url": "https://www.mas.gov.sg/monetary-policy/past-monetary-policy-decisions"
+  },
+  {
+   "date": "Oct 14, 2025",
+   "position": 10,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "1. In its July 2025 monetary policy review, MAS maintained the rate of appreciation of the Singapore dollar nominal effective exchange rate (S$ ...",
+   "title": "MAS Monetary Policy Statement - October 2025",
+   "url": "https://www.mas.gov.sg/news/monetary-policy-statements/2025/mas-monetary-policy-statement-14oct25"
+  }
+ ]
+}

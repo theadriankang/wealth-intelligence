@@ -1,0 +1,95 @@
+{
+ "at": 1788537188248,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "MAS property cooling measures",
+   "d": [
+    "mas.gov.sg",
+    "iras.gov.sg"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Dec 15, 2021",
+   "position": 1,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "The Government announced a package of measures to cool the private residential and HDB resale markets. With effect from 16 December 2021, ...",
+   "title": "Measures To Cool The Property Market",
+   "url": "https://www.mas.gov.sg/news/media-releases/2021/measures-to-cool-the-property-market"
+  },
+  {
+   "date": "Jan 12, 2013",
+   "position": 2,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Cooling Measures for the Residential Property Market · Measures Applicable to all Residential Property · Measures Specific to Public Housing.",
+   "title": "Additional Measures To Ensure A Stable And Sustainable Property ...",
+   "url": "https://www.mas.gov.sg/news/media-releases/2013/additional-measures-to-ensure-a-stable-and-sustainable-property-market"
+  },
+  {
+   "date": "Apr 26, 2023",
+   "position": 3,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "The Government announced today increases in the Additional Buyer's Stamp Duty (ABSD) rates to promote a sustainable property market. The revised ...",
+   "title": "Measures for a Sustainable Property Market",
+   "url": "https://www.mas.gov.sg/news/media-releases/2023/measures-for-a-sustainable-property-market"
+  },
+  {
+   "date": "Jul 6, 2018",
+   "position": 4,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Stamp Duty (ABSD) rates and Loan-to-Value (LTV) limits on residential property purchases, to cool the property market … 0% and 5% respectively.",
+   "title": "Raising Additional Buyer's Stamp Duty Rates and Tightening Loan ...",
+   "url": "https://www.mas.gov.sg/news/media-releases/2018/raising-additional-buyers-stamp-duty-rates-and-tightening-loan-to-value-limits"
+  },
+  {
+   "position": 5,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Measures To Cool The Property Market July Lowered Housing LTV Limits Lowered LTV limits by 5 percentage points for all housing loans granted by FIs.",
+   "title": "Macroprudential Policies in Singapore",
+   "url": "https://www.mas.gov.sg/publications/macroprudential-policies-in-singapore"
+  },
+  {
+   "date": "Sep 29, 2022",
+   "position": 6,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Measures to Promote Sustainable Conditions in the Property Market by Ensuring Prudent Borrowing and Moderating Demand",
+   "title": "Measures to Promote Sustainable Conditions in the Property Market ...",
+   "url": "https://www.mas.gov.sg/news/media-releases/2022/measures-to-promote-sustainable-conditions-in-the-property-market-by-ensuring-prudent-borrowing-and-moderating-demand"
+  },
+  {
+   "date": "Jan 13, 2011",
+   "position": 7,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Therefore, the Government has decided to introduce additional targeted measures to cool the property market and encourage greater financial ...",
+   "title": "Measures to Maintain a Stable and Sustainable Property Market",
+   "url": "https://www.mas.gov.sg/news/media-releases/2011/measures-to-maintain-a-stable-and-sustainable-property-market"
+  },
+  {
+   "date": "Feb 19, 2010",
+   "position": 8,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "measures helped to cool the property market, Lowering Loan-To-Value (LTV) Limit to 80% for Housing Loans 13 The LTV limit will be lowered from ...",
+   "title": "Measures To Ensure a Stable and Sustainable Property Market",
+   "url": "https://www.mas.gov.sg/news/media-releases/2010/measures-to-ensure-a-stable-and-sustainable-property-market"
+  },
+  {
+   "date": "Dec 15, 2021",
+   "position": 9,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "MAS expects property loans subject to the TDSR framework to not exceed the maximum TDSR threshold of 55%. Loans above the 55% threshold should ...",
+   "title": "TDSR Thresholds for Property Loans",
+   "url": "https://www.mas.gov.sg/regulation/explainers/tdsr-for-property-loans/calculating-tdsr-thresholds"
+  },
+  {
+   "date": "Aug 30, 2010",
+   "position": 10,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Decrease the Loan-to-Value (LTV) limit for housing loans granted by financial institutions regulated by MAS to these buyers from the current 80% ...",
+   "title": "Joint Press Release on Measures to Maintain a Stable and ...",
+   "url": "https://www.mas.gov.sg/news/media-releases/2010/measures-to-maintain-a-stable-and-sustainable-property-market"
+  }
+ ]
+}

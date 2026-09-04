@@ -1,0 +1,93 @@
+{
+ "at": 1788537300727,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Hong Kong residential property price index drivers",
+   "d": [
+    "hkma.gov.hk",
+    "rvd.gov.hk"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Dec 22, 2023",
+   "position": 1,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "weather conditions can affect a broad range of economic activities including property trading and housing prices, which can in turn impact ...",
+   "title": "[PDF] The impact of climate change on Hong Kong housing prices",
+   "url": "https://www.hkma.gov.hk/media/eng/publication-and-research/research/research-memorandums/2023/RM05-2023.pdf"
+  },
+  {
+   "position": 2,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "Hang Seng Index (LHS). Residential property prices (overall market) (RHS). Residential property prices (saleable area over 100 square metres) (RHS). Jan. Apr.",
+   "title": "[PDF] Domestic and external environment - Hong Kong Monetary Authority",
+   "url": "https://www.hkma.gov.hk/media/eng/publication-and-research/quarterly-bulletin/qb201006/ra1.pdf"
+  },
+  {
+   "date": "Jul 14, 2014",
+   "position": 3,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "Our goal is to reduce homebuyers' ability to borrow, minimise banks' risk and reduce the leveraging of the financial system as a whole during ...",
+   "title": "The HKMA's countercyclical prudential measures and financial stability",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2014/07/20140714/"
+  },
+  {
+   "date": "Feb 22, 2013",
+   "position": 4,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "However, activities in the property market picked up again recently, with significant increases in transaction volume and prices of residential ...",
+   "title": "Remarks by Norman T.L. Chan, Chief Executive of the Hong Kong ...",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/speeches/2013/02/20130222-1/"
+  },
+  {
+   "date": "Feb 17, 2017",
+   "position": 5,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "The Sub-Committee noted a paper which examined the drivers of the short-run dynamics of Hong Kong's housing prices based on an empirical model.",
+   "title": "Record of Discussion of the Meeting of the Exchange Fund Advisory ...",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2017/02/20170217-5/"
+  },
+  {
+   "date": "Feb 22, 2001",
+   "position": 6,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "Why does domestic lending continue to be so sluggish in Hong Kong when the economy is making such a vigorous recovery?",
+   "title": "Domestic Lending - Hong Kong Monetary Authority",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2001/02/20010222/"
+  },
+  {
+   "position": 7,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "Consumer spending growth increased to 4.2% from 2.8% in the third quarter, as improved labour market conditions, rising equity prices and lower energy prices ...",
+   "title": "[PDF] Domestic and external environment - Hong Kong Monetary Authority",
+   "url": "https://www.hkma.gov.hk/media/eng/publication-and-research/quarterly-bulletin/qb200703/E_36_43.pdf"
+  },
+  {
+   "date": "Jun 19, 2025",
+   "position": 8,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "The Hong Kong Monetary Authority (HKMA) sold Hong Kong dollars to the market in exchange for US dollars in accordance with the LERS. As a result ...",
+   "title": "HKMA's Response to US Fed's Interest Rate Decision",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2025/06/20250619-3/"
+  },
+  {
+   "position": 9,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "The faster pace of price increases was mainly due to the higher costs of tradables and housing rentals. (Chart 3.5). In particular, tradables' price inflation ...",
+   "title": "[PDF] 3. Domestic economy - Hong Kong Monetary Authority",
+   "url": "https://www.hkma.gov.hk/media/eng/publication-and-research/quarterly-bulletin/qb201703/chapter3.pdf"
+  },
+  {
+   "date": "Sep 4, 2014",
+   "position": 10,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "Property price shock: Reductions in Hong Kong's real property prices by 4.4%,. 14.5%, 10.8%, and 16.9% respectively in each of the four ...",
+   "title": "[PDF] Half-Yearly Monetary and Financial Stability Report September 2014",
+   "url": "https://www.hkma.gov.hk/media/eng/publication-and-research/quarterly-bulletin/qb201409/E_Half-yearly_Sep2014.pdf"
+  }
+ ]
+}

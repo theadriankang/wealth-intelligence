@@ -1,0 +1,91 @@
+{
+ "at": 1788537475551,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "HKD peg convertibility undertaking",
+   "d": [
+    "hkma.gov.hk"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "The HKMA provides Convertibility Undertakings (CUs), under which the HKMA commits to sell Hong Kong dollars upon request by banks at the strong-side CU",
+   "title": "How Does the LERS Work? - Hong Kong Monetary Authority",
+   "url": "https://www.hkma.gov.hk/eng/key-functions/money/linked-exchange-rate-system/how-does-the-lers-work/"
+  },
+  {
+   "date": "May 20, 2025",
+   "position": 2,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "In early May, as funds flowed into the Hong Kong dollar, the strong-side Convertibility Undertaking (CU) under the Linked Exchange Rate System ...",
+   "title": "Recent dynamics in the Hong Kong dollar market",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2025/05/20250520/"
+  },
+  {
+   "date": "Nov 13, 2023",
+   "position": 3,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "The Hong Kong dollar exchange rate under the Convertibility Undertaking in respect of the Aggregate Balance moves from 7.7500 to 7.8000 by 1 ...",
+   "title": "Milestones of Monetary Reform - Hong Kong Monetary Authority",
+   "url": "https://www.hkma.gov.hk/eng/key-functions/money/linked-exchange-rate-system/milestones-of-monetary-reform/"
+  },
+  {
+   "date": "Nov 1, 2007",
+   "position": 4,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "Convertibility Undertaking operations was undertaken, which involved the purchase of a total of about US$1 billion against the Hong Kong dollar,",
+   "title": "operations within the Convertibility ... - Hong Kong Monetary Authority",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2007/11/20071101/"
+  },
+  {
+   "date": "May 24, 2007",
+   "position": 5,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "Hong Kong dollar spot exchange rate stayed close to the strong-side Convertibility Undertaking in the latter half of 2005 and in 2006, the ...",
+   "title": "the second anniversary of the three ... - Hong Kong Monetary Authority",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2007/05/20070524/"
+  },
+  {
+   "position": 6,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "The Convertibility Undertaking was not triggered and the level of the Aggregate Balance remained unchanged, save for minor movements associated with interest ...",
+   "title": "[PDF] OPERATION OF MONETARY POLICY1",
+   "url": "https://www.hkma.gov.hk/media/eng/publication-and-research/quarterly-bulletin/qb200205/ra02.pdf"
+  },
+  {
+   "date": "Jul 11, 2025",
+   "position": 7,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "In the inSight article in May, I shared some views on the strengthening of HKD and the triggering of the strong-side Convertibility Undertaking",
+   "title": "Eddie Yue on a few observations ... - Hong Kong Monetary Authority",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2025/07/20250711/"
+  },
+  {
+   "position": 8,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "Convertibility Undertakings (CUs) by the HKMA. Convertibility Zone of 7.75 to 7.85. Rumours regarding possible changes to the peg also briefly boosted ...",
+   "title": "[PDF] Annual Report 2007 - Hong Kong Monetary Authority",
+   "url": "https://www.hkma.gov.hk/media/eng/publication-and-research/annual-report/2007/11_monetary.pdf"
+  },
+  {
+   "date": "Apr 24, 2018",
+   "position": 9,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "As part of the design of Hong Kong's Linked Exchange Rate System (LERS), the weak-side Convertibility Undertaking (CU) was first triggered ...",
+   "title": "The Linked Exchange Rate System Staying Robust with Local ...",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2018/04/20180424/"
+  },
+  {
+   "position": 10,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "The Convertibility Undertaking was not triggered and the Hong Kong dollar exchange rate moved in a narrow range. The forward points picked up briefly in late ...",
+   "title": "[PDF] Operation of Monetary Policy",
+   "url": "https://www.hkma.gov.hk/media/eng/publication-and-research/quarterly-bulletin/qb200306/ra2.pdf"
+  }
+ ]
+}

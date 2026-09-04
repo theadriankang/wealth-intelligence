@@ -1,0 +1,90 @@
+{
+ "at": 1788537529971,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "FOMC calendar",
+   "d": [
+    "federalreserve.gov",
+    "ecb.europa.eu",
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "Meeting calendars, statements, and minutes (2021-2027). The FOMC holds eight regularly scheduled meetings during the year and other meetings as needed.",
+   "title": "The Fed - Meeting calendars and information - Federal Reserve",
+   "url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+  },
+  {
+   "position": 2,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "FOMC Meeting Two-day meeting, September 15 - 16 Press Conference 2:30 p.m. Fri 9/18 9:15 a.m. FOMC Calendar Statistical Releases",
+   "title": "Calendar - Federal Reserve Board",
+   "url": "https://www.federalreserve.gov/newsevents/calendar.htm"
+  },
+  {
+   "position": 3,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "FOMC Minutes. Meeting of June 16-17. 8. 2:30 p.m.. FOMC Press Conference. 29. 2:00 p.m.. FOMC Meeting. Two-day meeting, July 28 - 29. Press Conference. 29 ...",
+   "title": "Calendar: July 2026 - Federal Reserve Board",
+   "url": "https://www.federalreserve.gov/newsevents/2026-july.htm"
+  },
+  {
+   "date": "Jan 27, 2026",
+   "position": 4,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "The Federal Open Market Committee will meet as planned on Tuesday, January 27 and Wednesday, January 28. The FOMC statement will be released as ...",
+   "title": "Calendar: January 2026 - Federal Reserve Board",
+   "url": "https://www.federalreserve.gov/newsevents/2026-january.htm"
+  },
+  {
+   "position": 5,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "FOMC Meeting calendars. The FOMC holds eight regularly scheduled meetings per year. At these meetings, the Committee reviews economic and financial conditions, ...",
+   "title": "The Fed - Federal Open Market Committee",
+   "url": "https://www.federalreserve.gov/monetarypolicy/fomc.htm"
+  },
+  {
+   "date": "Jun 16, 2026",
+   "position": 6,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "4 FOMC Meetings Time: Release Date(s): 2:30 p.m. FOMC Meeting Two-day meeting, June 16 - 17. Money Stock Measures 23 4:15 p.m.",
+   "title": "Calendar: June 2026 - Federal Reserve Board",
+   "url": "https://www.federalreserve.gov/newsevents/2026-june.htm"
+  },
+  {
+   "position": 7,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "FOMC Meeting calendars and information … 5 FOMC Meetings Time: Release Date(s): 2:00 p.m. FOMC Minutes Meeting of July 28-29 19",
+   "title": "Calendar: August 2026 - Federal Reserve Board",
+   "url": "https://www.federalreserve.gov/newsevents/2026-august.htm"
+  },
+  {
+   "position": 8,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "Upcoming Dates Sept. 15-16 FOMC Meeting Two-day meeting Press Conference Oct. 7 FOMC Minutes Meeting of September 15-16 Oct. 27-28 FOMC Meeting",
+   "title": "Monetary Policy - Federal Reserve Board",
+   "url": "https://www.federalreserve.gov/monetarypolicy.htm"
+  },
+  {
+   "date": "May 26, 2026",
+   "position": 9,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "FOMC Meetings. Time: Release Date(s):. 2:00 p.m.. FOMC Minutes. Meeting of April 28-29. 20. Statistical Releases. Time: Release Date(s):. 2:00 ...",
+   "title": "Calendar: May 2026 - Federal Reserve Board",
+   "url": "https://www.federalreserve.gov/newsevents/2026-may.htm"
+  },
+  {
+   "position": 10,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "FOMC materials ; January 27-28, 2026. Statement · January 28, 2026 ; December 9-10, 2025. Statement · December 10, 2025 ; December 9-10, 2025. Minutes · December 30, ...",
+   "title": "FOMC Materials Filter - Federal Reserve Board",
+   "url": "https://www.federalreserve.gov/monetarypolicy/materials/"
+  }
+ ]
+}

@@ -1,0 +1,89 @@
+{
+ "at": 1788537423579,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "private credit NAV valuation lag",
+   "d": [
+    "iosco.org",
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.iosco.org",
+   "snippet": "If asset valuations are improper, investors in OEFs that transact at NAV5 may unfairly pay more or receive less for their shares, which can lead to diminished ...",
+   "title": "[PDF] Recommendations on Valuing Collective Investment Schemes (CIS)",
+   "url": "https://www.iosco.org/library/pubdocs/pdf/IOSCOPD824.pdf"
+  },
+  {
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "100 dollars' worth of EME international bond sales is associated with around 4 dollars' worth of valuation losses. leverage in private equity-backed buyouts,",
+   "title": "[PDF] Investor redemptions and fund manager sales of emerging market ...",
+   "url": "https://www.bis.org/publications/working-paper-509-investor-redemptions-and-fund-manager-sales-emerging-market-bonds-how-are-they-related.pdf"
+  },
+  {
+   "date": "Dec 6, 2021",
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "The gap between the net asset value (NAV) per share and secondary market price of HY bond ETFs, for example, exceeded 800 basis points at ...",
+   "title": "Open-ended bond funds: systemic risks and policy implications",
+   "url": "https://www.bis.org/publications/open-ended-bond-funds-systemic-risks-and-policy-implications"
+  },
+  {
+   "date": "Sep 20, 2021",
+   "position": 4,
+   "site_name": "www.bis.org",
+   "snippet": "EMMFs can be classified into three main groups: (i) constant net asset value (CNAV); (ii) low-volatility NAV (LVNAV); and (iii) variable NAV ( ...",
+   "title": "Markets send mixed signals - the BIS",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt2109a.htm"
+  },
+  {
+   "position": 5,
+   "site_name": "www.iosco.org",
+   "snippet": "The Joint Global Initiative made several recommendations for improving key market practices including independent third-party sources of valuation, reporting ...",
+   "title": "[PDF] Transparency of Structured Finance Products - IOSCO",
+   "url": "https://www.iosco.org/library/pubdocs/pdf/IOSCOPD326.pdf"
+  },
+  {
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "MMFs are exposed to credit risk, net asset value (NAV). less liquid and longer-maturity assets amplifies the overall riskiness of MMFs. lagged market value ...",
+   "title": "[PDF] Asset price bubbles and systemic risk in money market funds",
+   "url": "https://www.bis.org/publications/working-paper-1358-asset-price-bubbles-and-systemic-risk-money-market-funds.pdf"
+  },
+  {
+   "position": 7,
+   "site_name": "www.iosco.org",
+   "snippet": "the fund's NAV does not adjust to fully reflect those declines in value, investors may seek to redeem before that adjustment is made.18 … is temporarily very ...",
+   "title": "[PDF] Guidance for Open-ended Funds for Effective Implementation of the ...",
+   "url": "https://www.iosco.org/library/pubdocs/pdf/IOSCOPD771.pdf"
+  },
+  {
+   "position": 8,
+   "site_name": "www.iosco.org",
+   "snippet": "The value paid depends on the NAV. A larger NAV implies a larger fee up to a cap value of 10.800 reais (approximately 4.000 USD).",
+   "title": "[PDF] Collective Investment Schemes in Emerging Markets - IOSCO",
+   "url": "https://www.iosco.org/library/pubdocs/pdf/ioscopd222.pdf"
+  },
+  {
+   "date": "May 29, 2015",
+   "position": 9,
+   "site_name": "www.iosco.org",
+   "snippet": "include, for example, the fund's fluctuating NAV, the required valuation of portfolio holdings at current value to establish the fund's ...",
+   "title": "[PDF] Investment Company Institute (ICI).pdf - IOSCO",
+   "url": "https://www.iosco.org/library/pubdocs/479/pdf/Investment%20Company%20Institute%20(ICI).pdf"
+  },
+  {
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "Lynch and Musto (1997) explain the widespread use of contracts based on net asset value (NAV) as a contracting variable, with the standard contract paying the ...",
+   "title": "[PDF] Incentive structures in institutional asset management and their ...",
+   "url": "https://www.bis.org/publications/cgfs-paper-21-incentive-structures-institutional-asset-management-and-their-implications-financial-markets.pdf"
+  }
+ ]
+}

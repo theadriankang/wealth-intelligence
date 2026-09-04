@@ -1,0 +1,91 @@
+{
+ "at": 1788536860125,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Indonesia coal domestic market obligation and export levy",
+   "d": [
+    "bi.go.id",
+    "esdm.go.id"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Jul 22, 2022",
+   "position": 1,
+   "site_name": "www.bi.go.id",
+   "snippet": "Exports from both regions will be supported by persistently strong coal exports despite a shift towards the domestic market at the beginning of ...",
+   "title": "[PDF] Regional Economic and Financial Review - Bank Indonesia",
+   "url": "https://www.bi.go.id/en/publikasi/laporan/Documents/Nusantara_Report_Jul_22.pdf"
+  },
+  {
+   "date": "Oct 2, 2021",
+   "position": 2,
+   "site_name": "www.bi.go.id",
+   "snippet": "increase coal production, the government also continues to balance fulfilling domestic needs by tightening domestic market obligations (DMO)2.",
+   "title": "Regional Economic and Financial Review - Bank Indonesia",
+   "url": "https://www.bi.go.id/en/publikasi/laporan/Documents/Nusantara_Report_October_2021.pdf"
+  },
+  {
+   "date": "Mar 4, 2026",
+   "position": 3,
+   "site_name": "www.bi.go.id",
+   "snippet": "Public Service Obligation Revenue: Grew supported by increased hospital services and higher export levy rates for CPO and its derivatives. , ...",
+   "title": "[PDF] Presentation Book Republic of Indonesia",
+   "url": "https://www.bi.go.id/en/iru/presentation/Documents/Republic%20of%20Indonesia%20Presentation%20Book%20-%20April%202026.pdf"
+  },
+  {
+   "position": 4,
+   "site_name": "jurnal.tekmira.esdm.go.id",
+   "snippet": "Prasetiawati (2012) stated that foreign investment in Indonesia is more dominant lead to the domestic market, it is not export- oriented. It impacts to the ...",
+   "title": "[PDF] ANALYSIS ON TERMS OF TRADE OF INDONESIA'S NICKEL",
+   "url": "https://jurnal.tekmira.esdm.go.id/index.php/imj/article/view/365/239"
+  },
+  {
+   "position": 5,
+   "site_name": "geologi.esdm.go.id",
+   "snippet": "Indonesia produced 105.5 tons of gold, with 37.08 tons allocated to the domestic market and 43.53 tons exported. With an extraction rate of 13.16 million tons",
+   "title": "[PDF] ISSN 3109-4112 - Badan Geologi",
+   "url": "https://geologi.esdm.go.id/storage/publikasi/kcVEQXADi0eq4J94sT1N1Ri8BgnURtxdEFTrvwO7.pdf"
+  },
+  {
+   "position": 6,
+   "site_name": "jurnal.tekmira.esdm.go.id",
+   "snippet": "Many of coal producers prefer to export their coal rather than to sell coals for domestic market (for instance power plants) due to the big margin price",
+   "title": "[PDF] analysis of ubc utilization in the existing coal power station case study",
+   "url": "https://jurnal.tekmira.esdm.go.id/index.php/imj/article/view/581/443"
+  },
+  {
+   "date": "Mar 31, 2026",
+   "position": 7,
+   "site_name": "www.bi.go.id",
+   "snippet": "stronger domestic demand. Mineral and Coal. primarily due to higher export levy rates on palm oil (CPO) and its derivatives. boosting Indonesia ...",
+   "title": "[PDF] Presentation Book Republic of Indonesia",
+   "url": "https://www.bi.go.id/en/iru/presentation/Documents/Republic%20of%20Indonesia%20Presentation%20Book%20-%20May%202026.pdf"
+  },
+  {
+   "position": 8,
+   "site_name": "jurnal.tekmira.esdm.go.id",
+   "snippet": "Such a policy is to confirm that the Indonesia coal reserve is competent to comply with the domestic demand for power generation and industry by 2050.",
+   "title": "Archives | Indonesian Mining Journal",
+   "url": "https://jurnal.tekmira.esdm.go.id/index.php/imj/issue/archive"
+  },
+  {
+   "position": 9,
+   "site_name": "jurnal.tekmira.esdm.go.id",
+   "snippet": "This study provides a doctrinal examination of Indonesia's legal framework regulating the increase of added value in nickel mining, with a particular focus ...",
+   "title": "[PDF] regulation on increasing added value of nickel and mineral mining ...",
+   "url": "https://jurnal.tekmira.esdm.go.id/index.php/imj/article/download/1695/1145"
+  },
+  {
+   "date": "Jul 13, 2026",
+   "position": 10,
+   "site_name": "www.bi.go.id",
+   "snippet": "The stable rating outlook reflects our expectation that government revenue will continue to recover this year and export receipts will ...",
+   "title": "[PDF] Indonesia Ratings Affirmed At 'BBB/A-2'; Outlook Stable",
+   "url": "https://www.bi.go.id/id/publikasi/ruang-media/news-release/Documents/sp_2813626_SnP_Indonesia-Ratings_13-Jul-2026.pdf"
+  }
+ ]
+}

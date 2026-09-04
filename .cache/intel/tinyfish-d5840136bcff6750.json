@@ -1,0 +1,91 @@
+{
+ "at": 1788536975774,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Basel capital requirements Asian banks",
+   "d": [
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "The Basel Committee on Banking Supervision introduced the first framework for minimum capital requirements for market risk in January 1996. Download PDF ...",
+   "title": "Basel III: international regulatory framework for banks - the BIS",
+   "url": "https://www.bis.org/committees/bcbs/standards"
+  },
+  {
+   "date": "Jul 8, 2026",
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "This paper documents the various components that make up the overall capital requirements of global systemically important banks (G-SIBs) ...",
+   "title": "On the comparison of capital requirements for global systemically ...",
+   "url": "https://www.bis.org/publications/fsi-insight-76-comparison-capital-requirements-global-systemically-important-banks"
+  },
+  {
+   "date": "Jun 27, 2019",
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "A bank subsidiary must maintain its minimum regulatory capital requirement at all times, and that capital must be available to support the ...",
+   "title": "Definition of capital in Basel III - Executive Summary",
+   "url": "https://www.bis.org/publications/fsi-summary-definition-capital-basel-iii-executive-summary"
+  },
+  {
+   "position": 4,
+   "site_name": "www.bis.org",
+   "snippet": "Asian Consultative Council ... The risk-based capital requirements set out in the Basel II framework were expanded to cover: in 2012, capital requirements for ...",
+   "title": "BCBS history - Basel Committee on Banking Supervision",
+   "url": "https://www.bis.org/committees/bcbs/history"
+  },
+  {
+   "date": "Oct 23, 2025",
+   "position": 5,
+   "site_name": "www.bis.org",
+   "snippet": "Basel III risk-based capital ratios increased in the second half of 2024. Banks' leverage ratio and Net Stable Funding Ratio remain stable ...",
+   "title": "Basel III risk-based capital ratios increase while leverage ... - the BIS",
+   "url": "https://www.bis.org/media-releases/20251023-basel-iii-risk-based-capital-ratios-increase-while-leverage-ratio-and-net-stable-funding-ratio"
+  },
+  {
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "This standard describes the criteria that bank capital instruments must meet to be eligible to satisfy the Basel capital requirements, as well as necessary ...",
+   "title": "Basel Framework | Bank for International Settlements - the BIS",
+   "url": "https://www.bis.org/committees/bcbs/basel-framework"
+  },
+  {
+   "date": "Jun 26, 2013",
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "The Basel III reforms introduced a simple, transparent, non-risk based leverage ratio to act as a credible supplementary measure to the risk- ...",
+   "title": "Revised Basel III leverage ratio framework and disclosure ... - the BIS",
+   "url": "https://www.bis.org/publications/201306-consultation-revised-basel-iii-leverage-ratio-framework-and-disclosure-requirements"
+  },
+  {
+   "date": "May 29, 2015",
+   "position": 8,
+   "site_name": "www.bis.org",
+   "snippet": "Several Asian regulators, such as China, India, Philippines and Singapore, have set capital requirements that exceed the Basel III standards.",
+   "title": "Whither Asian banking? | Bank for International Settlements - the BIS",
+   "url": "https://www.bis.org/speeches/20150529-whither-asian-banking"
+  },
+  {
+   "position": 9,
+   "site_name": "www.bis.org",
+   "snippet": "Basel II requires the implementation of three mutually reinforcing pillars: Pillar 1 - minimum regulatory capital for credit, market and operational risks; ...",
+   "title": "[PDF] The implementation of the new capital adequacy framework in Asia",
+   "url": "https://www.bis.org/fsi/fsipapers04asia.pdf"
+  },
+  {
+   "date": "Jul 30, 2025",
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "This paper studies how banks manage their equity capital in the short run, particularly during periods of distress, based on Basel III ...",
+   "title": "Bank capital and balance sheet management during times of distress",
+   "url": "https://www.bis.org/publications/bank-capital-and-balance-sheet-management-during-times-distress-international-evidence"
+  }
+ ]
+}

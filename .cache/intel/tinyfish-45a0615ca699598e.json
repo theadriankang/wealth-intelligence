@@ -1,0 +1,92 @@
+{
+ "at": 1788537494959,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "structured product suitability disclosure requirements",
+   "d": [
+    "sfc.hk",
+    "mas.gov.sg"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Jun 12, 2019",
+   "position": 1,
+   "site_name": "www.sfc.hk",
+   "snippet": "A warning statement to the effect that the product is a complex product and investors should exercise caution in relation to the product. A ...",
+   "title": "Minimum information to be provided and warning statements - SFC",
+   "url": "https://www.sfc.hk/en/Rules-and-standards/Suitability-requirement/Non-complex-and-complex-products/Minimum-information-to-be-provided-and-warning-statements"
+  },
+  {
+   "date": "Oct 17, 2019",
+   "position": 2,
+   "site_name": "www.sfc.hk",
+   "snippet": "It requires a licensed or registered person to, when making a recommendation or solicitation, including product due diligence and disclosure of ...",
+   "title": "Suitability requirement | Securities & Futures Commission of Hong ...",
+   "url": "https://www.sfc.hk/en/Rules-and-standards/Suitability-requirement"
+  },
+  {
+   "date": "Nov 2, 2023",
+   "position": 3,
+   "site_name": "www.sfc.hk",
+   "snippet": "Guidelines on Disclosure of Inside Information ... Suitability requirement · Regulatory requirements · Circulars · FAQs · Non-complex and complex ...",
+   "title": "Non-complex and complex products | Securities & Futures ... - SFC",
+   "url": "https://www.sfc.hk/en/rules-and-standards/suitability-requirement/non-complex-and-complex-products"
+  },
+  {
+   "date": "Jul 28, 2023",
+   "position": 4,
+   "site_name": "apps.sfc.hk",
+   "snippet": "Suitability assessment is a risk-based process that involves intermediaries matching of investment products with the personal circumstances and ...",
+   "title": "Joint circular to intermediaries Streamlined approach for compliance ...",
+   "url": "https://apps.sfc.hk/edistributionWeb/gateway/EN/circular/suitability/doc?refNo=23EC35"
+  },
+  {
+   "position": 5,
+   "site_name": "www.sfc.hk",
+   "snippet": "suitability assessment, provision of product information, disclosure of warning statement, advice provided and any rebalancing conducted, and incident.",
+   "title": "[PDF] Guidelines on Online Distribution and Advisory Platforms - SFC",
+   "url": "https://www.sfc.hk/en/Rules-and-standards/Codes-and-guidelines/Guidelines/Guidelines-on-Online-Distribution-and-Advisory-Platforms"
+  },
+  {
+   "date": "Jul 28, 2023",
+   "position": 6,
+   "site_name": "www.sfc.hk",
+   "snippet": "Intermediaries should be satisfied that a client has met the qualifying criteria. To apply the Streamlined Approach, intermediaries should ...",
+   "title": "Streamlined approach for compliance with suitability obligations ...",
+   "url": "https://www.sfc.hk/en/faqs/intermediaries/supervision/Sophisticated-Professional-Investors/Sophisticated-Professional-Investors"
+  },
+  {
+   "position": 7,
+   "site_name": "apps.sfc.hk",
+   "snippet": "For the avoidance of doubt, intermediaries should comply with all applicable regulatory requirements, including the FAQs on Compliance with Suitability ...",
+   "title": "[PDF] Frequently Asked Questions - SFC",
+   "url": "https://apps.sfc.hk/edistributionWeb/api/circular/openAppendix?lang=EN&refNo=19EC42&appendix=0"
+  },
+  {
+   "position": 8,
+   "site_name": "www.sfc.hk",
+   "snippet": "In the Handbook, we propose certain structural requirements for specific products to complement product disclosure requirements and to increase product ...",
+   "title": "[PDF] Part II Products - SFC",
+   "url": "https://www.sfc.hk/edistributionWeb/gateway/EN/consultation/openAppendix?refNo=09CP3&appendix=3"
+  },
+  {
+   "position": 9,
+   "site_name": "apps.sfc.hk",
+   "snippet": "In Singapore, section 27 of the Financial Advisers Act requires recommendations made to have a reasonable basis (i.e. suitability). “Recommendations by licensed ...",
+   "title": "[PDF] Response to Proposed Guidelines on Online Distribution and ... - SFC",
+   "url": "https://apps.sfc.hk/edistributionWeb/gateway/EN/consultation/product-authorization/openCommentFile?refNo=17CP3&commentRefNo=14"
+  },
+  {
+   "date": "1 day ago",
+   "position": 10,
+   "site_name": "apps.sfc.hk",
+   "snippet": "Funds with direct or indirect exposure to private market assets are required to observe the enhanced disclosure requirements set out in this ...",
+   "title": "Circular on SFC-authorised funds with exposure to private market ...",
+   "url": "https://apps.sfc.hk/edistributionWeb/gateway/EN/circular/doc?refNo=26EC55"
+  }
+ ]
+}

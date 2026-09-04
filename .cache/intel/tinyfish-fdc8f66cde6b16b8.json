@@ -1,0 +1,89 @@
+{
+ "at": 1788537385518,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Bank of Japan yield curve control and JGB market",
+   "d": [
+    "boj.or.jp"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Aug 30, 2024",
+   "position": 1,
+   "site_name": "www.boj.or.jp",
+   "snippet": "This paper examines the impact of the Bank of Japan (BOJ)'s Quantitative and Qualitative Easing (QQE) and Yield Curve Control (YCC) on the ...",
+   "title": "The Impact of Quantitative and Qualitative Easing and Yield Curve ...",
+   "url": "https://www.boj.or.jp/en/research/wps_rev/wps_2024/wp24e09.htm"
+  },
+  {
+   "position": 2,
+   "site_name": "www.boj.or.jp",
+   "snippet": "10-year Japanese government bond (JGB) yields had been at the target level of around zero percent under Quantitative and Qualitative Monetary Easing (QQE) with ...",
+   "title": "Semiannual Report on Currency and Monetary Control (Summary)",
+   "url": "https://www.boj.or.jp/en/mopo/diet/d_report/hanki23a.htm"
+  },
+  {
+   "position": 3,
+   "site_name": "www.boj.or.jp",
+   "snippet": "Announcement of the Bank of Japan's Issue-by-Issue Holdings of JGBs by Amount Outstanding. Notices of Corrections. 日本銀行 Bank of Japan. 2-1-1 Nihonbashi ...",
+   "title": "Japanese Government Bonds Held by the Bank of Japan - 日本銀行",
+   "url": "https://www.boj.or.jp/en/statistics/boj/other/mei/index.htm"
+  },
+  {
+   "date": "Aug 9, 2024",
+   "position": 4,
+   "site_name": "www.boj.or.jp",
+   "snippet": "Specifically, it decided to conduct yield curve control with the upper bound of 1.0 percent for 10-year JGBs as a reference. In line with this ...",
+   "title": "(Research Paper) Market Operations in Fiscal 2023 - 日本銀行",
+   "url": "https://www.boj.or.jp/en/research/brp/mor/mor240809.htm"
+  },
+  {
+   "date": "Dec 20, 2022",
+   "position": 5,
+   "site_name": "www.boj.or.jp",
+   "snippet": "Bank of Japan decided to modify the conduct of yield curve control in order to improve market functioning and encourage a smoother formation of ...",
+   "title": "Statement on Monetary Policy : 日本銀行 Bank of Japan",
+   "url": "https://www.boj.or.jp/en/mopo/mpmdeci/state_2022/k221220a.htm"
+  },
+  {
+   "position": 6,
+   "site_name": "www.boj.or.jp",
+   "snippet": "Yield Curve Control (YCC), its JGB purchases exerted downward pressure on interest rates by up to about one percentage point.5 … the yield curve in JGB markets ...",
+   "title": "[PDF] Impact of the Bank of Japan's Reductions in JGB Purchases on the",
+   "url": "https://www.boj.or.jp/en/research/wps_rev/rev_2026/data/rev26e10.pdf"
+  },
+  {
+   "position": 7,
+   "site_name": "www.boj.or.jp",
+   "snippet": "10-year JGB yields will remain at around zero percent. The Bank will regard the upper bound of 1.0 percent for 10-year JGB yields as a reference in its market ...",
+   "title": "Semiannual Report on Currency and Monetary Control (Summary)",
+   "url": "https://www.boj.or.jp/en/mopo/diet/d_report/hanki24a.htm"
+  },
+  {
+   "date": "Mar 21, 2025",
+   "position": 8,
+   "site_name": "www.boj.or.jp",
+   "snippet": "... Yield Curve Control and to the subsequent large-scale JGB purchases by the Bank, and remained elevated before starting to decline in mid-2024.",
+   "title": "(BOJ Review) Developments in the Functioning of the JGB Markets ...",
+   "url": "https://www.boj.or.jp/en/research/wps_rev/rev_2025/rev25e03.htm"
+  },
+  {
+   "position": 9,
+   "site_name": "www.boj.or.jp",
+   "snippet": "Yield curve control. The Bank decided to set the following guideline for market operations for the intermeeting period. The short-term policy interest rate: The ...",
+   "title": "Semiannual Report on Currency and Monetary Control (Summary ...",
+   "url": "https://www.boj.or.jp/en/mopo/diet/d_report/hanki20b.htm"
+  },
+  {
+   "position": 10,
+   "site_name": "www.boj.or.jp",
+   "snippet": "... Yield Curve Control on the Functioning of the Japanese Government Bond Market ... of the Japanese government bond (JGB) market using panel data for JGB issues.",
+   "title": "Search : 日本銀行 Bank of Japan",
+   "url": "https://www.boj.or.jp/qssearch.jsp?offset=171&limit=10&indexname=qsidxpe01&search=jgb&sort=Similarity+desc&searchtype=kw&qsk1=jgb"
+  }
+ ]
+}

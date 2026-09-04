@@ -1,0 +1,88 @@
+{
+ "at": 1788537477514,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "private client cash flow planning horizon",
+   "d": []
+  }
+ },
+ "value": [
+  {
+   "date": "Aug 11, 2026",
+   "position": 1,
+   "site_name": "alpenpartners.com",
+   "snippet": "Alpen maps anticipated inflows and outflows across a rolling 12- to 36-month planning horizon. The planning horizon varies depending on each ...",
+   "title": "Cash-Flow Planning in International Wealth Management - Alpen Partners",
+   "url": "https://alpenpartners.com/us/insights/why-is-disciplined-cash-flow-planning-one-of-the-foundations-of-international-wealth-management/"
+  },
+  {
+   "date": "May 8, 2025",
+   "position": 2,
+   "site_name": "www.huntington.com",
+   "snippet": "Effective cash flow management involves tracking income and expenses to ensure a healthy financial position for your business. Learn more.",
+   "title": "What is Cash Flow Management and Why Is it Important - Huntington Bank",
+   "url": "https://www.huntington.com/private-bank/insights/market-trends/what-is-cash-flow-management"
+  },
+  {
+   "date": "Jul 9, 2024",
+   "position": 3,
+   "site_name": "www.envestnet.com",
+   "snippet": "Cash flow planning means tracking every dollar your client interacts with. We use the acronym S=I-T-E (Savings = Income – Taxes – Expenses) for ...",
+   "title": "Cash flow vs. goals-based planning: Prescribing the right plan | Envestnet",
+   "url": "https://www.envestnet.com/financial-intel/cash-flow-vs-goals-based-planning-prescribing-right-plan"
+  },
+  {
+   "position": 4,
+   "site_name": "www.capitaladvisorsltd.com",
+   "snippet": "CFM Horizon™ lays out cash inflows and outflows to help guide a client on major financial events: selling or buying a business, real estate transactions, ...",
+   "title": "CFM Horizon™ | Capital Advisors",
+   "url": "https://www.capitaladvisorsltd.com/cfm-horizon"
+  },
+  {
+   "date": "Aug 6, 2024",
+   "position": 5,
+   "site_name": "rwawealth.com",
+   "snippet": "Here's how you can approach different financial goals within short-, medium- and long-term horizons: Short term (1 to 3 years): Goals cash you ...",
+   "title": "Cash Flow Planning Strategies To Maximize Your Wealth",
+   "url": "https://rwawealth.com/cash-flow-planning-strategies-to-maximize-your-wealth/"
+  },
+  {
+   "date": "Jul 29, 2022",
+   "position": 6,
+   "site_name": "emoneyadvisor.com",
+   "snippet": "Financial professionals who provide cash flow-based planning can help their clients gain better control of their financial situations.",
+   "title": "Cash Flow-based Financial Planning Benefits All Clients - eMoney Advisor",
+   "url": "https://emoneyadvisor.com/blog/cash-flow-based-financial-planning-for-all-client-life-stages/"
+  },
+  {
+   "position": 7,
+   "site_name": "nedbankprivatewealth.com",
+   "snippet": "Cashflow refers to the movement of money over time. It includes income, expenses, savings and investments, and gives an insight into your financial situation.",
+   "title": "Cashflow Planning Services | Expertise in Wealth Management",
+   "url": "https://nedbankprivatewealth.com/our-approach/cashflow-planning/"
+  },
+  {
+   "position": 8,
+   "site_name": "avior.com",
+   "snippet": "Learn the fundamentals of cash flow planning, including how to create a cash flow statement and stay proactive in your planning.",
+   "title": "Mastering Cash Flow Planning Fundamentals",
+   "url": "https://avior.com/insights/wealth-management/cash-flow-planning/mastering-cash-flow-planning-fundamentals/"
+  },
+  {
+   "position": 9,
+   "site_name": "prosperitycapitaladvisors.com",
+   "snippet": "Master financial planning with the 3 phases of cash-flow based planning and optimize your cash flow for a secure retirement using The Bucket Plan!",
+   "title": "Decoding the 3 Phases of Cash-Flow Based Financial Planning",
+   "url": "https://prosperitycapitaladvisors.com/blog/cash-flow-based-financial-planning/"
+  },
+  {
+   "position": 10,
+   "site_name": "www.obol.ai",
+   "snippet": "Cash flow planning involves tracking, forecasting, and controlling the movement of cash in and out of a business or household. By accurately predicting cash ...",
+   "title": "The Ultimate Guide to Cash Flow Planning for Businesses - Obol AI",
+   "url": "https://www.obol.ai/blog/cash-flow-planning-benefits-importance-and-types"
+  }
+ ]
+}

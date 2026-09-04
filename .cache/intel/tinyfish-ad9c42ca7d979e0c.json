@@ -1,0 +1,91 @@
+{
+ "at": 1788536860060,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "IDR volatility and Bank Indonesia intervention",
+   "d": [
+    "bi.go.id"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Apr 15, 2026",
+   "position": 1,
+   "site_name": "www.bi.go.id",
+   "snippet": "Bank Indonesia continues optimising its policy mix to maintain rupiah exchange rate stability amid heightened global uncertainty.",
+   "title": "Bank Indonesia Continues to Maintain Rupiah Exchange Rate ...",
+   "url": "https://www.bi.go.id/en/publikasi/ruang-media/news-release/Pages/sp_287526.aspx"
+  },
+  {
+   "position": 2,
+   "site_name": "www.bi.go.id",
+   "snippet": "Bank Indonesia intervened on the spot and forward markets to create equilibrium between demand and supply of foreign currency, thus curbing volatility in the ...",
+   "title": "[PDF] POLICY RESPONSE - Bank Indonesia",
+   "url": "https://www.bi.go.id/en/publikasi/laporan/Documents/PartIII_Policy_Response.pdf"
+  },
+  {
+   "position": 3,
+   "site_name": "www.bi.go.id",
+   "snippet": "the exchange rate movement are quite volatile. Rupiah exchange rate against US dollar (IDR), trading transaction makes the forex market is more liquid, but on ...",
+   "title": "[PDF] EFFECTS OF FOREIGN EXCHANGE SUPPLY AND DEMAND ...",
+   "url": "https://www.bi.go.id/en/publikasi/jurnal-ekonomi/Documents/3bfe8ea9c7f1485e97c7dfe62f9ba5b2Sugeng.pdf"
+  },
+  {
+   "position": 4,
+   "site_name": "www.bi.go.id",
+   "snippet": "Bank Indonesia continues to intensify foreign exchange intervention, both through intervention in offshore NDF markets as well as spot and DNDF transactions",
+   "title": "BI-Rate Increased by 50 bps to 5.25%",
+   "url": "https://www.bi.go.id/en/publikasi/ruang-media/news-release/Pages/sp_2810726.aspx"
+  },
+  {
+   "date": "Feb 23, 2026",
+   "position": 5,
+   "site_name": "www.bi.go.id",
+   "snippet": "Bank Indonesia is strengthening its policy to stabilise the Rupiah exchange rate through measured intervention in offshore NDF markets and in ...",
+   "title": "Strengthening Economic Growth, Maintaining Stability",
+   "url": "https://www.bi.go.id/en/publikasi/ruang-media/news-release/Pages/sp_284326.aspx"
+  },
+  {
+   "date": "Oct 5, 2025",
+   "position": 6,
+   "site_name": "www.bi.go.id",
+   "snippet": "Indonesia's economy in 2025 has performed well amid heightened global volatility and uncertainty. Bank Indonesia to intervene in the market to ...",
+   "title": "[PDF] Bank Indonesia Annual Meeting 2025",
+   "url": "https://www.bi.go.id/en/publikasi/ruang-media/pidato-dewan-gubernur/Documents/Bank-Indonesia-Annual-Meeting-2025.pdf"
+  },
+  {
+   "date": "Jul 14, 2022",
+   "position": 7,
+   "site_name": "www.bi.go.id",
+   "snippet": "With the launch of DNDF, the exchange rate intervention strategy implemented by Bank Indonesia has been updated to a triple intervention ...",
+   "title": "Central Bank Policy Mix for Stability and Economic Recovery",
+   "url": "https://www.bi.go.id/en/bi-institute/publikasi/Documents/Central-Bank-Policy-Mix-for-Stability-and-Economic-Recovery.pdf"
+  },
+  {
+   "date": "Jan 21, 2026",
+   "position": 8,
+   "site_name": "www.bi.go.id",
+   "snippet": "Bank Indonesia's exchange rate policy is constantly strengthened to maintain Rupiah exchange rate stability against the impact of increasing ...",
+   "title": "BI-Rate Held at 4.75%: Strengthening Economic Growth ...",
+   "url": "https://www.bi.go.id/en/publikasi/ruang-media/news-release/Pages/sp_281326.aspx"
+  },
+  {
+   "date": "Mar 4, 2026",
+   "position": 9,
+   "site_name": "www.bi.go.id",
+   "snippet": "Central Bank Policy Mix: Despite persistently high global uncertainty, Bank Indonesia has implemented accommodative monetary policy through ...",
+   "title": "[PDF] Presentation Book Republic of Indonesia",
+   "url": "https://www.bi.go.id/en/iru/presentation/Documents/Republic%20of%20Indonesia%20Presentation%20Book%20-%20April%202026.pdf"
+  },
+  {
+   "position": 10,
+   "site_name": "www.bi.go.id",
+   "snippet": "In the case of Indonesia, the most binding constraints hindering Indonesia's economic growth are inadequate and low quality infrastructure and human capital. I ...",
+   "title": "Structural reform In emergIng aSIa - Bank Indonesia",
+   "url": "https://www.bi.go.id/id/bi-institute/publikasi/Documents/Structural%20Reform%20in%20Emerging%20Asia.pdf"
+  }
+ ]
+}

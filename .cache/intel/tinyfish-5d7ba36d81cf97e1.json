@@ -1,0 +1,91 @@
+{
+ "at": 1788537515098,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "investment grade credit spread drivers",
+   "d": [
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Sep 19, 2022",
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "Investment-grade (IG) corporate bond indices have grown riskier over time. US IG indices represent half of the total, up from 25% in 1990. In ...",
+   "title": "The increasing risk of investment grade indices: implications for ...",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt2209w.htm"
+  },
+  {
+   "date": "Mar 11, 2025",
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "The main sources of capital for private credit funds are institutional investors with long-term investment horizons and low liquidity needs.",
+   "title": "The global drivers of private credit - the BIS",
+   "url": "https://www.bis.org/publications/global-drivers-private-credit"
+  },
+  {
+   "date": "Mar 11, 2025",
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "Credit spreads compressed further across the rating spectrum, particularly for European high-yield bonds, and stayed widely below historical ...",
+   "title": "Markets caught in cross-currents - the BIS",
+   "url": "https://www.bis.org/publications/markets-caught-cross-currents"
+  },
+  {
+   "position": 4,
+   "site_name": "www.bis.org",
+   "snippet": "Credit quality is specified as either investment grade (IG), high yield (HY), or not rated (NR). counterparty credit spreads and market risk factors driving ...",
+   "title": "MAR50 - Credit valuation adjustment framework",
+   "url": "https://www.bis.org/basel_framework/chapter/MAR/50.htm?inforce=20230101&published=20200708&tldate=20230412"
+  },
+  {
+   "position": 5,
+   "site_name": "www.bis.org",
+   "snippet": "Investment grade spreads generally outperformed those of lower-quality borrowers (Graph 1, left-hand and centre panels).",
+   "title": "[PDF] 1. Overview: investors ponder depth and duration of global downturn",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt0903a.pdf"
+  },
+  {
+   "date": "Jun 26, 2016",
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "Both investment grade and high-yield credit spreads were higher in May 2016 than a year before in the United States and the euro area as well ...",
+   "title": "II. - the BIS",
+   "url": "https://www.bis.org/publications/ii-10"
+  },
+  {
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "The turbulence spilled over to advanced economies. (AEs), as flattening yield curves and widening credit spreads made investors ponder recessionary scenarios.",
+   "title": "[PDF] Uneasy calm gives way to turbulence | BIS",
+   "url": "https://www.bis.org/publications/uneasy-calm-gives-way-turbulence.pdf"
+  },
+  {
+   "date": "Mar 6, 2017",
+   "position": 8,
+   "site_name": "www.bis.org",
+   "snippet": "After narrowing in November, the spreads of European and US corporate investment grade credit remained essentially unchanged thereafter (Graph 5 ...",
+   "title": "Beyond swings in risk appetite - the BIS",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt1703a.htm"
+  },
+  {
+   "position": 9,
+   "site_name": "www.bis.org",
+   "snippet": "Between end-August and 30 November, the US five-year CDX high-yield index spread rose by 85 basis points to 492, while corresponding investment grade spreads ...",
+   "title": "[PDF] 1. Overview: markets hit by renewed credit woes",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt0712a.pdf"
+  },
+  {
+   "date": "Feb 27, 2023",
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "For example, the spreads on BBB credits, a growing segment within investment grade, fell by about 50 basis points, while the spreads on CCC ...",
+   "title": "Perceptions of risk and policy outlook drive markets - the BIS",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt2303a.htm"
+  }
+ ]
+}

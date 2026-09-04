@@ -1,0 +1,38 @@
+{
+ "at": 1788537308172,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "bank perpetual coupon deferral mechanics",
+   "d": [
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "2 days ago",
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "Banking groups are groups that engage predominantly repaid in liquidation. Principal is perpetual and never repaid outside of liquidation",
+   "title": "[PDF] Basel Framework - the BIS",
+   "url": "https://www.bis.org/committees/bcbs/basel-framework/basel-framework.pdf"
+  },
+  {
+   "date": "Apr 29, 2003",
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "... bank is denoted discount if the exposure is larger, and premium if the exposure is smaller. Superseded document. Page 67. The New Basel ...",
+   "title": "[PDF] Basel II - Bank for International Settlements",
+   "url": "https://www.bis.org/publ/bcbscp3.pdf"
+  },
+  {
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "An overview of international and national initiatives to address data gaps revealed by the financial crisis … provide the sophistication of a perpetual ...",
+   "title": "[PDF] Initiatives to address data gaps revealed by the financial crisis",
+   "url": "https://www.bis.org/publications/ifc-bulletin-34-initiatives-address-data-gaps-revealed-financial-crisis.pdf"
+  }
+ ]
+}

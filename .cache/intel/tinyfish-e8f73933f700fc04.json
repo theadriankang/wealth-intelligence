@@ -1,0 +1,89 @@
+{
+ "at": 1788537517543,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "long duration bond price sensitivity to yields",
+   "d": [
+    "federalreserve.gov",
+    "ecb.europa.eu",
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.investopedia.com",
+   "snippet": "Long-term bonds are more sensitive to interest rate changes than short-term bonds because their fixed payments extend over many years.",
+   "title": "Interest Rate Risk: Impact on Long- and Short-Term Bonds",
+   "url": "https://www.investopedia.com/ask/answers/05/ltbondrisk.asp"
+  },
+  {
+   "position": 2,
+   "site_name": "www.pimco.com",
+   "snippet": "Bonds and bond strategies with longer durations tend to be more sensitive and volatile than those with shorter durations; bond prices generally fall as interest",
+   "title": "Bonds 102: Understanding how Interest Rates Affect Bond ... - PIMCO",
+   "url": "https://www.pimco.com/us/en/resources/education/bonds-102-understanding-how-interest-rates-affect-bond-performance"
+  },
+  {
+   "position": 3,
+   "site_name": "www.investopedia.com",
+   "snippet": "Bond prices and yields have an inverse relationship, meaning when one rises, the other falls and vice versa. This is because yield is calculated by dividing the ...",
+   "title": "Inverse Relation Between Interest Rates and Bond Prices",
+   "url": "https://www.investopedia.com/ask/answers/why-interest-rates-have-inverse-relationship-bond-prices/"
+  },
+  {
+   "date": "Mar 5, 2019",
+   "position": 4,
+   "site_name": "libertystreeteconomics.newyorkfed.org",
+   "snippet": "Under the so-called expectations hypothesis, long-term interest rates reflect investors' expectations of future short-term interest rates.",
+   "title": "The Sensitivity of Long-Term Interest Rates: A Tale of Two ...",
+   "url": "https://libertystreeteconomics.newyorkfed.org/2019/03/the-sensitivity-of-long-term-interest-rates-a-tale-of-two-frequencies/"
+  },
+  {
+   "position": 5,
+   "site_name": "www.hartfordfunds.com",
+   "snippet": "Duration is a measure of the sensitivity of an investment's price to changes in interest rates. Convexity is a measure of how a bond's duration can change",
+   "title": "How Changing Interest Rates Affect Bond Prices - Hartford Funds",
+   "url": "https://www.hartfordfunds.com/practice-management/client-conversations/managing-volatility/how-changing-interest-rates-affect-bond-prices.html"
+  },
+  {
+   "position": 6,
+   "site_name": "www.rbcgam.com",
+   "snippet": "Typically, the further away a bond is from its maturity date, the longer its duration and the greater the price change could be when yields move.",
+   "title": "What are bond yields? How do rising yields affect investors?",
+   "url": "https://www.rbcgam.com/en/ca/learn-plan/investment-strategies/what-do-rising-bond-yields-mean-to-long-term-investors/detail"
+  },
+  {
+   "position": 7,
+   "site_name": "www.investopedia.com",
+   "snippet": "Long-term bonds are more affected by inflation expectations and interest rate changes. TIPS can help protect against inflation by offering a real rate of return ...",
+   "title": "How Interest Rates and Inflation Impact Bond Prices and Yields",
+   "url": "https://www.investopedia.com/articles/bonds/09/bond-market-interest-rates.asp"
+  },
+  {
+   "position": 8,
+   "site_name": "www.ubs.com",
+   "snippet": "Long-term bonds are more susceptible to changing interest rates because the span of time until the capital is repaid is longer. Bonds are repaid",
+   "title": "How do bonds react to changes in interest rates? - UBS",
+   "url": "https://www.ubs.com/ch/en/services/guide/investments/articles/obligations-interest-rate-changes.html"
+  },
+  {
+   "date": "May 12, 2025",
+   "position": 9,
+   "site_name": "arxiv.org",
+   "snippet": "In times of economic uncertainty, investors demand higher risk premiums to hold long-term bonds, offsetting the rate-lowering effect of QE.",
+   "title": "How Does Monetary Policy Influence the U.S. Treasury Bond Yields ...",
+   "url": "https://arxiv.org/html/2505.07226v1"
+  },
+  {
+   "position": 10,
+   "site_name": "www.fidelity.com.sg",
+   "snippet": "If the market expects interest rates to rise, then bond yields rise as well, forcing bond prices, in turn, to fall. Here's a look at the inverse ...",
+   "title": "How interest rates affect bonds | Fidelity Singapore",
+   "url": "https://www.fidelity.com.sg/beginners/bond-investing-made-simple/how-interest-rates-affect-bonds"
+  }
+ ]
+}

@@ -1,0 +1,90 @@
+{
+ "at": 1788537180598,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Singapore residential property additional buyer stamp duty",
+   "d": [
+    "mas.gov.sg",
+    "iras.gov.sg"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Aug 27, 2026",
+   "position": 1,
+   "site_name": "www.iras.gov.sg",
+   "snippet": "The ABSD rates applicable on the purchase of Property A, B and C are 20%^, 30%* and 35%# respectively. ^20% because Property A is the Singapore ...",
+   "title": "Additional Buyer's Stamp Duty (ABSD) - Singapore - IRAS",
+   "url": "https://www.iras.gov.sg/taxes/stamp-duty/for-property/buying-or-acquiring-property/additional-buyer's-stamp-duty-(absd)"
+  },
+  {
+   "date": "Jan 28, 2026",
+   "position": 2,
+   "site_name": "www.iras.gov.sg",
+   "snippet": "Buying, selling, or renting a property? Understand your stamp duty obligations. Additional Buyer's Stamp Duty (ABSD) Definition of Residential ...",
+   "title": "Stamp Duty for Property - Singapore - IRAS",
+   "url": "https://www.iras.gov.sg/taxes/stamp-duty/for-property"
+  },
+  {
+   "position": 3,
+   "site_name": "www.iras.gov.sg",
+   "snippet": "The BSD rate for acquisition of residential properties from 20 Feb 2018 to 14 Feb 2023 is up to 4%. From 15 Feb 2023, the top marginal rate for residential ...",
+   "title": "Buyer's Stamp Duty (BSD) - Singapore - IRAS",
+   "url": "https://www.iras.gov.sg/taxes/stamp-duty/for-property/buying-or-acquiring-property/buyer's-stamp-duty-(bsd)"
+  },
+  {
+   "date": "Dec 7, 2011",
+   "position": 4,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "c) Singapore Citizens (Singaporeans) owning two2 and buying the third and subsequent residential property will pay an ABSD of 3%. The ABSD will ...",
+   "title": "Additional Buyer's Stamp Duty for a Stable and Sustainable Property ...",
+   "url": "https://www.mas.gov.sg/news/media-releases/2011/absd-for-a-stable-and-sustainable-property-market"
+  },
+  {
+   "position": 5,
+   "site_name": "www.iras.gov.sg",
+   "snippet": "Additional Buyer's Stamp Duty ABSD is computed based on the purchase price or market value of the residential property, whichever is higher.",
+   "title": "Stamp Duty - Singapore - IRAS",
+   "url": "https://www.iras.gov.sg/quick-links/tax-rates/stamp-duty"
+  },
+  {
+   "position": 6,
+   "site_name": "www.iras.gov.sg",
+   "snippet": "ABSD remission may be applicable to a married couple who purchases a second residential property jointly, if the remission conditions are met. The couple must ...",
+   "title": "Remission of ABSD for a Married Couple - IRAS",
+   "url": "https://www.iras.gov.sg/taxes/stamp-duty/for-property/appeals-refunds-reliefs-and-remissions/common-stamp-duty-remissions-and-reliefs-for-property/remission-of-absd-for-a-married-couple"
+  },
+  {
+   "position": 7,
+   "site_name": "www.iras.gov.sg",
+   "snippet": "Eligible parties may apply for a remission of ABSD. Stamp Duty For Property Appeals, Refunds, Reliefs and Remissions ・ of 65% paid will be refunded. All ...",
+   "title": "Remission of ABSD (Trust) - Singapore - IRAS",
+   "url": "https://www.iras.gov.sg/taxes/stamp-duty/for-property/appeals-refunds-reliefs-and-remissions/common-stamp-duty-remissions-and-reliefs-for-property/remission-of-absd-(trust)"
+  },
+  {
+   "date": "Jul 6, 2018",
+   "position": 8,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Additional Buyer's Stamp Duty (ABSD) rates … limits on residential property purchases, 0% and 5% respectively.",
+   "title": "Raising Additional Buyer's Stamp Duty Rates and Tightening Loan ...",
+   "url": "https://www.mas.gov.sg/news/media-releases/2018/raising-additional-buyers-stamp-duty-rates-and-tightening-loan-to-value-limits"
+  },
+  {
+   "position": 9,
+   "site_name": "www.iras.gov.sg",
+   "snippet": "Additional Buyer's Stamp Duty (ABSD) remission is applicable to acquisitions of sites on or after 8 Dec 2011 for the development of five or more units of ...",
+   "title": "Sites for Development of Five or More Residential Units - IRAS",
+   "url": "https://www.iras.gov.sg/taxes/stamp-duty/for-property/appeals-refunds-reliefs-and-remissions/common-stamp-duty-remissions-and-reliefs-for-property/sites-for-development-of-five-or-more-residential-units"
+  },
+  {
+   "position": 10,
+   "site_name": "www.iras.gov.sg",
+   "snippet": "From 15 Feb 2023, the top marginal BSD rate for residential properties is 6%, and the top marginal BSD rate for non-residential properties is 5%. If you buy or ...",
+   "title": "Stamp Duty Basics for Property - IRAS",
+   "url": "https://www.iras.gov.sg/taxes/stamp-duty/for-property/basics-of-stamp-duty-for-property/learning-the-basics-for-properties"
+  }
+ ]
+}

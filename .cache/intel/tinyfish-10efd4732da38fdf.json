@@ -1,0 +1,88 @@
+{
+ "at": 1788536860163,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Bank Indonesia policy rate decisions",
+   "d": [
+    "bi.go.id",
+    "esdm.go.id"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.bi.go.id",
+   "snippet": "The BI Board of Governors Meeting agreed on 18-19 july 2026 to hold the BI-Rate at 5.75%, while also maintaining the Deposit Facility (DF) rate and Lending ...",
+   "title": "Bank Indonesia",
+   "url": "https://www.bi.go.id/en/default.aspx"
+  },
+  {
+   "position": 2,
+   "site_name": "www.bi.go.id",
+   "snippet": "Seeking to strengthen the effectiveness of monetary policy transmission, Bank Indonesia set the BI 7-Day (Reverse) Repo Rate (BI7DRR) as the policy rate on 19th ...",
+   "title": "Monetary - Bank Indonesia",
+   "url": "https://www.bi.go.id/en/fungsi-utama/moneter/default.aspx"
+  },
+  {
+   "position": 3,
+   "site_name": "www.bi.go.id",
+   "snippet": "The Bank Indonesia Board of Governors agreed on 19-20th May 2026 to increase the BI-Rate by 50 bps to 5.25%, while also raising the Deposit Facility (DF) rate ...",
+   "title": "BI-Rate Increased by 50 bps to 5.25%",
+   "url": "https://www.bi.go.id/en/publikasi/ruang-media/news-release/Pages/sp_2810726.aspx"
+  },
+  {
+   "position": 4,
+   "site_name": "www.bi.go.id",
+   "snippet": "Bank Indonesia changed the name of its policy rate to the BI-Rate, replacing the BI 7-Day Reverse Repo Rate (BI7DRR), to strengthen monetary policy ...",
+   "title": "BI-Rate",
+   "url": "https://www.bi.go.id/en/fungsi-utama/moneter/bi-rate/default.aspx"
+  },
+  {
+   "date": "Jul 25, 2026",
+   "position": 5,
+   "site_name": "www.bi.go.id",
+   "snippet": "Bank Indonesia Board of Governors' Meeting agreed on 21st-22nd July 2026 to hold the BI-Rate at 5.75%, while also maintaining the Deposit ...",
+   "title": "BI-Rate Held at 5.75%: Strengthening Stability, Supporting ...",
+   "url": "https://www.bi.go.id/en/publikasi/ruang-media/news-release/Pages/sp_2814226.aspx"
+  },
+  {
+   "date": "Aug 1, 2024",
+   "position": 6,
+   "site_name": "www.bi.go.id",
+   "snippet": "The BI Board of Governors Meeting agreed on 16 - 17th July 2024 to hold the BI-Rate at 6.25%, while also maintaining the Deposit Facility (DF) ...",
+   "title": "BI-Rate Held at 6.25%: Strengthening Stability and Maintaining ...",
+   "url": "https://www.bi.go.id/en/publikasi/ruang-media/news-release/Pages/sp_2614424.aspx"
+  },
+  {
+   "position": 7,
+   "site_name": "www.bi.go.id",
+   "snippet": "The Bank Indonesia Board of Governors agreed on 16-17th March 2026 to hold the BI-Rate at 4.75%, while also maintaining the Deposit Facility (DF) rate at 3.75% ...",
+   "title": "BI-Rate Held at 4.75%: Maintaining Stability, Strengthening ...",
+   "url": "https://www.bi.go.id/en/publikasi/ruang-media/news-release/Pages/sp_286526.aspx"
+  },
+  {
+   "position": 8,
+   "site_name": "www.bi.go.id",
+   "snippet": "Bank Indonesia announced a 50 bps reduction in the BI Rate from 11.75% to 11.25%. This decision was taken after in-depth discussions lasting two full days on 4 ...",
+   "title": "PRESS RELEASE Statement by the Governor of Bank Indonesia",
+   "url": "https://www.bi.go.id/en/iru/email-archive/Pages/BI%20lowering%20BI%20rate.aspx"
+  },
+  {
+   "position": 9,
+   "site_name": "www.bi.go.id",
+   "snippet": "At the BI Board of Governors' Meeting in June 2016, in addition to lower the BI Rate by 25bps to 6.50%, Bank Indonesia also introduced macroprudential policy ...",
+   "title": "[PDF] central bank policy: - theory and practice1",
+   "url": "https://www.bi.go.id/id/bi-institute/policy-mix/Documents/CB_Theory_Practice_2019.pdf"
+  },
+  {
+   "position": 10,
+   "site_name": "www.bi.go.id",
+   "snippet": "Bank Indonesia also hiked its policy rate several times outside the ITF schedule during Q3/2005, from 8.25 percent in July to. 12.25 percent by end-November ...",
+   "title": "[PDF] Miranda S. Goeltom – Bank Indonesia 1. Introduction Over the past ...",
+   "url": "https://www.bi.go.id/id/bi-institute/policy-mix/ITF/Documents/ITF%20and%20Time%20Consistency%20of%20Monetary%20Policy%20in%20Indonesia%202008.pdf"
+  }
+ ]
+}

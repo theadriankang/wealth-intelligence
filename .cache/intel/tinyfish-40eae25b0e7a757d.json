@@ -1,0 +1,92 @@
+{
+ "at": 1788537310667,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Basel III treatment of additional tier 1 capital",
+   "d": [
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "Additional Tier 1 capital (AT1) also provides loss absorption on a going-concern basis, although AT1 instruments do not meet all the criteria for CET1.",
+   "title": "[PDF] Definition of capital in Basel III – Executive Summary | BIS",
+   "url": "https://www.bis.org/publications/fsi-summary-definition-capital-basel-iii-executive-summary.pdf"
+  },
+  {
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "This standard describes the criteria that bank capital instruments must meet to be eligible to satisfy the Basel capital requirements, Tier 1, Additional Tier ...",
+   "title": "Definition of capital | Bank for International Settlements - the BIS",
+   "url": "https://www.bis.org/committees/bcbs/basel-framework/standard/cap"
+  },
+  {
+   "date": "Dec 15, 2019",
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "[Additional Tier 1] [Tier 2] 5 Specifies regulatory capital treatment under Basel III rules not taking into account transitional treatment.",
+   "title": "DIS25 - Composition of capital and TLAC",
+   "url": "https://www.bis.org/basel_framework/chapter/DIS/25.htm?inforce=20191215&published=20191215&tldate=20200722"
+  },
+  {
+   "date": "Mar 17, 2026",
+   "position": 4,
+   "site_name": "www.bis.org",
+   "snippet": "Both the standardized approach and the Basel III proposals remove any requirement to deduct mortgage servicing assets from regulatory capital.",
+   "title": "Michelle W Bowman: Capital rules for the real economy",
+   "url": "https://www.bis.org/review/r260316e.htm"
+  },
+  {
+   "position": 5,
+   "site_name": "www.bis.org",
+   "snippet": "Basel III is an internationally agreed set of measures. The measures aim to strengthen the regulation, supervision and risk management of banks.",
+   "title": "Basel III: international regulatory framework for banks - the BIS",
+   "url": "https://www.bis.org/committees/bcbs/standards"
+  },
+  {
+   "date": "Dec 15, 2019",
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "Additional Tier 1 capital should be calculated as the total of all holdings of capital instruments and other TLAC liabilities not covered by ...",
+   "title": "CAP30 - Regulatory adjustments - Bank for International Settlements",
+   "url": "https://www.bis.org/basel_framework/chapter/CAP/30.htm"
+  },
+  {
+   "date": "Jul 2, 2026",
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "Additional Tier 1 capital net of regulatory adjustments available at the resolution group level. Deposits with a fixed appropriate maturity … ...",
+   "title": "[PDF] Instructions for Basel III monitoring - Bank for International Settlements",
+   "url": "https://www.bis.org/bcbs/qis/biiiimplmoninstr_5.6.pdf"
+  },
+  {
+   "date": "Dec 15, 2019",
+   "position": 8,
+   "site_name": "www.bis.org",
+   "snippet": "banks must deduct investments in their own Additional Tier 1 in the calculation of their Additional Tier 1 capital and must deduct investments ...",
+   "title": "Regulatory adjustments | Bank for International Settlements - the BIS",
+   "url": "https://www.bis.org/basel_framework/chapter/CAP/30.htm?tldate=20241230&inforce=20191215&published=20191215"
+  },
+  {
+   "date": "Sep 12, 2010",
+   "position": 9,
+   "site_name": "www.bis.org",
+   "snippet": "The Tier 1 capital requirement will rise from 4% to 4.5%. On 1 January 2014, banks will have to meet a 4% minimum common equity requirement and ...",
+   "title": "Group of Governors and Heads of Supervision announces higher ...",
+   "url": "https://www.bis.org/press/p100912.htm"
+  },
+  {
+   "date": "Sep 29, 2021",
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "The average impact of the fully phased-in final Basel III framework on the Tier 1 minimum required capital (MRC) of Group 1 banks is +2.9%, ...",
+   "title": "Basel III Monitoring Report - Bank for International Settlements",
+   "url": "https://www.bis.org/bcbs/publ/d524.htm"
+  }
+ ]
+}

@@ -1,0 +1,76 @@
+{
+ "at": 1788537284050,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "AI capital expenditure sustainability debate",
+   "d": []
+  }
+ },
+ "value": [
+  {
+   "date": "May 11, 2026",
+   "position": 1,
+   "site_name": "www.troweprice.com",
+   "snippet": "The bottom line is that AI infrastructure spending represents both a powerful opportunity and a growing source of uncertainty. Earnings growth ...",
+   "title": "Is AI infrastructure spending sustainable",
+   "url": "https://www.troweprice.com/institutional/fi/en/insights/articles/2026/q2/is-ai-infrastructure-spending-sustainable.html"
+  },
+  {
+   "date": "5 months ago",
+   "position": 2,
+   "site_name": "www.linkedin.com",
+   "snippet": "There's $600 billion being spent on AI capex per year and 150 million people working in the United States. That's roughly $4,000 per head. ...",
+   "title": "AI Capex Sustainability: Investment vs Profitability",
+   "url": "https://www.linkedin.com/posts/roryodriscoll_three-seemingly-contradictory-thoughts-on-activity-7438322823812575232-MoF9"
+  },
+  {
+   "date": "Aug 6, 2026",
+   "position": 3,
+   "site_name": "internationalbanker.com",
+   "snippet": "The debate is no longer centred on whether AI will transform the global economy—few doubt that it will. Instead, investors are now asking ...",
+   "title": "AI's Capital-Spending Boom: Sustainable Investment or ...",
+   "url": "https://internationalbanker.com/technology/ais-capital-spending-boom-sustainable-investment-or-emerging-bubble/"
+  },
+  {
+   "date": "Jun 29, 2026",
+   "position": 4,
+   "site_name": "www.alliancebernstein.com",
+   "snippet": "AI infrastructure spending is driving record equity market raisings and has lifted expectations for long-term GDP growth in the US.",
+   "title": "Proof Pending: Can AI Deliver Lasting Growth? | AB",
+   "url": "https://www.alliancebernstein.com/corporate/en/insights/investment-insights/proof-pending-can-ai-deliver-lasting-growth.html"
+  },
+  {
+   "date": "May 1, 2026",
+   "position": 5,
+   "site_name": "www.goldmansachs.com",
+   "snippet": "The AI CapEx debate is usually framed as a demand-side question—will adoption justify the spend?—but the size of the investment itself is ...",
+   "title": "The Assumptions Shaping the Scale of the AI Build-Out",
+   "url": "https://www.goldmansachs.com/insights/articles/tracking-trillions-the-assumptions-shaping-scale-of-the-ai-build-out"
+  },
+  {
+   "date": "Nov 17, 2025",
+   "position": 6,
+   "site_name": "www.guinnessgi.com",
+   "snippet": "Some estimates put the overall AI CapEx spend at c.0.9% of US GDP (assuming c.70% of announced CapEx is spent in America).",
+   "title": "Are we in an AI bubble?",
+   "url": "https://www.guinnessgi.com/insights/are-we-in-an-ai-bubble"
+  },
+  {
+   "position": 7,
+   "site_name": "pmc.ncbi.nlm.nih.gov",
+   "snippet": "by R Waelen · 2025 · Cited by 21 — In this article, it is argued that the debate on sustainable AI should not only be about AI's environmental costs, but also incorporate social ...",
+   "title": "Considering the Social and Economic Sustainability of AI - PMC",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12289707/"
+  },
+  {
+   "date": "Jun 22, 2026",
+   "position": 8,
+   "site_name": "streetsignal.substack.com",
+   "snippet": "The first position is that the returns on AI infrastructure are extraordinary. That inference is a two-hundred-billion-dollar revenue ...",
+   "title": "The AI Capex Debate is Getting Too Cute - StreetSignal",
+   "url": "https://streetsignal.substack.com/p/the-ai-capex-debate-is-getting-too"
+  }
+ ]
+}

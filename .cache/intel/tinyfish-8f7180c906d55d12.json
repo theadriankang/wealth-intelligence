@@ -1,0 +1,90 @@
+{
+ "at": 1788537423155,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "private fund capital call default consequences",
+   "d": []
+  }
+ },
+ "value": [
+  {
+   "date": "Oct 29, 2024",
+   "position": 1,
+   "site_name": "www.mayerbrown.com",
+   "snippet": "The default remedies in a fund's limited partnership agreement (“LPA”) significantly impact the health and stability of the subscription credit ...",
+   "title": "Understanding LPA Default Remedies | Insights",
+   "url": "https://www.mayerbrown.com/en/insights/publications/2024/08/understanding-lpa-default-remedies"
+  },
+  {
+   "position": 2,
+   "site_name": "www.reddit.com",
+   "snippet": "",
+   "title": "Friend got a capital call for fund investment. Is this normal?",
+   "url": "https://www.reddit.com/r/CommercialRealEstate/comments/1jzeeia/friend_got_a_capital_call_for_fund_investment_is/"
+  },
+  {
+   "position": 3,
+   "site_name": "www.quora.com",
+   "snippet": "",
+   "title": "How did LPs avoid fulfilling capital calls after the dot com crash?",
+   "url": "https://www.quora.com/How-did-LPs-avoid-fulfilling-capital-calls-after-the-dot-com-crash"
+  },
+  {
+   "position": 4,
+   "site_name": "www.quora.com",
+   "snippet": "",
+   "title": "What's the current best practice (terms) to handle an LP missing a capital ...",
+   "url": "https://www.quora.com/Whats-the-current-best-practice-terms-to-handle-an-LP-missing-a-capital-call-in-a-venture-capital-fund"
+  },
+  {
+   "date": "Apr 16, 2026",
+   "position": 5,
+   "site_name": "www.privatefundscfo.com",
+   "snippet": "First, penalty interest accrues on the unpaid amount, usually at prime plus 3-5 percent. Second, the defaulting LP loses governance rights: ...",
+   "title": "When a LP defaults",
+   "url": "https://www.privatefundscfo.com/when-a-lp-defaults/"
+  },
+  {
+   "date": "May 12, 2026",
+   "position": 6,
+   "site_name": "www.moonfare.com",
+   "snippet": "The consequences for defaulting on a capital call are explained in the Investor Agreement associated with each fund and can include loss of ...",
+   "title": "Capital call: what it means for private equity investors",
+   "url": "https://www.moonfare.com/us/glossary/capital-call"
+  },
+  {
+   "date": "May 25, 2023",
+   "position": 7,
+   "site_name": "www.dentons.com",
+   "snippet": "The aggregate amount of the capital call that is subject to the LP default can be reduced by the amount of the unpaid contribution. ...",
+   "title": "Limited partner defaults in private equity: Risks, remedies ...",
+   "url": "https://www.dentons.com/en/insights/articles/2023/may/25/limited-partner-defaults-in-private-equity"
+  },
+  {
+   "date": "Jul 11, 2025",
+   "position": 8,
+   "site_name": "carta.com",
+   "snippet": "LPs rarely default because it would cause both reputational damage and have severe financial ramifications. A GP may: Impose a penalty of a few ...",
+   "title": "What is a Capital Call in Private Equity and Venture Capital?",
+   "url": "https://carta.com/learn/private-funds/management/capital-calls/"
+  },
+  {
+   "date": "6 months ago",
+   "position": 9,
+   "site_name": "www.linkedin.com",
+   "snippet": "A single default can: • Force additional capital calls on other LPs • Delay or jeopardize investments • Require bridge financing • Shift risk ...",
+   "title": "LP Defaults: Consequences and Remedies in Private Funds",
+   "url": "https://www.linkedin.com/posts/michael-bjorn-huseby_investment-fund-key-terms-25-lp-defaults-activity-7429915915514814464-4JGi"
+  },
+  {
+   "date": "Mar 20, 2026",
+   "position": 10,
+   "site_name": "www.cummings.law",
+   "snippet": "A capital call default provision is the provision that governs what happens when an investor fails to fund a required capital contribution.",
+   "title": "How to Document a Capital Call Default Provision in ...",
+   "url": "https://www.cummings.law/how-to-document-a-capital-call-default-provision-in-a-private-fund/"
+  }
+ ]
+}

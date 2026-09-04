@@ -1,0 +1,29 @@
+{
+ "at": 1788537198835,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "direct property valuation and transaction liquidity",
+   "d": [
+    "rvd.gov.hk"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.rvd.gov.hk",
+   "snippet": "Rateable value of a property is an estimate of the annual open market rent at a designated date on the assumption that the property was then vacant and to.",
+   "title": "[PDF] 香港物業報告- Hong Kong",
+   "url": "https://www.rvd.gov.hk/doc/en/PR_fullbook/PR2023.pdf"
+  },
+  {
+   "position": 2,
+   "site_name": "www.rvd.gov.hk",
+   "snippet": "《 香港物業報告》 載錄差餉物業估價. 署在每年年底所編製的物業數據與資. 料。 有關落成量、 使用量／ 入住量、. 空置量、 售價和租金的資料， 除詳載.",
+   "title": "[PDF] 香港物業報告Hong Kong Property Review 2011 - Rating and ...",
+   "url": "https://www.rvd.gov.hk/doc/tc/PR_fullbook/PR2011.pdf"
+  }
+ ]
+}

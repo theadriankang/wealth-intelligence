@@ -1,0 +1,91 @@
+{
+ "at": 1788537522608,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "semiconductor supply chain concentration",
+   "d": [
+    "iea.org",
+    "sia.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.iea.org",
+   "snippet": "For semiconductors and clean energy technologies, it refers to manufacturing capacity. holds between 5% and 20% of global production capacity. between 2% and ...",
+   "title": "Supply chain risks and industrial competitiveness - IEA",
+   "url": "https://www.iea.org/reports/energy-technology-perspectives-2026/supply-chain-risks-and-industrial-competitiveness"
+  },
+  {
+   "date": "Oct 23, 2025",
+   "position": 2,
+   "site_name": "www.iea.org",
+   "snippet": "In addition to energy technologies, defence and semiconductor supply chains could be particularly affected if export licences for components ...",
+   "title": "With new export controls on critical minerals, supply concentration ...",
+   "url": "https://www.iea.org/commentaries/with-new-export-controls-on-critical-minerals-supply-concentration-risks-become-reality"
+  },
+  {
+   "date": "Mar 26, 2026",
+   "position": 3,
+   "site_name": "www.iea.org",
+   "snippet": "IEA analysis finds many energy technology supply chains contain at least one weak link, underscoring need to reduce concentration and improve ...",
+   "title": "Strengthening supply chains can improve resilience and reduce ...",
+   "url": "https://www.iea.org/news/strengthening-supply-chains-can-improve-resilience-and-reduce-economic-security-risks-for-key-energy-technologies"
+  },
+  {
+   "position": 4,
+   "site_name": "www.iea.org",
+   "snippet": "This reflects growing concerns about supply chain concentration and the expanding use of trade restrictions. ... semiconductor manufacturing rely on only one or ...",
+   "title": "Executive summary – Global Critical Minerals Outlook 2026 - IEA",
+   "url": "https://www.iea.org/reports/global-critical-minerals-outlook-2026/executive-summary"
+  },
+  {
+   "date": "Dec 8, 2023",
+   "position": 5,
+   "site_name": "www.iea.org",
+   "snippet": "The report covers semiconductor manufacturing, large capacity batteries, critical minerals and pharmaceuticals. concentration of strategic and ...",
+   "title": "100-day reviews under EO 14017: Building resilient supply chains ...",
+   "url": "https://www.iea.org/policies/17973-100-day-reviews-under-eo-14017-building-resilient-supply-chains-revitalizing-american-manufacturing-and-fostering-broad-based-growth"
+  },
+  {
+   "position": 6,
+   "site_name": "www.iea.org",
+   "snippet": "The concentration of critical mineral processing and refining and end-use component manufacturing capacity has emerged … semiconductors remain highly ...",
+   "title": "Policy pathways – Global Critical Minerals Outlook 2026 - IEA",
+   "url": "https://www.iea.org/reports/global-critical-minerals-outlook-2026/policy-pathways"
+  },
+  {
+   "position": 7,
+   "site_name": "www.iea.org",
+   "snippet": "The wide range of applications, combined with highly concentrated supply chains, has elevated their importance in both energy and broader economic security ...",
+   "title": "Executive summary – Rare Earth Elements – Analysis - IEA",
+   "url": "https://www.iea.org/reports/rare-earth-elements/executive-summary"
+  },
+  {
+   "date": "May 20, 2026",
+   "position": 8,
+   "site_name": "www.iea.org",
+   "snippet": "The semiconductor supply chain is characterised by tight supply and high concentration. Just one company produces roughly 70% of the world's ...",
+   "title": "Artificial intelligence and EVs – Analysis - IEA",
+   "url": "https://www.iea.org/reports/artificial-intelligence-and-evs"
+  },
+  {
+   "position": 9,
+   "site_name": "www.iea.org",
+   "snippet": "Enhancing emergency preparedness and accelerating supply chain diversification. Critical minerals have risen rapidly up the policy agenda as a cornerstone of ...",
+   "title": "Critical Minerals Security Programme - IEA",
+   "url": "https://www.iea.org/programmes/critical-minerals-security-programme"
+  },
+  {
+   "date": "Feb 9, 2025",
+   "position": 10,
+   "site_name": "www.iea.org",
+   "snippet": "For lithium the gap is less stark, but the remaining N-1 supply still covers only 60% of N-1 demand. This emphasises that, even where the ...",
+   "title": "Growing geopolitical tensions underscore the need for stronger ... - IEA",
+   "url": "https://www.iea.org/commentaries/growing-geopolitical-tensions-underscore-the-need-for-stronger-action-on-critical-minerals-security"
+  }
+ ]
+}

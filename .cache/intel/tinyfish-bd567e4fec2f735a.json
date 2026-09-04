@@ -1,0 +1,23 @@
+{
+ "at": 1788537475534,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "HIBOR SOFR spread mechanics",
+   "d": [
+    "hkma.gov.hk"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Jul 11, 2025",
+   "position": 1,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "HIBOR were at 4.36% and 4.30% respectively, abundant liquidity dragged overnight HIBOR to 0.03% one-month HIBOR moved up to 1.08% as of today ( ...",
+   "title": "Eddie Yue on a few observations ... - Hong Kong Monetary Authority",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2025/07/20250711/"
+  }
+ ]
+}

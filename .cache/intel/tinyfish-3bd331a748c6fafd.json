@@ -1,0 +1,87 @@
+{
+ "at": 1788537508203,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "single stock concentration risk hedging for private clients",
+   "d": [
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Mar 11, 2025",
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "Portfolio concentration yields benefits but also entails risks. Specialisation in narrow markets provides a deeper understanding of borrower ...",
+   "title": "The global drivers of private credit - the BIS",
+   "url": "https://www.bis.org/publications/global-drivers-private-credit"
+  },
+  {
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "Maug and Naik (1996) consider a single risky-asset model, in which the manager has imperfect, private information about stock returns and chooses his portfolio",
+   "title": "[PDF] Incentive structures in institutional asset management and their ...",
+   "url": "https://www.bis.org/publications/cgfs-paper-21-incentive-structures-institutional-asset-management-and-their-implications-financial-markets.pdf"
+  },
+  {
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "The equity backing ratio is defined as the percentage of assets held in equities and asset classes with similar (equity) risk characteristics such as hedge ...",
+   "title": "[PDF] 44 Fixed income strategies of insurance companies and pension funds",
+   "url": "https://www.bis.org/publications/cgfs-paper-44-fixed-income-strategies-insurance-companies-and-pension-funds.pdf"
+  },
+  {
+   "position": 4,
+   "site_name": "www.bis.org",
+   "snippet": "Hedging a portfolio of private securities with a short position in Treasury bill futures exposed the dealer to so-called basis risk, that is, to a widening of.",
+   "title": "[PDF] International banking and financial market developments",
+   "url": "https://www.bis.org/publ/r_qt0103.pdf"
+  },
+  {
+   "position": 5,
+   "site_name": "www.bis.org",
+   "snippet": "What sets hedge funds apart from mutual funds is their speculative nature. Their target clientele of high net worth individuals and institutions is.",
+   "title": "[PDF] V. Asset prices and the asset management industry",
+   "url": "https://www.bis.org/publ/ar98b05.pdf"
+  },
+  {
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "Investing more into one asset is equivalent to investing in one risk factor, which is a portfolio of assets with correlated payoffs.",
+   "title": "[PDF] FinTech, investor sophistication and financial portfolio choices",
+   "url": "https://www.bis.org/publications/working-paper-1091-fintech-investor-sophistication-and-financial-portfolio-choices.pdf"
+  },
+  {
+   "date": "Sep 19, 2019",
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "Second, the private banks must understand the risk appetite/tolerance level of their clients on the one hand and conduct proper product due ...",
+   "title": "Hong Kong as a risk management hub - the BIS",
+   "url": "https://www.bis.org/speeches/20190919-hong-kong-risk-management-hub"
+  },
+  {
+   "position": 8,
+   "site_name": "www.bis.org",
+   "snippet": "These can arise when the herding behaviour of large investors causes international financing flows to amplify financial shocks. He explains how macroprudential ...",
+   "title": "[PDF] Cross-border Financial Linkages: Challenges for Monetary Policy ...",
+   "url": "https://www.bis.org/publications/paper-82-cross-border-financial-linkages-challenges-monetary-policy-and-financial-stability.pdf"
+  },
+  {
+   "position": 9,
+   "site_name": "www.bis.org",
+   "snippet": "The connection between the development of asset management and the growth of the stock market is shown by the fact that at the end of 1995 the shareholdings of ...",
+   "title": "[PDF] Mr. Desario reports on growth prospects and implications for ...",
+   "url": "https://www.bis.org/review/r980518p.pdf"
+  },
+  {
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "However, the individual techniques used to validate a model should take due account of the structure of a firm's repo-style transaction portfolio and its main ...",
+   "title": "[PDF] Swiss Bankers Association Scanned PDF - the BIS",
+   "url": "https://www.bis.org/2026-07/swibanass.pdf"
+  }
+ ]
+}

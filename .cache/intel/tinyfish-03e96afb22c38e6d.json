@@ -1,0 +1,73 @@
+{
+ "at": 1788537454977,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Asian consumer discretionary demand drivers",
+   "d": []
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.eastspring.com",
+   "snippet": "Asia's consumer spending is being unlocked by higher disposable income, low household debt and falling inflation. As Asians move into and within the consuming ...",
+   "title": "Asias consumer-fuelled growth",
+   "url": "https://www.eastspring.com/insights/asian-expert-series/asias-consumer-fuelled-growth"
+  },
+  {
+   "date": "Jun 18, 2026",
+   "position": 2,
+   "site_name": "www.mckinsey.com",
+   "snippet": "Asia–Pacific consumers are adjusting spending in 2026 amid inflation and geopolitical shifts, requiring companies to sharpen growth plans.",
+   "title": "An update on Asia–Pacific consumer sentiment",
+   "url": "https://www.mckinsey.com/industries/consumer-packaged-goods/our-insights/an-update-on-consumer-sentiment-in-asia-pacific"
+  },
+  {
+   "date": "Apr 14, 2025",
+   "position": 3,
+   "site_name": "www.business.hsbc.com",
+   "snippet": "An article about the rapidly growing consumer sector in Asia, with a focus on travel and how companies are using AI.",
+   "title": "How to serve the Asian consumer | Insights",
+   "url": "https://www.business.hsbc.com/en-gb/insights/how-to-serve-the-asian-consumer"
+  },
+  {
+   "position": 4,
+   "site_name": "www.sciencedirect.com",
+   "snippet": "by SD Rathnayaka · 2022 · Cited by 27 — These segments of society are shifting towards greater discretionary spending, in particular spending on high-nutrient food, comfortable living, better health ...",
+   "title": "Modelling the consumption patterns in the Asian countries",
+   "url": "https://www.sciencedirect.com/science/article/abs/pii/S0313592622000236"
+  },
+  {
+   "date": "Feb 4, 2026",
+   "position": 5,
+   "site_name": "usa.visa.com",
+   "snippet": "Asia Pacific consumers are spending more despite global uncertainty—driven by rising wealth, Gen Z, a growing silver economy and AI-powered ...",
+   "title": "Asia Pacific consumer spending: What to expect in 2026 - Visa",
+   "url": "https://usa.visa.com/partner-with-us/visa-consulting-analytics/economic-insights/how-asia-pacific-consumers-might-spend-in-2026-and-why-it-matters.html"
+  },
+  {
+   "date": "Sep 11, 2024",
+   "position": 6,
+   "site_name": "asialink.unimelb.edu.au",
+   "snippet": "The underlying factors driving this growth – longer life expectancy, better education, urbanisation – have been put in place over the last ...",
+   "title": "Asia's consumer tipping point - Asialink",
+   "url": "https://asialink.unimelb.edu.au/diplomacy/asia-consumer-tipping-point/"
+  },
+  {
+   "position": 7,
+   "site_name": "marketresearchsoutheastasia.com",
+   "snippet": "Discover key trends shaping the ASEAN consumer landscape. Explore digital adoption, spending habits, and growth opportunities in the region.",
+   "title": "The New ASEAN Consumer: Trends & Market Insights",
+   "url": "https://marketresearchsoutheastasia.com/insights/whitepapers/the-new-asean-consumer"
+  },
+  {
+   "position": 8,
+   "site_name": "kadence.com",
+   "snippet": "Discover Asia's evolving consumer terrain in 2026, driven by digital growth, policy shifts, and rising middle-class influence across key regional markets.",
+   "title": "The New Power Map of Asian Consumption.",
+   "url": "https://kadence.com/en-us/knowledge/the-new-power-map-of-asian-consumption/"
+  }
+ ]
+}

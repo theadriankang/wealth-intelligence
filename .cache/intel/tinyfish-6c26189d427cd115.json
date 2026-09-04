@@ -1,0 +1,91 @@
+{
+ "at": 1788537452572,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "gold price drivers real yields and central bank demand",
+   "d": [
+    "gold.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Jun 24, 2025",
+   "position": 1,
+   "site_name": "www.gold.org",
+   "snippet": "As real rates rose – currently sitting above 2% – gold prices also generally rose, by central bank buying.",
+   "title": "You asked, we answered: Are fiscal concerns driving gold?",
+   "url": "https://www.gold.org/goldhub/gold-focus/2025/06/you-asked-we-answered-are-fiscal-concerns-driving-gold"
+  },
+  {
+   "date": "Jan 9, 2023",
+   "position": 2,
+   "site_name": "www.gold.org",
+   "snippet": "Gold prices posted a small gain in a year when real yields (10-year TIPs) rose an unprecedented 250bps and the dollar gained over 8%.",
+   "title": "Gold Market Commentary | World Gold Council",
+   "url": "https://www.gold.org/goldhub/research/gold-market-commentary-december-2022"
+  },
+  {
+   "date": "Dec 4, 2025",
+   "position": 3,
+   "site_name": "www.gold.org",
+   "snippet": "Gold has experienced a remarkable 2025, achieving over 50 all-time highs and returning over 60%.1. Both investors and central banks have ...",
+   "title": "Gold Outlook 2026: Push ahead or pull back | World Gold Council",
+   "url": "https://www.gold.org/goldhub/research/gold-outlook-2026"
+  },
+  {
+   "position": 4,
+   "site_name": "www.gold.org",
+   "snippet": "Understand the gold market & its current performance with the world-class research and data. From gold prices charts, returns, volatility, and correlations.",
+   "title": "Gold Price Performance & Data | World Gold Council",
+   "url": "https://www.gold.org/goldhub/data"
+  },
+  {
+   "position": 5,
+   "site_name": "www.gold.org",
+   "snippet": "Data on central bank gold holdings, sales and purchases, real rates, the US. Data on sectors of gold demand, supply, productions costs and futures market",
+   "title": "World Gold Council | The Authority on Gold",
+   "url": "https://www.gold.org/"
+  },
+  {
+   "date": "Jul 10, 2025",
+   "position": 6,
+   "site_name": "www.gold.org",
+   "snippet": "Gold price bear runs in history are usually associated with rising real yields and a stronger dollar Gold price performance, US 10-year real ...",
+   "title": "What's a bear case for gold: A historical perspective",
+   "url": "https://www.gold.org/goldhub/research/whats-a-bear-case-for-gold"
+  },
+  {
+   "position": 7,
+   "site_name": "www.gold.org",
+   "snippet": "Gold demand saw a modest y/y increase in Q1 to 1,231t, while value surged to a record US$193bn. Bar and coin investment drove gains, while ETF buying slowed in ...",
+   "title": "Gold Market And Demand Trends | World Gold Council",
+   "url": "https://www.gold.org/goldhub/research/gold-demand-trends"
+  },
+  {
+   "date": "Aug 18, 2026",
+   "position": 8,
+   "site_name": "www.gold.org",
+   "snippet": "Gold has a diverse demand base spanning consumer use – jewellery (29%) and technology (6%) – and investment use – investment (43%) and central ...",
+   "title": "Gold Market Primer: Market size and structure - World Gold Council",
+   "url": "https://www.gold.org/goldhub/research/market-primer/gold-market-primer-market-size-and-structure"
+  },
+  {
+   "date": "Jul 7, 2022",
+   "position": 9,
+   "site_name": "www.gold.org",
+   "snippet": "In the near term, gold will likely remain reactive to real rates, driven by the speed at which global central banks tighten monetary policy in ...",
+   "title": "Gold Mid-Year Outlook 2022 | World Gold Council",
+   "url": "https://www.gold.org/goldhub/research/gold-outlook-2022-mid-year"
+  },
+  {
+   "position": 10,
+   "site_name": "www.gold.org",
+   "snippet": "Central banks have accumulated an average of 1,000t of gold over the past four years, up significantly from the 500t average over the preceding decade. Find out ...",
+   "title": "Goldhub | The Definitive Source for Gold Data and Insight",
+   "url": "https://www.gold.org/goldhub"
+  }
+ ]
+}

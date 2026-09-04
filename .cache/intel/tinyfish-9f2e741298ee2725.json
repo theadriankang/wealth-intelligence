@@ -1,0 +1,94 @@
+{
+ "at": 1788536860184,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Indonesia capital controls and repatriation rules",
+   "d": [
+    "bi.go.id",
+    "esdm.go.id"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.bi.go.id",
+   "snippet": "Bank Indonesia Regulation on Foreign Exchange Transactions against Rupiah between Bank and Foreign Party; capital market and money market, loan, capital, and ...",
+   "title": "[PDF] Bank Indonesia Regulation on Foreign Exchange Transactions ...",
+   "url": "https://www.bi.go.id/en/publikasi/peraturan/Documents/PBI_181916-EN.pdf"
+  },
+  {
+   "date": "Oct 27, 2016",
+   "position": 2,
+   "site_name": "www.bi.go.id",
+   "snippet": "Capital control Regulation to limit capital flows from capital market Capital flows The movement of money for the purpose of investment, trade ...",
+   "title": "[PDF] APPENDICES - Bank Indonesia",
+   "url": "https://www.bi.go.id/en/publikasi/laporan/Documents/Appendices.pdf"
+  },
+  {
+   "position": 3,
+   "site_name": "www.bi.go.id",
+   "snippet": "regulations and prudential standards, including capital ratios, such as the Countercyclical Capital Buffer (CCB) and Conservation Buffer, as well as ...",
+   "title": "[PDF] 2020_LTBI.pdf - Bank Indonesia",
+   "url": "https://www.bi.go.id/en/publikasi/laporan/Documents/2020_LTBI.pdf"
+  },
+  {
+   "date": "Nov 1, 2020",
+   "position": 4,
+   "site_name": "www.bi.go.id",
+   "snippet": "Draft Government Regulation on the Company's Authorized Capital ... The Government of Indonesia issued Law No. 2 of 2012 on Land ...",
+   "title": "November 2020 - Bank Indonesia",
+   "url": "https://www.bi.go.id/en/iru/presentation/Documents/Republic_of_Indonesia_Presentation_Book_Nov_2020.pdf"
+  },
+  {
+   "date": "Jan 1, 2023",
+   "position": 5,
+   "site_name": "www.bi.go.id",
+   "snippet": "the Government of Indonesia enacted Law Number 3 of 2022 concerning the State Capital. Domestic Declaration and Repatriation Investment IDR512. ...",
+   "title": "[PDF] January 2023 - Bank Indonesia",
+   "url": "https://www.bi.go.id/en/iru/presentation/Documents/Republic%20of%20Indonesia%20Presentation%20Book%20-%20January%202023.pdf"
+  },
+  {
+   "date": "Dec 15, 2011",
+   "position": 6,
+   "site_name": "www.bi.go.id",
+   "snippet": "Bank Indonesia has implemented the exchange rate policy and the management of foreign capital flows in order to maintain exchange rate ...",
+   "title": "Part 2 - Bank Indonesia",
+   "url": "https://www.bi.go.id/en/publikasi/laporan/Documents/64f6c89c9cdd4f9c85790db799452768Part_2.pdf"
+  },
+  {
+   "date": "Jul 13, 2026",
+   "position": 7,
+   "site_name": "www.bi.go.id",
+   "snippet": "This is due to faster debt accumulation during the pandemic when the fiscal rule was suspended, and weak revenue growth in the past two years.",
+   "title": "[PDF] Indonesia Ratings Affirmed At 'BBB/A-2'; Outlook Stable",
+   "url": "https://www.bi.go.id/id/publikasi/ruang-media/news-release/Documents/sp_2813626_SnP_Indonesia-Ratings_13-Jul-2026.pdf"
+  },
+  {
+   "date": "Jul 1, 2022",
+   "position": 8,
+   "site_name": "www.bi.go.id",
+   "snippet": "The main objective of IRU is to actively communicate. Indonesian economic policy and to address concerns of investors, especially financial ...",
+   "title": "[PDF] July 2022 - Bank Indonesia",
+   "url": "https://www.bi.go.id/en/iru/presentation/Documents/Republic-of-Indonesia-Presentation-Book-Jul-2022.pdf"
+  },
+  {
+   "date": "Sep 19, 2013",
+   "position": 9,
+   "site_name": "www.bi.go.id",
+   "snippet": "This edition is published in September 2013 and is based on data and information available as of June 2013, unless stated otherwise. Source: ...",
+   "title": "[PDF] No.21, September 2013 - Bank Indonesia",
+   "url": "https://www.bi.go.id/en/publikasi/kajian/Documents/FSR%2021_Sept%202013%20Revisi.pdf"
+  },
+  {
+   "date": "Apr 13, 2020",
+   "position": 10,
+   "site_name": "www.bi.go.id",
+   "snippet": "The use of foreign exchange by residents, including provisions for the surrender, repatriation and conversion of foreign exchange to maintain.",
+   "title": "TKM April_En.indd - Bank Indonesia",
+   "url": "https://www.bi.go.id/en/publikasi/laporan/Documents/TKM_April_2020_en.pdf"
+  }
+ ]
+}

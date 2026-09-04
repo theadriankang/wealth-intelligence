@@ -1,0 +1,96 @@
+{
+ "at": 1788537510790,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "property cooling measures",
+   "d": [
+    "mas.gov.sg",
+    "hkma.gov.hk"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Dec 15, 2021",
+   "position": 1,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "The Government announced a package of measures to cool the private residential and HDB resale markets. With effect from 16 December 2021, ...",
+   "title": "Measures To Cool The Property Market",
+   "url": "https://www.mas.gov.sg/news/media-releases/2021/measures-to-cool-the-property-market"
+  },
+  {
+   "date": "Jan 12, 2013",
+   "position": 2,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Cooling Measures for the Residential Property Market · Measures Applicable to all Residential Property · Measures Specific to Public Housing.",
+   "title": "Additional Measures To Ensure A Stable And Sustainable Property ...",
+   "url": "https://www.mas.gov.sg/news/media-releases/2013/additional-measures-to-ensure-a-stable-and-sustainable-property-market"
+  },
+  {
+   "date": "Apr 26, 2023",
+   "position": 3,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "The Government announced today increases in the Additional Buyer's Stamp Duty (ABSD) rates to promote a sustainable property market. The revised ...",
+   "title": "Measures for a Sustainable Property Market",
+   "url": "https://www.mas.gov.sg/news/media-releases/2023/measures-for-a-sustainable-property-market"
+  },
+  {
+   "date": "Jul 6, 2018",
+   "position": 4,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Additional Buyer's Stamp Duty (ABSD) rates and Loan-to-Value (LTV) limits on residential property purchases, to cool the property market",
+   "title": "Raising Additional Buyer's Stamp Duty Rates and Tightening Loan ...",
+   "url": "https://www.mas.gov.sg/news/media-releases/2018/raising-additional-buyers-stamp-duty-rates-and-tightening-loan-to-value-limits"
+  },
+  {
+   "date": "Sep 29, 2022",
+   "position": 5,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "Measures to Promote Sustainable Conditions in the Property Market by Ensuring Prudent Borrowing and Moderating Demand",
+   "title": "Measures to Promote Sustainable Conditions in the Property Market ...",
+   "url": "https://www.mas.gov.sg/news/media-releases/2022/measures-to-promote-sustainable-conditions-in-the-property-market-by-ensuring-prudent-borrowing-and-moderating-demand"
+  },
+  {
+   "date": "Jan 13, 2011",
+   "position": 6,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "a) Increase the holding period for imposition of Seller's Stamp Duty (SSD) b) Raise the SSD rates to 16%, 12%, 8% and 4% of consideration for ...",
+   "title": "Measures to Maintain a Stable and Sustainable Property Market",
+   "url": "https://www.mas.gov.sg/news/media-releases/2011/measures-to-maintain-a-stable-and-sustainable-property-market"
+  },
+  {
+   "date": "Feb 19, 2010",
+   "position": 7,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "The measures were the removal of the Interest Absorption Scheme and Interest-Only housing loans, resumption of the Confirmed List under the ...",
+   "title": "Measures To Ensure a Stable and Sustainable Property Market",
+   "url": "https://www.mas.gov.sg/news/media-releases/2010/measures-to-ensure-a-stable-and-sustainable-property-market"
+  },
+  {
+   "date": "Aug 30, 2010",
+   "position": 8,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "a) Increase the holding period for imposition of Seller's Stamp Duty (SSD) Increase the minimum cash payment from 5% to 10% of the valuation ...",
+   "title": "Joint Press Release on Measures to Maintain a Stable and ...",
+   "url": "https://www.mas.gov.sg/news/media-releases/2010/measures-to-maintain-a-stable-and-sustainable-property-market"
+  },
+  {
+   "date": "Sep 14, 2009",
+   "position": 9,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "a) Reinstatement of the Confirmed List for the 1st Half 2010 Government Land Sales (GLS) Programme. b) Removal of the Interest Absorption Scheme ...",
+   "title": "Measures to Ensure a Stable and Sustainable Property Market",
+   "url": "https://www.mas.gov.sg/news/media-releases/2009/measures-to-ensure-a-stable-and-sustainable-property-market"
+  },
+  {
+   "date": "Jul 17, 2018",
+   "position": 10,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "The cooling measures are not meant to send prices down, but to moderate the property market cycle. Experience here and abroad has shown that, ...",
+   "title": "Response to Property Market Measures 'A Sustainable Residential ...",
+   "url": "https://www.mas.gov.sg/news/letters-to-editor/2018/a-sustainable-residential-property-market-benefits-all"
+  }
+ ]
+}

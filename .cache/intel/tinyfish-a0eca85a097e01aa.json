@@ -1,0 +1,90 @@
+{
+ "at": 1788537488324,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Newcastle thermal coal price drivers",
+   "d": [
+    "iea.org",
+    "esdm.go.id"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.iea.org",
+   "snippet": "Newcastle FOB (6 000 kcal/kg) averaged USD 104/t in 2025, a decrease of 22% from 2024, yet still around 17% above its 2017-2019 baseline of USD 89/t.",
+   "title": "Prices and costs – Coal 2025 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/coal-2025/prices-and-costs"
+  },
+  {
+   "position": 2,
+   "site_name": "www.iea.org",
+   "snippet": "Newcastle and ARA prices for high-CV thermal coal reached levels around USD 119/t, last seen at the beginning of 2022.",
+   "title": "Prices – Coal Market Update – July 2023 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/coal-market-update-july-2023/prices"
+  },
+  {
+   "date": "Dec 18, 2024",
+   "position": 3,
+   "site_name": "www.iea.org",
+   "snippet": "Coal prices today remain 50% higher than the average seen between 2017 and 2019. Coal production reached an all-time high in 2024, though ...",
+   "title": "Global coal demand is set to plateau through 2027 - News - IEA",
+   "url": "https://www.iea.org/news/global-coal-demand-is-set-to-plateau-through-2027"
+  },
+  {
+   "date": "Dec 17, 2025",
+   "position": 4,
+   "site_name": "www.iea.org",
+   "snippet": "The report finds that global coal demand is on course to rise by 0.5% in 2025, reaching a record 8.85 billion tonnes.",
+   "title": "Global coal demand has reached a plateau and may well decline ...",
+   "url": "https://www.iea.org/news/global-coal-demand-has-reached-a-plateau-and-may-well-decline-slightly-by-2030"
+  },
+  {
+   "position": 5,
+   "site_name": "www.iea.org",
+   "snippet": "As a result, thermal coal prices in the first half of 2025 dropped to their lowest since 2021. International thermal coal prices stabilised in 2025",
+   "title": "Overview – Coal Mid-Year Update 2025 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/coal-mid-year-update-2025/overview"
+  },
+  {
+   "position": 6,
+   "site_name": "www.iea.org",
+   "snippet": "The premium for Newcastle FOB 6 000 kcal/kg came down to USD 20/t in that period compared to an average of about USD 90/t from July 2022 to July 2023.",
+   "title": "Prices – Coal Mid-Year Update - July 2024 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/coal-mid-year-update-july-2024/prices"
+  },
+  {
+   "position": 7,
+   "site_name": "www.iea.org",
+   "snippet": "In 2019, CIF prices for thermal coal in Northwest Europe were consistently lower than FOB prices in Newcastle (New South Wales, Australia). Lower prices in ...",
+   "title": "Prices and costs – Coal 2020 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/coal-2020/prices-and-costs"
+  },
+  {
+   "date": "Jul 24, 2025",
+   "position": 8,
+   "site_name": "www.iea.org",
+   "snippet": "However, the report anticipates a decline in global coal production in 2026, as high stock levels and lower prices begin to weigh on supply.",
+   "title": "Global coal demand to remain on a plateau in 2025 and 2026 - IEA",
+   "url": "https://www.iea.org/news/global-coal-demand-to-remain-on-a-plateau-in-2025-and-2026"
+  },
+  {
+   "position": 9,
+   "site_name": "www.iea.org",
+   "snippet": "Price is for thermal price (Newcastle free-on-board 6 000 kcal/kg) and investments also include coking coal. Prices for the preceding year are used to ...",
+   "title": "Fuel supply – World Energy Investment 2020 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/world-energy-investment-2020/fuel-supply"
+  },
+  {
+   "date": "Sep 6, 2021",
+   "position": 10,
+   "site_name": "www.esdm.go.id",
+   "snippet": "Plateauing in February-April 2021, the HBA was on the hike during May-July 2021, touching USD115.35 per tonne in July 2021, while the September ...",
+   "title": "September HBA Set at USD150.03 per Tonne - Kementerian ESDM",
+   "url": "https://www.esdm.go.id/en/media-center/news-archives/terus-naik-hba-september-2021-tembus-usd15003-per-ton"
+  }
+ ]
+}

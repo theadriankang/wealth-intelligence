@@ -1,0 +1,91 @@
+{
+ "at": 1788537133084,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "CHF safe haven flows SNB policy",
+   "d": [
+    "snb.ch"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.snb.ch",
+   "snippet": "Numerous papers have shown that the Swiss franc (CHF) exhibits safe haven characteristics. For example, RANALDO and SÖDERLIND (2010) find that the CHF is a safe ...",
+   "title": "[PDF] Capital Flows and the Swiss Franc - SNB Working Papers",
+   "url": "https://www.snb.ch/public/asset/de/www-snb-ch/publications/research/working-papers/2016/working_paper_2016_08/publications0/working_paper_2016_08.n.pdf"
+  },
+  {
+   "date": "Sep 14, 2007",
+   "position": 2,
+   "site_name": "www.snb.ch",
+   "snippet": "For instance, when CHF/USD is the dependent variable, then FXVolt is based on the log realised volatilities of EUR/USD,. JPY/USD and GBP/USD.",
+   "title": "[PDF] Safe Haven Currencies - snb.ch.",
+   "url": "https://www.snb.ch/public/asset/en/www-snb-ch/publications/research/working-papers/2007/working_paper_2007_17/publications0_en/working_paper_2007_17.n.pdf"
+  },
+  {
+   "date": "Oct 23, 2025",
+   "position": 3,
+   "site_name": "www.snb.ch",
+   "snippet": "Geopolitical shocks could lead to money flowing into currency areas regarded as safe havens by investors. This could result in an ...",
+   "title": "Monetary policy assessment of September 2025: Summary ... - snb.ch",
+   "url": "https://www.snb.ch/en/publications/communication/summaries/zus_20251023"
+  },
+  {
+   "date": "Dec 5, 2022",
+   "position": 4,
+   "site_name": "www.snb.ch",
+   "snippet": "This paper investigates the effects of Switzerland's real effective exchange rate. (REER) on its current account.",
+   "title": "[PDF] The exchange rate elasticity of the Swiss current account - snb.ch",
+   "url": "https://www.snb.ch/public/asset/en/www-snb-ch/publications/research/working-papers/2022/working_paper_2022_14/publications0_en/working_paper_2022_14.n.pdf"
+  },
+  {
+   "position": 5,
+   "site_name": "www.snb.ch",
+   "snippet": "SNB Working Papers present research in progress. Their aim is to elicit comments and to further debate. The opinions expressed in the working papers are ...",
+   "title": "SNB Working Papers",
+   "url": "https://www.snb.ch/en/news-publications/economy/working-papers"
+  },
+  {
+   "date": "Mar 18, 2025",
+   "position": 6,
+   "site_name": "www.snb.ch",
+   "snippet": "With the transition from a negative to a positive SNB policy rate in. September 2022, the SNB adopted a new approach to monetary policy.",
+   "title": "[PDF] 117th Annual Report Swiss National Bank - 2024 - snb.ch",
+   "url": "https://www.snb.ch/public/asset/en/www-snb-ch/publications/communication/annual-report/annrep_2024_komplett/publications0_en/annrep_2024_komplett.en.pdf"
+  },
+  {
+   "date": "Nov 21, 2022",
+   "position": 7,
+   "site_name": "www.snb.ch",
+   "snippet": "In this paper, we first document the growing importance of foreign-domiciled investment funds in countries' portfolio liabilities over time ...",
+   "title": "[PDF] The growing importance of investment funds in capital flows - SNB",
+   "url": "https://www.snb.ch/public/publication/de/www-snb-ch/publications/research/working-papers/2022/working_paper_2022_13/publications0/working_paper_2022_13.n.pdf"
+  },
+  {
+   "position": 8,
+   "site_name": "www.snb.ch",
+   "snippet": "First, SNB policy rate decisions affected the CHF/USD rate on 10 occasions out of 29 (34%); 6 coincided with scheduled meetings and 4 with unscheduled meetings.",
+   "title": "[PDF] The reaction of asset markets to Swiss National Bank communication",
+   "url": "https://www.snb.ch/public/publication/de/www-snb-ch/publications/research/working-papers/2007/working_paper_2007_11/publications0/working_paper_2007_11.n.pdf"
+  },
+  {
+   "date": "Nov 23, 2020",
+   "position": 9,
+   "site_name": "www.snb.ch",
+   "snippet": "to Swiss franc dynamics, especially in times of a worsening risk environment, highlighting the role of the Swiss franc as a safe-haven currency.",
+   "title": "[PDF] Short-term determinants of bilateral exchange rates - snb.ch",
+   "url": "https://www.snb.ch/public/asset/en/www-snb-ch/publications/research/working-papers/2020/working_paper_2020_21/publications0_en/working_paper_2020_21.n.pdf"
+  },
+  {
+   "position": 10,
+   "site_name": "www.snb.ch",
+   "snippet": "Our findings suggest that FXI are effective and long-lasting: FXI of approximately. CHF 27 billion (5% of annual GDP) are necessary to prevent the Swiss franc ...",
+   "title": "[PDF] FX interventions as a form of unconventional monetary policy - SNB",
+   "url": "https://www.snb.ch/public/asset/fr/www-snb-ch/publications/research/working-papers/2024/working_paper_2024_04/publications0_fr/working_paper_2024_04.pdf"
+  }
+ ]
+}

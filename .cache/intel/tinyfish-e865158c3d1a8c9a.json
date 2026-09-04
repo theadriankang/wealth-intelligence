@@ -1,0 +1,91 @@
+{
+ "at": 1788537243832,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "sovereign bond duration and inflation risk premium",
+   "d": [
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "One channel working through the inflation risk premium is the risk of bond yield. “snapbacks”. If inflation risks in the United States suddenly rise and the ...",
+   "title": "[PDF] expectations, term premia and macro-financial vulnerabilities - the BIS",
+   "url": "https://www.bis.org/publications/working-paper-814-interest-rate-spillovers-united-states-expectations-term-premia-and-macro-financial-vulnerabilities.pdf"
+  },
+  {
+   "date": "Sep 23, 2018",
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "We review methods and models for estimating term premia on long-term government bonds. We then use these models to estimate term premia on ...",
+   "title": "Term premia: models and some stylised facts - the BIS",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt1809h.htm"
+  },
+  {
+   "date": "Dec 4, 2023",
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "The correlation between equity and government bond returns has remained positive since inflation took hold in 2021, thus weakening investor ...",
+   "title": "Markets adjust to \"higher for longer\" - the BIS",
+   "url": "https://www.bis.org/publications/markets-adjust-to-higher-longer"
+  },
+  {
+   "date": "Sep 27, 2019",
+   "position": 4,
+   "site_name": "www.bis.org",
+   "snippet": "We analyse how movements in the components of sovereign bond yields in the United States affect long-term rates in 10 advanced and 21 emerging ...",
+   "title": "Interest rate spillovers from the United States: expectations, term ...",
+   "url": "https://www.bis.org/publ/work814.htm"
+  },
+  {
+   "position": 5,
+   "site_name": "www.bis.org",
+   "snippet": "In this paper, we construct a two-country, to estimate inflation expectations and risk premiums bond yields of 2-, 5- and 10-year maturities as well as actual ...",
+   "title": "[PDF] Uncovering Inflation Expectations and Risk Premiums from ...",
+   "url": "https://www.bis.org/publ/cgfs11fung.pdf"
+  },
+  {
+   "date": "Dec 13, 2010",
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "The drop in real yields mainly reflected increasing inflation compensation (expected inflation and inflation risk premium) among investors in ...",
+   "title": "Negative real yields on US Treasury Inflation-Protected Securities ...",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt1012v.htm"
+  },
+  {
+   "date": "Feb 27, 2023",
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "In addition to inflation, policy expectations drove sovereign bond markets. The market for Japanese government bonds (JGBs) experienced some ...",
+   "title": "Perceptions of risk and policy outlook drive markets - the BIS",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt2303a.htm"
+  },
+  {
+   "date": "Jul 5, 2023",
+   "position": 8,
+   "site_name": "www.bis.org",
+   "snippet": "The main reason for this is the risk premium on sovereign debt, which is very sensitive to market conditions. when pricing government bonds.2",
+   "title": "Policies for liquid and well functioning sovereign debt markets",
+   "url": "https://www.bis.org/speeches/sp230705.htm"
+  },
+  {
+   "position": 9,
+   "site_name": "www.bis.org",
+   "snippet": "Thus, the maximum duration of index-linked bonds and inflation swaps are the same (30 years). 11. For example, when interest rates fall sharply, new premiums ...",
+   "title": "[PDF] 44 Fixed income strategies of insurance companies and pension funds",
+   "url": "https://www.bis.org/publications/cgfs-paper-44-fixed-income-strategies-insurance-companies-and-pension-funds.pdf"
+  },
+  {
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "Through this channel, the decline in inflation volatility should be reflected in a smaller inflation risk premium in nominal bond yields, which is exactly. 8 ...",
+   "title": "[PDF] Richard H Clarida: Monetary policy, price stability, and equilibrium ...",
+   "url": "https://www.bis.org/review/r191112c.pdf"
+  }
+ ]
+}

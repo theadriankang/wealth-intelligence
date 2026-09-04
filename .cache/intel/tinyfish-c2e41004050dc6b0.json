@@ -1,0 +1,90 @@
+{
+ "at": 1788537306078,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "AT1 perpetual call risk and extension",
+   "d": [
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Dec 15, 2019",
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "The disclosures described in this chapter cover the composition of regulatory capital, the main features of regulatory capital instruments ...",
+   "title": "DIS25 - Composition of capital and TLAC",
+   "url": "https://www.bis.org/basel_framework/chapter/DIS/25.htm?tldate=20211118&inforce=20191215"
+  },
+  {
+   "date": "2 days ago",
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "to provide supervisors with a comprehensive view of risks and to reduce opportunities for regulatory arbitrage.",
+   "title": "[PDF] Basel Framework - the BIS",
+   "url": "https://www.bis.org/committees/bcbs/basel-framework/basel-framework.pdf"
+  },
+  {
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "whether a bond is inflation-protected, convertible, perpetual. convertible and perpetual securities, time-varying risk of each bond differently",
+   "title": "[PDF] Global or regional safe assets: Evidence from bond substitution ...",
+   "url": "https://www.bis.org/publications/working-paper-1254-global-or-regional-safe-assets-evidence-bond-substitution-patterns.pdf"
+  },
+  {
+   "position": 4,
+   "site_name": "www.bis.org",
+   "snippet": "This standard describes how to calculate capital requirements for market risk and credit valuation adjustment risk.",
+   "title": "Disclosure requirements | Bank for International Settlements - the BIS",
+   "url": "https://www.bis.org/committees/bcbs/basel-framework/standard/dis"
+  },
+  {
+   "date": "Mar 28, 2014",
+   "position": 5,
+   "site_name": "www.bis.org",
+   "snippet": "Second, although highly accommodative monetary policy can lead to increasing inflation risks today, inflation in the United States is too low.",
+   "title": "Charles L Evans: Thoughts on accommodative monetary policy ...",
+   "url": "https://www.bis.org/review/r140328e.htm"
+  },
+  {
+   "date": "May 26, 2020",
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "As for perpetual debt, with no prospect of repayment, investors would demand high risk premiums and therefore interest rates, which would be ...",
+   "title": "François Villeroy de Galhau: Monetary policy in the face of the Covid ...",
+   "url": "https://www.bis.org/review/r200526a.htm"
+  },
+  {
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "This standard describes how to calculate capital requirements for market risk and credit valuation adjustment risk.",
+   "title": "Net stable funding ratio | Bank for International Settlements - the BIS",
+   "url": "https://www.bis.org/committees/bcbs/basel-framework/standard/nsf"
+  },
+  {
+   "position": 8,
+   "site_name": "www.bis.org",
+   "snippet": "By extension, a safe asset can be defined as any debt asset that promises a fixed amount of money in the future 5 Page 15 with no default risk.2",
+   "title": "[PDF] Global safe assets - the BIS",
+   "url": "https://www.bis.org/publications/working-paper-399-global-safe-assets.pdf"
+  },
+  {
+   "date": "Jul 21, 2005",
+   "position": 9,
+   "site_name": "www.bis.org",
+   "snippet": "in respect to sources of risk, the movement of loan loss provisions, etc. ... additional information please contact the authors by e-mail:michael ...",
+   "title": "[PDF] IFC Bulletin No 21, July 2005. - Bank for International Settlements",
+   "url": "https://www.bis.org/ifc/publ/ifcb21.pdf"
+  },
+  {
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "Papers in this volume were prepared for a meeting of senior officials from central banks held at the Bank for International Settlements on 28 – 29 January ...",
+   "title": "[PDF] Inflation mechanisms, expectations and monetary policy - the BIS",
+   "url": "https://www.bis.org/publications/paper-89-inflation-mechanisms-expectations-and-monetary-policy.pdf"
+  }
+ ]
+}

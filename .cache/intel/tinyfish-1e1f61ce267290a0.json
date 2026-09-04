@@ -1,0 +1,86 @@
+{
+ "at": 1788537441715,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "EUR rate differential drivers",
+   "d": [
+    "ecb.europa.eu"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "This box presents a methodology for separating out the four main drivers of emerging market exchange rate swings: spillovers from US shocks, global risk ...",
+   "title": "Emerging market currencies: the role of global risk, the US dollar ...",
+   "url": "https://www.ecb.europa.eu/press/economic-bulletin/focus/2019/html/ecb.ebbox201903_02~29b4722819.en.html"
+  },
+  {
+   "position": 2,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The differential is projected to increase in 12 euro area countries by 2020, but to remain in negative territory for all countries except Italy.",
+   "title": "Interest rate-growth differential and government debt dynamics",
+   "url": "https://www.ecb.europa.eu/press/economic-bulletin/focus/2019/html/ecb.ebbox201902_06~0c96ee6f7c.en.html"
+  },
+  {
+   "position": 3,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "We also drop the fourth (“flow”) equation from the VAR and thus include only the excess returns on the USD/EUR, the real interest rate differential between the ...",
+   "title": "[PDF] What drives investors' behaviour in different FX market segments? A ...",
+   "url": "https://www.ecb.europa.eu/pub/pdf/scpwps/ecbwp706.pdf"
+  },
+  {
+   "position": 4,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The “1-year interest rate differential” is calculated as the difference between the one-year euro area benchmark government bond yield and the average yield of ...",
+   "title": "[PDF] The international role of the euro, June 2026 - European Central Bank",
+   "url": "https://www.ecb.europa.eu/pub/pdf/ire/ecb.ire202606.en.pdf"
+  },
+  {
+   "position": 5,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "CIP stipulates that the interest rate differential between two currencies should equal the differential between the forward and spot exchange rate.",
+   "title": "[PDF] Role of cross currency swap markets in funding and investment ...",
+   "url": "https://www.ecb.europa.eu/pub/pdf/scpops/ecb.op228~bb3e50120a.en.pdf"
+  },
+  {
+   "position": 6,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Differentials of growth rates of earnings are one of the driving forces of developments in the European exchange rates.",
+   "title": "[PDF] the uncovered equity return parity condition - European Central Bank",
+   "url": "https://www.ecb.europa.eu/pub/pdf/scpwps/ecbwp529.pdf"
+  },
+  {
+   "date": "Jan 9, 2026",
+   "position": 7,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Chart 7. BVAR historical decomposition of the drivers behind the USD/EUR exchange rate. (percentages; increase = appreciation of the euro).",
+   "title": "The euro in a changing world - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/key/date/2026/html/ecb.sp260109~7a044d36db.en.html"
+  },
+  {
+   "position": 8,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Only above a certain income threshold, productivity in manufacturing relative to services becomes the main driver of the aggregate price level and the standard ...",
+   "title": "[PDF] Real exchange rate misalignments in the euro area",
+   "url": "https://www.ecb.europa.eu/pub/pdf/scpwps/ecb.wp2108.en.pdf"
+  },
+  {
+   "position": 9,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "We study the implications of deviations from covered interest rate parity for in- ternational capital flows using novel data covering euro-area derivatives ...",
+   "title": "[PDF] The implications of CIP deviations for international capital flows",
+   "url": "https://www.ecb.europa.eu/pub/pdf/scpwps/ecb.wp3017~2c077fb436.en.pdf"
+  },
+  {
+   "position": 10,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Another factor is that increasing interest rate differentials across major currencies have stimulated demand for assets denominated in higher-yielding.",
+   "title": "[PDF] Violations in covered interest parity and the euro's role as an ...",
+   "url": "https://www.ecb.europa.eu/pub/pdf/ire/article/ecb.ireart201707_02~d6bec18e98.en.pdf"
+  }
+ ]
+}

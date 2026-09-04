@@ -1,0 +1,92 @@
+{
+ "at": 1788536860173,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "IEA oil market report schedule",
+   "d": [
+    "iea.org",
+    "opec.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.iea.org",
+   "snippet": "Schedule. The OMR is published every month at 10 AM Paris time on release day. See the schedule to the right for upcoming release dates ...",
+   "title": "Oil Market Report (OMR) - Data product - IEA",
+   "url": "https://www.iea.org/data-and-statistics/data-product/oil-market-report-omr"
+  },
+  {
+   "date": "Aug 12, 2026",
+   "position": 2,
+   "site_name": "www.iea.org",
+   "snippet": "World oil demand is forecast to decline by 1.6 mb/d in 2026, 510 kb/d more than our estimate in last month's Report, as the ongoing closure of ...",
+   "title": "Oil Market Report - August 2026 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/oil-market-report-august-2026"
+  },
+  {
+   "date": "May 13, 2026",
+   "position": 3,
+   "site_name": "www.iea.org",
+   "snippet": "Featuring tables, graphs and statistics, the OMR provides all the data necessary to perform ad-hoc analysis and track oil market developments ...",
+   "title": "Oil Market Report – May 2026 - Event - IEA",
+   "url": "https://www.iea.org/events/oil-market-report-may-2026"
+  },
+  {
+   "date": "Jun 17, 2026",
+   "position": 4,
+   "site_name": "www.iea.org",
+   "snippet": "Global oil demand is forecast to decline by 1.1 mb/d y-o-y in 2026. · Global supply is set to fall by 3.9 mb/d to 102.4 mb/d in 2026 before ...",
+   "title": "Oil Market Report - June 2026 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/oil-market-report-june-2026"
+  },
+  {
+   "date": "Aug 12, 2026",
+   "position": 5,
+   "site_name": "www.iea.org",
+   "snippet": "The IEA's monthly Oil Market Report (OMR) is the exclusive source for official government statistics from all OECD countries, ...",
+   "title": "Oil Market Report – August 2026 - Event - IEA",
+   "url": "https://www.iea.org/events/oil-market-report-august-2026"
+  },
+  {
+   "date": "May 13, 2026",
+   "position": 6,
+   "site_name": "www.iea.org",
+   "snippet": "World oil demand is forecast to contract by 420 kb/d y-o-y in 2026, to 104 mb/d, 1.3 mb/d less than our pre-war forecast. The biggest decline is ...",
+   "title": "Oil Market Report - May 2026 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/oil-market-report-may-2026"
+  },
+  {
+   "date": "Jul 10, 2026",
+   "position": 7,
+   "site_name": "www.iea.org",
+   "snippet": "Annual contractions ease from 4.8 mb/d in 2Q26 to 1.7 mb/d in 3Q26, followed by a rise of 1.2 mb/d in 4Q26, for an overall decline of 1 mb/d ...",
+   "title": "Oil Market Report - July 2026 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/oil-market-report-july-2026"
+  },
+  {
+   "position": 8,
+   "site_name": "www.iea.org",
+   "snippet": "Schedule. Released each month on the same day as the Oil Market Report at 10 am Paris time. 11 ...",
+   "title": "Monthly Oil Data Service (MODS) Supply, Demand, Balances and ...",
+   "url": "https://www.iea.org/data-and-statistics/data-product/monthly-oil-data-service-mods-supply-demand-balances-and-stocks"
+  },
+  {
+   "position": 9,
+   "site_name": "www.opec.org",
+   "snippet": "Monthly Oil Market Report: 2026 release dates · Wednesday, 14 January · Wednesday, 11 February · Wednesday, 11 March · Monday, 13 April · Wednesday, 13 May · Thursday ...",
+   "title": "Monthly Oil Market Report - OPEC.org",
+   "url": "https://www.opec.org/monthly-oil-market-report.html"
+  },
+  {
+   "position": 10,
+   "site_name": "www.iea.org",
+   "snippet": "Latest monthly data on oil production, imports, exports, refinery outputs, deliveries and stocks for all OECD Member countries through May 2026. File. Updated.",
+   "title": "Monthly Oil Statistics - Data product - IEA",
+   "url": "https://www.iea.org/data-and-statistics/data-product/monthly-oil-statistics"
+  }
+ ]
+}

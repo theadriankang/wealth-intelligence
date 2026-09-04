@@ -1,0 +1,80 @@
+{
+ "at": 1788537508177,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "healthcare policy and drug pricing risk",
+   "d": []
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.phrma.org",
+   "snippet": "Government price-setting policies come in a variety of forms, but they all lead to the government inserting itself between patients and providers, threatening ...",
+   "title": "Government Price Setting",
+   "url": "https://www.phrma.org/policy-issues/government-price-setting"
+  },
+  {
+   "position": 2,
+   "site_name": "pmc.ncbi.nlm.nih.gov",
+   "snippet": "by KS Lee · 2020 · Cited by 72 — Increasing prescription drug pricing often reflects additional work stress on medical professionals because they function as financial advisors ...",
+   "title": "Factors Impacting Pharmaceutical Prices and Affordability - PMC",
+   "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7838942/"
+  },
+  {
+   "position": 3,
+   "site_name": "www.amcp.org",
+   "snippet": "AMCP opposes government regulation of drug pricing because of the potential for unintended consequences and supports the elimination of barriers to ...",
+   "title": "Regulation of Prescription Drug Pricing",
+   "url": "https://www.amcp.org/legislative-regulatory-position/regulation-prescription-drug-pricing"
+  },
+  {
+   "date": "Jan 22, 2026",
+   "position": 4,
+   "site_name": "ldi.upenn.edu",
+   "snippet": "In markets with multiple competitors, pharmacy benefit managers and insurers already exert some pricing pressure. The greatest policy leverage, ...",
+   "title": "Unpacking the Federal Drug Price Reduction Struggle",
+   "url": "https://ldi.upenn.edu/our-work/research-updates/unpacking-the-federal-drug-price-reduction-struggle/"
+  },
+  {
+   "position": 5,
+   "site_name": "www.jbclinpharm.org",
+   "snippet": "Drug pricing policies significantly affect healthcare equity and affordability, shaping access to essential medicines and influencing the broader dynamics of ...",
+   "title": "The Effect of Drug Pricing Policies on Healthcare Equity ...",
+   "url": "https://www.jbclinpharm.org/articles/the-effect-of-drug-pricing-policies-on-healthcare-equity-and-affordability-13081.html"
+  },
+  {
+   "date": "Feb 10, 2025",
+   "position": 6,
+   "site_name": "www.commonwealthfund.org",
+   "snippet": "Our focus group findings suggest that having affordable drug pricing and an assurance that prices will be predictable month-to-month could ...",
+   "title": "Medicare Prescription Drug Costs",
+   "url": "https://www.commonwealthfund.org/publications/issue-briefs/2025/feb/drug-costs-impact-care-insights-medicare-patients-providers"
+  },
+  {
+   "date": "Jan 27, 2026",
+   "position": 7,
+   "site_name": "www.hhs.gov",
+   "snippet": "HHS announced new guidance clarifying how pharmaceutical manufacturers can offer lower-cost prescription drugs directly to patients.",
+   "title": "HHS Clears Path for Lower-Cost Prescription Drugs ...",
+   "url": "https://www.hhs.gov/press-room/oig-clears-path-for-lower-cost-prescription-drugs.html"
+  },
+  {
+   "position": 8,
+   "site_name": "www.pnas.org",
+   "snippet": "by K Ho · 2025 · Cited by 17 — Proposed U.S. policies to reduce pharmaceutical prices, though particularly beneficial for low-income and elderly populations, could reduce ...",
+   "title": "Policy options for the drug pricing conundrum",
+   "url": "https://www.pnas.org/doi/10.1073/pnas.2418540122"
+  },
+  {
+   "date": "Oct 30, 2025",
+   "position": 9,
+   "site_name": "hms.harvard.edu",
+   "snippet": "Health systems everywhere are struggling with unsustainable costs and with sometimes staggering unmet needs. Understanding how pharmaceutical ...",
+   "title": "The Economic Forces That Drive Prescription Drug Prices",
+   "url": "https://hms.harvard.edu/news/economic-forces-drive-prescription-drug-prices"
+  }
+ ]
+}

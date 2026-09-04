@@ -1,0 +1,93 @@
+{
+ "at": 1788537397558,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "FOMC meeting calendar and dot plot",
+   "d": [
+    "federalreserve.gov"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "Meeting calendars, statements, and minutes (2021-2027). The FOMC holds eight regularly scheduled meetings during the year and other meetings as needed.",
+   "title": "The Fed - Meeting calendars and information - Federal Reserve",
+   "url": "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
+  },
+  {
+   "date": "Jun 17, 2026",
+   "position": 2,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "Federal Open Market Committee (FOMC) meeting held on June 16–17, 2026, meeting participants submitted their projections of the most likely ...",
+   "title": "[PDF] Summary of Economic Projections, June 17, 2026 - Federal Reserve",
+   "url": "https://www.federalreserve.gov/monetarypolicy/files/fomcprojtabl20260617.pdf"
+  },
+  {
+   "date": "Mar 18, 2026",
+   "position": 3,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "About the FOMC Meeting calendars and informationTranscripts and other historical materialsFAQs. March 17-18, 2026 FOMC Meeting. FOMC Press ...",
+   "title": "The Fed - March 17-18, 2026 FOMC Meeting - Federal Reserve",
+   "url": "https://www.federalreserve.gov/monetarypolicy/fomcpresconf20260318.htm"
+  },
+  {
+   "date": "4 days ago",
+   "position": 4,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "About the FOMC · Meeting calendars and information · Transcripts and other historical materials · FAQs. Monetary Policy Principles and Practice.",
+   "title": "Anchored to the Dot Plot: Central Bank Projections and Interest Rate ...",
+   "url": "https://www.federalreserve.gov/econres/feds/anchored-to-the-dot-plot-central-bank-projections-and-interest-rate-expectations.htm"
+  },
+  {
+   "date": "Aug 19, 2026",
+   "position": 5,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "July 28–29, 2026. A joint meeting of the Federal Open Market Committee and the Board of Governors of the Federal Reserve System was held in ...",
+   "title": "Minutes of the Federal Open Market Committee",
+   "url": "https://www.federalreserve.gov/monetarypolicy/fomcminutes20260729.htm"
+  },
+  {
+   "position": 6,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "FOMC Meeting calendars and information Transcripts and other historical materials FAQs. July 2026 Chart Line chart with 115 data points.",
+   "title": "Federal Reserve Board - Home",
+   "url": "https://www.federalreserve.gov/"
+  },
+  {
+   "date": "Jun 17, 2026",
+   "position": 7,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "June 17, 2026. Federal Reserve Board and Federal Open Market Committee release economic projections from the June 16-17 FOMC meeting.",
+   "title": "Press Releases - Federal Reserve",
+   "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20260617b.htm"
+  },
+  {
+   "date": "Feb 22, 2019",
+   "position": 8,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "Since 1979, the Federal Reserve has published a summary of individual economic projections from various Board members, FOMC members, or FOMC ...",
+   "title": "Timeline: Summary of Economic Projections - Federal Reserve Board",
+   "url": "https://www.federalreserve.gov/monetarypolicy/timeline-summary-of-economic-projections.htm"
+  },
+  {
+   "date": "Feb 12, 2026",
+   "position": 9,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "The chart shows the total volume for each FOMC meeting based on the log scale dating back to 2021. These values reflect the sum of the markets ...",
+   "title": "[PDF] Kalshi and the Rise of Macro Markets - Federal Reserve",
+   "url": "https://www.federalreserve.gov/econres/feds/files/2026010pap.pdf"
+  },
+  {
+   "date": "Jan 16, 2026",
+   "position": 10,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "About the FOMC Meeting calendars and informationTranscripts and other historical materialsFAQs. Historical Materials by Year. 2020+.",
+   "title": "The Fed - Historical Materials by Year - Federal Reserve",
+   "url": "https://www.federalreserve.gov/monetarypolicy/fomc_historical_year.htm"
+  }
+ ]
+}

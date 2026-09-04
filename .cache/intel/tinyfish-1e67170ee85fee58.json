@@ -1,0 +1,86 @@
+{
+ "at": 1788537385768,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "JPY carry trade and intervention history",
+   "d": [
+    "boj.or.jp"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.boj.or.jp",
+   "snippet": "The Japanese Government holds large amounts of foreign assets in the FEFSA, partly as a result of foreign currency buying/yen selling interventions in past yen ...",
+   "title": "Outline of the Bank of Japan's Foreign Exchange Intervention ...",
+   "url": "https://www.boj.or.jp/en/intl_finance/outline/expkainyu.htm"
+  },
+  {
+   "position": 2,
+   "site_name": "www.imes.boj.or.jp",
+   "snippet": "The current yen carry trades differ in some ways from those observed in 1998: namely, (1) they are mostly driven by retail investors rather than large hedge ...",
+   "title": "[PDF] Growth, Integration, and Monetary Policy in East Asia",
+   "url": "https://www.imes.boj.or.jp/research/papers/english/me25-s1-10.pdf"
+  },
+  {
+   "position": 3,
+   "site_name": "www.boj.or.jp",
+   "snippet": "Papers, Reports, Speeches and Financial Markets. The Bank of Japan is the central bank of Japan. Purchases of Japanese Government Bonds. Economic Activity and ...",
+   "title": "Home : 日本銀行 Bank of Japan",
+   "url": "https://www.boj.or.jp/en/"
+  },
+  {
+   "position": 4,
+   "site_name": "www.imes.boj.or.jp",
+   "snippet": "Thus, the new base money created by the unsterilized intervention would have to be quickly withdrawn in order to prevent sharp yen depreciation. In conclusion, ...",
+   "title": "[PDF] Comments and Rejoinder - IMES DISCUSSION PAPER SERIES",
+   "url": "https://www.imes.boj.or.jp/research/papers/english/99-E-28.pdf"
+  },
+  {
+   "position": 5,
+   "site_name": "www.boj.or.jp",
+   "snippet": "(1) Determines the specifics of daily market operations, (2) conducts foreign exchange interventions, (3) works toward improving the functioning of Japanese ...",
+   "title": "Annual Review 2020 : 日本銀行 Bank of Japan",
+   "url": "https://www.boj.or.jp/en/about/activities/act/ar2020.htm"
+  },
+  {
+   "position": 6,
+   "site_name": "www.imes.boj.or.jp",
+   "snippet": "This monographic paper summarizes views held by the Bank of Japan. (hereafter BOJ or the Bank) in the 1980s regarding economic conditions.",
+   "title": "[PDF] Bank of Japan's Monetary Policy in the 1980s: A View Perceived ...",
+   "url": "https://www.imes.boj.or.jp/research/papers/english/me33-5.pdf"
+  },
+  {
+   "position": 7,
+   "site_name": "www.imes.boj.or.jp",
+   "snippet": "Japan and many other countries had a long history of enjoying prosperity under the fixed exchange rate system called the Bretton Woods regime, yen/dollar ...",
+   "title": "[PDF] The Role of Central Banks in Exchange Rate Regimes in the 21st ...",
+   "url": "https://www.imes.boj.or.jp/research/papers/english/me20-s1-10.pdf"
+  },
+  {
+   "date": "Aug 9, 2005",
+   "position": 8,
+   "site_name": "www.imes.boj.or.jp",
+   "snippet": "After two decades of pegging at 360 yen, Japan decoupled from the dollar on August 1971 and then repegged at a revalued rate of 308 yen. On 18 ...",
+   "title": "[PDF] Can a Rapidly-Growing Export-Oriented Economy Smoothly Exit an ...",
+   "url": "https://www.imes.boj.or.jp/research/papers/english/05-E-09.pdf"
+  },
+  {
+   "position": 9,
+   "site_name": "www.imes.boj.or.jp",
+   "snippet": "One of these was the yen carry trade. This involved investors borrowing at zero interest rates in Japan and investing somewhere else such as in Australia ...",
+   "title": "[PDF] Financial Regulation Going Forward",
+   "url": "https://www.imes.boj.or.jp/research/papers/english/10-E-18.pdf"
+  },
+  {
+   "position": 10,
+   "site_name": "www.boj.or.jp",
+   "snippet": "Over this period some Japanese institutional investors increased investment in U.S. dollar-denominated bonds through yen-carry trades aiming to profit from ...",
+   "title": "The Japanese Economy and Monetary Policy in a Deflationary ...",
+   "url": "https://www.boj.or.jp/en/announcements/press/koen_2001/ko0202a.htm/"
+  }
+ ]
+}

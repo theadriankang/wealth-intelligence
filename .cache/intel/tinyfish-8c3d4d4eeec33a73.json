@@ -1,0 +1,78 @@
+{
+ "at": 1788536860433,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "OPEC production quota mechanics",
+   "d": [
+    "iea.org",
+    "opec.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Oct 30, 2003",
+   "position": 1,
+   "site_name": "www.opec.org",
+   "snippet": "production quota would be left until some time in the future, double its oil production to 3.5- 4.0m b/d by 2005 and further to 25 years of ...",
+   "title": "[PDF] bulletin-2003-10.pdf - OPEC.org",
+   "url": "https://www.opec.org/assets/assetdb/bulletin-2003-10.pdf"
+  },
+  {
+   "date": "Jan 1, 2004",
+   "position": 2,
+   "site_name": "www.opec.org",
+   "snippet": "A course on Mechanics and operations of oil trading was organized by the Energy Institute (IP) OPEC's production quota allocation",
+   "title": "[PDF] bulletin-2004-01.pdf - OPEC.org",
+   "url": "https://www.opec.org/assets/assetdb/bulletin-2004-01.pdf"
+  },
+  {
+   "date": "Dec 4, 2003",
+   "position": 3,
+   "site_name": "www.opec.org",
+   "snippet": "The importance of weighted variables to OPEC's production quota allocation — Mahmoud Al-Osaimy and Aziz Yahyai",
+   "title": "[PDF] bulletin-2003-12.pdf - OPEC.org",
+   "url": "https://www.opec.org/assets/assetdb/bulletin-2003-12.pdf"
+  },
+  {
+   "date": "Dec 10, 2004",
+   "position": 4,
+   "site_name": "www.opec.org",
+   "snippet": "OPEC, a kind of fifth column: it was deliberately violating production quotas and was prioritizing a policy of volume versus price, producing ...",
+   "title": "[PDF] bulletin-2004-12.pdf - OPEC.org",
+   "url": "https://www.opec.org/assets/assetdb/bulletin-2004-12.pdf"
+  },
+  {
+   "position": 5,
+   "site_name": "www.opec.org",
+   "snippet": "The OPEC WOO App provides increased access to the publication's vital analysis and energy-related data. It is ideal for energy professionals, oil industry ...",
+   "title": "[PDF] World Oil Outlook 2045 - OPEC.org",
+   "url": "https://www.opec.org/assets/assetdb/woo-2020.pdf"
+  },
+  {
+   "date": "Feb 1, 2001",
+   "position": 6,
+   "site_name": "www.opec.org",
+   "snippet": "Quota systems imposed by the government are Page 26 26 OPEC. Consumption growth, derived from production and trade data,",
+   "title": "[PDF] bulletin-2001-02.pdf - OPEC.org",
+   "url": "https://www.opec.org/assets/assetdb/bulletin-2001-02.pdf"
+  },
+  {
+   "date": "Apr 4, 2022",
+   "position": 7,
+   "site_name": "www.iea.org",
+   "snippet": "Estimates of OPEC crude production are based on information from a wide range of sources with tanker tracking information being particularly ...",
+   "title": "Oil Market Report Glossary – Analysis - IEA",
+   "url": "https://www.iea.org/articles/oil-market-report-glossary"
+  },
+  {
+   "position": 8,
+   "site_name": "www.iea.org",
+   "snippet": "Production from the Saudi-Kuwaiti Neutral Zone may be reported separately, but in reality is shared 50/50 between them and included in respective OPEC quotas.",
+   "title": "Glossary - IEA",
+   "url": "https://www.iea.org/glossary"
+  }
+ ]
+}

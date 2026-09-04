@@ -1,0 +1,88 @@
+{
+ "at": 1788537459967,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "ECB calendar",
+   "d": [
+    "federalreserve.gov",
+    "ecb.europa.eu",
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Browse schedules for the meetings of the Governing Council and General Council of the ECB and related press conferences.",
+   "title": "Meetings of the Governing Council and the General Council",
+   "url": "https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html"
+  },
+  {
+   "position": 2,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Weekly schedule · Meetings of the Governing Council and the General Council · Statistical calendars · Eurosystem's tender operations · Reserve maintenance period.",
+   "title": "Calendars - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/calendars/html/index.en.html"
+  },
+  {
+   "position": 3,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Weekly schedule of public speaking engagements and other activities Friday, 28 August 2026 - Sunday, 06 September 2026",
+   "title": "Weekly schedule of public speaking engagements and other activities",
+   "url": "https://www.ecb.europa.eu/press/calendars/weekly/html/index.en.html"
+  },
+  {
+   "position": 4,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The ECB, together with national central banks, regularly publishes macro- and micro-level statistics on various topics related to central banking and the euro ...",
+   "title": "Statistical calendars - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/calendars/statscal/html/index.en.html"
+  },
+  {
+   "position": 5,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "A list of all monthly monetary policy decisions by the Governing Council of the ECB by year. 23 July 2026",
+   "title": "Monetary policy decisions - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/govcdec/mopo/html/index.en.html"
+  },
+  {
+   "position": 6,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Release calendar of the Euro area balance of payments and international investment position data · 18/09/2026 10:00 CET: Euro area monthly balance of payments ( ...",
+   "title": "Release calendar of the Euro area balance of payments and ...",
+   "url": "https://www.ecb.europa.eu/press/calendars/statscal/ext/html/stprbp.en.html"
+  },
+  {
+   "position": 7,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Release calendar for the euro area bank interest rate statistics · 02/09/2026 10:00 CET: Euro area bank interest rate statistics (Dataset: MIR) · 01/10/2026 10:00 ...",
+   "title": "Release calendar for the euro area bank interest rate statistics",
+   "url": "https://www.ecb.europa.eu/press/calendars/statscal/mfm/html/stprmf.en.html"
+  },
+  {
+   "position": 8,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Indicative calendar of reserve maintenance periods. Indicative operational calendars for 2026 · Indicative operational calendars for 2025 · Indicative ...",
+   "title": "Indicative calendar of reserve maintenance periods",
+   "url": "https://www.ecb.europa.eu/press/calendars/reserve/html/index.en.html"
+  },
+  {
+   "date": "Jun 30, 2026",
+   "position": 9,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The European Central Bank (ECB) today published the indicative calendars for the Eurosystem's regular tender operations and reserve maintenance ...",
+   "title": "ECB publishes indicative operational calendars for 2027 - Europa.eu",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.pr260630~9f54a0a4fb.en.html"
+  },
+  {
+   "position": 10,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Stay informed about upcoming and past ECB conferences and seminars.",
+   "title": "Conferences & seminars - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/conferences/html/index.en.html"
+  }
+ ]
+}

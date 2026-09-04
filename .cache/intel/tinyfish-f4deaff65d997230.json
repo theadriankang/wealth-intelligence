@@ -1,0 +1,87 @@
+{
+ "at": 1788537385245,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Bank of Japan policy meeting calendar",
+   "d": [
+    "boj.or.jp"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.boj.or.jp",
+   "snippet": "A list of scheduled dates of the meetings; Minutes Jan. 22 (Thurs.), 23 (Fri.) Feb. 2 (Mon.) Mar. 25 (Wed.) Oct. 29 (Thurs.), 30 (Fri.) Nov. 10 (Tues.) Jan. 27 ...",
+   "title": "Monetary Policy Meetings : 日本銀行 Bank of Japan",
+   "url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/index.htm"
+  },
+  {
+   "position": 2,
+   "site_name": "www.boj.or.jp",
+   "snippet": "Upcoming Monetary Policy Meeting Dates. Sept. 17 (Thurs.), 18 (Fri.) Monetary Policy Meetings. Release Schedule of Statistical Data.",
+   "title": "Release Schedule : 日本銀行 Bank of Japan",
+   "url": "https://www.boj.or.jp/en/about/calendar/index.htm"
+  },
+  {
+   "position": 3,
+   "site_name": "www.boj.or.jp",
+   "snippet": "Minutes of the Monetary Policy Meetings List by Year. 日本語 · 2026 · 2025 · 2024 · 2023 · 2022 · 2021 · 2020 · 2019 · 2018.",
+   "title": "Minutes of the Monetary Policy Meetings List by Year - 日本銀行",
+   "url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/minu_all/index.htm"
+  },
+  {
+   "position": 4,
+   "site_name": "www.boj.or.jp",
+   "snippet": "Monetary Policy Meeting on July 30 and 31, 2026[PDF. Monetary Policy Meeting on June 15 and 16, 2026[PDF. Next Monetary Policy Meeting Date September 17 and 18 ...",
+   "title": "Home : 日本銀行 Bank of Japan",
+   "url": "https://www.boj.or.jp/en/"
+  },
+  {
+   "date": "Jul 31, 2026",
+   "position": 5,
+   "site_name": "www.boj.or.jp",
+   "snippet": "MPM Minutes Jan. 21 (Thurs.), 22 (Fri.) Feb. 1 (Mon.) Mar. May 7 (Fri.) Apr. May 12 (Wed.) June 16 (Wed.) June 10 (Thurs.), 11 (Fri.) -- June. ...",
+   "title": "[PDF] Scheduled Dates of Monetary Policy Meetings in 2027",
+   "url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/m_ref/mref260731a.pdf"
+  },
+  {
+   "position": 6,
+   "site_name": "www.boj.or.jp",
+   "snippet": "Scheduled Dates of Monetary Policy Meetings in 2027 [PDF 137KB] · July 31, 2025 · Scheduled Dates of Monetary Policy Meetings in 2026 [PDF 278KB] · July 31, 2024.",
+   "title": "Others : 日本銀行 Bank of Japan",
+   "url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/m_ref/index.htm"
+  },
+  {
+   "position": 7,
+   "site_name": "www.boj.or.jp",
+   "snippet": "A list of past dates of the meetings; policy statements; Minutes Jan. 23 (Thurs.), 24 (Fri.) - Dec. 29 (Mon.) Jan. 28 (Wed.), 2026. Dec. 27 (Fri.) Jan. 26 (Fri ...",
+   "title": "Past Monetary Policy Meetings : 日本銀行 Bank of Japan",
+   "url": "https://www.boj.or.jp/en/mopo/mpmsche_minu/past.htm"
+  },
+  {
+   "position": 8,
+   "site_name": "www.boj.or.jp",
+   "snippet": "Date Sept. 2, 2026 Speaker. Date Aug. 27, 2026. Date June 25, 2026. Aug. 27, 2026 HIMINO. Scheduled Dates of Upcoming Speeches Date Sept. 10, 2026 Speaker. Tel ...",
+   "title": "Speeches and Statements : 日本銀行 Bank of Japan",
+   "url": "https://www.boj.or.jp/en/about/press/index.htm"
+  },
+  {
+   "date": "May 27, 2024",
+   "position": 9,
+   "site_name": "www.boj.or.jp",
+   "snippet": "May 27, 2024 · UCHIDA Shinichi, Deputy Governor · \"Price Dynamics in Japan over the Past 25 Years\" (Keynote Speech at the 2024 BOJ-IMES Conference Hosted by the ...",
+   "title": "Review of Monetary Policy from a Broad Perspective - 日本銀行",
+   "url": "https://www.boj.or.jp/en/mopo/outline/bpreview/index.htm"
+  },
+  {
+   "position": 10,
+   "site_name": "www.boj.or.jp",
+   "snippet": "Monetary Policy Meetings. Monetary Policy Meetings · Summary of Opinions ... Outline of Statistics and Statistical Release Schedule. Outline of Statistics ...",
+   "title": "Market Operations by the Bank of Japan - 日本銀行",
+   "url": "https://www.boj.or.jp/en/statistics/boj/fm/ope/index.htm"
+  }
+ ]
+}

@@ -1,0 +1,95 @@
+{
+ "at": 1788537508179,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "residential property purchase deposit timing and financing",
+   "d": [
+    "mas.gov.sg",
+    "hkma.gov.hk"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Feb 28, 2024",
+   "position": 1,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "For residential properties for self-occupation, the maximum loan-to-value (LTV) ratios will be adjusted to 70% for properties valued at HK$30 ...",
+   "title": "Countercyclical Macroprudential Measures for Property Mortgage ...",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2024/02/20240228-3/"
+  },
+  {
+   "date": "Oct 6, 2012",
+   "position": 2,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "9 The new MAS rules impose an absolute limit of 35 years on the tenure of all loans for residential property. This will apply to loans to both ...",
+   "title": "MAS Restricts Loan Tenure for Residential Properties",
+   "url": "https://www.mas.gov.sg/news/media-releases/2012/mas-restricts-loan-tenure-for-residential-properties"
+  },
+  {
+   "position": 3,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "2 As part of the minimum 10% downpayment by the borrower, the minimum cash component for purchases of private residential properties has also been reduced from ...",
+   "title": "MAS Issues Revised Housing Loan Rules",
+   "url": "https://www.mas.gov.sg/news/media-releases/2005/mas-issues-revised-housing-loan-rules"
+  },
+  {
+   "date": "Dec 4, 2024",
+   "position": 4,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "The special scheme aims to provide flexibility for banks to assist homebuyers who bought uncompleted residential properties during 2021 to 2023 ...",
+   "title": "Special Mortgage Scheme for Uncompleted Residential Properties",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2024/12/20241204-5/"
+  },
+  {
+   "date": "Jun 20, 2016",
+   "position": 5,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "Interest and repayment holidays in the first two to three years, or only a small amount of down payment, with full payment to be made only after ...",
+   "title": "Mortgage Loans with High Loan-to-Value Ratios offered by Property ...",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2016/06/20160620/"
+  },
+  {
+   "date": "Feb 5, 2026",
+   "position": 6,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "Under PAPT, the buyer's mortgage loan proceeds will be transferred to the seller's bank through the interbank electronic payment system, ...",
+   "title": "Expansion of PAPT to cover sale and purchase of residential ...",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/02/20260205-4/"
+  },
+  {
+   "date": "Feb 25, 1998",
+   "position": 7,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "Mortgagee actions (in the form of repossession of the property) generally took place about 11 months after the loans were overdue for one month.",
+   "title": "Survey on Residential Mortgages in Hong Kong",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/1998/02/980225/"
+  },
+  {
+   "date": "Feb 12, 2004",
+   "position": 8,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "The number of mortgages in negative equity is declining as property prices rebound. A friend told me this morning, with great excitement, ...",
+   "title": "improvements in negative equity - Hong Kong Monetary Authority",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2004/02/20040212/"
+  },
+  {
+   "date": "Jul 14, 2014",
+   "position": 9,
+   "site_name": "www.hkma.gov.hk",
+   "snippet": "In addition, to encourage sales, many property developers would offer top-up mortgages of up to 20% of the purchase price to buyers. In other ...",
+   "title": "The HKMA's countercyclical prudential measures and financial stability",
+   "url": "https://www.hkma.gov.hk/eng/news-and-media/insight/2014/07/20140714/"
+  },
+  {
+   "date": "Aug 30, 2010",
+   "position": 10,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "6 The 10% minimum cash payment will apply to transactions where the date on which the option to purchase (OTP) was granted falls on or after 30 ...",
+   "title": "Joint Press Release on Measures to Maintain a Stable and ...",
+   "url": "https://www.mas.gov.sg/news/media-releases/2010/measures-to-maintain-a-stable-and-sustainable-property-market"
+  }
+ ]
+}

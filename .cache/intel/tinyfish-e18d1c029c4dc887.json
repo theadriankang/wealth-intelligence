@@ -1,0 +1,88 @@
+{
+ "at": 1788537243962,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Asian household wealth allocation and home bias",
+   "d": [
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Dec 2, 2025",
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "Chinese households are unable to use home equity for borrowing, real estate functions as an investment asset for some residents. increase in ...",
+   "title": "[PDF] Housing wealth effects in China - the BIS",
+   "url": "https://www.bis.org/publications/working-paper-1319-housing-wealth-effects-china.pdf"
+  },
+  {
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "Indeed, apart from Spanish banks, home bias tended to spare claims at home from the asset shedding. A retreat to the home market when a bank has suffered ...",
+   "title": "VI. | Bank for International Settlements - the BIS",
+   "url": "https://www.bis.org/publications/vi-11"
+  },
+  {
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "This bias towards domestic securities appears too strong to be explained by the obvious barriers to foreign investment: higher transaction and information costs ...",
+   "title": "[PDF] V. Asset prices and the asset management industry",
+   "url": "https://www.bis.org/publ/ar98b05.pdf"
+  },
+  {
+   "position": 4,
+   "site_name": "www.bis.org",
+   "snippet": "The severity of the home bias found in EME Asia's asset holdings is an important finding of the paper. average, 82% of EME Asian equity holdings were domestic ...",
+   "title": "[PDF] Cross-border Financial Linkages: Challenges for Monetary Policy ...",
+   "url": "https://www.bis.org/publications/paper-82-cross-border-financial-linkages-challenges-monetary-policy-and-financial-stability.pdf"
+  },
+  {
+   "position": 5,
+   "site_name": "www.bis.org",
+   "snippet": "As a result, over 90% of households participate and 70% of losses were insured. We estimate that 60% of insured losses were in turn re-insured, so that almost ...",
+   "title": "[PDF] (re)insurance puzzle: Home bias in disaster risk-bearing - the BIS",
+   "url": "https://www.bis.org/publications/working-paper-808-disaster-under-reinsurance-puzzle-home-bias-disaster-risk-bearing.pdf"
+  },
+  {
+   "date": "Jun 29, 2021",
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "In general, home ownership tends to be far more dispersed in the population than equity ownership, which tends to be concentrated at the top of ...",
+   "title": "II. The distributional footprint of monetary policy - the BIS",
+   "url": "https://www.bis.org/publications/aer-2021/distributional-footprint-monetary-policy"
+  },
+  {
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "Over the past decade, Asia-Pacific economies have made significant progress in developing private housing markets and market-based systems for financing.",
+   "title": "[PDF] The structure of housing finance markets and house prices in Asia",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt0612g.pdf"
+  },
+  {
+   "position": 8,
+   "site_name": "www.bis.org",
+   "snippet": "The impact effect of a decline in E's rate of growth is a decline in the value of E's assets which drags down E's wealth one for one given the extreme home bias ...",
+   "title": "[PDF] An Equilibrium Model of \"Global Imbalances\" and Low Interest Rates",
+   "url": "https://www.bis.org/events/conf060619caballero.pdf"
+  },
+  {
+   "position": 9,
+   "site_name": "www.bis.org",
+   "snippet": "However, household saving would tend to fall at higher levels of wealth. In line with this, empirical studies find that growth is associated with higher ...",
+   "title": "[PDF] Pension systems in EMEs: implications for capital flows and financial ...",
+   "url": "https://www.bis.org/publ/bppdf/bispap44c.pdf"
+  },
+  {
+   "date": "Oct 25, 2023",
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "Our research sheds light on the potential mechanisms through which AI adoption might influence income distribution, including structural ...",
+   "title": "Artificial intelligence, services globalisation and income inequality",
+   "url": "https://www.bis.org/publications/working-paper-1135-artificial-intelligence-services-globalisation-and-income-inequality"
+  }
+ ]
+}

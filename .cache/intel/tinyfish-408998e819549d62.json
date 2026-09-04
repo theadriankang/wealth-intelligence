@@ -1,0 +1,91 @@
+{
+ "at": 1788537313143,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "Lombard lending advance rates and haircut policy",
+   "d": [
+    "bis.org",
+    "finma.ch"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "This area summarises the institutional frameworks and key features of monetary policy operating procedures for each currency area.",
+   "title": "Markets Committee compendium currency area overviews - the BIS",
+   "url": "https://www.bis.org/committees/mc/compendium/currencies"
+  },
+  {
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "This chapter sets out the standardised approach for credit risk as it applies to individual claims. Minimum haircut floors for securities financing ...",
+   "title": "individual exposures | Bank for International Settlements - the BIS",
+   "url": "https://www.bis.org/committees/bcbs/basel-framework/standard/cre/20/inforce/2023-01-01/published/2022-12-08"
+  },
+  {
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "Tokenised platforms with central bank reserves, commercial bank money and government bonds can underpin the next-generation monetary and financial system.",
+   "title": "III. The next-generation monetary and financial system - the BIS",
+   "url": "https://www.bis.org/publications/aer-2025/next-generation-monetary-financial-system"
+  },
+  {
+   "date": "Nov 17, 2025",
+   "position": 4,
+   "site_name": "www.finma.ch",
+   "snippet": "Leveraged finance and Lombard loans granted by banks, as well as the Swiss SMEs and corporate lending business are particularly affected. The ...",
+   "title": "[PDF] FINMA Risk Monitor 2025",
+   "url": "https://www.finma.ch/en/~/media/finma/dokumente/dokumentencenter/myfinma/finma-publikationen/risikomonitor/20251117-finma-risikomonitor-2025.pdf?sc_lang=en&hash=6CB0C57B5333208BA29F26542B3B76B8"
+  },
+  {
+   "date": "Oct 3, 2013",
+   "position": 5,
+   "site_name": "www.bis.org",
+   "snippet": "liquidity shortage on the interbank market varying haircuts on eligible assets; determining bank lending rates,",
+   "title": "[PDF] Liquidity regulation and monetary policy implementation",
+   "url": "https://www.bis.org/review/r131004e.pdf"
+  },
+  {
+   "date": "Jun 22, 2026",
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "A shift from retail to wholesale funding typically increases the pass-through of policy rates to banks' marginal funding costs and lending ...",
+   "title": "[PDF] Annual Economic Report 2026 - the BIS",
+   "url": "https://www.bis.org/publications/aer-2026.pdf"
+  },
+  {
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "Hachem and Kuncl (2025) explore how regulations could help increase banks' “haircuts” on withdrawals during banking crises.",
+   "title": "[PDF] When is less more? Bank arrangements for liquidity vs central bank ...",
+   "url": "https://www.bis.org/publications/working-paper-1307-when-less-more-bank-arrangements-liquidity-vs-central-bank-support.pdf"
+  },
+  {
+   "date": "Aug 24, 2017",
+   "position": 8,
+   "site_name": "www.bis.org",
+   "snippet": "And generally, the interest rates faced by households and businesses typically moved in line with movements in central bank policy rates.",
+   "title": "The interdependence of research and policymaking - the BIS",
+   "url": "https://www.bis.org/speeches/20170824-interdependence-research-and-policymaking"
+  },
+  {
+   "position": 9,
+   "site_name": "www.finma.ch",
+   "snippet": "securities and cash collateral, the standard supervisory haircut for the exchange rate risk shall be 8%. ... loans and retail positions: Lombard loans may be ...",
+   "title": "[PDF] Unofficial translation of the Swiss Federal Banking Commission's ...",
+   "url": "https://www.finma.ch/finmaarchiv/ebk/e/regulier/rundsch/2006/rs_0601_e.pdf"
+  },
+  {
+   "date": "Oct 24, 2013",
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "The major global banks have raised $500 billion of new equity over the past few years and are on course as a group to meet the Basel III ...",
+   "title": "[PDF] Mark Carney: The UK at the heart of a renewed globalisation",
+   "url": "https://www.bis.org/review/r131025g.pdf"
+  }
+ ]
+}

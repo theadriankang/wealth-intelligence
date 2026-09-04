@@ -1,0 +1,92 @@
+{
+ "at": 1788537008277,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "global oil supply and demand balance",
+   "d": [
+    "iea.org",
+    "opec.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Aug 12, 2026",
+   "position": 1,
+   "site_name": "www.iea.org",
+   "snippet": "Global oil demand is projected to expand by 2.4 mb/d in 2027. Global oil supply rose by 2.4 mb/d to 101.5 mb/d in July, but remained 6.3 mb/d ...",
+   "title": "Oil Market Report - August 2026 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/oil-market-report-august-2026"
+  },
+  {
+   "date": "Mar 4, 2026",
+   "position": 2,
+   "site_name": "www.iea.org",
+   "snippet": "Global oil supply and demand balances, historical and forecasts ahead of 28 February 2026 - Chart and data by the International Energy ...",
+   "title": "Global oil supply and demand balances, historical and forecasts ...",
+   "url": "https://www.iea.org/data-and-statistics/charts/global-oil-supply-and-demand-balances-historical-and-forecasts-ahead-of-28-february-2026"
+  },
+  {
+   "position": 3,
+   "site_name": "www.opec.org",
+   "snippet": "The report provides a detailed analysis of key developments impacting oil market trends in world oil demand, supply as well as the oil market balance.",
+   "title": "Monthly Oil Market Report - OPEC.org",
+   "url": "https://www.opec.org/monthly-oil-market-report.html"
+  },
+  {
+   "position": 4,
+   "site_name": "www.iea.org",
+   "snippet": "Monthly supply and demand balances for individual OECD countries, presenting indigenous production, imports, exports, stock changes, refinery intake and output, ...",
+   "title": "Monthly Oil Data Service (MODS) Supply, Demand, Balances and ...",
+   "url": "https://www.iea.org/data-and-statistics/data-product/monthly-oil-data-service-mods-supply-demand-balances-and-stocks"
+  },
+  {
+   "date": "Jun 17, 2026",
+   "position": 5,
+   "site_name": "www.iea.org",
+   "snippet": "Global oil demand is forecast to decline by 1.1 mb/d y-o-y in 2026. · Global supply is set to fall by 3.9 mb/d to 102.4 mb/d in 2026 before ...",
+   "title": "Oil Market Report - June 2026 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/oil-market-report-june-2026"
+  },
+  {
+   "position": 6,
+   "site_name": "www.iea.org",
+   "snippet": "The oil supply shown below combines crude and refined oil produces and includes oil production and oil imports in each country minus oil that is exported or ...",
+   "title": "World - IEA",
+   "url": "https://www.iea.org/world/oil"
+  },
+  {
+   "date": "Jul 10, 2026",
+   "position": 7,
+   "site_name": "www.iea.org",
+   "snippet": "Global oil supply rebounded by a sharp 4.1 mb/d to 98.8 mb/d in June, pinned a partial recovery in Gulf production. expand by 7.5 mb/d next ...",
+   "title": "Oil Market Report - July 2026 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/oil-market-report-july-2026"
+  },
+  {
+   "date": "Jun 22, 2026",
+   "position": 8,
+   "site_name": "www.iea.org",
+   "snippet": "Global oil supply had been running ahead of demand for 12 months, with the amount of oil in storage reaching 8.2 billion barrels. China ...",
+   "title": "How global oil supplies have readjusted to help fill the huge gap left ...",
+   "url": "https://www.iea.org/commentaries/how-global-oil-supplies-have-readjusted-to-help-fill-the-huge-gap-left-by-the-strait-of-hormuz-shock"
+  },
+  {
+   "date": "May 13, 2026",
+   "position": 9,
+   "site_name": "www.iea.org",
+   "snippet": "Global oil supply declined by a further 1.8 mb/d in April to 95.1 mb ... Global oil demand is now expected to contract by 2.4 mb/d ...",
+   "title": "Oil Market Report - May 2026 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/oil-market-report-may-2026"
+  },
+  {
+   "position": 10,
+   "site_name": "www.iea.org",
+   "snippet": "In the wake of the largest oil supply disruption in history, Brent futures – the global benchmark for crude prices – rose steeply, peaking at more than 60% ...",
+   "title": "The Middle East and Global Energy Markets – Topics - IEA",
+   "url": "https://www.iea.org/topics/the-middle-east-and-global-energy-markets"
+  }
+ ]
+}

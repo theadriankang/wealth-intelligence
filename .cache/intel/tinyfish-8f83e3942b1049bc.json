@@ -1,0 +1,92 @@
+{
+ "at": 1788537475944,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "global freight and shipping rate drivers",
+   "d": [
+    "unctad.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Oct 22, 2024",
+   "position": 1,
+   "site_name": "unctad.org",
+   "snippet": "Disruptions in the Red Sea, Suez Canal, and Panama Canal have driven up shipping costs, sending shockwaves through the global economy.",
+   "title": "High freight rates strain global supply chains, threaten vulnerable ...",
+   "url": "https://unctad.org/news/high-freight-rates-strain-global-supply-chains-threaten-vulnerable-economies"
+  },
+  {
+   "date": "Sep 24, 2025",
+   "position": 2,
+   "site_name": "unctad.org",
+   "snippet": "Freight rates have become more volatile, with disruptions such as the 2024 Red Sea crisis driving a surge that year, while ongoing geopolitical ...",
+   "title": "Stormy seas for global shipping: UNCTAD warns of uncertainty ...",
+   "url": "https://unctad.org/news/stormy-seas-global-shipping-unctad-warns-uncertainty-volatility-and-rising-costs"
+  },
+  {
+   "date": "Apr 23, 2025",
+   "position": 3,
+   "site_name": "unctad.org",
+   "snippet": "Their share of global maritime freight rose from 38% in 2000 to 54% in 2023. The surge was led by Asia, with China driving much of the growth.",
+   "title": "Shipping data: UNCTAD releases new seaborne trade statistics",
+   "url": "https://unctad.org/news/shipping-data-unctad-releases-new-seaborne-trade-statistics"
+  },
+  {
+   "position": 4,
+   "site_name": "unctad.org",
+   "snippet": "global ship carrying capacity expanded at an annual rate of 3.2 per cent. The global fleet continued to grow at 3.2 per cent in 2022 but aged compared to a ...",
+   "title": "[PDF] Chapter 2: World shipping fleet, services, and freight rates - UNCTAD",
+   "url": "https://unctad.org/system/files/official-document/rmt2023ch2_en.pdf"
+  },
+  {
+   "date": "Sep 24, 2025",
+   "position": 5,
+   "site_name": "unctad.org",
+   "snippet": "Container, bulk and tanker freight rates have remained elevated and volatile in 2024 and 2025, swinging sharply amid geopolitical tensions, ...",
+   "title": "Review of Maritime Transport 2025: Staying the course in turbulent ...",
+   "url": "https://unctad.org/publication/review-maritime-transport-2025"
+  },
+  {
+   "date": "Nov 17, 2021",
+   "position": 6,
+   "site_name": "unctad.org",
+   "snippet": "High freight rates have boosted the profits of global container shipping companies. In the first quarter of 2020 their operating profits ...",
+   "title": "[PDF] Freight rates, maritime transport costs and their impact on prices",
+   "url": "https://unctad.org/system/files/official-document/rmt2021ch3_en.pdf"
+  },
+  {
+   "position": 7,
+   "site_name": "unctad.org",
+   "snippet": "Global maritime trade grew by 2.4% in 2023, recovering from a 2022 contraction, Freight rates surged in 2024",
+   "title": "Review of Maritime Transport 2024 | UN Trade and Development ...",
+   "url": "https://unctad.org/publication/review-maritime-transport-2024"
+  },
+  {
+   "position": 8,
+   "site_name": "unctad.org",
+   "snippet": "The flagship report provides an analysis of structural and cyclical changes affecting seaborne trade, ports and shipping, as well as an extensive collection",
+   "title": "Review of Maritime Transport | UN Trade and Development (UNCTAD)",
+   "url": "https://unctad.org/topic/transport-and-trade-logistics/review-of-maritime-transport"
+  },
+  {
+   "date": "Apr 27, 2010",
+   "position": 9,
+   "site_name": "unctad.org",
+   "snippet": "Maritime transport, which carries over 80% of the volume of global merchandise trade, relies heavily on oil for propulsion, and in view of the ...",
+   "title": "How are maritime freight rates affected by rising oil prices? - UNCTAD",
+   "url": "https://unctad.org/news/how-are-maritime-freight-rates-affected-rising-oil-prices"
+  },
+  {
+   "date": "Nov 18, 2021",
+   "position": 10,
+   "site_name": "unctad.org",
+   "snippet": "If container freight rates remain at their current high levels, global consumer prices are projected to be 1.5% higher in 2023 than they ...",
+   "title": "Maritime trade weathers COVID-19 storm but faces far-reaching ...",
+   "url": "https://unctad.org/news/maritime-trade-weathers-covid-19-storm-faces-far-reaching-knock-effects"
+  }
+ ]
+}

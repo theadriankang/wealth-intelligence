@@ -1,0 +1,22 @@
+{
+ "at": 1788537422550,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "uncalled commitment capital call mechanics",
+   "d": [
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "There has been no call-up of capital and the amount of contributions paid in has remained unchanged at $38 million since 7th March i960.",
+   "title": "[PDF] 35th annual report of the Bank for International Settlements - 1965",
+   "url": "https://www.bis.org/publ/arpdf/archive/ar1965_en.pdf"
+  }
+ ]
+}

@@ -1,0 +1,45 @@
+{
+ "at": 1788537485112,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "integrated oil major cashflow breakeven",
+   "d": [
+    "iea.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.iea.org",
+   "snippet": "Upstream oil and gas investment is set for another modest rise in 2019 · Shale remains dynamic, but the investment focus is shifting to conventional assets.",
+   "title": "Fuel supply – World Energy Investment 2019 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/world-energy-investment-2019/fuel-supply"
+  },
+  {
+   "position": 2,
+   "site_name": "www.iea.org",
+   "snippet": "The more modular design of SMRs significantly cuts construction times, with projects expected to reach cash flow break-even up to 10 years earlier than for ...",
+   "title": "Executive Summary – The Path to a New Era for Nuclear Energy - IEA",
+   "url": "https://www.iea.org/reports/the-path-to-a-new-era-for-nuclear-energy/executive-summary"
+  },
+  {
+   "date": "Jul 16, 2018",
+   "position": 3,
+   "site_name": "www.iea.org",
+   "snippet": "Between 2010 and 2014, companies spent up to USD 1.8 for each dollar of revenue. However, the industry has almost halved its breakeven price, ...",
+   "title": "Global energy investment in 2017 fails to keep up with energy ...",
+   "url": "https://www.iea.org/news/global-energy-investment-in-2017-fails-to-keep-up-with-energy-security-and-sustainability-goals"
+  },
+  {
+   "date": "Dec 9, 2020",
+   "position": 4,
+   "site_name": "www.iea.org",
+   "snippet": "Projected Costs of Generating Electricity 2020 - Analysis and key findings. A report by the International Energy Agency.",
+   "title": "Projected Costs of Generating Electricity 2020 – Analysis - IEA",
+   "url": "https://www.iea.org/reports/projected-costs-of-generating-electricity-2020"
+  }
+ ]
+}

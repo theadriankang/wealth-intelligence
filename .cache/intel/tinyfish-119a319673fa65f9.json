@@ -1,0 +1,88 @@
+{
+ "at": 1788537441771,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "ECB monetary policy transmission euro area",
+   "d": [
+    "ecb.europa.eu"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The transmission mechanism is characterised by long, variable and uncertain time lags. Thus it is difficult to predict the precise effect of monetary policy ...",
+   "title": "Transmission mechanism of monetary policy - European Central Bank",
+   "url": "https://www.ecb.europa.eu/mopo/intro/transmission/html/index.en.html"
+  },
+  {
+   "date": "Jul 23, 2026",
+   "position": 2,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The Governing Council today decided to keep the three key ECB interest rates unchanged. The outlook for energy prices, while highly volatile, ...",
+   "title": "Monetary policy decisions - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2026/html/ecb.mp260723~29f24d99bc.en.html"
+  },
+  {
+   "position": 3,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The monetary transmission mechanism consists of the various channels through which monetary policy actions affect the economy and the price level in particular.",
+   "title": "[PDF] Monetary policy transmission in the euro area",
+   "url": "https://www.ecb.europa.eu/pub/pdf/other/mbjul2000_article07.pdf"
+  },
+  {
+   "position": 4,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Our main aim at the ECB is price stability. We serve people living in the euro area by working to preserve the value of the euro.",
+   "title": "Overview of monetary policy and markets - European Central Bank",
+   "url": "https://www.ecb.europa.eu/mopo/html/index.en.html"
+  },
+  {
+   "date": "Aug 24, 2024",
+   "position": 5,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Monetary transmission Chart 1 shows the evolution of the euro short-term rate (€STR) forward curve since December 2021.",
+   "title": "The effectiveness and transmission of monetary policy in the euro area",
+   "url": "https://www.ecb.europa.eu/press/key/date/2024/html/ecb.sp240824~c215968c41.en.html"
+  },
+  {
+   "position": 6,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The ECB's monetary policy strategy provides a comprehensive framework within which we take our monetary policy decisions and communicate them to the public.",
+   "title": "Introduction - European Central Bank",
+   "url": "https://www.ecb.europa.eu/mopo/intro/html/index.en.html"
+  },
+  {
+   "position": 7,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "This paper surveys research from the ESCB ChaMP Research Network on how ongoing structural change is affecting monetary policy transmission in the euro area.",
+   "title": "Occasional papers - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/research-publications/occasional-papers/html/index.en.html"
+  },
+  {
+   "date": "Jun 30, 2025",
+   "position": 8,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The ELB continues to constrain the conduct of euro area monetary policy in the event of significant disinflation shocks, confirming the ...",
+   "title": "An overview of the ECB's monetary policy strategy - 2025 - Europa.eu",
+   "url": "https://www.ecb.europa.eu/mopo/strategy/strategy-review/ecb.strategyreview202506_strategy_overview.en.html"
+  },
+  {
+   "position": 9,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The ECB's monetary policy decisions are published in a press release at 14:15 CET on the day of the Governing Council monetary policy meeting.",
+   "title": "Monetary policy decisions - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/govcdec/mopo/html/index.en.html"
+  },
+  {
+   "position": 10,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "We quantify barriers to cross-border bank lending to firms within the euro area and their consequences for credit allocation and output. Using loan-level data ...",
+   "title": "Working papers - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/research-publications/working-papers/html/index.en.html"
+  }
+ ]
+}

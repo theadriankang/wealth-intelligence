@@ -1,0 +1,92 @@
+{
+ "at": 1788537462669,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "gold demand drivers central bank buying",
+   "d": [
+    "gold.org",
+    "imf.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Apr 29, 2026",
+   "position": 1,
+   "site_name": "www.gold.org",
+   "snippet": "Central bank demand of 244t in Q1 was up 17% q/q · Poland (31t) and Uzbekistan (25t) led buying in Q1 · Reported sales also increased, ...",
+   "title": "Central Banks - World Gold Council",
+   "url": "https://www.gold.org/goldhub/research/gold-demand-trends/gold-demand-trends-q1-2026/central-banks"
+  },
+  {
+   "date": "Jul 30, 2026",
+   "position": 2,
+   "site_name": "www.gold.org",
+   "snippet": "Total gold demand, including OTC, was unchanged y/y at 1,269t in Q2. Central banks made significant gold purchases in Q2 (289t). We expect ...",
+   "title": "Gold Demand Trends: Q2 2026 - World Gold Council",
+   "url": "https://www.gold.org/goldhub/research/gold-demand-trends/gold-demand-trends-q2-2026"
+  },
+  {
+   "date": "Jul 9, 2026",
+   "position": 3,
+   "site_name": "www.elibrary.imf.org",
+   "snippet": "Central banks should treat gold as a high‑risk reserve asset, and avoid interpreting valuation gains as a permanent increase in reserves.",
+   "title": "Gold in Central Bank Reserves: Strategic Considerations, Market ...",
+   "url": "https://www.elibrary.imf.org/view/journals/068/2026/007/article-A001-en.xml"
+  },
+  {
+   "position": 4,
+   "site_name": "www.gold.org",
+   "snippet": "Data on central bank gold holdings, sales and purchases, as well as insights from annual surveys into central bank attitudes towards gold.",
+   "title": "Goldhub | The Definitive Source for Gold Data and Insight",
+   "url": "https://www.gold.org/goldhub"
+  },
+  {
+   "date": "Jun 17, 2025",
+   "position": 5,
+   "site_name": "www.gold.org",
+   "snippet": "Similar to findings from previous surveys, central banks continue to hold favourable expectations on gold. Respondents overwhelmingly (95%) ...",
+   "title": "Central Bank Gold Reserves Survey 2025 - World Gold Council",
+   "url": "https://www.gold.org/goldhub/research/central-bank-gold-reserves-survey-2025"
+  },
+  {
+   "position": 6,
+   "site_name": "www.gold.org",
+   "snippet": "Gold demand saw a modest y/y increase in Q1 to 1,231t, Central banks continued to buy in healthy size. Jewellery demand volumes remained under pressure amid ...",
+   "title": "Gold Market And Demand Trends | World Gold Council",
+   "url": "https://www.gold.org/goldhub/research/gold-demand-trends"
+  },
+  {
+   "position": 7,
+   "site_name": "www.gold.org",
+   "snippet": "Today's demand for gold comes from a more diverse set of consumers and investors than ever before. Learn more about gold demand and read our reports.",
+   "title": "Global Gold Demand | World Gold Council",
+   "url": "https://www.gold.org/about-gold/gold-demand"
+  },
+  {
+   "date": "Oct 3, 2024",
+   "position": 8,
+   "site_name": "www.gold.org",
+   "snippet": "Central banks reported net purchases of 8t in August – the lowest since March; The National Bank of Poland was the leading buyer in the ...",
+   "title": "Central banks report modest demand for gold in August",
+   "url": "https://www.gold.org/goldhub/gold-focus/2024/10/central-banks-report-modest-demand-gold-august"
+  },
+  {
+   "date": "Jun 16, 2026",
+   "position": 9,
+   "site_name": "www.gold.org",
+   "snippet": "\"This year's survey sends a clear message: central bank demand for gold remains on an upward trajectory. A record number of respondents plan to ...",
+   "title": "Central banks set to step up gold buying over the next year",
+   "url": "https://www.gold.org/news-and-events/press-releases/central-banks-set-step-gold-buying-over-next-year"
+  },
+  {
+   "position": 10,
+   "site_name": "www.gold.org",
+   "snippet": "Data on central bank gold holdings, sales and purchases, as well as insights from annual surveys into central bank attitudes towards gold. E3: Chart loading ...",
+   "title": "Gold Price Performance & Data | World Gold Council",
+   "url": "https://www.gold.org/goldhub/data"
+  }
+ ]
+}

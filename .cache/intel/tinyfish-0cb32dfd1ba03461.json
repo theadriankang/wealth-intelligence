@@ -1,0 +1,86 @@
+{
+ "at": 1788537442569,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "ECB governing council meeting calendar",
+   "d": [
+    "ecb.europa.eu"
+   ]
+  }
+ },
+ "value": [
+  {
+   "position": 1,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Browse schedules for the meetings of the Governing Council and General Council of the ECB and related press conferences.",
+   "title": "Meetings of the Governing Council and the General Council",
+   "url": "https://www.ecb.europa.eu/press/calendars/mgcgc/html/index.en.html"
+  },
+  {
+   "position": 2,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Weekly schedule Meetings of the Governing Council and the General Council Statistical calendars Statistical calendars",
+   "title": "Calendars - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/calendars/html/index.en.html"
+  },
+  {
+   "position": 3,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The Governing Council usually meets twice a month. It assesses economic and monetary developments and takes its monetary policy decisions every six weeks.",
+   "title": "Governing Council - European Central Bank",
+   "url": "https://www.ecb.europa.eu/ecb/decisions/govc/html/index.en.html"
+  },
+  {
+   "position": 4,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The Governing Council, the main decision-making body of the ECB, usually meets every two weeks. Every six weeks, it takes its monetary policy decision,",
+   "title": "Governing Council decisions - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/govcdec/html/index.en.html"
+  },
+  {
+   "position": 5,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "A list of all monthly monetary policy decisions by the Governing Council of the ECB by year. s Weekly schedule Meetings of the Governing Council",
+   "title": "Monetary policy decisions - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/govcdec/mopo/html/index.en.html"
+  },
+  {
+   "position": 6,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "s Weekly schedule Meetings of the Governing Council … of public speaking engagements and other activities Friday, 28 August 2026 - Sunday, 06 September 2026. ...",
+   "title": "Weekly schedule of public speaking engagements and other activities",
+   "url": "https://www.ecb.europa.eu/press/calendars/weekly/html/index.en.html"
+  },
+  {
+   "position": 7,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "MEETING CALENDAR. Find the dates for upcoming Governing Council meetings and press conferences. Governing Council meeting calendar. All pages in this section.",
+   "title": "Press conference - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/press_conference/html/index.en.html"
+  },
+  {
+   "position": 8,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The accounts cover the monetary policy meetings of the Governing Council, normally held every six weeks. Next release: 8 October 2026. August 2026 Meeting of ...",
+   "title": "Monetary policy accounts - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/accounts/html/index.en.html"
+  },
+  {
+   "position": 9,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "Calendars · Calendars · Weekly schedule · Meetings of the Governing Council and the General Council · Statistical calendars · Statistical calendars · Money, ...",
+   "title": "Conferences & seminars - European Central Bank",
+   "url": "https://www.ecb.europa.eu/press/conferences/html/index.en.html"
+  },
+  {
+   "date": "Apr 24, 2025",
+   "position": 10,
+   "site_name": "www.ecb.europa.eu",
+   "snippet": "The indicative calendar for the Eurosystem's reserve maintenance periods takes into account the calendar for Governing Council meetings in 2026, ...",
+   "title": "ECB publishes indicative operational calendars for 2026 - Europa.eu",
+   "url": "https://www.ecb.europa.eu/press/pr/date/2025/html/ecb.pr250424~2643533670.en.html"
+  }
+ ]
+}

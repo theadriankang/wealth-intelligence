@@ -1,0 +1,94 @@
+{
+ "at": 1788537422588,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "private equity secondary market pricing and discounts",
+   "d": [
+    "bis.org"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Dec 6, 2021",
+   "position": 1,
+   "site_name": "www.bis.org",
+   "snippet": "This special feature examines how private capital markets have become a global force in all aspects of firm financing and restructuring.",
+   "title": "The rise of private markets - the BIS",
+   "url": "https://www.bis.org/publications/rise-private-markets"
+  },
+  {
+   "date": "Mar 11, 2025",
+   "position": 2,
+   "site_name": "www.bis.org",
+   "snippet": "A lower cost of capital allows lenders to offer loans at lower rates, thereby attracting more borrowers and expanding their market share. The ...",
+   "title": "The global drivers of private credit - the BIS",
+   "url": "https://www.bis.org/publications/global-drivers-private-credit"
+  },
+  {
+   "date": "Jan 19, 2026",
+   "position": 3,
+   "site_name": "www.bis.org",
+   "snippet": "Higher monetary policy uncertainty is associated with larger valuation discount to the acquirer, with the discount compensating investors for ...",
+   "title": "[PDF] Monetary policy and private equity acquisitions: tracing the links",
+   "url": "https://www.bis.org/publications/working-paper-1326-monetary-policy-and-private-equity-acquisitions-tracing-links.pdf"
+  },
+  {
+   "date": "Dec 6, 2021",
+   "position": 4,
+   "site_name": "www.bis.org",
+   "snippet": "This box outlines the structural features of private markets. First, it highlights some key details of the main investment vehicles. Second ...",
+   "title": "Private markets: a primer - the BIS",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt2112y.htm"
+  },
+  {
+   "date": "Mar 16, 2026",
+   "position": 5,
+   "site_name": "www.bis.org",
+   "snippet": "BDCs' stock prices fell by about 10% on average (blue line). Meanwhile discounts to net asset value, which is largely determined by the book ...",
+   "title": "Markets recalibrate amid shifting currents - the BIS",
+   "url": "https://www.bis.org/publ/qtrpdf/r_qt2603a.htm"
+  },
+  {
+   "date": "Aug 10, 2021",
+   "position": 6,
+   "site_name": "www.bis.org",
+   "snippet": "We find evidence that targets of private-to-private deals and targets that are ex-ante more likely to be financially constrained exhibit greater ...",
+   "title": "[PDF] BIS Working Papers - No 961 Private equity buyouts and firm exports",
+   "url": "https://www.bis.org/publications/working-paper-961-private-equity-buyouts-and-firm-exports-evidence-uk-firms.pdf"
+  },
+  {
+   "date": "Nov 20, 2023",
+   "position": 7,
+   "site_name": "www.bis.org",
+   "snippet": "Lately the global private equity industry has inevitably been affected by factors such as rising interest rates, slower growth, lacklustre IPO ...",
+   "title": "Darryl Chan: Opening address - 36th Annual AVCJ Private Equity ...",
+   "url": "https://www.bis.org/review/r231115r.htm"
+  },
+  {
+   "date": "Mar 12, 2026",
+   "position": 8,
+   "site_name": "www.bis.org",
+   "snippet": "In Canada, they purchase up to 50% of Government of Canada bonds sold at auction and account for a big portion of secondary market trading. In ...",
+   "title": "Tiff Macklem: New players, old risks - financial stability in a changing ...",
+   "url": "https://www.bis.org/review/r260310c.htm"
+  },
+  {
+   "date": "Jul 4, 2008",
+   "position": 9,
+   "site_name": "www.bis.org",
+   "snippet": "The credit market turmoil since mid-2007 has substantially affected the terms and conditions of funding in leveraged finance markets. Rising ...",
+   "title": "Private equity and leveraged finance markets",
+   "url": "https://www.bis.org/publ/cgfs30.htm"
+  },
+  {
+   "position": 10,
+   "site_name": "www.bis.org",
+   "snippet": "In a recent presentation, Dudley (2009) has argued that central banks may want to make it their business to pro-actively deal with asset price bubbles, despite ...",
+   "title": "[PDF] Development of financial markets in Asia and the Pacific",
+   "url": "https://www.bis.org/publ/bppdf/bispap52d.pdf"
+  }
+ ]
+}

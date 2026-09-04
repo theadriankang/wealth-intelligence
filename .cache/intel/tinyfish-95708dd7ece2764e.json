@@ -1,0 +1,80 @@
+{
+ "at": 1788537368521,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "equity long short net exposure and crowding",
+   "d": []
+  }
+ },
+ "value": [
+  {
+   "date": "Jan 13, 2026",
+   "position": 1,
+   "site_name": "www.morganstanley.com",
+   "snippet": "Reduce overall portfolio gross exposure by selling longs and covering shorts at the same time, so that the portfolio has less capital at risk ...",
+   "title": "Long Short Equity Strategies: \"Hedging\" Your Bets",
+   "url": "https://www.morganstanley.com/im/en-hk/intermediary-investor/insights/articles/long-short-equity-strategies-hedging-your-bets4.html"
+  },
+  {
+   "date": "Jun 17, 2026",
+   "position": 2,
+   "site_name": "www.caisgroup.com",
+   "snippet": "High net strategies carry exposure closer to a long-only portfolio, so market direction becomes the dominant outcome driver. In these strategies ...",
+   "title": "An Introduction to Long/Short Equity Strategies - CAIS",
+   "url": "https://www.caisgroup.com/articles/an-introduction-to-long-short-equity-strategies"
+  },
+  {
+   "position": 3,
+   "site_name": "www.greycourt.com",
+   "snippet": "The fund would have a positive net exposure of 50% (120% – 70%). Of course, we expect equity long/short funds to profit from every dollar they invest, long or ...",
+   "title": "The Current Case for Equity Long/Short Hedge Funds",
+   "url": "https://www.greycourt.com/white-paper/greycourt-white-paper-no-67-the-current-case-for-equity-long-short-hedge-funds-2/"
+  },
+  {
+   "date": "Nov 20, 2023",
+   "position": 4,
+   "site_name": "www.gspublishing.com",
+   "snippet": "This Hedge Fund Trend Monitor analyzes 735 hedge funds with $2.4 trillion of gross equity positions ($1.6 trillion long and $797 billion short).",
+   "title": "Hedge fund crowding reaches new record as popular ...",
+   "url": "https://www.gspublishing.com/content/research/en/reports/2023/11/20/c1c0208f-e17d-4152-ac01-22aa849e10dc.html"
+  },
+  {
+   "position": 5,
+   "site_name": "www.investopedia.com",
+   "snippet": "Net long exposure shows a bullish investment strategy, while net short exposure shows a bearish investment strategy. Lower net exposure can reduce a fund's risk ...",
+   "title": "Understanding Net Exposure: Definitions, Examples, and ...",
+   "url": "https://www.investopedia.com/terms/n/net-exposure.asp"
+  },
+  {
+   "position": 6,
+   "site_name": "funds.aqr.com",
+   "snippet": "Unlike traditional long-only equity strategies, Long-Short Equity strategies have the ability to reduce market exposure and potentially limit downside risk, ...",
+   "title": "Long-Short Equity Strategies - AQR Funds",
+   "url": "https://funds.aqr.com/Insights/Strategies/Long-Short-Equity"
+  },
+  {
+   "position": 7,
+   "site_name": "mergersandinquisitions.com",
+   "snippet": "Some funds even use market-neutral strategies in which the long positions equal the short positions, resulting in a net exposure of 0% (or close to it). This ...",
+   "title": "Long/Short Equity: Full Guide to the Most Accessible ...",
+   "url": "https://mergersandinquisitions.com/long-short-equity/"
+  },
+  {
+   "date": "Jun 4, 2024",
+   "position": 8,
+   "site_name": "analystprep.com",
+   "snippet": "The absolute value of the longs minus the absolute value of the shorts is referred to as the portfolio's net exposure. The sum of the longs plus ...",
+   "title": "Long and Short Securities | CFA Level III Study Notes",
+   "url": "https://analystprep.com/study-notes/cfa-level-iii/long-and-short-security/"
+  },
+  {
+   "position": 9,
+   "site_name": "academic.oup.com",
+   "snippet": "Gross exposure for long/short equity funds usually varies between 150 and 200 percent. The typical gross exposure is around 100 percent for a long-only fund and ...",
+   "title": "11 Directional Equity Strategies of Hedge Funds",
+   "url": "https://academic.oup.com/book/25365/chapter/192448466"
+  }
+ ]
+}

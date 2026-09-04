@@ -1,0 +1,92 @@
+{
+ "at": 1788537527458,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "US Treasury yield curve drivers",
+   "d": [
+    "federalreserve.gov"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Sep 3, 2024",
+   "position": 1,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "This wedge is usually referred to as the convenience yield of Treasury securities and is driven by the supply and demand for liquid and safe ...",
+   "title": "The Fed - Convenience Yield as a Driver of r* - Federal Reserve",
+   "url": "https://www.federalreserve.gov/econres/notes/feds-notes/convenience-yield-as-a-driver-of-r-20240903.html"
+  },
+  {
+   "date": "Sep 3, 2024",
+   "position": 2,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "Our analysis suggests that the rise in yields was primarily driven by an increase in term premiums, fueled by the combination of quantitative ...",
+   "title": "The Fed - The Treasury Tantrum of 2023 - Federal Reserve",
+   "url": "https://www.federalreserve.gov/econres/notes/feds-notes/the-treasury-tantrum-of-2023-20240903.html"
+  },
+  {
+   "date": "Jun 28, 2018",
+   "position": 3,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "Treasury yields, a bond's yield is an average of the forward rates over the term of a bond, yields tend to dull the signal embedded in forward ...",
+   "title": "The Fed - (Don't Fear) The Yield Curve - Federal Reserve",
+   "url": "https://www.federalreserve.gov/econres/notes/feds-notes/dont-fear-the-yield-curve-20180628.html"
+  },
+  {
+   "date": "Jun 16, 2006",
+   "position": 4,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "the nominal ten-year Treasury yield is roughly 5 percent, still very low by historical standards, compared to an average of more than 7-1/2 ...",
+   "title": "Why Are Yield Curves So Flat and Long Rates So Low Globally?",
+   "url": "https://www.federalreserve.gov/newsevents/speech/kroszner20060616a.htm"
+  },
+  {
+   "position": 5,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "A steepening of the U.S. Treasury yield curve has adverse effects on capital ratios in the euro area, which suggests that banks allow LSAP-induced fluctuations.",
+   "title": "[PDF] The Spillovers of LSAPs on Banks in the Euro Area - Federal Reserve",
+   "url": "https://www.federalreserve.gov/econres/feds/files/2026005r1pap.pdf"
+  },
+  {
+   "date": "May 5, 2014",
+   "position": 6,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "They point to interacted issuer-duration channels as more important drivers of yield changes following FOMC announcements, emphasizing a \" ...",
+   "title": "Yield Curve Impacts of Forward Guidance and Maurity Extension ...",
+   "url": "https://www.federalreserve.gov/pubs/feds/2013/201372/index.html"
+  },
+  {
+   "date": "Jun 26, 2020",
+   "position": 7,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "In this paper, we extract common factors from a cross-section of U.S. macro-variables and Treasury zero-coupon yields.",
+   "title": "The Fed - Unspanned macroeconomic factors in the yield curve",
+   "url": "https://www.federalreserve.gov/econres/feds/unspanned-macroeconomic-factors-in-the-yield-curve.htm"
+  },
+  {
+   "position": 8,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "The yield on the ten-year Treasury note also rises, from the average 2013:Q2 rate of 1.9 percent to 4.9 percent at the end of the projection period.",
+   "title": "Finance and Economics Discussion Series - Federal Reserve",
+   "url": "https://www.federalreserve.gov/pubs/feds/2013/201301/revision/index.html"
+  },
+  {
+   "date": "Jul 28, 2023",
+   "position": 9,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "The identifying assumption is that changes in foreign official holdings of Treasuries are driven by foreign central banks' reserve management ...",
+   "title": "[PDF] Why Does the Yield Curve Predict GDP Growth? The Role of Banks",
+   "url": "https://www.federalreserve.gov/econres/feds/files/2023049pap.pdf"
+  },
+  {
+   "position": 10,
+   "site_name": "www.federalreserve.gov",
+   "snippet": "Several U.S. macro data surprises, including for nonfarm payrolls and the CPI, prompt an increase in the Brazilian bond yield spread and a fall in Brazilian ...",
+   "title": "FRB: How Do FOMC Actions and U.S. Macroeconomic Data ...",
+   "url": "https://www.federalreserve.gov/pubs/ifdp/2006/868/ifdp868.htm"
+  }
+ ]
+}

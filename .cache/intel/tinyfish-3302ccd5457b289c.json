@@ -1,0 +1,39 @@
+{
+ "at": 1788537492476,
+ "id": {
+  "provider": "tinyfish",
+  "endpoint": "search",
+  "params": {
+   "q": "worst-of fixed coupon note downside risk",
+   "d": [
+    "sfc.hk",
+    "mas.gov.sg"
+   ]
+  }
+ },
+ "value": [
+  {
+   "date": "Nov 28, 2001",
+   "position": 1,
+   "site_name": "apps.sfc.hk",
+   "snippet": "Economic risks - the note should have less volatility than the underlying fund and the maximum downside is limited. Structural risks - the note ...",
+   "title": "[PDF] UNION BANCAIRE PRIVÉE, GENEVA - SFC",
+   "url": "https://apps.sfc.hk/edistributionWeb/api/consultation/openCommentFile?refNo=01CP12&commentRefNo=22"
+  },
+  {
+   "date": "Dec 6, 2021",
+   "position": 2,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "It is calculated as the spread of the yield-to-worst of USD corporate bond over the yield of the corresponding maturity US Treasury zero coupon ...",
+   "title": "[PDF] Financial Stability Review December 2021",
+   "url": "https://www.mas.gov.sg/-/media/mas/resource/publications/fsr/financial-stability-review-2021.pdf"
+  },
+  {
+   "position": 3,
+   "site_name": "www.mas.gov.sg",
+   "snippet": "central bank measures should help cap downside risks to growth. Also, supply-side disruptions, such as those arising from the Japan earthquake and the Thai ...",
+   "title": "[PDF] Macroeconomic Review October 2012 Vol XI Issue 2",
+   "url": "https://www.mas.gov.sg/-/media/mas/resource/publications/macro_review/2012/mr_combined_web_new.pdf"
+  }
+ ]
+}
