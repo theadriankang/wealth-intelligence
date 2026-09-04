@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 const repo = "https://github.com/Singhacks-2026/juliusbaer.git";
 const checkout = join(tmpdir(), "singhacks-juliusbaer");
 const sourceDir = findSource();
-const targetDir = join(process.cwd(), "src/adapters/raw/juliusbaer");
+const targetDir = join(process.cwd(), "data/juliusbaer");
 
 const expected = {
   "clients.csv": ["client_id", "client_name", "total_aum_usd", "source_of_wealth"],
@@ -17,8 +17,8 @@ const expected = {
   "planned_cash_needs.csv": ["client_id", "amount", "currency"],
   "commitments.csv": ["client_id", "uncalled", "currency"],
   "event_log.csv": ["event_date", "event_type", "region", "severity", "primary_transmission"],
-  "market_context.csv": ["date"],
-  "mandates.csv": ["client_id"],
+  "market_context.csv": ["snapshot_date", "series_id", "value"],
+  "mandates.csv": ["mandate_code", "asset_class", "target_pct"],
   "transactions.csv": ["client_id"],
   "rm_notes.json": null
 };

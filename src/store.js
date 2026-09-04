@@ -8,6 +8,7 @@ export const S = {
   route: "dashboard", clientScopeId: null,
   household: false, live: false, actionState: {}, meta: {},
   policyScan: null, policyScanState: "idle",
+  evaluation: null, narratedHash: {},
   clientFilter: "all", clientSearch: "", copilotOpen: false, copilotDraft: "",
   driverFilter: "all", profileFilter: "all", bookingFilter: "all", aumFilter: "all",
   clientDrawerOpen: false, railDrawerOpen: false
@@ -62,3 +63,7 @@ export const visibleRows = () => {
 export const actionState = a => S.actionState[S.portfolio.id + a.id] || a.state;
 export const factsForCountries = isos => isos.flatMap(i => S.signals[i]?.events || []);
 export { FLAG_THRESHOLD };
+
+export const countryScore = iso3 => S.evaluation?.countries?.[iso3] || null;
+export const clientEval = () => S.evaluation?.clients?.[S.portfolio?.id] || null;
+export const urgentTasks = () => S.evaluation?.urgent || [];

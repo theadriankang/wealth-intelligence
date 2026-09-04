@@ -53,9 +53,9 @@ export function mountSilk(host, options = {}) {
     ctx.translate(-cx, -cy);
 
     const base = ctx.createLinearGradient(0, 0, w, h);
-    base.addColorStop(0, `rgba(${r + 82},${g + 88},${b + 96},0.84)`);
-    base.addColorStop(0.44, `rgba(${r},${g},${b},0.52)`);
-    base.addColorStop(1, "rgba(245,249,255,0.95)");
+    base.addColorStop(0, `rgba(${Math.min(r + 96, 255)},${Math.min(g + 102, 255)},${Math.min(b + 110, 255)},0.98)`);
+    base.addColorStop(0.42, `rgba(${r},${g},${b},0.84)`);
+    base.addColorStop(1, "rgba(214,234,255,0.94)");
     ctx.fillStyle = base;
     ctx.fillRect(0, 0, w, h);
 
@@ -65,8 +65,8 @@ export function mountSilk(host, options = {}) {
       const drift = t * cfg.speed * 7 + i * 41;
       const grad = ctx.createLinearGradient(0, y - amp, w, y + amp);
       grad.addColorStop(0, "rgba(255,255,255,0)");
-      grad.addColorStop(0.48, `rgba(255,255,255,${0.08 + (i % 3) * 0.025})`);
-      grad.addColorStop(1, "rgba(123,116,129,0)");
+      grad.addColorStop(0.48, `rgba(255,255,255,${0.17 + (i % 3) * 0.045})`);
+      grad.addColorStop(1, "rgba(123,116,129,0.02)");
       ctx.beginPath();
       ctx.moveTo(-80, y);
       for (let x = -80; x <= w + 80; x += 24) {
@@ -79,8 +79,8 @@ export function mountSilk(host, options = {}) {
     }
 
     const glow = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.min(w, h) * 0.52);
-    glow.addColorStop(0, "rgba(255,255,255,0.46)");
-    glow.addColorStop(0.56, "rgba(216,236,255,0.20)");
+    glow.addColorStop(0, "rgba(255,255,255,0.30)");
+    glow.addColorStop(0.56, "rgba(216,236,255,0.12)");
     glow.addColorStop(1, "rgba(255,255,255,0)");
     ctx.fillStyle = glow;
     ctx.fillRect(0, 0, w, h);

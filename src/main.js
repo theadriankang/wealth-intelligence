@@ -8,10 +8,11 @@ import { shellHtml } from "./ui/shell.js";
 import { installLiquidGlass, applyLiquidGlass } from "./ui/glass.js";
 import { mountSilk } from "./ui/silk.js";
 import { mountGlobe, paintGlobe, sizeGlobe } from "./ui/globe.js";
+import { mountGoogleGlobe } from "./ui/googleGlobe.js";
 import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTicker, paintPfRail, paintCopilot }
   from "./ui/panels.js";
 import { paintActions, paintConversation, paintCompliance, paintEconomics } from "./ui/tabs.js";
-import { initDrawers, openPosition, openBrief, openPolicyTrial } from "./ui/drawers.js";
+import { initDrawers, openPosition, openPolicyTrial } from "./ui/drawers.js";
 import * as M from "./ui/motion.js";
 import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
 
@@ -55,7 +56,13 @@ async function boot() {
   });
   initDrawers();
   try {
-    mountGlobe(document.getElementById("globe"), { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
+    const globeEl = document.getElementById("globe");
+    if (CONFIG.GLOBE_PROVIDER === "google" && CONFIG.GOOGLE_MAPS_API_KEY) {
+      await mountGoogleGlobe(globeEl, { apiKey: CONFIG.GOOGLE_MAPS_API_KEY });
+      document.querySelector(".globe-wrap")?.classList.add("using-google-globe");
+    } else {
+      mountGlobe(globeEl, { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
+    }
   } catch (err) {
     console.warn("[globe] WebGL unavailable, rendering dashboard without globe canvas:", err);
     document.getElementById("globe").innerHTML = `<div class="globe-fallback">
@@ -75,8 +82,6 @@ async function boot() {
 }
 
 function wire() {
-  document.getElementById("brief-btn").addEventListener("click", openBrief);
-  document.getElementById("policy-scan-btn").addEventListener("click", runPolicySentinel);
   document.getElementById("open-client-rail")?.addEventListener("click", () => { S.clientDrawerOpen = true; S.railDrawerOpen = false; syncDrawers(); });
   document.getElementById("open-priority-rail")?.addEventListener("click", () => { S.railDrawerOpen = true; S.clientDrawerOpen = false; syncDrawers(); });
   document.getElementById("close-client-rail")?.addEventListener("click", () => { S.clientDrawerOpen = false; syncDrawers(); });
@@ -172,11 +177,6 @@ async function runPolicySentinel() {
 
 export function renderAll() {
   syncRouteClass();
-  const policyBtn = document.getElementById("policy-scan-btn");
-  if (policyBtn) {
-    policyBtn.textContent = S.policyScanState === "running" ? "Scanning portfolio..." : "Run portfolio scan";
-    policyBtn.disabled = S.policyScanState === "running";
-  }
   paintBook(id => {
     S.portfolio = S.portfolios.find(p => p.id === id);
     S.clientScopeId = id; S.goalSel = null; S.household = false; S.clientDrawerOpen = false;

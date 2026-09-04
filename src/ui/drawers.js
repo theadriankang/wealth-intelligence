@@ -8,6 +8,7 @@ import { validateBrief, briefToHtml } from "../llm/validate.js";
 import { BRIEF_SCHEMA } from "../llm/contract.js";
 import { SYSTEM, buildBriefPrompt } from "../llm/prompts.js";
 import { economics } from "../store.js";
+import { currentPolicyScan } from "../policy/sentinel.js";
 import * as M from "./motion.js";
 
 const scrim = () => document.getElementById("scrim");
@@ -27,6 +28,46 @@ function openDrawer(html, wide = false) {
   drawer().classList.add("on"); if (wide) drawer().classList.add("wide");
   scrim().classList.add("on");
   M.drawer(drawer());
+}
+
+/** The detail behind this client's evaluation: goals, account-level positions, relationship record. */
+export function openPortfolioDetail() {
+  const p = S.portfolio, gs = goals();
+  const ps = S.portfolio.positions.map(x => {
+    const inst = S.instruments[x.instrumentId];
+    return { ...x, inst, name: inst?.name || x.instrumentId };
+  });
+  const r = S.portfolio.relationship;
+  openDrawer(`
+    <div class="dr-h"><div><div style="font-size:15px;font-weight:600">${p.name}</div>
+      <div style="font-size:11.5px;color:var(--ink-3);margin-top:3px">${p.ref} · ${p.mandate} · ${p.currency} ${p.aum}</div>
+    </div><button class="x" aria-label="Close">×</button></div>
+    <div class="dr-body">
+      <section class="dr-sec"><h3>Goals</h3>
+        ${gs.map(g => `<div class="tl-i"><span class="rail-dot" style="background:var(--amber)"></span>
+          <div><span class="tx"><b>${g.name}</b> — ${g.horizon} · ${g.targetLabel}</span>
+            <div class="mt"><span class="src">${g.funded}% funded</span>
+              <span style="font-family:var(--mono);font-size:10px;color:var(--ink-4)">${g.change === 0 ? "no change" : (g.change > 0 ? "+" : "−") + Math.abs(g.change) + " pts wk"}</span></div></div></div>`).join("")}
+      </section>
+      <section class="dr-sec"><h3>Positions</h3>
+        ${ps.map(x => `<button class="card" data-t="${x.instrumentId}">
+          <div class="c-top"><span class="tickr">${x.instrumentId}</span><span class="cname">${x.name}</span>
+            <span class="wtv">${x.weightPct.toFixed(1)}%</span></div>
+          ${lookThroughBar(x.inst, S.signals)}</button>`).join("")}
+      </section>
+      ${r ? `<section class="dr-sec"><h3>Relationship</h3>
+        <p class="lede"><strong>Last contact:</strong> ${r.last.date} · ${r.last.channel} — ${r.last.topics}</p>
+        <p class="lede">${r.behaviour}</p>
+        <h4 style="font-size:11px;text-transform:uppercase;color:var(--ink-3);margin:12px 0 6px">Standing concerns</h4>
+        ${r.concerns.map(c => `<p class="lede">· ${c}</p>`).join("")}
+        <h4 style="font-size:11px;text-transform:uppercase;color:var(--ink-3);margin:12px 0 6px">Talking points</h4>
+        ${r.points.map((pt, i) => `<p class="lede">${i + 1}. ${pt}</p>`).join("")}
+        <h4 style="font-size:11px;text-transform:uppercase;color:var(--ink-3);margin:12px 0 6px">Likely objections</h4>
+        ${r.objections.map(o => `<p class="lede"><em>"${o[0]}"</em> — ${o[1]}</p>`).join("")}
+      </section>` : ""}
+    </div>`, true);
+  document.querySelectorAll('#drawer [data-t]').forEach(b =>
+    b.addEventListener("click", () => openPosition(b.dataset.t)));
 }
 
 export function openPosition(id) {

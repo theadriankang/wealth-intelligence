@@ -906,47 +906,59 @@ button:disabled{opacity:.58; cursor:wait}
 }
 
 .liquid-glass-defs{position:absolute; width:0; height:0; overflow:hidden; pointer-events:none}
-.silk-stage{position:absolute!important; left:50%; top:48%; z-index:-3; transform:translate(-50%,-50%);
-  pointer-events:none; opacity:.94; overflow:hidden; border-radius:50%}
+.silk-stage{position:absolute!important; left:50%; top:50%; z-index:-3; width:100vw!important; height:100vh!important;
+  transform:translate(-50%,-50%); pointer-events:none; opacity:.82; overflow:hidden; border-radius:0;
+  filter:saturate(2.05) contrast(1.16)}
 .silk-bg,.silk-bg canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
 
 .app::before{display:none}
 .app::after{z-index:-2; background:
-  radial-gradient(ellipse 82% 76% at 50% 44%, rgba(255,255,255,.28), rgba(245,248,253,.70) 64%, rgba(246,249,253,.92)),
-  linear-gradient(180deg, rgba(255,255,255,.72), rgba(245,248,253,.88));
-  backdrop-filter:blur(1.5px)}
+  radial-gradient(ellipse 82% 76% at 50% 44%, rgba(255,255,255,.04), rgba(245,248,253,.18) 64%, rgba(246,249,253,.34)),
+  linear-gradient(180deg, rgba(255,255,255,.18), rgba(245,248,253,.28));
+  backdrop-filter:blur(.35px)}
 
 .liquid-glass{position:relative; overflow:hidden;
-  background:rgba(255,255,255,.28);
-  border:1px solid rgba(255,255,255,.38);
+  background:linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.05));
+  border:1px solid rgba(255,255,255,.64);
   box-shadow:
-    0 8px 32px rgba(31,38,135,.16),
-    0 2px 16px rgba(31,38,135,.08),
-    inset 0 1px 0 rgba(255,255,255,.46),
-    inset 0 -1px 0 rgba(255,255,255,.22);
-  backdrop-filter:url(#liquid-glass-filter) blur(12px) saturate(1.8) brightness(1.1);
-  -webkit-backdrop-filter:blur(12px) saturate(1.8) brightness(1.1)}
+    0 18px 54px rgba(48,58,95,.18),
+    0 3px 18px rgba(48,58,95,.10),
+    inset 0 1px 0 rgba(255,255,255,.72),
+    inset 0 -1px 0 rgba(255,255,255,.28),
+    inset 0 0 24px rgba(255,255,255,.18);
+  backdrop-filter:url(#liquid-glass-filter) blur(18px) saturate(2.2) brightness(1.16);
+  -webkit-backdrop-filter:blur(18px) saturate(2.2) brightness(1.16)}
 .liquid-glass::before{content:""; position:absolute; inset:0; z-index:0; pointer-events:none;
   background:
     linear-gradient(135deg, rgba(255,255,255,.48), rgba(255,255,255,.10) 38%, rgba(123,116,129,.08) 74%, rgba(255,255,255,.30)),
     radial-gradient(circle at 18% 10%, rgba(255,255,255,.48), transparent 32%);
-  mix-blend-mode:screen; opacity:.82}
+  mix-blend-mode:screen; opacity:.95}
 .liquid-glass::after{content:""; position:absolute; inset:1px; z-index:0; pointer-events:none;
-  border-radius:inherit; box-shadow:inset 0 0 18px rgba(255,255,255,.34), inset 0 0 2px rgba(25,33,45,.16)}
+  border-radius:inherit; box-shadow:inset 0 0 22px rgba(255,255,255,.50), inset 0 0 2px rgba(25,33,45,.20)}
 .liquid-glass > *{position:relative; z-index:1}
 .overlay.liquid-glass{position:absolute}
 .priority-stack.liquid-glass,.client-rail.liquid-glass{overflow-y:auto}
 .client-rail.liquid-glass{overflow-x:hidden}
 
 .client-rail.liquid-glass,.priority-stack.liquid-glass,.cockpit.liquid-glass{
-  background:rgba(255,255,255,.34); border-color:rgba(255,255,255,.42)}
+  background:linear-gradient(145deg, rgba(255,255,255,.18), rgba(255,255,255,.07));
+  border-color:rgba(255,255,255,.62)}
 .bar.liquid-glass,.tick-strip.liquid-glass,.demo-strip.liquid-glass{
-  background:rgba(255,255,255,.48); box-shadow:0 1px 0 rgba(255,255,255,.44)}
+  background:rgba(255,255,255,.30); box-shadow:0 1px 0 rgba(255,255,255,.60)}
 .legend.liquid-glass,.evid.liquid-glass,.lensbar.liquid-glass{
-  background:rgba(255,255,255,.34); border-color:rgba(255,255,255,.54)}
+  background:linear-gradient(145deg, rgba(255,255,255,.42), rgba(255,255,255,.18));
+  border-color:rgba(255,255,255,.72)}
 .priority-card.liquid-glass,.urgent-mini.liquid-glass,.goal.liquid-glass,.card.liquid-glass,
 .act.liquid-glass,.blk.liquid-glass,.trial-card.liquid-glass,.thought.liquid-glass,.econ div.liquid-glass{
   border-color:rgba(255,255,255,.44)}
+
+.dashboard-view .cockpit.liquid-glass{background:rgba(255,255,255,.08)}
+.dashboard-view .globe-wrap{background:radial-gradient(ellipse 72% 66% at 50% 47%, rgba(213,235,255,.22), rgba(255,255,255,.02) 68%, rgba(255,255,255,.05))}
+.dashboard-view .client-rail.liquid-glass,.dashboard-view .priority-stack.liquid-glass{background:rgba(255,255,255,.13)}
+
+.using-google-globe #globe,.google-globe,.google-globe-canvas{position:absolute; inset:0}
+.google-globe-canvas .cesium-widget,.google-globe-canvas canvas{background:transparent}
+.google-globe .cesium-widget-credits{font-size:10px; color:var(--ink-3)}
 
 @supports not (backdrop-filter:blur(1px)){
   .liquid-glass{background:rgba(255,255,255,.78)}

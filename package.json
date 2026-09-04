@@ -10,7 +10,11 @@
     "data:sync": "node scripts/sync-juliusbaer-data.mjs",
     "preview": "vite preview",
     "server": "node server/index.js",
-    "dev:all": "concurrently -n web,api -c cyan,magenta \"npm:dev\" \"npm:server\""
+    "dossiers": "node scripts/build-dossiers.js",
+    "dev:all": "concurrently -n web,api -c cyan,magenta \"npm:dev\" \"npm:server\"",
+    "intel": "node scripts/build-intel.js",
+    "agent": "node scripts/run-agent.js",
+    "test": "node scripts/test-fx.js && node scripts/test-intel.js && node scripts/build-intel.js && node scripts/test-agent.js && node --test 'src/**/*.test.js'"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",
@@ -18,6 +22,7 @@
     "@react-three/fiber": "^9.7.0",
     "@tailwindcss/vite": "^4.3.3",
     "animejs": "^4.5.0",
+    "cesium": "^1.145.0",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.2.5",
     "globe.gl": "2.46.2",

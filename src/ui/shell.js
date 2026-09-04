@@ -1,5 +1,3 @@
-import { CONFIG } from "../config.js";
-
 export const shellHtml = () => `
 <div class="app">
   <div class="silk-stage" style="width:1080px;height:1080px;position:relative" aria-hidden="true">
@@ -11,13 +9,7 @@ export const shellHtml = () => `
       <span class="mode" id="mode-tag">…</span></div>
     <div class="rm-id">Priscilla Ong · Asia Desk</div>
     <div class="spacer"></div>
-    <button class="ghost" id="policy-scan-btn">Run portfolio scan</button>
-    <button class="ghost solid" id="brief-btn">Prepare RM brief</button>
   </header>
-
-  ${CONFIG.DEMO_BANNER ? `<div class="demo-strip liquid-glass">
-    <b>Demonstration data.</b> Mandates, holdings and signal values are fabricated.
-    Advisor decision support — not investment advice.</div>` : ""}
 
   <div class="tick-strip liquid-glass">
     <div class="tick-lab"><span class="pulse" style="width:5px;height:5px"></span> Signals</div>

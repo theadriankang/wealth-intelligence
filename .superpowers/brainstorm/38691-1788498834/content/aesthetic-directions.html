@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aesthetic directions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Spline+Sans+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&family=Bricolage+Grotesque:wght@500;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; padding: 40px 32px 80px;
+    background: #17181c;
+    color: #d8d9dd;
+    font-family: "Archivo", system-ui, sans-serif;
+  }
+  .head { max-width: 1180px; margin: 0 auto 28px; }
+  .head h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin: 0 0 6px; }
+  .head p { margin: 0; font-size: 13.5px; color: #9a9ba1; line-height: 1.5; max-width: 70ch; }
+  .grid {
+    max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px;
+  }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+
+  .pick {
+    border: 1px solid #2c2d33; border-radius: 14px; overflow: hidden;
+    background: #1c1d22; cursor: pointer; transition: border-color .15s, transform .15s;
+  }
+  .pick:hover { border-color: #4a4b55; transform: translateY(-2px); }
+  .pick.selected { border-color: #e8a33d; box-shadow: 0 0 0 3px rgba(232,163,61,.18); }
+  .pick-cap { display: flex; gap: 12px; align-items: flex-start; padding: 15px 17px 13px; }
+  .pick-cap .badge {
+    width: 26px; height: 26px; border-radius: 7px; flex: none;
+    background: #2c2d33; color: #d8d9dd; font-weight: 700; font-size: 13px;
+    display: grid; place-items: center;
+  }
+  .pick.selected .pick-cap .badge { background: #e8a33d; color: #17181c; }
+  .pick-cap h2 { margin: 0 0 3px; font-size: 15px; font-weight: 600; }
+  .pick-cap p { margin: 0; font-size: 12px; color: #9a9ba1; line-height: 1.5; }
+
+  /* ---- shared vignette skeleton ---- */
+  .vig { height: 430px; overflow: hidden; position: relative; border-top: 1px solid #2c2d33; }
+  .vig .bar { display: flex; align-items: center; gap: 9px; padding: 12px 15px; }
+  .vig .brand { font-weight: 600; }
+  .vig .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .vig .mode { font-size: 9px; letter-spacing: .09em; text-transform: uppercase; padding: 2px 6px; border-radius: 3px; }
+  .vig .body { display: grid; grid-template-columns: 1fr 168px; gap: 0; height: calc(100% - 45px); }
+  .vig .stagecol { position: relative; overflow: hidden; padding: 13px 15px; }
+  .vig .rail { padding: 13px 13px; overflow: hidden; }
+
+  .goal { border-radius: 8px; padding: 10px 12px; margin-bottom: 11px; }
+  .goal .gn { font-size: 12px; font-weight: 500; }
+  .goal .gh { font-size: 9.5px; letter-spacing: .04em; opacity: .6; margin-top: 1px; }
+  .goal .gv { display: flex; align-items: baseline; gap: 7px; margin: 7px 0 6px; }
+  .goal .pct { font-size: 19px; font-weight: 600; }
+  .goal .chg { font-size: 10px; }
+  .goal .track { height: 4px; border-radius: 2px; overflow: hidden; position: relative; }
+  .goal .track i { display: block; height: 100%; }
+
+  .orb { position: absolute; inset: 40px 20px auto 20px; height: 190px; border-radius: 50%;
+         margin: 0 auto; max-width: 220px; }
+  .orb .rim { position: absolute; inset: 0; border-radius: 50%; }
+  .cap-bar { position: absolute; width: 4px; bottom: 50%; transform-origin: bottom center; border-radius: 1px; }
+
+  .lens { position: absolute; top: 13px; left: 50%; transform: translateX(-50%);
+          display: flex; border-radius: 6px; overflow: hidden; font-size: 9.5px; }
+  .lens span { padding: 4px 8px; }
+
+  .pos { border-radius: 7px; padding: 9px 10px; margin-bottom: 8px; }
+  .pos .r1 { display: flex; align-items: baseline; gap: 6px; }
+  .pos .tk { font-weight: 700; font-size: 11.5px; }
+  .pos .nm { font-size: 10px; opacity: .7; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; flex: 1; }
+  .pos .d { font-size: 11px; font-weight: 600; }
+  .pos .r2 { display: flex; gap: 5px; margin-top: 6px; }
+  .pos .r2 i { display: block; height: 4px; border-radius: 1px; }
+  .sectitle { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; opacity: .55; margin-bottom: 9px; }
+
+  /* ============ A · REFINED INSTRUMENT ============ */
+  .v-a { background: #0c0d0f; color: #e8e8e6; font-family: "Archivo", sans-serif; }
+  .v-a .bar { border-bottom: 1px solid #222327; letter-spacing: -0.01em; }
+  .v-a .brand { font-size: 12px; letter-spacing: .02em; }
+  .v-a .dot { background: #6bbf59; }
+  .v-a .live { font-family: "Spline Sans Mono", monospace; font-size: 9px; color: #6a6b70; margin-left: auto; }
+  .v-a .mode { background: #1a1204; color: #e8a33d; }
+  .v-a .stagecol { border-right: 1px solid #222327; background: radial-gradient(ellipse 70% 55% at 50% 42%, #14161a, #0c0d0f 72%); }
+  .v-a .rail { background: #101114; }
+  .v-a .goal { background: #131417; border: 1px solid #1e1f24; }
+  .v-a .goal .gn, .v-a .goal .pct { font-family: "Spline Sans Mono", monospace; }
+  .v-a .goal .gh { font-family: "Spline Sans Mono", monospace; }
+  .v-a .goal .chg { font-family: "Spline Sans Mono", monospace; color: #c56b60; }
+  .v-a .goal .track { background: #1e1f24; }
+  .v-a .goal .track i { background: #c56b60; }
+  .v-a .goal .track .p { position: absolute; top: 0; bottom: 0; width: 1px; background: #6a6b70; left: 87%; }
+  .v-a .orb .rim { border: 1px solid #24262b; box-shadow: inset 0 0 40px rgba(232,163,61,.05); background: radial-gradient(circle at 42% 38%, #16181c, #0e0f12); }
+  .v-a .cap-bar { background: #e8a33d; }
+  .v-a .lens { border: 1px solid #222327; background: rgba(16,17,20,.9); font-family: "Spline Sans Mono", monospace; }
+  .v-a .lens span { color: #6a6b70; }
+  .v-a .lens span.on { background: #1f2126; color: #e8e8e6; }
+  .v-a .sectitle { font-family: "Spline Sans Mono", monospace; }
+  .v-a .pos { background: #131417; border: 1px solid #1e1f24; border-left: 2px solid #c56b60; }
+  .v-a .pos.up { border-left-color: #c56b60; }
+  .v-a .pos .tk { font-family: "Spline Sans Mono", monospace; }
+  .v-a .pos .d { font-family: "Spline Sans Mono", monospace; color: #c56b60; }
+
+  /* ============ B · SWISS ATLAS ============ */
+  .v-b { background: #0d1a22; color: #e7ddc7; font-family: "Archivo", sans-serif;
+         background-image: repeating-linear-gradient(0deg, rgba(231,221,199,.035) 0 1px, transparent 1px 26px),
+                           repeating-linear-gradient(90deg, rgba(231,221,199,.035) 0 1px, transparent 1px 26px); }
+  .v-b .bar { border-bottom: 1px solid rgba(231,221,199,.16); }
+  .v-b .brand { font-family: "Newsreader", serif; font-size: 14px; font-weight: 500; letter-spacing: .01em; }
+  .v-b .dot { background: #5bbfa6; }
+  .v-b .live { font-family: "Newsreader", serif; font-style: italic; font-size: 11px; color: #8a9a94; margin-left: auto; }
+  .v-b .mode { background: rgba(201,96,90,.16); color: #d9877f; font-family: "Newsreader", serif; font-style: italic; text-transform: none; letter-spacing: 0; font-size: 10px; }
+  .v-b .stagecol { border-right: 1px solid rgba(231,221,199,.16); }
+  .v-b .goal { background: rgba(231,221,199,.04); border: 1px solid rgba(231,221,199,.14); }
+  .v-b .goal .gn { font-family: "Newsreader", serif; font-size: 13px; }
+  .v-b .goal .gh { font-family: "Newsreader", serif; font-style: italic; }
+  .v-b .goal .chg { font-family: "Newsreader", serif; font-style: italic; color: #d9877f; font-size: 11px; }
+  .v-b .goal .track { background: rgba(231,221,199,.12); }
+  .v-b .goal .track i { background: #c9605a; }
+  .v-b .orb { border-radius: 50%; }
+  .v-b .orb .rim { border: 1px solid rgba(231,221,199,.35);
+    background: radial-gradient(circle at 45% 40%, #12333c, #0c1f27);
+    box-shadow: inset 0 0 0 6px rgba(231,221,199,.06), inset 0 0 30px rgba(0,0,0,.4); }
+  .v-b .orb::after { content: ""; position: absolute; inset: 22%; border-radius: 50%; border: 1px dashed rgba(231,221,199,.25); }
+  .v-b .cap-bar { background: #5bbfa6; }
+  .v-b .lens { border: 1px solid rgba(231,221,199,.22); background: rgba(13,26,34,.9); font-family: "Newsreader", serif; font-style: italic; }
+  .v-b .lens span { color: #8a9a94; }
+  .v-b .lens span.on { background: rgba(231,221,199,.1); color: #e7ddc7; }
+  .v-b .sectitle { font-family: "Newsreader", serif; font-style: italic; text-transform: none; letter-spacing: .02em; font-size: 11px; opacity: .7; }
+  .v-b .pos { background: rgba(231,221,199,.04); border: 1px solid rgba(231,221,199,.13); }
+  .v-b .pos .tk { font-family: "Newsreader", serif; font-weight: 500; }
+  .v-b .pos .d { font-family: "Spline Sans Mono", monospace; color: #d9877f; }
+
+  /* ============ C · EDITORIAL BROADSHEET ============ */
+  .v-c { background: #f4f1e8; color: #1c1a17; font-family: "Source Serif 4", serif; }
+  .v-c .bar { border-bottom: 2px solid #1c1a17; }
+  .v-c .brand { font-family: "Fraunces", serif; font-weight: 700; font-size: 15px; letter-spacing: -0.01em; }
+  .v-c .dot { background: #1f6f5c; }
+  .v-c .live { font-family: "Archivo", sans-serif; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: #6b655a; margin-left: auto; }
+  .v-c .mode { background: #e6e0d0; color: #8a3324; font-family: "Archivo", sans-serif; }
+  .v-c .stagecol { border-right: 1px solid #cfc7b4; }
+  .v-c .goal { border: 1px solid #cfc7b4; background: #faf8f1; }
+  .v-c .goal .gn { font-family: "Fraunces", serif; font-weight: 600; font-size: 13px; }
+  .v-c .goal .gh { font-family: "Archivo", sans-serif; letter-spacing: .06em; text-transform: uppercase; opacity: .55; }
+  .v-c .goal .pct { font-family: "Fraunces", serif; }
+  .v-c .goal .chg { font-family: "Archivo", sans-serif; color: #8a3324; font-weight: 500; }
+  .v-c .goal .track { background: #e0d9c6; }
+  .v-c .goal .track i { background: #8a3324; }
+  .v-c .orb .rim { border: 1px solid #1c1a17;
+    background: radial-gradient(circle at 44% 40%, #ffffff, #e9e3d3);
+    box-shadow: inset 0 0 24px rgba(28,26,23,.08); }
+  .v-c .orb::after { content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; background: rgba(28,26,23,.18); }
+  .v-c .cap-bar { background: #1c1a17; }
+  .v-c .lens { border: 1px solid #1c1a17; background: #faf8f1; font-family: "Archivo", sans-serif; letter-spacing: .04em; text-transform: uppercase; font-size: 8.5px; }
+  .v-c .lens span { color: #6b655a; }
+  .v-c .lens span.on { background: #1c1a17; color: #f4f1e8; }
+  .v-c .sectitle { font-family: "Archivo", sans-serif; opacity: .5; }
+  .v-c .pos { border: 1px solid #cfc7b4; background: #faf8f1; border-left: 3px solid #8a3324; }
+  .v-c .pos .tk { font-family: "Fraunces", serif; font-weight: 700; }
+  .v-c .pos .nm { font-family: "Source Serif 4", serif; }
+  .v-c .pos .d { font-family: "Archivo", sans-serif; color: #8a3324; }
+
+  /* ============ D · FINANCIAL NOIR ============ */
+  .v-d { background: #08090b; color: #eceded; font-family: "JetBrains Mono", monospace;
+         background-image: radial-gradient(ellipse 60% 50% at 50% 30%, rgba(245,197,66,.10), transparent 70%); }
+  .v-d .bar { border-bottom: 1px solid #1a1b1f; }
+  .v-d .brand { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 14px; letter-spacing: -0.02em; text-transform: uppercase; }
+  .v-d .dot { background: #f5c542; box-shadow: 0 0 8px #f5c542; }
+  .v-d .live { font-size: 8.5px; color: #56585e; margin-left: auto; letter-spacing: .04em; }
+  .v-d .mode { background: rgba(245,197,66,.14); color: #f5c542; }
+  .v-d .stagecol { border-right: 1px solid #1a1b1f; }
+  .v-d .goal { background: #0d0e11; border: 1px solid #1a1b1f; }
+  .v-d .goal .gn { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; font-size: 12px; }
+  .v-d .goal .gh { font-size: 8.5px; color: #56585e; }
+  .v-d .goal .pct { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; color: #f5c542; }
+  .v-d .goal .chg { color: #f5c542; font-size: 9.5px; }
+  .v-d .goal .track { background: #1a1b1f; }
+  .v-d .goal .track i { background: #f5c542; box-shadow: 0 0 10px rgba(245,197,66,.5); }
+  .v-d .orb .rim { border: 1px solid #26272c;
+    background: radial-gradient(circle at 45% 38%, #17140c, #0a0a0c 70%);
+    box-shadow: 0 0 60px rgba(245,197,66,.12), inset 0 0 40px rgba(245,197,66,.06); }
+  .v-d .cap-bar { background: #f5c542; box-shadow: 0 0 6px rgba(245,197,66,.6); }
+  .v-d .lens { border: 1px solid #1a1b1f; background: rgba(8,9,11,.9); font-size: 8.5px; }
+  .v-d .lens span { color: #56585e; }
+  .v-d .lens span.on { background: rgba(245,197,66,.14); color: #f5c542; }
+  .v-d .sectitle { color: #56585e; }
+  .v-d .pos { background: #0d0e11; border: 1px solid #1a1b1f; }
+  .v-d .pos .tk { font-family: "Bricolage Grotesque", sans-serif; font-weight: 700; }
+  .v-d .pos .d { color: #f5c542; }
+
+  .foot { max-width: 1180px; margin: 26px auto 0; font-size: 12.5px; color: #9a9ba1; line-height: 1.6; }
+  .foot b { color: #d8d9dd; }
+</style>
+</head>
+<body>
+<div class="head">
+  <h1>Four aesthetic directions for the refurbishment</h1>
+  <p>Same cockpit fragment in each — top bar, one goal card, the globe zone with a lens switcher, two position rows. Style is the only variable. Click the one that feels right (or tell me in the terminal). We can also blend.</p>
+</div>
+
+<div class="grid" id="grid">
+
+  <!-- A -->
+  <div class="pick" data-choice="refined-instrument" onclick="toggleSelect(this)">
+    <div class="pick-cap">
+      <div class="badge">A</div>
+      <div><h2>Refined instrument</h2>
+      <p>Dark and dense, but crafted — Braun / Teenage Engineering precision. One amber accent, oxblood for loss, hairline rules, mono for every number. Still a working tool.</p></div>
+    </div>
+    <div class="vig v-a">
+      <div class="bar"><span class="dot"></span><span class="brand">WEALTH INTELLIGENCE</span><span class="live">live · 0s ago</span><span class="mode">fixtures</span></div>
+      <div class="body">
+        <div class="stagecol">
+          <div class="lens"><span class="on">Risk Δ</span><span>Instability</span><span>Tone</span><span>Policy</span></div>
+          <div class="orb"><div class="rim"></div>
+            <div class="cap-bar" style="height:34px;left:30%;transform:rotate(-32deg)"></div>
+            <div class="cap-bar" style="height:52px;left:50%;transform:rotate(6deg)"></div>
+            <div class="cap-bar" style="height:22px;left:68%;transform:rotate(28deg)"></div>
+          </div>
+        </div>
+        <div class="rail">
+          <div class="goal">
+            <div class="gn">Property purchase</div><div class="gh">2027 · CHF 4.0M</div>
+            <div class="gv"><span class="pct">71%</span><span class="chg">−16 pts / wk</span></div>
+            <div class="track"><i style="width:71%"></i><span class="p"></span></div>
+          </div>
+          <div class="sectitle">Positions, by pressure</div>
+          <div class="pos up"><div class="r1"><span class="tk">TSM</span><span class="nm">Taiwan Semi.</span><span class="d">+24</span></div>
+            <div class="r2"><i style="width:60%;background:#c56b60"></i><i style="width:22%;background:#3a3d42"></i><i style="width:18%;background:#3a3d42"></i></div></div>
+          <div class="pos up"><div class="r1"><span class="tk">JBGEF</span><span class="nm">JB Global Equity</span><span class="d">+9</span></div>
+            <div class="r2"><i style="width:30%;background:#c56b60"></i><i style="width:25%;background:#e8a33d"></i><i style="width:45%;background:#3a3d42"></i></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- B -->
+  <div class="pick" data-choice="swiss-atlas" onclick="toggleSelect(this)">
+    <div class="pick-cap">
+      <div class="badge">B</div>
+      <div><h2>Swiss atlas / cartographic</h2>
+      <p>Leans into the globe. Ink-navy ground with a graticule grid, dashed range rings, warm parchment ink, verdigris + chart-red signals, Newsreader italic for labels. Geographic and calm.</p></div>
+    </div>
+    <div class="vig v-b">
+      <div class="bar"><span class="dot"></span><span class="brand">Wealth Intelligence</span><span class="live">live, updated moments ago</span><span class="mode">fixtures</span></div>
+      <div class="body">
+        <div class="stagecol">
+          <div class="lens"><span class="on">Risk Δ</span><span>Instability</span><span>Tone</span><span>Policy</span></div>
+          <div class="orb"><div class="rim"></div>
+            <div class="cap-bar" style="height:34px;left:30%;transform:rotate(-32deg)"></div>
+            <div class="cap-bar" style="height:52px;left:50%;transform:rotate(6deg)"></div>
+            <div class="cap-bar" style="height:22px;left:68%;transform:rotate(28deg)"></div>
+          </div>
+        </div>
+        <div class="rail">
+          <div class="goal">
+            <div class="gn">Property purchase</div><div class="gh">2027 · CHF 4.0M</div>
+            <div class="gv"><span class="pct">71%</span><span class="chg">down 16 pts this week</span></div>
+            <div class="track"><i style="width:71%"></i></div>
+          </div>
+          <div class="sectitle">Positions, by pressure</div>
+          <div class="pos"><div class="r1"><span class="tk">TSM</span><span class="nm">Taiwan Semi.</span><span class="d">+24</span></div>
+            <div class="r2"><i style="width:60%;background:#c9605a"></i><i style="width:22%;background:#2f5b63"></i><i style="width:18%;background:#2f5b63"></i></div></div>
+          <div class="pos"><div class="r1"><span class="tk">JBGEF</span><span class="nm">JB Global Equity</span><span class="d">+9</span></div>
+            <div class="r2"><i style="width:30%;background:#c9605a"></i><i style="width:25%;background:#5bbfa6"></i><i style="width:45%;background:#2f5b63"></i></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- C -->
+  <div class="pick" data-choice="editorial-broadsheet" onclick="toggleSelect(this)">
+    <div class="pick-cap">
+      <div class="badge">C</div>
+      <div><h2>Editorial broadsheet</h2>
+      <p>A private bank's printed research note, made live. Warm paper, Fraunces display serif, wide rules, ink-on-paper charts, oxblood + teal. Dark mode is a clean inversion. Authoritative, un-SaaS.</p></div>
+    </div>
+    <div class="vig v-c">
+      <div class="bar"><span class="dot"></span><span class="brand">Wealth Intelligence</span><span class="live">Updated 08:40 SGT</span><span class="mode">fixtures</span></div>
+      <div class="body">
+        <div class="stagecol">
+          <div class="lens"><span class="on">Risk Δ</span><span>Instability</span><span>Tone</span><span>Policy</span></div>
+          <div class="orb"><div class="rim"></div>
+            <div class="cap-bar" style="height:34px;left:30%;transform:rotate(-32deg)"></div>
+            <div class="cap-bar" style="height:52px;left:50%;transform:rotate(6deg)"></div>
+            <div class="cap-bar" style="height:22px;left:68%;transform:rotate(28deg)"></div>
+          </div>
+        </div>
+        <div class="rail">
+          <div class="goal">
+            <div class="gn">Property purchase</div><div class="gh">2027 — CHF 4.0M</div>
+            <div class="gv"><span class="pct">71%</span><span class="chg">−16 pts this week</span></div>
+            <div class="track"><i style="width:71%"></i></div>
+          </div>
+          <div class="sectitle">Positions, by pressure</div>
+          <div class="pos"><div class="r1"><span class="tk">TSM</span><span class="nm">Taiwan Semiconductor</span><span class="d">+24</span></div>
+            <div class="r2"><i style="width:60%;background:#8a3324"></i><i style="width:22%;background:#c9c0aa"></i><i style="width:18%;background:#c9c0aa"></i></div></div>
+          <div class="pos"><div class="r1"><span class="tk">JBGEF</span><span class="nm">JB Global Equity Fund</span><span class="d">+9</span></div>
+            <div class="r2"><i style="width:30%;background:#8a3324"></i><i style="width:25%;background:#1f6f5c"></i><i style="width:45%;background:#c9c0aa"></i></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- D -->
+  <div class="pick" data-choice="financial-noir" onclick="toggleSelect(this)">
+    <div class="pick-cap">
+      <div class="badge">D</div>
+      <div><h2>Financial noir</h2>
+      <p>High-drama dark. Near-black, a single luminous amber that actually glows, Bricolage Grotesque headlines, atmospheric top-glow, cinematic load. The "intelligence" framing as a situation room.</p></div>
+    </div>
+    <div class="vig v-d">
+      <div class="bar"><span class="dot"></span><span class="brand">Wealth Intelligence</span><span class="live">LIVE · 0s</span><span class="mode">fixtures</span></div>
+      <div class="body">
+        <div class="stagecol">
+          <div class="lens"><span class="on">Risk Δ</span><span>Instability</span><span>Tone</span><span>Policy</span></div>
+          <div class="orb"><div class="rim"></div>
+            <div class="cap-bar" style="height:34px;left:30%;transform:rotate(-32deg)"></div>
+            <div class="cap-bar" style="height:52px;left:50%;transform:rotate(6deg)"></div>
+            <div class="cap-bar" style="height:22px;left:68%;transform:rotate(28deg)"></div>
+          </div>
+        </div>
+        <div class="rail">
+          <div class="goal">
+            <div class="gn">PROPERTY PURCHASE</div><div class="gh">2027 · CHF 4.0M</div>
+            <div class="gv"><span class="pct">71%</span><span class="chg">▼ 16 pts</span></div>
+            <div class="track"><i style="width:71%"></i></div>
+          </div>
+          <div class="sectitle">Positions, by pressure</div>
+          <div class="pos"><div class="r1"><span class="tk">TSM</span><span class="nm">Taiwan Semi.</span><span class="d">+24</span></div>
+            <div class="r2"><i style="width:60%;background:#f5c542"></i><i style="width:22%;background:#26272c"></i><i style="width:18%;background:#26272c"></i></div></div>
+          <div class="pos"><div class="r1"><span class="tk">JBGEF</span><span class="nm">JB Global Equity</span><span class="d">+9</span></div>
+            <div class="r2"><i style="width:30%;background:#f5c542"></i><i style="width:25%;background:#8a6f2a"></i><i style="width:45%;background:#26272c"></i></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="foot">
+  <b>Note on the current build:</b> it's direction A's cousin already — dark IDE, IBM Plex, red/blue diverging. The refurbishment brief is to make it <i>committed and distinctive</i> instead of default. A is the smallest leap; B and C are the boldest re-framings; D is the most demo-dramatic. Blends are on the table (e.g. B's cartography for the globe, C's editorial voice for the client-facing note).
+</div>
+</body>
+</html>

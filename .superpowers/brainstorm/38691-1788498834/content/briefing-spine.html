@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Briefing spine · noir</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500;700&family=Spectral:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#08090b; --near:#0d0e11; --raise:#131419;
+    --line:#1c1d22; --line-soft:#141519;
+    --ink:#eceded; --ink-2:#a0a2a8; --ink-3:#63656c; --ink-4:#3f4147;
+    --amber:#f5c542; --amber-2:#f0a03c; --ember:#e2683c;
+    --cool:#5c7a8f; --flat:#2a2c31; --good:#4a9d8e;
+    --disp:"Bricolage Grotesque",sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,monospace;
+    --serif:"Spectral",Georgia,serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--black);color:var(--ink);font-family:var(--mono);font-size:14px;line-height:1.5}
+  .frame{max-width:1240px;margin:0 auto;padding:34px 24px 90px}
+  .frame > h1{font-family:var(--disp);font-weight:800;font-size:19px;letter-spacing:-.02em;margin:0 0 5px}
+  .frame > .lede{font-family:var(--mono);font-size:12.5px;color:var(--ink-3);margin:0 0 26px;line-height:1.6;max-width:76ch}
+
+  .card-shell{border:1px solid var(--line);border-radius:14px;overflow:hidden;margin-bottom:26px;
+    background:var(--near);cursor:pointer;transition:border-color .15s}
+  .card-shell:hover{border-color:#33343c}
+  .card-shell.selected{border-color:var(--amber);box-shadow:0 0 0 3px rgba(245,197,66,.16)}
+  .card-shell > .tag{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--ink-3);padding:11px 15px;border-bottom:1px solid var(--line)}
+
+  /* ============ THE NOIR APP ============ */
+  .app{
+    background:
+      radial-gradient(ellipse 52% 40% at 50% -4%, rgba(245,197,66,.10), transparent 70%),
+      radial-gradient(ellipse 80% 60% at 50% 120%, rgba(0,0,0,.5), transparent 60%),
+      var(--black);
+    position:relative;
+  }
+  .app::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E")}
+
+  .bar{display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid var(--line);position:relative;z-index:2}
+  .brand{font-family:var(--disp);font-weight:800;font-size:15px;letter-spacing:-.03em;text-transform:uppercase}
+  .brand em{color:var(--amber);font-style:normal}
+  .live{display:flex;align-items:center;gap:7px;font-size:10px;color:var(--ink-3);letter-spacing:.04em}
+  .pulse{width:6px;height:6px;border-radius:50%;background:var(--amber);box-shadow:0 0 8px var(--amber);animation:p 2.4s infinite}
+  @keyframes p{0%{box-shadow:0 0 0 0 rgba(245,197,66,.5)}70%{box-shadow:0 0 0 7px rgba(245,197,66,0)}100%{box-shadow:0 0 0 0 rgba(245,197,66,0)}}
+  .spacer{flex:1}
+  .mode{font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:3px;
+    background:rgba(245,197,66,.14);color:var(--amber)}
+  .btn{font-family:var(--mono);font-size:11px;border:1px solid var(--line);border-radius:6px;
+    padding:6px 12px;color:var(--ink-2);background:transparent}
+  .btn.solid{background:var(--amber);color:var(--black);border-color:var(--amber);font-weight:700}
+
+  .ticker{display:flex;align-items:center;height:30px;border-bottom:1px solid var(--line);overflow:hidden;position:relative;z-index:2}
+  .ticker .lab{flex:none;padding:0 13px;height:100%;display:flex;align-items:center;gap:6px;font-size:8.5px;
+    letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);border-right:1px solid var(--line)}
+  .ticker .run{display:flex;gap:30px;padding-left:18px;white-space:nowrap;animation:mq 40s linear infinite}
+  @keyframes mq{to{transform:translateX(-50%)}}
+  .tk{font-size:11px;color:var(--ink-2)}
+  .tk b{color:var(--ink);font-weight:500}
+  .tk .t{color:var(--ink-4)}
+
+  /* two-column: pinned situation + spine */
+  .stage{display:grid;grid-template-columns:44px 1fr 400px;min-height:900px;position:relative;z-index:2}
+
+  .book{border-right:1px solid var(--line);padding:14px 0;display:flex;flex-direction:column;align-items:center;gap:4px}
+  .book .bt{writing-mode:vertical-rl;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-4);margin-bottom:10px}
+  .book .cl{width:26px;height:26px;border-radius:7px;border:1px solid var(--line);display:grid;place-items:center;
+    font-size:10px;color:var(--ink-3)}
+  .book .cl.on{border-color:var(--amber);color:var(--amber);background:rgba(245,197,66,.1)}
+  .book .cl.flag{position:relative}
+  .book .cl.flag::after{content:"";position:absolute;top:-2px;right:-2px;width:6px;height:6px;border-radius:50%;background:var(--ember)}
+
+  .situation{border-right:1px solid var(--line);position:relative;display:flex;flex-direction:column;
+    background:radial-gradient(ellipse 70% 50% at 50% 38%, #131a1f, var(--black) 72%)}
+  .sit-h{padding:14px 18px 0;display:flex;align-items:baseline;gap:9px}
+  .sit-h h2{font-family:var(--disp);font-weight:700;font-size:15px;margin:0;letter-spacing:-.01em}
+  .sit-h .ref{font-size:10px;color:var(--ink-4)}
+  .sit-h .tag2{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;border:1px solid var(--line);
+    border-radius:3px;padding:2px 6px;color:var(--cool)}
+  .lensrow{display:flex;gap:2px;padding:11px 18px 0}
+  .lensrow span{font-size:9.5px;padding:4px 9px;border-radius:5px;color:var(--ink-4);border:1px solid transparent}
+  .lensrow span.on{background:rgba(245,197,66,.12);color:var(--amber);border-color:rgba(245,197,66,.25)}
+  .orb-wrap{flex:1;position:relative;display:grid;place-items:center;min-height:300px}
+  .orb{width:230px;height:230px;border-radius:50%;position:relative;
+    background:radial-gradient(circle at 42% 36%, #17140c, #0a0a0c 70%);
+    border:1px solid #26272c;box-shadow:0 0 70px rgba(245,197,66,.14),inset 0 0 50px rgba(245,197,66,.06);animation:float 8s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+  .orb .cap{position:absolute;width:4px;bottom:50%;left:50%;transform-origin:bottom center;border-radius:1px;
+    background:var(--amber);box-shadow:0 0 6px rgba(245,197,66,.6)}
+  .orb .arc{position:absolute;inset:14%;border-radius:50%;border-top:1px solid rgba(245,197,66,.4);
+    border-right:1px solid rgba(245,197,66,.15);transform:rotate(28deg)}
+  .orb .ring{position:absolute;width:14px;height:14px;border-radius:50%;border:1.5px solid var(--ember);
+    box-shadow:0 0 10px rgba(226,104,60,.5)}
+  .evid{position:absolute;right:16px;top:78px;width:172px;border:1px solid var(--line);border-radius:9px;
+    background:rgba(8,9,11,.82);backdrop-filter:blur(6px);padding:11px 13px}
+  .evid .k{font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+  .evid .v{font-family:var(--disp);font-weight:800;font-size:24px;color:var(--amber);margin:3px 0 2px}
+  .evid .s{font-size:10px;color:var(--ink-3);line-height:1.45}
+  .sit-f{border-top:1px solid var(--line);padding:10px 18px;font-size:9.5px;color:var(--ink-4);display:flex;justify-content:space-between}
+
+  /* the spine */
+  .spine{overflow-y:auto;padding:0}
+  .seg{padding:17px 20px;border-bottom:1px solid var(--line-soft);opacity:0;transform:translateY(10px);
+    animation:rise .5s ease forwards}
+  .seg:nth-child(1){animation-delay:.05s}.seg:nth-child(2){animation-delay:.13s}
+  .seg:nth-child(3){animation-delay:.21s}.seg:nth-child(4){animation-delay:.29s}.seg:nth-child(5){animation-delay:.37s}
+  @keyframes rise{to{opacity:1;transform:none}}
+  .seg-h{display:flex;align-items:baseline;gap:9px;margin-bottom:12px}
+  .seg-n{font-family:var(--mono);font-size:10px;color:var(--amber);letter-spacing:.1em}
+  .seg-h h3{font-family:var(--disp);font-weight:700;font-size:13px;margin:0;letter-spacing:.01em;text-transform:uppercase}
+  .seg-h .c{margin-left:auto;font-size:10px;color:var(--ink-4)}
+
+  .change{display:grid;grid-template-columns:34px 1fr;gap:10px;font-size:11.5px;color:var(--ink-2);margin-bottom:9px;line-height:1.5}
+  .change time{font-size:10px;color:var(--ink-4)}
+  .change b{color:var(--ink);font-weight:500}
+
+  .goalcard{border:1px solid var(--line);border-radius:9px;padding:11px 13px;background:var(--raise);margin-bottom:9px}
+  .goalcard.hit{border-color:rgba(245,197,66,.4);box-shadow:0 0 0 1px rgba(245,197,66,.12)}
+  .goalcard .gn{font-family:var(--disp);font-weight:700;font-size:12px}
+  .goalcard .gh{font-size:9px;color:var(--ink-4);margin-top:1px}
+  .goalcard .row{display:flex;align-items:baseline;gap:8px;margin:8px 0 6px}
+  .goalcard .pct{font-family:var(--disp);font-weight:800;font-size:20px;color:var(--amber)}
+  .goalcard .chg{font-size:10px;color:var(--amber-2)}
+  .goalcard .tr{height:4px;border-radius:2px;background:var(--flat);overflow:hidden}
+  .goalcard .tr i{display:block;height:100%;background:var(--amber);box-shadow:0 0 8px rgba(245,197,66,.4)}
+
+  .pos{border:1px solid var(--line);border-radius:8px;padding:9px 11px;margin-bottom:7px;background:var(--raise)}
+  .pos .r1{display:flex;align-items:baseline;gap:7px}
+  .pos .tk2{font-family:var(--disp);font-weight:700;font-size:11.5px}
+  .pos .nm{font-size:10px;color:var(--ink-3);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .pos .d{font-size:11px;color:var(--amber);font-weight:500}
+  .pos .lt{display:flex;gap:1px;height:4px;margin-top:7px;border-radius:2px;overflow:hidden}
+  .pos .lt i{display:block}
+  .pos .note{font-size:9.5px;color:var(--ink-4);margin-top:6px}
+
+  .hh{display:inline-flex;align-items:center;gap:7px;font-size:10px;color:var(--ink-3);border:1px solid var(--line);
+    border-radius:6px;padding:5px 9px;margin-bottom:9px}
+  .hh .sw{width:22px;height:12px;border-radius:6px;background:var(--flat);position:relative}
+  .hh .sw::after{content:"";position:absolute;top:2px;left:2px;width:8px;height:8px;border-radius:50%;background:var(--ink-3)}
+  .hh.on{color:var(--amber);border-color:rgba(245,197,66,.3)}
+  .hh.on .sw::after{transform:translateX(10px);background:var(--amber)}
+  .breach{font-size:10px;color:var(--ember);margin-bottom:4px}
+
+  .action{border:1px solid var(--line);border-left:2px solid var(--amber);border-radius:8px;padding:10px 12px;
+    margin-bottom:8px;background:var(--raise)}
+  .action .k{font-size:8.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--amber);margin-bottom:3px}
+  .action h4{font-family:var(--disp);font-weight:700;font-size:12px;margin:0 0 3px}
+  .action p{margin:0;font-family:var(--serif);font-size:12px;color:var(--ink-2);line-height:1.5}
+
+  .talk{font-family:var(--serif);font-size:12.5px;color:var(--ink-2);line-height:1.6;margin:0 0 8px;
+    padding-left:11px;border-left:2px solid var(--line)}
+
+  .evi-cta{display:flex;gap:8px;padding:14px 20px;border-bottom:1px solid var(--line-soft)}
+  .evi-cta .btn{flex:1;text-align:center}
+
+  /* evidence slide-over (shown inset for the mock) */
+  .slideover{position:absolute;top:0;right:0;bottom:0;width:340px;background:var(--near);border-left:1px solid var(--amber);
+    box-shadow:-30px 0 60px rgba(0,0,0,.5);padding:16px 18px;z-index:5}
+  .slideover .soh{font-family:var(--disp);font-weight:700;font-size:13px;text-transform:uppercase;margin-bottom:4px}
+  .slideover .sos{font-size:10px;color:var(--ink-4);margin-bottom:14px}
+  .slideover .erow{display:flex;justify-content:space-between;font-size:11px;padding:8px 0;border-bottom:1px solid var(--line-soft)}
+  .slideover .erow .v{font-family:var(--mono);color:var(--ink)}
+  .slideover .erow .ok{color:var(--good)}
+  .slideover .erow .watch{color:var(--amber)}
+
+  .footnote{font-family:var(--mono);font-size:11px;color:var(--ink-3);line-height:1.6;margin:22px 0 0}
+  .footnote b{color:var(--ink)}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="frame">
+  <h1>Approach 1 · the Briefing spine, in Financial-noir</h1>
+  <p class="lede">One screen. Left: the situation (globe) stays pinned. Right: the client's morning brief reads top-to-bottom as a story — the same 9 demo beats, now a guided scroll instead of five tabs. Compliance + Impact live in an "Evidence" slide-over (shown open on the right). Click the card if this is the direction; notes in the terminal.</p>
+
+  <div class="card-shell" data-choice="briefing-spine-noir" onclick="toggleSelect(this)">
+    <div class="tag">Cockpit · Bergmann · goal "Property purchase 2027" selected → whole spine + globe filtered</div>
+    <div class="app">
+      <div class="bar">
+        <span class="brand">Wealth<em>·</em>Intelligence</span>
+        <span class="live"><span class="pulse"></span>LIVE · SIGNAL 14s AGO</span>
+        <span class="spacer"></span>
+        <span class="mode">fixtures</span>
+        <span class="btn">Client view</span>
+        <span class="btn solid">Generate note</span>
+      </div>
+
+      <div class="ticker">
+        <span class="lab"><span class="pulse" style="width:5px;height:5px"></span> Signals</span>
+        <div class="run">
+          <span class="tk"><span class="t">08:31</span> <b>Taiwan Strait</b> — naval activity re-rated, instability +7 <span class="t">WORLDMONITOR</span></span>
+          <span class="tk"><span class="t">07:55</span> <b>TWD</b> — 30-day narrative tone −1.4σ <span class="t">WORLDMONITOR</span></span>
+          <span class="tk"><span class="t">07:20</span> <b>SNB</b> — hold, guidance unchanged <span class="t">POLICY</span></span>
+          <span class="tk"><span class="t">08:31</span> <b>Taiwan Strait</b> — naval activity re-rated, instability +7 <span class="t">WORLDMONITOR</span></span>
+          <span class="tk"><span class="t">07:55</span> <b>TWD</b> — 30-day narrative tone −1.4σ <span class="t">WORLDMONITOR</span></span>
+          <span class="tk"><span class="t">07:20</span> <b>SNB</b> — hold, guidance unchanged <span class="t">POLICY</span></span>
+        </div>
+      </div>
+
+      <div class="stage">
+        <nav class="book">
+          <span class="bt">Book · 6</span>
+          <span class="cl on flag">BE</span>
+          <span class="cl flag">VO</span>
+          <span class="cl">HG</span>
+          <span class="cl flag">MR</span>
+          <span class="cl">KX</span>
+          <span class="cl">DL</span>
+        </nav>
+
+        <section class="situation">
+          <div class="sit-h">
+            <h2>C. &amp; M. Bergmann</h2><span class="ref">BER-4471</span>
+            <span class="tag2">Advisory</span>
+          </div>
+          <div class="lensrow">
+            <span class="on">Risk Δ</span><span>Instability</span><span>Tone</span><span>Policy</span>
+          </div>
+          <div class="orb-wrap">
+            <div class="orb">
+              <div class="arc"></div>
+              <div class="cap" style="height:70px;transform:rotate(-30deg)"></div>
+              <div class="cap" style="height:44px;transform:rotate(-6deg)"></div>
+              <div class="cap" style="height:30px;transform:rotate(18deg)"></div>
+              <div class="cap" style="height:22px;transform:rotate(40deg)"></div>
+              <div class="ring" style="top:32%;left:60%"></div>
+            </div>
+            <div class="evid">
+              <div class="k">This goal moved</div>
+              <div class="v">−16 pts</div>
+              <div class="s">this week, driven by<br>TSM · JBGEF · ASML</div>
+            </div>
+          </div>
+          <div class="sit-f"><span>Drag to rotate · click a country</span><span>4 lenses · 1 geometry</span></div>
+        </section>
+
+        <div class="spine">
+          <div class="seg">
+            <div class="seg-h"><span class="seg-n">01</span><h3>Situation</h3><span class="c">overnight</span></div>
+            <div class="change"><time>08:31</time><div><b>Taiwan Strait re-rated.</b> Naval activity lifts the instability index +7; narrative tone −1.4σ against its 30-day band.</div></div>
+            <div class="change"><time>07:20</time><div><b>SNB held.</b> No change to the CHF rate path — confirms the house view, no action implied.</div></div>
+          </div>
+
+          <div class="seg">
+            <div class="seg-h"><span class="seg-n">02</span><h3>Goals at risk</h3><span class="c">1 of 3 filtered</span></div>
+            <div class="goalcard hit">
+              <div class="gn">Property purchase</div><div class="gh">2027 · CHF 4.0M · advisory</div>
+              <div class="row"><span class="pct">71%</span><span class="chg">▼ 16 pts this week</span></div>
+              <div class="tr"><i style="width:71%"></i></div>
+            </div>
+          </div>
+
+          <div class="seg">
+            <div class="seg-h"><span class="seg-n">03</span><h3>Positions under pressure</h3><span class="c">3 funding this goal</span></div>
+            <div class="hh on"><span class="sw"></span>Household · 3 entities</div>
+            <div class="breach">▲ Taiwan look-through 7.8% → 11.5% — crosses the 10% mandate limit</div>
+            <div class="pos">
+              <div class="r1"><span class="tk2">TSM</span><span class="nm">Taiwan Semiconductor</span><span class="d">+24</span></div>
+              <div class="lt"><i style="width:100%;background:var(--amber)"></i></div>
+              <div class="note">single equity · Taiwan 100%</div>
+            </div>
+            <div class="pos">
+              <div class="r1"><span class="tk2">JBGEF</span><span class="nm">JB Global Equity Fund</span><span class="d">+9</span></div>
+              <div class="lt"><i style="width:32%;background:var(--amber)"></i><i style="width:20%;background:var(--amber-2)"></i><i style="width:48%;background:var(--flat)"></i></div>
+              <div class="note">fund · look-through: TWN 5% · KOR 4% · +28 more — <span style="color:var(--amber)">nobody's statement says so</span></div>
+            </div>
+            <div class="pos">
+              <div class="r1"><span class="tk2">ASML</span><span class="nm">ASML Holding</span><span class="d">+6</span></div>
+              <div class="lt"><i style="width:40%;background:var(--amber-2)"></i><i style="width:60%;background:var(--flat)"></i></div>
+              <div class="note">single equity · Netherlands 100% · revenue exposure TWN</div>
+            </div>
+          </div>
+
+          <div class="seg">
+            <div class="seg-h"><span class="seg-n">04</span><h3>Recommended actions</h3><span class="c">advisory · needs client decision</span></div>
+            <div class="action">
+              <div class="k">Trim</div><h4>Reduce TSM by one third</h4>
+              <p>Brings household Taiwan look-through back under the mandate limit; releases CHF 180k toward the property goal. Suitability record attached.</p>
+            </div>
+            <div class="action">
+              <div class="k">Hedge</div><h4>Collar the JBGEF sleeve</h4>
+              <p>Keeps the position, caps the strait-specific downside for two quarters. Lower tax drag than the trim.</p>
+            </div>
+          </div>
+
+          <div class="seg">
+            <div class="seg-h"><span class="seg-n">05</span><h3>The conversation</h3><span class="c">last contact 21 Aug</span></div>
+            <p class="talk">"Your 2027 purchase is the thing that moved — down 16 points — and it's one strait doing it, showing up in three places including a fund we'd never have flagged by name."</p>
+            <p class="talk">Likely objection: <i>"Didn't we already de-risk Asia?"</i> — The single stock, yes. The fund's 9% look-through to the region is the part that's invisible per account.</p>
+          </div>
+
+          <div class="evi-cta">
+            <span class="btn">Compliance &amp; screening →</span>
+            <span class="btn">Operating impact →</span>
+          </div>
+        </div>
+
+        <aside class="slideover">
+          <div class="soh">Evidence</div>
+          <div class="sos">Compliance · concentration · suitability trail — the appendix, not a peer tab</div>
+          <div class="erow"><span>Sanctions screening</span><span class="v ok">clear</span></div>
+          <div class="erow"><span>Concentration policy</span><span class="v watch">watch</span></div>
+          <div class="erow"><span>Taiwan Strait — capital behind it</span><span class="v">11.5%</span></div>
+          <div class="erow"><span>Suitability records generated</span><span class="v">2</span></div>
+          <div class="erow"><span>Clients touched by this signal</span><span class="v">4 of 6</span></div>
+          <div class="erow"><span>Prep per review</span><span class="v">18 → 4 min</span></div>
+        </aside>
+      </div>
+    </div>
+  </div>
+
+  <p class="footnote">
+    <b>Type system:</b> Bricolage Grotesque (headlines / tickers / numbers), JetBrains Mono (labels, data, chrome), Spectral (narrative prose — the conversation, the client note). <br>
+    <b>Colour:</b> one luminous amber carries every "attention" signal and glows; a dim steel-blue is the only counter-pole (improvement); ember-orange for a breach. Near-black ground with a top glow, a bottom vignette, and a faint film grain. <br>
+    <b>Motion:</b> on load the spine segments rise and fade in sequence (01→05); the globe drifts; the live dot pulses amber; ticker marquees. All of it off under <code>prefers-reduced-motion</code>. <br>
+    <b>Demo path:</b> beats 1–2 = pick Bergmann, see goal 02 drop → click it, spine + globe filter. Beats 3–4 = segment 03, drill TSM then JBGEF (the fund moment). Beat 5 = household toggle → ember breach line. Beat 6 = segment 04. Beat 7 = "Operating impact →" opens Evidence. Beat 8 = "Generate note". Beat 9 = "Client view".
+  </p>
+</div>
+</body>
+</html>
