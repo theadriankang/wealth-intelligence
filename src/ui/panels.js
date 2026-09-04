@@ -7,6 +7,67 @@ import { currentPolicyScan } from "../policy/sentinel.js";
 import * as M from "./motion.js";
 
 const SCALE = { total:20 };
+export const RISK_THRESHOLDS = { critical:80, high:60, medium:35 };
+
+/**
+ * score/band here are NOT recomputed — they defer entirely to clientMeta()'s aiState()-derived
+ * meta.urgency/meta.band. An earlier version of this file computed its own weighted score
+ * (referencing meta.breakdown, a field clientMeta() no longer produces — it silently degraded
+ * to a fallback formula instead of throwing) and displayed it regardless of whether the AI had
+ * actually scored the client yet. That's the exact "never show a number that might be a guess"
+ * regression the loading/unavailable states exist to prevent, so score is null — and rendered
+ * as a state, not a number — until aiState() reports "ai". See clientMeta() in this file and
+ * aiState() in store.js.
+ */
+function riskLevelFor(meta) { return meta.band; } // "critical"|"high"|"medium"|"low"|"loading"|"unavailable"
+
+function sidebarScore(meta) { return meta.urgency; } // number 0-100, or null while loading/unavailable
+
+function scoreLabel(meta) {
+  if (meta.band === "loading") return "…";
+  if (meta.band === "unavailable") return "n/a";
+  return String(sidebarScore(meta));
+}
+
+function aiInsight(meta) {
+  if (meta.band === "loading") return "AI: Scoring…";
+  if (meta.band === "unavailable") return "AI: Unavailable";
+  if (meta.band === "critical") return meta.ltv ? "AI ALERT: Margin Call Risk" : "AI ALERT: Urgent Rebalance";
+  if (meta.band === "high") return meta.driver === "Collateral/Leverage" ? "AI INSIGHT: Risk Limit Warning" : `AI INSIGHT: ${meta.driver} Pressure`;
+  if (meta.band === "medium") return meta.dueSoon ? "AI NOTICE: Annual Review Due" : `AI NOTICE: ${meta.driver} Watch`;
+  if (/No urgent/i.test(meta.reason)) return "AI: Healthy Portfolio";
+  return "AI: Stable Portfolio";
+}
+
+function aumNumber(p) {
+  if (Number.isFinite(p.jb?.totalUsd)) return p.jb.totalUsd;
+  const m = String(p.aum || "").match(/([\d.]+)\s*m/i);
+  return m ? Number(m[1]) * 1e6 : 0;
+}
+
+function sortClients(list, metas) {
+  const riskRank = { critical:4, high:3, medium:2, low:1 };
+  return list.sort((a, b) => {
+    const am = metas.get(a.id), bm = metas.get(b.id);
+    const as = sidebarScore(am), bs = sidebarScore(bm);
+    switch (S.clientSort || "urgency-desc") {
+      case "aum-desc": return aumNumber(b) - aumNumber(a);
+      case "name-asc": return a.name.localeCompare(b.name);
+      case "review-asc": return String(a.reviewDate || "").localeCompare(String(b.reviewDate || ""));
+      case "risk-desc": return (riskRank[bm.band] ?? 0) - (riskRank[am.band] ?? 0) || (bs ?? -1) - (as ?? -1);
+      default: return (bs ?? -1) - (as ?? -1) || String(a.reviewDate || "").localeCompare(String(b.reviewDate || ""));
+    }
+  });
+}
+
+function clientCard(p, m) {
+  return `<button class="cl rm-client ${m.band}" data-cl="${p.id}" aria-current="${p.id === S.portfolio.id}">
+    <span class="client-accent" aria-hidden="true"></span>
+    <span class="client-top"><span class="nm">${p.name}</span><span class="client-aum">${p.aum}</span></span>
+    <span class="client-meta">Mandate: ${p.riskProfile}</span>
+    <span class="client-insight"><span class="score-pill">${scoreLabel(m)}</span><span>${aiInsight(m)}</span><span class="chev">›</span></span>
+  </button>`;
+}
 
 export function lookThroughBar(inst, signals) {
   if (!inst?.exposures?.length || inst.exposures.length === 1) return "";
@@ -73,12 +134,59 @@ function clientMeta(p) {
   });
 }
 
+function initials(name) {
+  return String(name || "RM").split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join("").toUpperCase();
+}
+
+const PROFILE_IMAGES = {
+  "Ravi Chandrasekaran": "/avatars/ravi-chandrasekaran.png",
+  "Fong Enterprises Family Office": "/avatars/fong-enterprises.png",
+  "Zhang Meiling": "/avatars/zhang-meiling.png",
+  "Tan Boon Huat": "/avatars/tan-boon-huat.png",
+  "Kim Do-Yoon": "/avatars/kim-do-yoon.png"
+};
+
+function profileAvatar(p) {
+  const src = PROFILE_IMAGES[p.name];
+  return src
+    ? `<div class="profile-avatar has-photo"><img src="${src}" alt="${p.name} profile portrait" loading="lazy"></div>`
+    : `<div class="profile-avatar">${initials(p.name)}</div>`;
+}
+
+function reviewDateLabel(date) {
+  const d = String(date || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!d) return date || "Not scheduled";
+  return new Date(`${date}T00:00:00`).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" });
+}
+
+function urgentReviewCard({ p, m }, index, total) {
+  const band = m.band;
+  const badge = band === "critical" ? "Critical attention" : band === "high" ? "High attention"
+    : band === "medium" ? "Medium attention" : band === "low" ? "Low attention"
+    : band === "loading" ? "Scoring…" : "Attention unavailable";
+  return `<article class="urgent-swipe-card ${band}" data-urgent-card>
+    <div class="urgent-card-top"><span class="attention-badge ${band}"><i></i>${badge}</span><span>${index + 1} / ${total}</span></div>
+    ${profileAvatar(p)}
+    <h3>${p.name}</h3>
+    <p class="client-type">${m.source}</p>
+    <div class="profile-facts">
+      <div><span>AUM</span><b>${p.currency || ""} ${p.aum}</b></div>
+      <div><span>Mandate</span><b>${p.riskProfile || p.mandate}</b></div>
+    </div>
+    <button class="risk-callout ${band}" data-cl="${p.id}">
+      <b>${scoreLabel(m)}</b><span><strong>${aiInsight(m)}</strong>${m.reason}</span><em>›</em>
+    </button>
+    <div class="next-review"><span>▣</span><div><small>Next Review</small><b>${reviewDateLabel(p.reviewDate)}</b></div></div>
+    <button class="open-review" data-cl="${p.id}">Open client review <span>→</span></button>
+  </article>`;
+}
+
 function clientMatches(p, meta) {
   const filter = S.clientFilter || "all";
   const q = (S.clientSearch || "").trim().toLowerCase();
   const hay = [p.name, p.ref, meta.source, p.countryOfResidence, p.bookingCentre, p.currency].join(" ").toLowerCase();
   if (q && !hay.includes(q)) return false;
-  if (filter !== "all" && meta.category !== filter) return false;
+  if (filter !== "all" && riskLevelFor(meta) !== filter) return false;
   if (S.driverFilter !== "all" && meta.driver !== S.driverFilter) return false;
   if (S.profileFilter !== "all" && p.riskProfile !== S.profileFilter) return false;
   if (S.bookingFilter !== "all" && p.bookingCentre !== S.bookingFilter) return false;
@@ -93,33 +201,34 @@ export function paintBook(onPick) {
   const filtered = S.portfolios.filter(p => clientMatches(p, metas.get(p.id)))
     .sort((a, b) => (metas.get(b.id).urgency ?? -1) - (metas.get(a.id).urgency ?? -1));
   document.getElementById("book-n").textContent = `${SCALE.total} synthetic clients`;
-  document.getElementById("book-foot").innerHTML = `Sorted by attention score, then nearest deadline. Synthetic demo data as of 26 Aug 2026.`;
+  document.getElementById("book-foot").innerHTML = `<span>Showing ${Math.min(filtered.length, 5)} of ${S.portfolios.length} clients</span><button id="view-all-clients">View all clients →</button>`;
   const input = document.getElementById("client-search");
   if (input && input.value !== S.clientSearch) input.value = S.clientSearch;
   document.querySelectorAll("#client-filters [data-filter]").forEach(b =>
     b.setAttribute("aria-pressed", String((S.clientFilter || "all") === b.dataset.filter)));
-  const fs = document.getElementById("filter-summary");
-  for (const [id, value] of [["driver-filter", S.driverFilter], ["profile-filter", S.profileFilter], ["booking-filter", S.bookingFilter], ["aum-filter", S.aumFilter]]) {
+  const sort = document.getElementById("client-sort");
+  if (sort) sort.value = S.clientSort || "urgency-desc";
+  const fp = document.getElementById("filter-panel");
+  if (fp) fp.hidden = !S.filtersOpen;
+  const ft = document.getElementById("filter-toggle");
+  if (ft) ft.setAttribute("aria-expanded", String(!!S.filtersOpen));
+  for (const [id, value] of [["risk-popover-filter", S.clientFilter], ["driver-filter", S.driverFilter], ["profile-filter", S.profileFilter], ["booking-filter", S.bookingFilter], ["aum-filter", S.aumFilter]]) {
     const el = document.getElementById(id);
     if (el) el.value = value || "all";
   }
   const active = activeClientFilters();
-  if (fs) fs.textContent = active.length ? active.join(" · ") : "No active filters";
   document.getElementById("book").innerHTML = filtered.map(p => {
     const m = metas.get(p.id);
-    const tone = m.band;
-    const badgeLabel = m.band === "loading" ? "Scoring…" : m.band === "unavailable" ? "Unavailable" : `${m.urgency} · ${m.band}`;
-    return `<button class="cl rm-client ${tone}" data-cl="${p.id}" aria-current="${p.id === S.portfolio.id}">
-      <span class="client-dot"></span><span class="nm">${p.name}</span>
-      <span class="badge ${m.band}">${badgeLabel}</span>
-      <span class="rf">${m.source}</span>
-      <span class="riskline">${p.aum} · ${p.riskProfile}</span>
-      <span class="reason">${m.driver}: ${m.reason}</span><span class="mini-trend">${m.fl.length} alerts</span>
-      <span class="next">${m.next} · ${p.reviewDate}</span>
-    </button>`;
+    return clientCard(p, m);
   }).join("") || `<div class="empty-state">No clients match ${active.length ? active.join(" · ") : "the current search"}.</div>`;
   document.querySelectorAll("[data-cl]").forEach(b => b.addEventListener("click", () => onPick(b.dataset.cl)));
   document.querySelectorAll("#client-filters [data-filter]").forEach(b => b.addEventListener("click", () => { S.clientFilter = b.dataset.filter; paintBook(onPick); }));
+  document.getElementById("filter-toggle")?.addEventListener("click", () => { S.filtersOpen = !S.filtersOpen; paintBook(onPick); });
+  document.getElementById("client-sort")?.addEventListener("change", e => { S.clientSort = e.target.value; paintBook(onPick); });
+  document.getElementById("risk-popover-filter")?.addEventListener("change", e => { S.clientFilter = e.target.value; paintBook(onPick); });
+  document.getElementById("view-all-clients")?.addEventListener("click", () => {
+    S.clientFilter = "all"; S.clientSearch = ""; S.driverFilter = "all"; S.profileFilter = "all"; S.bookingFilter = "all"; S.aumFilter = "all"; paintBook(onPick);
+  });
   document.getElementById("clear-client-filters")?.addEventListener("click", () => {
     S.clientFilter = "all"; S.clientSearch = ""; S.driverFilter = "all"; S.profileFilter = "all"; S.bookingFilter = "all"; S.aumFilter = "all"; paintBook(onPick);
   });
@@ -238,10 +347,23 @@ export function paintLegend() {
 }
 
 export function paintTicker(feed = FEED) {
-  const item = f => `<span class="tk ${f[5] ? "new" : ""}"><time>${f[0]}</time><span class="sv" style="background:${P.SEV[f[4]]}"></span><b>${f[2]}</b> ${f[3]} <span class="src">${f[1]}</span></span>`;
+  const hrefFor = url => {
+    if (!url || typeof url !== "string") return "";
+    if (url.startsWith("/")) return url;
+    return /^[a-z]+:\/\//i.test(url) ? url : `https://${url}`;
+  };
+  const item = f => {
+    const url = hrefFor(f[5]);
+    const isNew = f[5] === true || f[6] === true;
+    const body = `<time>${f[0]}</time><span class="sv" style="background:${P.SEV[f[4]] || P.INK4}"></span><b>${f[2]}</b> ${f[3]} <span class="src">${f[1]}</span>`;
+    return url
+      ? `<a class="tk ${isNew ? "new" : ""}" href="${url}" target="_blank" rel="noreferrer">${body}</a>`
+      : `<span class="tk ${isNew ? "new" : ""}">${body}</span>`;
+  };
   document.getElementById("ticker").innerHTML = feed.map(item).join("") + feed.map(item).join("");
   M.tick();
   const tag = document.getElementById("mode-tag");
+  if (!tag) return;
   const { mode } = getMode();
   tag.className = "mode " + mode;
   tag.textContent = mode === "live" ? "live feed" : mode === "fixtures" ? "fixtures" : "…";
@@ -254,25 +376,44 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
   const digest = S.selIso ? S.signals[S.selIso]?.events || [] : topEventsRaw(4);
   const top = meta.fl[0];
   const scan = S.policyScan || currentPolicyScan();
-  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div><div class="urgent-list">${urgent.map(({p,m}) => `<article class="urgent-mini"><div><h3>${p.name}</h3><p>${m.reason}</p><span>${p.aum} · ${p.reviewDate}</span></div><b class="${m.band}">${m.band === "loading" ? "…" : m.band === "unavailable" ? "n/a" : m.urgency}</b><button class="ghost sm" data-cl="${p.id}">Open review</button></article>`).join("")}</div><button class="ghost solid" id="priority-open">View all urgent reviews</button></section>
+  const activeIndex = urgent.length ? Math.min(S.urgentReviewIndex || 0, urgent.length - 1) : 0;
+  const activeUrgent = urgent[activeIndex];
+  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card urgent-carousel"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div>${activeUrgent ? urgentReviewCard(activeUrgent, activeIndex, urgent.length) : `<div class="empty-state">No urgent reviews for this scope.</div>`}<div class="urgent-nav"><button class="urgent-arrow" data-urg-nav="-1" aria-label="Previous urgent review">‹</button><div class="urgent-dots">${urgent.map((_, i) => `<button data-urg-dot="${i}" aria-label="Urgent review ${i + 1}" aria-pressed="${i === activeIndex}"></button>`).join("")}</div><button class="urgent-arrow" data-urg-nav="1" aria-label="Next urgent review">›</button></div></section>
     <section class="priority-card"><div class="sec-h"><h2>Live Intelligence</h2><button class="ghost sm" id="clear-sel">Reset view</button></div><div class="situation-list">${digest.map(e => signalCard(e)).join("")}</div><div class="policy-mini"><span>Policy Sentinel</span><b>${scan.signal.stance}</b><button class="ghost sm" id="rail-policy-open">Evidence</button></div></section>
     <section class="priority-card positions-mini"><div class="sec-h"><h2>Positions by pressure</h2><span class="count">top 4</span></div>${visibleRows().slice(0,4).map(r => `<button class="mini-pos" data-t="${r.instrumentId}"><span class="tickr">${r.instrumentId}</span><span>${r.name}</span><b style="color:${L.col(r.riskDelta)}">${fmtD(r.riskDelta)}</b></button>`).join("")}</section>
     <section class="priority-card copilot-card"><div class="sec-h"><h2>AI Copilot</h2><span class="spark">✦</span></div><p>Ask about this client, a holding, or a market signal.</p><button class="suggest" data-coprompt="Prepare a call brief for ${p.name}">Prepare call brief</button><button class="suggest" data-coprompt="Show liquidity risks for ${p.name}">Show liquidity risks</button><button class="ghost solid" id="open-copilot">Open copilot</button></section>`;
   document.getElementById("priority-open")?.addEventListener("click", () => top ? onOpenPosition(top.instrumentId) : onRunPolicyScan());
   document.getElementById("clear-sel")?.addEventListener("click", onClearSel);
-  document.getElementById("rail-policy-open")?.addEventListener("click", onOpenPolicyTrial);
-  document.getElementById("open-copilot")?.addEventListener("click", onCopilotToggle);
-  document.querySelectorAll(".suggest").forEach(b => b.addEventListener("click", () => { S.copilotDraft = b.dataset.coprompt; onCopilotToggle(); }));
   document.querySelectorAll("#pfrail [data-cl]").forEach(b => b.addEventListener("click", () => onOpenClient?.(b.dataset.cl)));
   document.querySelectorAll("#pfrail [data-iso]").forEach(b => b.addEventListener("click", () => onSelectIso?.(b.dataset.iso)));
   document.querySelectorAll("#pfrail [data-t]").forEach(b => b.addEventListener("click", () => onOpenPosition(b.dataset.t)));
+  document.querySelectorAll("#pfrail [data-urg-nav]").forEach(b => b.addEventListener("click", () => {
+    if (!urgent.length) return;
+    S.urgentReviewIndex = (S.urgentReviewIndex + Number(b.dataset.urgNav) + urgent.length) % urgent.length;
+    paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle });
+  }));
+  document.querySelectorAll("#pfrail [data-urg-dot]").forEach(b => b.addEventListener("click", () => {
+    S.urgentReviewIndex = Number(b.dataset.urgDot) || 0;
+    paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle });
+  }));
+  const card = document.querySelector("#pfrail [data-urgent-card]");
+  if (card) {
+    let startX = 0;
+    card.addEventListener("pointerdown", e => { startX = e.clientX; card.setPointerCapture?.(e.pointerId); });
+    card.addEventListener("pointerup", e => {
+      const dx = e.clientX - startX;
+      if (Math.abs(dx) < 34 || !urgent.length) return;
+      S.urgentReviewIndex = (S.urgentReviewIndex + (dx < 0 ? 1 : -1) + urgent.length) % urgent.length;
+      paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle });
+    });
+  }
   M.once("rail", [p.id, S.selIso, S.goalSel, S.household].join("|"), M.rail);
 }
 
 export function paintCopilot({ onToggle }) {
   const p = S.portfolio, open = S.copilotOpen;
   const prompts = ["Prepare call brief", "Show liquidity risks", "Summarise alerts", "Find clients affected by Singapore"];
-  document.getElementById("copilot").innerHTML = open ? `<div class="copilot-box"><div class="copilot-h"><div><h2>AI Copilot</h2><span>UI prototype · ${p.name}</span></div><button class="x" id="copilot-close">×</button></div><div class="prompt-grid">${prompts.map(x => `<button data-prompt="${x}">${x}</button>`).join("")}</div><div class="copilot-answer">${S.copilotDraft ? `Drafting workspace for: <b>${S.copilotDraft}</b><br><span>Will use portfolio, goals, RM notes and live signals when routing is connected.</span>` : "Select a prompt or ask a question to organise the RM workflow."}</div><div class="ask-row"><input value="${S.copilotDraft || ""}" placeholder="Ask a question..."><button>➤</button></div></div>` : `<button class="copilot-launch" id="copilot-open"><span>✦</span> AI Copilot</button>`;
+  document.getElementById("copilot").innerHTML = open ? `<div class="copilot-box"><div class="copilot-h"><div><h2><span>✦</span> AI Copilot</h2><p>Ask about this client, a holding, or market event</p></div><button class="x" id="copilot-close" aria-label="Close copilot">×</button></div><div class="prompt-grid">${prompts.map(x => `<button data-prompt="${x}">${x}</button>`).join("")}</div><div class="copilot-answer">${S.copilotDraft ? `Drafting workspace for: <b>${S.copilotDraft}</b><br><span>Will use portfolio, goals, RM notes and live signals when routing is connected.</span>` : "Select a prompt or ask a question to organise the RM workflow."}</div><div class="ask-row"><input value="${S.copilotDraft || ""}" placeholder="Ask anything..."><button>➤</button></div></div>` : `<button class="copilot-launch" id="copilot-open" aria-label="Open AI Copilot"><span>✦</span></button>`;
   document.getElementById("copilot-open")?.addEventListener("click", onToggle);
   document.getElementById("copilot-close")?.addEventListener("click", onToggle);
   document.querySelectorAll("#copilot [data-prompt]").forEach(b => b.addEventListener("click", () => { S.copilotDraft = b.dataset.prompt; paintCopilot({ onToggle }); }));

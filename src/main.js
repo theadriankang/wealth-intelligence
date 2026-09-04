@@ -7,7 +7,7 @@ import { initPalette } from "./ui/palette.js";
 import { shellHtml } from "./ui/shell.js";
 import { installLiquidGlass, applyLiquidGlass } from "./ui/glass.js";
 import { mountSilk } from "./ui/silk.js";
-import { mountGlobe, paintGlobe, sizeGlobe } from "./ui/globe.js";
+import { focusGlobeOnCountries, mountGlobe, paintGlobe, resetGlobeView, sizeGlobe } from "./ui/globe.js";
 import { mountGoogleGlobe } from "./ui/googleGlobe.js";
 import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTicker, paintPfRail, paintCopilot }
   from "./ui/panels.js";
@@ -54,12 +54,13 @@ async function boot() {
   const data = await loadData(CONFIG.ADAPTER);
   Object.assign(S, data);
   S.portfolio = S.portfolios[0];
+  S.operator = currentOperator(data);
   S.policyScan = FALLBACK_SCAN;
   const isos = collectIsos(S.portfolios, S.instruments);
   const usesDatasetSignals = await loadSignals(data, isos);
   readRouteFromLocation();
 
-  root.innerHTML = shellHtml();
+  root.innerHTML = shellHtml(S.operator);
   installLiquidGlass();
   mountSilk(document.getElementById("silk-bg"), {
     speed: 5,
@@ -80,8 +81,19 @@ async function boot() {
   } catch (err) {
     console.warn("[globe] WebGL unavailable, rendering dashboard without globe canvas:", err);
     document.getElementById("globe").innerHTML = `<div class="globe-fallback">
-      <div class="fallback-orbit"></div>
-      <div class="fallback-core">Global exposure map unavailable</div>
+      <div class="fallback-halo"></div>
+      <div class="fallback-orbit o1"></div>
+      <div class="fallback-orbit o2"></div>
+      <div class="fallback-orbit o3"></div>
+      <div class="fallback-globe" aria-label="Global exposure visualisation">
+        <span class="land l1"></span>
+        <span class="land l2"></span>
+        <span class="land l3"></span>
+        <span class="hotspot h1"></span>
+        <span class="hotspot h2"></span>
+        <span class="hotspot h3"></span>
+      </div>
+      <div class="fallback-core"><b>Global Exposure</b><span>Local WebGL fallback</span></div>
     </div>`;
   }
   wire();
@@ -101,6 +113,13 @@ async function boot() {
 }
 
 function wire() {
+  document.addEventListener("pointerdown", e => {
+    if (!S.copilotOpen) return;
+    if (e.target.closest("#copilot")) return;
+    S.copilotOpen = false;
+    paintCopilot({ onToggle: railHandlers.onCopilotToggle });
+  });
+
   document.getElementById("open-client-rail")?.addEventListener("click", () => { S.clientDrawerOpen = true; S.railDrawerOpen = false; syncDrawers(); });
   document.getElementById("open-priority-rail")?.addEventListener("click", () => { S.railDrawerOpen = true; S.clientDrawerOpen = false; syncDrawers(); });
   document.getElementById("close-client-rail")?.addEventListener("click", () => { S.clientDrawerOpen = false; syncDrawers(); });
@@ -111,6 +130,20 @@ function wire() {
       x.setAttribute("aria-pressed", String(x.dataset.lens === S.lens)));
     paintLegend(); paintGlobe();
   }));
+
+  document.getElementById("wi-logo-home")?.addEventListener("click", () => {
+    S.route = "dashboard";
+    S.clientScopeId = null;
+    S.selIso = null;
+    S.goalSel = null;
+    S.tab = "pf";
+    S.household = false;
+    S.clientDrawerOpen = false;
+    S.railDrawerOpen = false;
+    history.pushState(null, "", "/");
+    resetGlobeView();
+    renderAll();
+  });
 
   document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => {
     S.tab = b.dataset.tab;
@@ -124,7 +157,8 @@ function wire() {
 
   setInterval(() => {
     since++;
-    document.getElementById("live-t").textContent =
+    const live = document.getElementById("live-t");
+    if (live) live.textContent =
       "portfolio + intelligence · updated " + (since < 60 ? since + "s" : Math.floor(since / 60) + "m") + " ago";
   }, 1000);
 
@@ -171,6 +205,7 @@ async function switchSnapshot(asOf) {
     const data = await loadData(CONFIG.ADAPTER, { asOf });
     Object.assign(S, data);
     S.portfolio = S.portfolios.find(p => p.id === keepId) || S.portfolios[0];
+    S.operator = currentOperator(data);
     S.narratedHash = {}; S.aiActionState = {}; S.inspectDataOpen = false;
     since = 0;
     await loadSignals(data, collectIsos(S.portfolios, S.instruments));
@@ -190,8 +225,8 @@ function refresh(what) {
 
 const railHandlers = {
   onClearGoal: () => { S.goalSel = null; renderAll(); },
-  onClearSel: () => { S.selIso = null; S.clientScopeId = null; refresh("globe"); },
-  onSelectIso: iso => { S.selIso = iso; S.railDrawerOpen = false; refresh("globe"); },
+  onClearSel: () => { S.selIso = null; S.clientScopeId = null; resetGlobeView(); refresh("globe"); },
+  onSelectIso: iso => { S.selIso = iso; S.railDrawerOpen = false; focusGlobeOnCountries([iso]); refresh("globe"); },
   onOpenClient: id => {
     S.portfolio = S.portfolios.find(p => p.id === id) || S.portfolio;
     S.clientScopeId = null; S.selIso = null; S.goalSel = null; S.household = false; S.railDrawerOpen = false;
@@ -396,12 +431,13 @@ export function renderAll() {
   paintBook(id => {
     S.portfolio = S.portfolios.find(p => p.id === id);
     S.clientScopeId = id; S.goalSel = null; S.household = false; S.clientDrawerOpen = false;
+    focusPortfolio(S.portfolio);
     renderAll();
   });
   paintHead(() => { S.household = !S.household; S.selIso = null; renderAll(); });
   paintGoals(id => {
     S.goalSel = S.goalSel === id ? null : id;
-    S.selIso = null;
+    focusGoal(S.goalSel);
     renderAll();
   });
   paintLegend(); paintGlobe(); paintEvidence();
@@ -418,9 +454,42 @@ export function renderAll() {
   maybeNarrateOpenClient(); // hash-gated: only asks the model again if the open client's facts moved
 }
 
+function isoWeightsForPortfolio(p, goalId = null) {
+  const ids = goalId ? new Set((p.goals.find(g => g.id === goalId)?.driverIds) || []) : null;
+  const weights = new Map();
+  for (const pos of p.positions || []) {
+    if (ids && !ids.has(pos.instrumentId)) continue;
+    const inst = S.instruments[pos.instrumentId];
+    for (const ex of inst?.exposures || []) {
+      weights.set(ex.iso3, (weights.get(ex.iso3) || 0) + (pos.weightPct || 0) * (ex.weight || 1));
+    }
+  }
+  return [...weights.entries()].sort((a, b) => b[1] - a[1]).map(([iso]) => iso);
+}
+
+function focusPortfolio(p) {
+  const isos = isoWeightsForPortfolio(p);
+  if (isos.length) focusGlobeOnCountries(isos);
+}
+
+function focusGoal(goalId) {
+  if (!goalId) { S.selIso = null; resetGlobeView(); return; }
+  const isos = isoWeightsForPortfolio(S.portfolio, goalId);
+  if (isos.length) focusGlobeOnCountries(isos);
+}
+
 function syncDrawers() {
   document.querySelector(".mission-stage")?.classList.toggle("client-open", !!S.clientDrawerOpen);
   document.querySelector(".mission-stage")?.classList.toggle("rail-open", !!S.railDrawerOpen);
+}
+
+function currentOperator(data) {
+  const name = data.meta?.operatorName || data.meta?.rmName ||
+    data.portfolios?.find(p => p.rm)?.rm ||
+    "Relationship Manager";
+  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2)
+    .map(part => part[0]?.toUpperCase() || "").join("") || "RM";
+  return { name, initials };
 }
 
 function feedFromSignals(signals) {
@@ -431,7 +500,7 @@ function feedFromSignals(signals) {
       if (seen.has(e.id)) continue;
       seen.add(e.id);
       const sev = e.severity === "Severe" ? "crit" : e.severity === "High" ? "serious" : "warn";
-      events.push([(e.at || "").slice(5), e.source || "event_log.csv", e.region || s.name, e.text || e.value || "Signal update", sev]);
+      events.push([(e.at || "").slice(5), e.source || "event_log.csv", e.region || s.name, e.text || e.value || "Signal update", sev, e.endpoint]);
     }
   }
   return events.sort((a, b) => b[0].localeCompare(a[0])).slice(0, 12);

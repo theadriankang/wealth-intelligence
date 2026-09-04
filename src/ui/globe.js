@@ -11,8 +11,29 @@ const a3 = f => N2A3[f.properties.id] || null;
 
 /* Countries too small to appear in the 110m polygon set render as points. */
 const POINT_STATES = { SGP:{ name:"Singapore", lat:1.29, lng:103.85 } };
+const COUNTRY_VIEW = {
+  BRA:{ lat:-14.2, lng:-51.9 }, CHE:{ lat:46.8, lng:8.2 }, CHN:{ lat:35.9, lng:104.2 },
+  DEU:{ lat:51.2, lng:10.4 }, GBR:{ lat:55.4, lng:-3.4 }, IND:{ lat:20.6, lng:78.9 },
+  JPN:{ lat:36.2, lng:138.2 }, KOR:{ lat:36.5, lng:127.8 }, NLD:{ lat:52.1, lng:5.3 },
+  SAU:{ lat:23.9, lng:45.1 }, SGP:{ lat:1.29, lng:103.85 }, TWN:{ lat:23.7, lng:121 },
+  USA:{ lat:39.8, lng:-98.6 }
+};
 
 let globe = null;
+let idleTimer = null;
+const DEFAULT_VIEW = { lat:14, lng:104, altitude:2.15 };
+const FOCUS_IDLE_MS = 25000;
+
+function scheduleIdleReset() {
+  clearTimeout(idleTimer);
+  idleTimer = setTimeout(() => resetGlobeView(), FOCUS_IDLE_MS);
+}
+
+function pauseForFocus() {
+  if (!globe) return;
+  globe.controls().autoRotate = false;
+  scheduleIdleReset();
+}
 
 export function mountGlobe(el, { onSelect }) {
   globe = Globe({ animateIn:false })(el)
@@ -39,17 +60,34 @@ export function mountGlobe(el, { onSelect }) {
   globe.globeMaterial().emissive.set("#dbeafe");
   globe.globeMaterial().emissiveIntensity = 0.06;
   globe.globeMaterial().shininess = 9;
-  globe.pointOfView({ lat:14, lng:104, altitude:2.15 }, 0);
+  globe.pointOfView(DEFAULT_VIEW, 0);
 
   const reduced = matchMedia("(prefers-reduced-motion:reduce)").matches;
   globe.controls().autoRotate = !reduced;
-  globe.controls().autoRotateSpeed = 0.19;
+  globe.controls().autoRotateSpeed = 0.228;
   globe.controls().enableDamping = true;
   ["pointerdown", "wheel", "touchstart"].forEach(type =>
-    el.addEventListener(type, () => { globe.controls().autoRotate = false; }, { passive:true }));
+    el.addEventListener(type, pauseForFocus, { passive:true }));
   sizeGlobe();
   addEventListener("resize", sizeGlobe);
   return globe;
+}
+
+export function focusGlobeOnCountries(isos = []) {
+  if (!globe) return;
+  const iso = isos.find(x => COUNTRY_VIEW[x]);
+  if (!iso) return;
+  S.selIso = iso;
+  pauseForFocus();
+  globe.pointOfView({ ...COUNTRY_VIEW[iso], altitude:1.35 }, 850);
+}
+
+export function resetGlobeView() {
+  if (!globe) return;
+  S.selIso = null;
+  globe.pointOfView(DEFAULT_VIEW, 900);
+  globe.controls().autoRotate = !matchMedia("(prefers-reduced-motion:reduce)").matches;
+  paintGlobe();
 }
 
 export function sizeGlobe() {

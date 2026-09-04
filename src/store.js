@@ -7,12 +7,15 @@ export const S = {
   portfolio: null, lens: "d", selIso: null, goalSel: null, tab: "pf",
   route: "dashboard", clientScopeId: null,
   household: false, live: false, actionState: {}, meta: {},
+  operator: null,
   policyScan: null, policyScanState: "idle",
   evaluation: null, narratedHash: {},
   clientFilter: "all", clientSearch: "", copilotOpen: false, copilotDraft: "",
+  clientSort: "urgency-desc", filtersOpen: false,
   driverFilter: "all", profileFilter: "all", bookingFilter: "all", aumFilter: "all",
   clientDrawerOpen: false, railDrawerOpen: false,
-  inspectDataOpen: false, aiActionState: {}
+  inspectDataOpen: false, aiActionState: {},
+  urgentReviewIndex: 0
 };
 
 export const positions = () => {

@@ -1,22 +1,46 @@
-export const shellHtml = () => `
+const initialsFor = name => (name || "Relationship Manager")
+  .split(/\s+/)
+  .filter(Boolean)
+  .slice(0, 2)
+  .map(part => part[0]?.toUpperCase() || "")
+  .join("") || "RM";
+
+export const shellHtml = (operator = {}) => {
+  const operatorName = operator.name || "Relationship Manager";
+  const initials = operator.initials || initialsFor(operatorName);
+  return `
 <div class="app">
   <div class="silk-stage" style="width:1080px;height:1080px;position:relative" aria-hidden="true">
     <div id="silk-bg" class="silk-bg"></div>
   </div>
-  <header class="bar liquid-glass">
-    <div class="brand"><h1>Wealth Intelligence</h1><span class="sub">RM control tower</span></div>
-    <div class="live"><span class="pulse"></span><span id="live-t">portfolio + intelligence · updated 0s ago</span>
-      <span class="mode" id="mode-tag">…</span></div>
-    <div class="rm-id">Priscilla Ong · Asia Desk</div>
+  <header class="bar operator-header liquid-glass">
+    <div class="operator-greeting">
+      <button class="wi-logo-btn" id="wi-logo-home" type="button" aria-label="Return to Wealth Intelligence dashboard">
+        <span class="wi-logo-mark">A</span>
+      </button>
+      <div>
+        <span class="eyebrow">Welcome Back to Wealth Intelligence</span>
+        <h1>Good evening, ${operatorName}</h1>
+      </div>
+    </div>
     <div class="spacer"></div>
     <label class="snapshot-picker" id="snapshot-picker" hidden>
       <span>Snapshot</span>
       <select id="snapshot-select"></select>
     </label>
+    <div class="operator-controls" aria-label="Operator controls">
+      <button class="icon-btn has-alert" type="button" aria-label="Notifications">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      </button>
+      <button class="icon-btn" type="button" aria-label="Settings">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.43 12.98c.04-.32.07-.65.07-.98s-.02-.66-.07-.98l2.11-1.65a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.6-.22l-2.49 1a7.07 7.07 0 0 0-1.69-.98L14.5 2.42A.5.5 0 0 0 14 2h-4a.5.5 0 0 0-.5.42l-.38 2.65c-.61.24-1.18.57-1.69.98l-2.49-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.64l2.11 1.65c-.04.32-.07.65-.07.98s.02.66.07.98l-2.11 1.65a.5.5 0 0 0-.12.64l2 3.46a.5.5 0 0 0 .6.22l2.49-1c.51.4 1.08.73 1.69.98l.38 2.65a.5.5 0 0 0 .5.42h4a.5.5 0 0 0 .5-.42l.38-2.65c.61-.24 1.18-.57 1.69-.98l2.49 1a.5.5 0 0 0 .6-.22l2-3.46a.5.5 0 0 0-.12-.64l-2.11-1.65Z"/></svg>
+      </button>
+      <button class="avatar-btn" type="button" aria-label="${operatorName} profile"><span>${initials}</span></button>
+    </div>
   </header>
 
-  <div class="tick-strip liquid-glass">
-    <div class="tick-lab"><span class="pulse" style="width:5px;height:5px"></span> Signals</div>
+  <div class="tick-strip market-ticker liquid-glass">
+    <div class="tick-lab"><span class="pulse" style="width:5px;height:5px"></span> Breaking News</div>
     <div class="tick-view"><div class="tick-run" id="ticker"></div></div>
   </div>
 
@@ -36,12 +60,17 @@ export const shellHtml = () => `
         <button data-filter="medium" aria-pressed="false">Medium</button>
         <button data-filter="low" aria-pressed="false">Low</button>
       </div>
-      <div class="active-filters"><button class="ghost sm">Filters</button><span id="filter-summary">Attention band</span><button class="ghost sm" id="clear-client-filters">Clear all</button></div>
-      <div class="filter-panel" id="filter-panel">
+      <div class="client-sort-row">
+        <label>Sort by:<select id="client-sort"><option value="urgency-desc">Urgency Score (Desc)</option><option value="aum-desc">AUM (Desc)</option><option value="name-asc">Name (A-Z)</option><option value="review-asc">Next Review</option><option value="risk-desc">Risk Level</option></select></label>
+        <button class="ghost sm" id="filter-toggle" aria-expanded="false">Filters</button>
+      </div>
+      <div class="filter-panel" id="filter-panel" hidden>
+        <label>Risk<select id="risk-popover-filter"><option value="all">All risk levels</option><option value="critical">Critical</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option></select></label>
         <label>Driver<select id="driver-filter"><option value="all">All drivers</option><option value="Collateral/Leverage">Collateral/Leverage</option><option value="Liquidity">Liquidity</option><option value="Mandate/Suitability">Mandate/Suitability</option><option value="Concentration">Concentration</option><option value="Event Exposure">Event Exposure</option><option value="Compliance/KYC">Compliance/KYC</option></select></label>
         <label>Profile<select id="profile-filter"><option value="all">All profiles</option><option>Conservative</option><option>Income</option><option>Balanced</option><option>Balanced Growth</option><option>Growth</option><option>Sustainable Balanced</option><option>Dynamic Opportunistic</option></select></label>
         <label>Booking<select id="booking-filter"><option value="all">All centres</option><option>Singapore</option><option>Hong Kong</option></select></label>
         <label>AUM<select id="aum-filter"><option value="all">All AUM</option><option value="hnw">HNW</option><option value="uhnw">UHNW</option></select></label>
+        <button class="ghost sm" id="clear-client-filters">Clear all</button>
       </div>
       <div class="book-list" id="book"></div>
       <div class="book-f" id="book-foot">Prioritised by client urgency, review date, mandate risk and event exposure.</div>
@@ -100,3 +129,4 @@ export const shellHtml = () => `
 <div class="scrim" id="scrim"></div>
 <aside class="drawer" id="drawer" role="dialog" aria-modal="true" aria-label="Detail"></aside>
 `;
+};
