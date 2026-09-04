@@ -8,7 +8,8 @@ import { shellHtml } from "./ui/shell.js";
 import { mountGlobe, paintGlobe, sizeGlobe } from "./ui/globe.js";
 import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTicker, paintPfRail }
   from "./ui/panels.js";
-import { paintActions, paintConversation, paintCompliance, paintEconomics } from "./ui/tabs.js";
+import { paintActions, paintConversation } from "./ui/spine.js";
+import { paintCompliance, paintEconomics } from "./ui/evidence.js";
 import { initDrawers, openPosition, openBrief } from "./ui/drawers.js";
 import { renderClientView } from "./ui/clientview.js";
 
