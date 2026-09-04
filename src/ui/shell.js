@@ -35,10 +35,11 @@ export const shellHtml = () => `
         <div id="globe"></div>
         <div class="overlay hint">Drag to rotate · click a country</div>
         <div class="overlay lensbar" role="group" aria-label="Globe encoding">
-          <button data-lens="d" aria-pressed="true">Risk Δ</button>
+          <button data-lens="d" aria-pressed="false">Risk Δ</button>
           <button data-lens="inst" aria-pressed="false">Instability</button>
           <button data-lens="tone" aria-pressed="false">Tone</button>
           <button data-lens="pol" aria-pressed="false">Policy</button>
+          <button data-lens="ai" aria-pressed="true">AI risk</button>
         </div>
         <div class="overlay evid">
           <div class="k" id="ev-k">Risk-weighted concentration</div>

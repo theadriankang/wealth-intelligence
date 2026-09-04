@@ -1,4 +1,6 @@
 /** Colour, lenses, formatting. Diverging pairs and the sequential ramp live here. */
+import { S } from "../store.js";
+
 export const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 
 export const P = {};
@@ -43,7 +45,13 @@ export const LENSES = () => ({
       val:c => c.policyStance,
       fmt:v => (v > 0 ? "+" : v < 0 ? "−" : "") + Math.abs(v).toFixed(1),
       col:v => v >= 1.5 ? P.POL_H[1] : v > 0.3 ? P.POL_H[0]
-             : v <= -1.5 ? P.POL_D[1] : v < -0.3 ? P.POL_D[0] : P.FLAT }
+             : v <= -1.5 ? P.POL_D[1] : v < -0.3 ? P.POL_D[0] : P.FLAT },
+  ai:{ label:"AI risk score",
+      cap:"Sequential. The model's composite country risk — signals, market volatility and policy combined.",
+      lo:"0 calm", mid:"", hi:"100 acute", ramp:P.SQ,
+      val:c => S.evaluation?.countries?.[c.iso3]?.score ?? 0,
+      fmt:v => Math.round(v),
+      col:v => P.SQ[Math.min(4, Math.floor(v / 20))] }
 });
 export const sevOf = d => d >= 25 ? "crit" : d >= 12 ? "serious" : d >= 6 ? "warn" : "none";
 
