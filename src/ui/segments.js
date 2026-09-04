@@ -22,7 +22,9 @@ export function paintExplanation() {
     <div class="seg-h"><span class="seg-n">01</span><h3>Explanation</h3>
       <span class="c">${p.mandate} · ${p.riskBand}</span></div>
     <div class="health"><div class="health-dial health-${e.healthBand}"><span>${Math.round(e.health)}</span></div>
-      <div><div class="health-band">${e.healthBand}</div>
+      <div><div class="health-band">${e.healthBand}
+          <span class="mode ${e.scoreSource === "ai" ? "ai" : ""}" style="margin-left:6px">${e.scoreSource === "ai" ? "ai-scored" : "deterministic"}</span>
+        </div>
         <div class="health-drivers">${e.drivers.slice(0, 3).map(d => `<span>${d.label}</span>`).join("")}</div></div></div>
     <p class="prose">${e.thesis ?? shimmer}</p>
     <p class="prose">${e.summary ?? shimmer}</p>
