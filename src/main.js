@@ -29,6 +29,7 @@ async function boot() {
   const data = await loadData(CONFIG.ADAPTER);
   Object.assign(S, data);
   S.portfolio = S.portfolios[0];
+  S.operator = currentOperator(data);
   S.policyScan = FALLBACK_SCAN;
   const usesDatasetSignals = data.meta?.source === "julius-baer";
 
@@ -48,7 +49,7 @@ async function boot() {
   }
   readRouteFromLocation();
 
-  root.innerHTML = shellHtml();
+  root.innerHTML = shellHtml(S.operator);
   installLiquidGlass();
   mountSilk(document.getElementById("silk-bg"), {
     speed: 5,
@@ -69,8 +70,19 @@ async function boot() {
   } catch (err) {
     console.warn("[globe] WebGL unavailable, rendering dashboard without globe canvas:", err);
     document.getElementById("globe").innerHTML = `<div class="globe-fallback">
-      <div class="fallback-orbit"></div>
-      <div class="fallback-core">Global exposure map unavailable</div>
+      <div class="fallback-halo"></div>
+      <div class="fallback-orbit o1"></div>
+      <div class="fallback-orbit o2"></div>
+      <div class="fallback-orbit o3"></div>
+      <div class="fallback-globe" aria-label="Global exposure visualisation">
+        <span class="land l1"></span>
+        <span class="land l2"></span>
+        <span class="land l3"></span>
+        <span class="hotspot h1"></span>
+        <span class="hotspot h2"></span>
+        <span class="hotspot h3"></span>
+      </div>
+      <div class="fallback-core"><b>Global Exposure</b><span>Local WebGL fallback</span></div>
     </div>`;
   }
   wire();
@@ -89,6 +101,13 @@ async function boot() {
 }
 
 function wire() {
+  document.addEventListener("pointerdown", e => {
+    if (!S.copilotOpen) return;
+    if (e.target.closest("#copilot")) return;
+    S.copilotOpen = false;
+    paintCopilot({ onToggle: railHandlers.onCopilotToggle });
+  });
+
   document.getElementById("open-client-rail")?.addEventListener("click", () => { S.clientDrawerOpen = true; S.railDrawerOpen = false; syncDrawers(); });
   document.getElementById("open-priority-rail")?.addEventListener("click", () => { S.railDrawerOpen = true; S.clientDrawerOpen = false; syncDrawers(); });
   document.getElementById("close-client-rail")?.addEventListener("click", () => { S.clientDrawerOpen = false; syncDrawers(); });
@@ -112,7 +131,8 @@ function wire() {
 
   setInterval(() => {
     since++;
-    document.getElementById("live-t").textContent =
+    const live = document.getElementById("live-t");
+    if (live) live.textContent =
       "portfolio + intelligence · updated " + (since < 60 ? since + "s" : Math.floor(since / 60) + "m") + " ago";
   }, 1000);
 
@@ -362,6 +382,15 @@ function syncDrawers() {
   document.querySelector(".mission-stage")?.classList.toggle("rail-open", !!S.railDrawerOpen);
 }
 
+function currentOperator(data) {
+  const name = data.meta?.operatorName || data.meta?.rmName ||
+    data.portfolios?.find(p => p.rm)?.rm ||
+    "Relationship Manager";
+  const initials = name.split(/\s+/).filter(Boolean).slice(0, 2)
+    .map(part => part[0]?.toUpperCase() || "").join("") || "RM";
+  return { name, initials };
+}
+
 function feedFromSignals(signals) {
   const seen = new Set();
   const events = [];
@@ -370,7 +399,7 @@ function feedFromSignals(signals) {
       if (seen.has(e.id)) continue;
       seen.add(e.id);
       const sev = e.severity === "Severe" ? "crit" : e.severity === "High" ? "serious" : "warn";
-      events.push([(e.at || "").slice(5), e.source || "event_log.csv", e.region || s.name, e.text || e.value || "Signal update", sev]);
+      events.push([(e.at || "").slice(5), e.source || "event_log.csv", e.region || s.name, e.text || e.value || "Signal update", sev, e.endpoint]);
     }
   }
   return events.sort((a, b) => b[0].localeCompare(a[0])).slice(0, 12);
