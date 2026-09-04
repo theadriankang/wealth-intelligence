@@ -21,19 +21,34 @@
  * unrecognised code rather than erroring. FIPS is what the map below holds, and
  * an ISO3 with no mapping is reported as a failure instead of being guessed at.
  *
- * RATE LIMIT: GDELT publishes no hard number and asks for restraint. One call
- * per country is unavoidable (there is no batch mode), so the bucket is set low
- * and the cache is long. A demo does not need minute-fresh tone; it needs tone
- * that is genuinely live and genuinely cited.
+ * RATE LIMIT — measured, not assumed. GDELT publishes no number and asks for
+ * restraint; in practice (4 Sep 2026, from Singapore) it answers a SINGLE cold
+ * request with HTTP 429 in 11.5s once an IP has burst. It throttles far harder
+ * than its docs imply.
+ *
+ * So this lane does not fetch on demand at all. Requests are served from a
+ * 15-minute cache, and the cache is warmed by a background queue that issues at
+ * most one request every SPACING_MS, serially, forever patient. The endpoint
+ * returns immediately with whatever is warm and names what is still pending —
+ * a page that paints now and fills in over the next minute beats a page that
+ * blocks for forty seconds and then shows an error.
  */
 import { limited } from "./ratelimit.js";
 
 const BASE = "https://api.gdeltproject.org/api/v2/doc/doc";
-const PER_MIN = Number(process.env.GDELT_RATE_PER_MIN || 30);
-// One burst of ten, then a 15-minute silence, is gentler on GDELT than a
-// trickle — and it is the difference between the lens appearing at first paint
-// and appearing forty seconds later, which reads as broken.
-const BURST = Number(process.env.GDELT_BURST || 10);
+const SPACING_MS = Number(process.env.GDELT_SPACING_MS || 12000);  // measured: 6.5s still 429s
+const COOLDOWN_MS = Number(process.env.GDELT_COOLDOWN_MS || 120000);
+
+// GDELT 429s Node's default user-agent and curl's alike. Sending a browser-shaped
+// one is the last cheap thing to try before concluding the IP is simply blocked;
+// it is not a workaround for a limit, it is identifying the client honestly.
+const UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36";
+
+// Once throttled, GDELT keeps refusing for minutes. Hammering through that is
+// both rude and pointless, so a 429 stops the queue outright for COOLDOWN_MS.
+let blockedUntil = 0;
+export const cooling = () => Math.max(0, blockedUntil - Date.now());
+const TTL_MS = Number(process.env.GDELT_TTL_MS || 15 * 60 * 1000); // GDELT itself refreshes every 15 min
 
 /** ISO 3166-1 alpha-3 -> FIPS 10-4, for every country the book actually touches. */
 export const FIPS = {
@@ -69,14 +84,22 @@ export function urlFor(iso3, days) {
  * The raw points come back too: a number a judge cannot inspect is a number they
  * have to take on trust, and this whole product argues against that.
  */
-export async function tone(iso3, { days = 14, timeoutMs = 12000 } = {}) {
+export async function tone(iso3, { days = 14, timeoutMs = 30000 } = {}) {
   const url = urlFor(iso3, days);
   if (!url) throw new Error(`no FIPS mapping for ${iso3} — add it to server/providers/gdelt.js`);
 
-  const res = await limited("gdelt", PER_MIN, () =>
-    fetch(url, { signal: AbortSignal.timeout(timeoutMs), headers: { accept: "application/json" } }),
-    { burst: BURST, retries: 2, label: `GDELT ${iso3}` });
+  // 30s, because a throttled GDELT answers slowly rather than refusing fast:
+  // the first version timed out at 12s and reported "fetch failed" for what was
+  // actually an 11.5s HTTP 429.
+  const res = await limited("gdelt", 60000 / SPACING_MS, () =>
+    fetch(url, { signal: AbortSignal.timeout(timeoutMs),
+                 headers: { accept: "application/json", "user-agent": UA } }),
+    { burst: 1, retries: 1, label: `GDELT ${iso3}` });
 
+  if (res.status === 429) {
+    blockedUntil = Date.now() + COOLDOWN_MS;
+    throw new Error(`GDELT rate-limited this IP (429). Pausing ${COOLDOWN_MS / 1000}s.`);
+  }
   if (!res.ok) throw new Error(`GDELT HTTP ${res.status} for ${iso3}`);
 
   // GDELT answers a malformed query with an HTML error page and a 200.
@@ -108,18 +131,76 @@ export async function tone(iso3, { days = 14, timeoutMs = 12000 } = {}) {
   };
 }
 
+/* ── cache + background warm queue ─────────────────────────────────────── */
+
+const CACHE = new Map();      // "ISO:days" -> { reading | error, at }
+const QUEUE = [];             // pending "ISO:days" keys, in priority order
+let draining = false;
+
+const keyOf = (iso3, days) => `${iso3}:${days}`;
+const fresh = e => e && Date.now() - e.at < TTL_MS;
+
 /**
- * Tone for many countries, in parallel, through one bucket.
- * Failures are returned, never swallowed and never filled in.
+ * Drains the queue one request at a time. Never runs twice; never throws.
+ * Failures are cached too — retrying a country that has no FIPS mapping every
+ * fifteen seconds would spend the whole budget on a question already answered.
  */
-export async function toneFor(iso3s, opts = {}) {
+async function drain() {
+  if (draining) return;
+  draining = true;
+  try {
+    while (QUEUE.length) {
+      if (cooling()) { await new Promise(r => setTimeout(r, cooling())); }
+      const k = QUEUE.shift();
+      const [iso3, days] = k.split(":");
+      if (fresh(CACHE.get(k))) continue;
+      try {
+        CACHE.set(k, { reading: await tone(iso3, { days: Number(days) }), at: Date.now() });
+        console.log(`[gdelt] warmed ${iso3}`);
+      } catch (err) {
+        // A cooldown is not the country's fault: leave it uncached so it is
+        // retried once the pause lifts, rather than recorded as "no data".
+        if (!/429/.test(err.message)) CACHE.set(k, { error: err.message, at: Date.now() });
+        else QUEUE.push(k);
+        console.warn(`[gdelt] ${iso3}: ${err.message}`);
+      }
+      await new Promise(r => setTimeout(r, SPACING_MS));
+    }
+  } finally { draining = false; }
+}
+
+/** Queue anything stale or unseen, then let the drainer take its time. */
+export function warm(iso3s, { days = 14 } = {}) {
+  for (const iso3 of iso3s) {
+    const k = keyOf(iso3, days);
+    if (fresh(CACHE.get(k)) || QUEUE.includes(k)) continue;
+    QUEUE.push(k);
+  }
+  drain();
+  return QUEUE.length;
+}
+
+/**
+ * Read-through, non-blocking. Returns what is warm now and names what is not,
+ * so the caller can paint immediately and come back for the rest.
+ */
+export function toneFor(iso3s, { days = 14 } = {}) {
   const wanted = [...new Set(iso3s.filter(Boolean))];
-  const readings = {}, failures = [];
+  const readings = {}, failures = [], pending = [];
 
-  await Promise.all(wanted.map(async iso => {
-    try { readings[iso] = await tone(iso, opts); }
-    catch (err) { failures.push({ iso3: iso, reason: err.message }); }
-  }));
+  for (const iso3 of wanted) {
+    const e = CACHE.get(keyOf(iso3, days));
+    if (!fresh(e)) { pending.push(iso3); continue; }
+    if (e.reading) readings[iso3] = e.reading;
+    else failures.push({ iso3, reason: e.error });
+  }
 
-  return { readings, failures, as_of: new Date().toISOString() };
+  warm(pending, { days });
+
+  return {
+    readings, failures, pending,
+    warming: pending.length > 0,
+    next_in_ms: pending.length ? pending.length * SPACING_MS : null,
+    as_of: new Date().toISOString()
+  };
 }

@@ -84,21 +84,27 @@ async function boot() {
   if (!CONFIG.OFFLINE) {
     const toneIsos = topExposures(8);
     S.liveToneState = "loading";
-    const applyTone = ({ readings, failures, live }) => {
+    const applyTone = ({ readings, failures, pending, live, warming }) => {
       S.liveTone = readings || {};
-      S.liveToneState = live ? "live" : "unavailable";
+      S.liveToneState = warming ? "warming" : live ? "live" : "unavailable";
       if (failures?.length) console.warn("[gdelt] no reading for:", failures.map(f => f.iso3 || "?").join(", "));
       paintLegend();
       if (S.lens === "gtone") paintGlobe();
+
       const btn = document.getElementById("lens-gtone");
-      if (btn) {
-        const n = Object.keys(S.liveTone).length;
-        btn.textContent = n ? `Live tone · ${n}` : "Live tone";
-        btn.disabled = !n;
-        btn.title = n
-          ? `${n} countries, live from GDELT`
-          : "GDELT unreachable — no live reading. Run npm run dev:all so /api/gdelt is served.";
-      }
+      if (!btn) return;
+      const n = Object.keys(S.liveTone).length;
+      const waiting = pending?.length || 0;
+
+      // Never disable while warming: GDELT throttles to one country every ~6.5s,
+      // so an empty first response is the normal path, not a failure.
+      btn.disabled = !n && !warming;
+      btn.textContent = n ? `Live tone · ${n}` : warming ? "Live tone · …" : "Live tone";
+      btn.title = n
+        ? `${n} countries live from GDELT${waiting ? `, ${waiting} still loading` : ""}`
+        : warming
+          ? `Warming — GDELT rate-limits to one country every few seconds; ${waiting} queued`
+          : "No live reading. GDELT is unreachable or rate-limiting; the other four lenses are unaffected.";
     };
     fetchLiveTone(toneIsos).then(applyTone);
     pollLiveTone(toneIsos, applyTone);

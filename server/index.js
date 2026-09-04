@@ -45,12 +45,9 @@ app.get("/api/signals", async (req, res) => {
 app.get("/api/gdelt", async (req, res) => {
   const isos = String(req.query.countries || "").split(",").map(s => s.trim().toUpperCase()).filter(Boolean);
   if (!isos.length) return res.status(400).json({ error: "countries is required" });
-  try {
-    res.json(await toneFor(isos.slice(0, 12), { days: Number(req.query.days) || 14 }));
-  } catch (err) {
-    console.warn("[gdelt]", err.message);
-    res.status(502).json({ error: err.message, readings: {}, failures: [] });
-  }
+  // Read-through only: never blocks on GDELT, which throttles to roughly one
+  // request every six seconds. First call returns empty and starts warming.
+  res.json(toneFor(isos.slice(0, 12), { days: Number(req.query.days) || 14 }));
 });
 
 app.post("/api/llm", async (req, res) => {

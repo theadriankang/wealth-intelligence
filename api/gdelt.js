@@ -1,9 +1,12 @@
 /**
  * Vercel entry for /api/gdelt — live narrative tone by country.
  *
- * Cached hard at the CDN. GDELT refreshes every 15 minutes, so a shorter TTL
- * buys nothing and spends someone else's free service; at a booth with several
- * people opening the page at once, the CDN answers all of them from one call.
+ * Read-through against the provider's own cache; never waits on GDELT.
+ *
+ * NOTE for Vercel: serverless instances do not share memory, so each cold
+ * instance warms its own cache and the first views will show fewer countries
+ * than localhost does. The CDN header below is what makes that tolerable — and
+ * it is the honest reason the demo runs better from a warm dev server.
  */
 import { toneFor } from "../server/providers/gdelt.js";
 
@@ -17,12 +20,10 @@ export default async function handler(req, res) {
   const isos = String(req.query?.countries || "").split(",").map(s => s.trim().toUpperCase()).filter(Boolean);
   if (!isos.length) return res.status(400).json({ error: "countries is required (comma-separated ISO3)" });
 
-  try {
-    const out = await toneFor(isos.slice(0, MAX), { days: Number(req.query?.days) || 14 });
-    res.setHeader("cache-control", "public, s-maxage=900, stale-while-revalidate=1800");
-    res.status(200).json(out);
-  } catch (err) {
-    console.warn("[gdelt]", err.message);
-    res.status(502).json({ error: err.message, readings: {}, failures: [] });
-  }
+  const out = toneFor(isos.slice(0, MAX), { days: Number(req.query?.days) || 14 });
+  // Short TTL while warming so the page can fill in; long once it is complete.
+  res.setHeader("cache-control", out.warming
+    ? "public, s-maxage=15, stale-while-revalidate=60"
+    : "public, s-maxage=900, stale-while-revalidate=1800");
+  res.status(200).json(out);
 }

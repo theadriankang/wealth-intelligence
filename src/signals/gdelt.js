@@ -35,18 +35,31 @@ export async function fetchLiveTone(isos, { days = 14 } = {}) {
       { signal: AbortSignal.timeout(25000) });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const out = await res.json();
-    return { ...out, live: Object.keys(out.readings || {}).length > 0 };
+    return { ...out, live: Object.keys(out.readings || {}).length > 0, warming: !!out.warming };
   } catch (err) {
     // No route (static preview), no network, or GDELT down. The lens simply has
     // nothing to show and says so — nothing else in the cockpit is affected.
     console.warn("[gdelt] live tone unavailable:", err.message);
-    return { readings: {}, failures: [{ reason: err.message }], live: false };
+    return { readings: {}, failures: [{ reason: err.message }], pending: [], live: false, warming: false };
   }
 }
 
-/** Poll. GDELT refreshes every 15 minutes; anything faster is noise. */
-export function pollLiveTone(isos, onUpdate, ms = 900000) {
-  const tick = async () => onUpdate(await fetchLiveTone(isos));
-  const id = setInterval(tick, ms);
-  return () => clearInterval(id);
+/**
+ * Adaptive poll. The server warms its cache one country every ~6.5s because
+ * GDELT throttles hard, so while countries are still pending we check back
+ * often and the globe fills in as they land. Once everything is warm we drop to
+ * the refresh rate GDELT actually publishes at, and anything faster is noise.
+ */
+export function pollLiveTone(isos, onUpdate, { warmMs = 8000, idleMs = 900000 } = {}) {
+  let stopped = false, timer = null;
+
+  const tick = async () => {
+    if (stopped) return;
+    const out = await fetchLiveTone(isos);
+    onUpdate(out);
+    timer = setTimeout(tick, out.warming ? warmMs : idleMs);
+  };
+
+  timer = setTimeout(tick, warmMs);
+  return () => { stopped = true; clearTimeout(timer); };
 }
