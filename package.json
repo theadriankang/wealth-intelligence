@@ -9,7 +9,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "server": "node server/index.js",
-    "dev:all": "concurrently -n web,api -c cyan,magenta \"npm:dev\" \"npm:server\""
+    "dev:all": "concurrently -n web,api -c cyan,magenta \"npm:dev\" \"npm:server\"",
+    "test": "node --test src/eval/ src/market/ src/store.test.js"
   },
   "dependencies": {
     "animejs": "^4.5.0",
