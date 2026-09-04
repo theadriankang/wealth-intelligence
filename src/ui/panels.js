@@ -3,6 +3,7 @@ import { P, LENSES, fmtD, css } from "./palette.js";
 import { POLICY, FEED } from "../signals/fixtures/signals.js";
 import { getMode } from "../signals/worldmonitor.js";
 import { reconcile, HOUSE_VIEW } from "../model/houseview.js";
+import { currentPolicyScan } from "../policy/sentinel.js";
 
 /* ---------- look-through bar: the visual proof a fund is not a country ---------- */
 export function lookThroughBar(inst, signals) {
@@ -111,13 +112,17 @@ export function paintTicker(feed = FEED) {
     : "Signals fetched from the live World Monitor feed.";
 }
 
-export function paintPfRail({ onClearGoal, onClearSel, onOpenPosition }) {
+export function paintPfRail({ onClearGoal, onClearSel, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial }) {
   const L = LENSES().d, list = visibleRows(), all = rows();
   const maxw = Math.max(...all.map(r => r.weightPct));
   const g = goal();
   const held = new Set(positions().map(p => p.instrumentId));
   const sel = S.selIso ? S.signals[S.selIso] : null;
   const hv = sel ? reconcile(S.selIso, sel.riskDelta) : null;
+  const scan = S.policyScan || currentPolicyScan();
+  const scanBusy = S.policyScanState === "running";
+  const stanceCol = scan.signal.stanceScore > 0 ? P.POL_H[0]
+    : scan.signal.stanceScore < 0 ? P.POL_D[0] : P.FLAT;
 
   const digest = sel
     ? sel.events.map(e => [e.at.split(" ").slice(-1)[0], e.source, `<strong>${e.text}</strong> — ${e.value}`])
@@ -161,6 +166,32 @@ export function paintPfRail({ onClearGoal, onClearSel, onOpenPosition }) {
       </button>`).join("")}
     </section>
 
+    <section class="sec sentinel">
+      <div class="sec-h"><h2>Policy sentinel</h2>
+        <span class="mode ${scan.mode === "fallback" ? "fixtures" : "live"}">${scan.mode}</span></div>
+      <article class="trial-card">
+        <div class="trial-top">
+          <span class="agent-dot"></span>
+          <div><h3>${scan.source.issuer} ${scan.source.documentType}</h3>
+            <p>${scan.signal.whyFlagged}</p></div>
+        </div>
+        <div class="trial-score">
+          <div><span class="k">stance</span><strong style="color:${stanceCol}">${scan.signal.stance}</strong></div>
+          <div><span class="k">score</span><strong>${scan.signal.stanceScore > 0 ? "+" : ""}${scan.signal.stanceScore.toFixed(2)}</strong></div>
+          <div><span class="k">urgency</span><strong>${scan.signal.urgency}</strong></div>
+        </div>
+        <div class="agent-steps">
+          ${scan.agents.map(a => `<span class="${a.status}">${a.name.replace(" Agent", "")}</span>`).join("")}
+        </div>
+        <div class="trial-actions">
+          <button class="ghost sm ${scanBusy ? "" : "solid"}" id="rail-policy-run" ${scanBusy ? "disabled" : ""}>
+            ${scanBusy ? "Scanning..." : "Run scan"}
+          </button>
+          <button class="ghost sm" id="rail-policy-open">Evidence trial</button>
+        </div>
+      </article>
+    </section>
+
     <section class="sec">
       <div class="sec-h"><h2>Policy radar</h2><span class="count">last 8 days</span></div>
       <div class="st-ax"><span>← easing</span><span>tightening →</span></div>
@@ -184,6 +215,8 @@ export function paintPfRail({ onClearGoal, onClearSel, onOpenPosition }) {
 
   document.getElementById("clear-goal")?.addEventListener("click", onClearGoal);
   document.getElementById("clear-sel")?.addEventListener("click", onClearSel);
+  document.getElementById("rail-policy-run")?.addEventListener("click", onRunPolicyScan);
+  document.getElementById("rail-policy-open")?.addEventListener("click", onOpenPolicyTrial);
   document.querySelectorAll("#pfrail [data-t]").forEach(b =>
     b.addEventListener("click", () => onOpenPosition(b.dataset.t)));
 }

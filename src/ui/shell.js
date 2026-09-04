@@ -8,6 +8,7 @@ export const shellHtml = () => `
       <span class="mode" id="mode-tag">…</span></div>
     <div class="spacer"></div>
     <a class="ghost" id="client-view-btn" href="?view=client">Client view</a>
+    <button class="ghost" id="policy-scan-btn">Run live policy scan</button>
     <button class="ghost solid" id="brief-btn">Generate client note</button>
   </header>
 

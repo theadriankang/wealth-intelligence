@@ -8,6 +8,7 @@ import "dotenv/config";
 import express from "express";
 import { fetchWorldMonitor } from "./worldmonitor.js";
 import { callLLM } from "./llm.js";
+import { runPolicySentinelScan } from "./policy-sentinel.js";
 
 const app = express();
 app.use(express.json({ limit: "2mb" }));
@@ -42,6 +43,15 @@ app.post("/api/llm", async (req, res) => {
     res.json({ result: await callLLM(req.body) });
   } catch (err) {
     console.warn("[llm]", err.message);
+    res.status(502).json({ error: err.message });
+  }
+});
+
+app.post("/api/policy-scan", async (_req, res) => {
+  try {
+    res.json(await runPolicySentinelScan());
+  } catch (err) {
+    console.warn("[policy-scan]", err.message);
     res.status(502).json({ error: err.message });
   }
 });
