@@ -479,3 +479,124 @@ button:disabled{opacity:.58; cursor:wait}
 .cv .foot{margin-top:30px; font-size:11.5px; color:#8b919b; line-height:1.6}
 .cv .back{display:inline-block; margin-bottom:26px; font-size:12px; color:#5d6470;
   text-decoration:none; border:1px solid #dcdad4; border-radius:6px; padding:5px 11px; background:#fff}
+
+
+
+/* ================================================================== *
+ * Motion system — interaction polish.
+ * Every interactive surface answers within 120–180ms. Transitions are
+ * declared once here rather than per component so the whole interface
+ * responds with the same reflex.
+ * ================================================================== */
+:root{
+  --t-fast:120ms cubic-bezier(.32,.72,0,1);
+  --t-base:180ms cubic-bezier(.32,.72,0,1);
+}
+
+.ghost, .cl, .goal, .card, .tabs button, .lensbar button, .hh, .dr-h .x{
+  transition: background var(--t-base), border-color var(--t-base),
+              color var(--t-fast), transform var(--t-fast);
+}
+.ghost:active, .cl:active, .goal:active, .card:active{transform:translateY(1px)}
+.ghost:hover{background:var(--panel-2)}
+.ghost.solid:hover{background:#242a32}
+
+/* Book rows: the active mandate earns a rail, not just a fill. */
+.cl{position:relative}
+.cl::before{content:""; position:absolute; left:0; top:50%; width:2px; height:0;
+  background:var(--up-4); border-radius:0 2px 2px 0; transform:translateY(-50%);
+  transition:height var(--t-base)}
+.cl[aria-current="true"]::before{height:60%}
+.cl .badge{transition:transform var(--t-fast)}
+.cl:hover .badge{transform:scale(1.06)}
+
+/* Goal cards lift very slightly — enough to read as pressable, not as a toy. */
+.goal{transition:background var(--t-base), border-color var(--t-base),
+  transform var(--t-base), box-shadow var(--t-base)}
+.goal:hover{transform:translateY(-1px); box-shadow:0 6px 18px -12px rgba(0,0,0,.9)}
+.goal .track i{transition:background var(--t-base)}
+
+/* Position cards: the left risk rail thickens on hover. */
+.card{transition:background var(--t-base), border-color var(--t-base),
+  border-left-width var(--t-fast), padding-left var(--t-fast)}
+.card:hover{border-left-width:3px; padding-left:11px}
+
+/* Tabs: the underline slides in from the centre rather than appearing. */
+.tabs button{position:relative; border-bottom-color:transparent}
+.tabs button::after{content:""; position:absolute; left:50%; right:50%; bottom:-1px; height:2px;
+  background:var(--up-4); transition:left var(--t-base), right var(--t-base)}
+.tabs button[aria-selected="true"]{border-bottom-color:transparent}
+.tabs button[aria-selected="true"]::after{left:0; right:0}
+.tabs button:hover{color:var(--ink-2)}
+
+/* Lens bar: the pressed state fills rather than flicks. */
+.lensbar button{transition:background var(--t-base), color var(--t-fast)}
+.lensbar button:hover{color:var(--ink-2)}
+
+/* Overlays over the globe rise a hair on hover so they read as glass. */
+.legend, .evid{transition:transform var(--t-base), border-color var(--t-base)}
+.legend:hover{transform:translateY(-1px); border-color:var(--ink-4)}
+
+/* Suitability record — animated by JS, so it must start clipped. */
+.suit{overflow:hidden}
+
+/* Action cards. */
+.act{transition:border-color var(--t-base), box-shadow var(--t-base)}
+.act:hover{border-color:var(--ink-4); box-shadow:0 10px 30px -22px rgba(0,0,0,1)}
+.state{transition:background var(--t-base), color var(--t-base), border-color var(--t-base)}
+
+/* Impact numbers. */
+.econ div{transition:background var(--t-base)}
+.econ div:hover{background:var(--panel-2)}
+
+/* Ticker: new arrivals get one soft glow, then settle into the run. */
+.tk.new b{animation:tk-in 3.2s ease-out 1}
+@keyframes tk-in{0%{text-shadow:0 0 10px rgba(250,178,25,.55)}100%{text-shadow:none}}
+
+/* Drawer close affordance. */
+.dr-h .x:hover{background:var(--panel-3); color:var(--ink); border-color:var(--ink-4)}
+
+/* Client view: quieter, print-like hovers. */
+.cv .back{transition:background var(--t-base), border-color var(--t-base), color var(--t-fast)}
+.cv .back:hover{background:#f0eee9; color:#1a1c1f}
+.cv-goal{transition:background var(--t-base)}
+
+/* Compositor hints only where something actually animates. */
+.goal, .card, .act, .drawer, .scrim, .pane{will-change:auto}
+
+/* ================================================================== *
+ * Objectives strip — reframed.
+ * The bucket is the register the adviser speaks in; the named
+ * objective under it is what the client actually said. The strip
+ * labels itself so it reads as a mandate structure rather than a row
+ * of consumer wishes, and states how the number is derived.
+ * ================================================================== */
+.goals{align-items:stretch}
+.goals .goal{flex:1 1 184px; max-width:268px}
+.goal-lab{flex:none; display:flex; flex-direction:column; justify-content:center; gap:3px;
+  padding-right:15px; margin-right:3px; border-right:1px solid var(--line-soft); min-width:112px}
+.goal-lab h2{margin:0; font-size:10px; letter-spacing:.09em; text-transform:uppercase;
+  color:var(--ink-3); font-weight:600}
+.goal-lab .n{font-family:var(--mono); font-size:9.5px; letter-spacing:.05em;
+  text-transform:uppercase; color:var(--ink-3)}
+.goal-lab .n2{font-family:var(--mono); font-size:10px; color:var(--ink-4)}
+.goal-lab .method{align-self:flex-start; margin-top:4px; font-family:var(--mono); font-size:9px;
+  letter-spacing:.06em; text-transform:uppercase; color:var(--ink-4);
+  border:1px solid var(--line); border-bottom-style:dashed; border-radius:3px; padding:1px 5px;
+  cursor:help; transition:color var(--t-fast), border-color var(--t-base)}
+.goal-lab .method:hover, .goal-lab .method:focus{color:var(--ink-2); border-color:var(--ink-4)}
+
+.goal .g-top{display:flex; align-items:center; justify-content:space-between; gap:8px;
+  margin-bottom:5px}
+.bkt{font-family:var(--mono); font-size:9px; letter-spacing:.09em; text-transform:uppercase;
+  padding:2px 6px; border-radius:3px; border:1px solid var(--line); color:var(--ink-3);
+  cursor:help}
+.bkt.b-liquidity{color:#6da7ec; border-color:#2a4054; background:rgba(57,135,229,.08)}
+.bkt.b-longevity{color:#a795e8; border-color:#3d3557; background:rgba(144,133,233,.08)}
+.bkt.b-legacy{color:#5fb894; border-color:#24483a; background:rgba(47,185,138,.08)}
+.bkt.b-obligation{color:#d0a75a; border-color:#4d3f22; background:rgba(224,168,60,.08)}
+.bkt.b-solvency{color:#c8a0a0; border-color:#4a3232; background:rgba(224,120,120,.07)}
+.goal .gn{font-size:13px; font-weight:500; margin-bottom:0; letter-spacing:-.005em}
+.goal .gh{font-family:var(--mono); font-size:10px; color:var(--ink-4); letter-spacing:.03em}
+.goal .gt2{font-size:10.5px; color:var(--ink-4); white-space:nowrap}
+.goal .gt2 span:first-child{font-family:var(--mono); font-size:10px}

@@ -8,7 +8,7 @@ import { validateBrief, briefToHtml } from "../llm/validate.js";
 import { BRIEF_SCHEMA } from "../llm/contract.js";
 import { SYSTEM, buildBriefPrompt } from "../llm/prompts.js";
 import { economics } from "../store.js";
-import { currentPolicyScan } from "../policy/sentinel.js";
+import * as M from "./motion.js";
 
 const scrim = () => document.getElementById("scrim");
 const drawer = () => document.getElementById("drawer");
@@ -26,6 +26,7 @@ function openDrawer(html, wide = false) {
   drawer().querySelector(".x")?.addEventListener("click", closeDrawer);
   drawer().classList.add("on"); if (wide) drawer().classList.add("wide");
   scrim().classList.add("on");
+  M.drawer(drawer());
 }
 
 export function openPosition(id) {

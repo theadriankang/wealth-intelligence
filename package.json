@@ -12,6 +12,7 @@
     "dev:all": "concurrently -n web,api -c cyan,magenta \"npm:dev\" \"npm:server\""
   },
   "dependencies": {
+    "animejs": "^4.5.0",
     "globe.gl": "2.46.2"
   },
   "devDependencies": {

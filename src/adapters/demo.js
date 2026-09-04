@@ -78,13 +78,17 @@ export const PORTFOLIOS = [
                    SAP:4.0, SHEL:3.6, BABA:6.4, "005930":5.3, DBS:3.0, "7203":2.6, MAERSK:2.4,
                    VALE:2.2, RELI:1.7, ASML:4.4, NESN:3.1 }),
   goals:[
-    { id:"g1", name:"Zurich property purchase", horizon:"Q2 2027", targetLabel:"CHF 12.0m",
+    { id:"g1", name:"Zurich property acquisition", bucket:"liquidity", horizon:"Q2 2027",
+      targetLabel:"CHF 12.0m", commitment:"committed",
       baseFunded:96, driverIds:["TSM","005930","DBS"], sensitivity:0.75 },
-    { id:"g2", name:"Retirement income", horizon:"from 2034", targetLabel:"CHF 240k p.a.",
+    { id:"g2", name:"Retirement drawdown", bucket:"longevity", horizon:"from 2034",
+      targetLabel:"CHF 240k p.a.", commitment:"planned",
       baseFunded:93, driverIds:["MSFT","SREN","SAP","JBGEF"], sensitivity:0.35 },
-    { id:"g3", name:"Foundation pledge", horizon:"2028", targetLabel:"CHF 5.0m",
+    { id:"g3", name:"Foundation commitment", bucket:"legacy", horizon:"2028",
+      targetLabel:"CHF 5.0m", commitment:"contracted",
       baseFunded:80, driverIds:["SHEL","2222","VALE"], sensitivity:0.5 },
-    { id:"g4", name:"Liquidity buffer", horizon:"rolling 12m", targetLabel:"CHF 3.0m",
+    { id:"g4", name:"Liquidity reserve", bucket:"liquidity", horizon:"rolling 12m",
+      targetLabel:"CHF 3.0m", commitment:"policy",
       baseFunded:100, driverIds:[], sensitivity:0 }
   ],
   actions:[
@@ -109,8 +113,8 @@ export const PORTFOLIOS = [
     { id:"a3", kind:"Hold", title:"Hold Aramco and document the rationale", target:"2222 · Saudi Aramco",
       state:"Discussed",
       why:"Hormuz transit counts are down but the position is income-generating, the goal it funds is 2028-dated, and the signal has not broken its longer band. Holding is the recommendation — the record of why is the deliverable.",
-      effect:["Foundation pledge <b>unchanged</b>","<b>No cost</b>","Creates the file note for why no action was taken"],
-      suitability:{ objective:"Foundation pledge, 2028 — horizon absorbs the current signal",
+      effect:["Foundation commitment <b>unchanged</b>","<b>No cost</b>","Creates the file note for why no action was taken"],
+      suitability:{ objective:"Foundation commitment, 2028 — horizon absorbs the current signal",
         riskFit:"No change to portfolio risk", knowledge:"No new instrument involved",
         concentration:"Energy sleeve at 10.5%, inside the 12% limit", costs:"None" } },
     { id:"a4", kind:"Collateral", title:"Restore lombard headroom to 30%", target:"Loan CH-4471-L",
@@ -148,11 +152,14 @@ export const PORTFOLIOS = [
   householdPositions: pos({ DBS:11.8, TSM:13.9, ASIATECH:8.2, "005930":9.1, BABA:8.6, "7203":4.4,
                             MAERSK:3.7, ASML:5.2, MSFT:2.6, SREN:2.0 }),
   goals:[
-    { id:"g1", name:"Next-generation transfer", horizon:"2030", targetLabel:"SGD 25.0m",
+    { id:"g1", name:"Next-generation transfer", bucket:"legacy", horizon:"2030",
+      targetLabel:"SGD 25.0m", commitment:"planned",
       baseFunded:86, driverIds:["TSM","005930","BABA","ASIATECH"], sensitivity:0.7 },
-    { id:"g2", name:"Singapore property", horizon:"2027", targetLabel:"SGD 8.0m",
+    { id:"g2", name:"Singapore property acquisition", bucket:"liquidity", horizon:"2027",
+      targetLabel:"SGD 8.0m", commitment:"committed",
       baseFunded:94, driverIds:["DBS","MSFT"], sensitivity:0.6 },
-    { id:"g3", name:"School fees endowment", horizon:"2029", targetLabel:"SGD 2.4m",
+    { id:"g3", name:"Education endowment", bucket:"legacy", horizon:"2029",
+      targetLabel:"SGD 2.4m", commitment:"contracted",
       baseFunded:96, driverIds:["7203","MAERSK"], sensitivity:0.3 }
   ],
   actions:[
@@ -192,9 +199,11 @@ export const PORTFOLIOS = [
   entities:["Pension vehicle"], householdAum:"128.9m", lombard:null,
   positions: pos({ NESN:11.4, SREN:9.2, SAP:8.6, MSFT:8.1, JBGEF:12.0, SHEL:5.4, "7203":3.6, RELI:2.4 }),
   goals:[
-    { id:"g1", name:"Pension obligations", horizon:"2031–2045", targetLabel:"CHF 118m",
+    { id:"g1", name:"Pension obligations", bucket:"obligation", horizon:"2031–2045",
+      targetLabel:"CHF 118m", commitment:"contracted",
       baseFunded:104, driverIds:["NESN","SREN","SAP","MSFT","JBGEF"], sensitivity:0.25 },
-    { id:"g2", name:"Funding-ratio floor", horizon:"continuous", targetLabel:"95% floor",
+    { id:"g2", name:"Funding-ratio floor", bucket:"solvency", horizon:"continuous",
+      targetLabel:"95% floor", commitment:"policy",
       baseFunded:90, driverIds:["SHEL","7203","RELI"], sensitivity:0.3 }
   ],
   actions:[

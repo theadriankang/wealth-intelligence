@@ -11,7 +11,7 @@ import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTick
 import { paintActions, paintConversation, paintCompliance, paintEconomics } from "./ui/tabs.js";
 import { initDrawers, openPosition, openBrief, openPolicyTrial } from "./ui/drawers.js";
 import { renderClientView } from "./ui/clientview.js";
-import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
+import * as M from "./ui/motion.js";
 
 const root = document.getElementById("root");
 let feed = FEED.slice(), lateIdx = 0, since = 0;
@@ -43,6 +43,7 @@ async function boot() {
   mountGlobe(document.getElementById("globe"), { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
   wire();
   renderAll();
+  M.boot();
 
   pollSignals([...isos], ({ signals, prevSignals }) => {
     S.signals = signals; S.prevSignals = prevSignals; renderAll();
@@ -67,6 +68,7 @@ function wire() {
     ["pf","act","conv","comp","econ"].forEach(k =>
       document.getElementById("pane-" + k).hidden = (k !== S.tab));
     if (S.tab === "pf") requestAnimationFrame(sizeGlobe);
+    M.pane(S.tab);
   }));
 
   setInterval(() => {
