@@ -7,7 +7,7 @@ import { initPalette } from "./ui/palette.js";
 import { shellHtml } from "./ui/shell.js";
 import { installLiquidGlass, applyLiquidGlass } from "./ui/glass.js";
 import { mountSilk } from "./ui/silk.js";
-import { mountGlobe, paintGlobe, sizeGlobe } from "./ui/globe.js";
+import { focusGlobeOnCountries, mountGlobe, paintGlobe, resetGlobeView, sizeGlobe } from "./ui/globe.js";
 import { mountGoogleGlobe } from "./ui/googleGlobe.js";
 import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTicker, paintPfRail, paintCopilot }
   from "./ui/panels.js";
@@ -119,6 +119,20 @@ function wire() {
     paintLegend(); paintGlobe();
   }));
 
+  document.getElementById("wi-logo-home")?.addEventListener("click", () => {
+    S.route = "dashboard";
+    S.clientScopeId = null;
+    S.selIso = null;
+    S.goalSel = null;
+    S.tab = "pf";
+    S.household = false;
+    S.clientDrawerOpen = false;
+    S.railDrawerOpen = false;
+    history.pushState(null, "", "/");
+    resetGlobeView();
+    renderAll();
+  });
+
   document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => {
     S.tab = b.dataset.tab;
     document.querySelectorAll("[data-tab]").forEach(x =>
@@ -154,8 +168,8 @@ function refresh(what) {
 
 const railHandlers = {
   onClearGoal: () => { S.goalSel = null; renderAll(); },
-  onClearSel: () => { S.selIso = null; S.clientScopeId = null; refresh("globe"); },
-  onSelectIso: iso => { S.selIso = iso; S.railDrawerOpen = false; refresh("globe"); },
+  onClearSel: () => { S.selIso = null; S.clientScopeId = null; resetGlobeView(); refresh("globe"); },
+  onSelectIso: iso => { S.selIso = iso; S.railDrawerOpen = false; focusGlobeOnCountries([iso]); refresh("globe"); },
   onOpenClient: id => {
     S.portfolio = S.portfolios.find(p => p.id === id) || S.portfolio;
     S.clientScopeId = null; S.selIso = null; S.goalSel = null; S.household = false; S.railDrawerOpen = false;
@@ -355,12 +369,13 @@ export function renderAll() {
   paintBook(id => {
     S.portfolio = S.portfolios.find(p => p.id === id);
     S.clientScopeId = id; S.goalSel = null; S.household = false; S.clientDrawerOpen = false;
+    focusPortfolio(S.portfolio);
     renderAll();
   });
   paintHead(() => { S.household = !S.household; S.selIso = null; renderAll(); });
   paintGoals(id => {
     S.goalSel = S.goalSel === id ? null : id;
-    S.selIso = null;
+    focusGoal(S.goalSel);
     renderAll();
   });
   paintLegend(); paintGlobe(); paintEvidence();
@@ -375,6 +390,30 @@ export function renderAll() {
   paintEconomics();
   applyLiquidGlass();
   maybeNarrateOpenClient(); // hash-gated: only asks the model again if the open client's facts moved
+}
+
+function isoWeightsForPortfolio(p, goalId = null) {
+  const ids = goalId ? new Set((p.goals.find(g => g.id === goalId)?.driverIds) || []) : null;
+  const weights = new Map();
+  for (const pos of p.positions || []) {
+    if (ids && !ids.has(pos.instrumentId)) continue;
+    const inst = S.instruments[pos.instrumentId];
+    for (const ex of inst?.exposures || []) {
+      weights.set(ex.iso3, (weights.get(ex.iso3) || 0) + (pos.weightPct || 0) * (ex.weight || 1));
+    }
+  }
+  return [...weights.entries()].sort((a, b) => b[1] - a[1]).map(([iso]) => iso);
+}
+
+function focusPortfolio(p) {
+  const isos = isoWeightsForPortfolio(p);
+  if (isos.length) focusGlobeOnCountries(isos);
+}
+
+function focusGoal(goalId) {
+  if (!goalId) { S.selIso = null; resetGlobeView(); return; }
+  const isos = isoWeightsForPortfolio(S.portfolio, goalId);
+  if (isos.length) focusGlobeOnCountries(isos);
 }
 
 function syncDrawers() {

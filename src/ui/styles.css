@@ -3692,6 +3692,152 @@ body{
   }
 }
 
+.wi-logo-btn{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:46px;
+  height:46px;
+  flex:0 0 46px;
+  border:0;
+  border-radius:14px;
+  background:rgba(255,255,255,.36);
+  cursor:pointer;
+  transition:background .18s ease, opacity .18s ease;
+}
+.wi-logo-btn:hover{
+  background:rgba(255,255,255,.58);
+  opacity:.86;
+}
+.wi-logo-mark{
+  position:relative;
+  display:grid;
+  place-items:center;
+  width:34px;
+  height:34px;
+  color:#0a0f18;
+  font-size:34px;
+  font-weight:950;
+  line-height:1;
+  transform:skew(-8deg);
+}
+.wi-logo-mark:after{
+  content:"";
+  position:absolute;
+  left:2px;
+  right:-3px;
+  top:18px;
+  height:7px;
+  border-radius:999px;
+  background:#0a0f18;
+  transform:rotate(-13deg);
+}
+.operator-greeting{
+  min-width:0;
+}
+.operator-greeting > div{
+  min-width:0;
+}
+
+.market-ticker .tick-run{
+  animation-duration:106.7s;
+}
+.market-ticker:hover .tick-run{
+  animation-duration:213.4s;
+}
+
+.client-insight .chev,
+.rm-client .chev{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:32px;
+  height:32px;
+  min-width:32px;
+  padding:0;
+  border-radius:50%;
+  line-height:1;
+}
+.client-insight{
+  align-items:center;
+}
+
+.client-workbench .goals{
+  height:94px;
+  padding:9px 14px;
+}
+.client-workbench .goals .goal{
+  flex:0 0 188px;
+  max-width:204px;
+  min-width:0;
+  padding:9px 10px;
+}
+.goal .g-top{
+  min-width:0;
+}
+.goal .gn{
+  display:-webkit-box;
+  min-height:30px;
+  max-height:30px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:normal;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+}
+.goal .gh{
+  flex:0 0 auto;
+  white-space:nowrap;
+}
+.goal .gv{
+  margin:5px 0 4px;
+}
+.goal .pct{
+  font-size:16px;
+}
+
+.client-workbench .tabs{
+  min-height:40px;
+  padding:0 12px;
+}
+.client-workbench .tabs button{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-width:0;
+  padding:9px 11px 8px;
+}
+.client-workbench .tabs button .n{
+  flex:0 0 auto;
+}
+
+.impact-metrics{
+  grid-template-columns:repeat(4, minmax(150px, 1fr))!important;
+  align-items:stretch;
+}
+.impact-card{
+  min-width:0;
+  min-height:170px;
+}
+.impact-card.bars{
+  display:block;
+}
+.impact-card.bars:after{
+  float:right;
+  width:86px;
+  margin-top:-14px;
+}
+@media (max-width:1280px){
+  .impact-metrics{
+    grid-template-columns:repeat(2, minmax(0, 1fr))!important;
+  }
+}
+@media (max-width:760px){
+  .impact-metrics{
+    grid-template-columns:1fr!important;
+  }
+}
+
 /* Keep these viewport rules last so the page itself never gains extra scroll. */
 html,body,#root{
   width:100%;

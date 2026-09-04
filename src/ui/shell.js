@@ -15,8 +15,13 @@ export const shellHtml = (operator = {}) => {
   </div>
   <header class="bar operator-header liquid-glass">
     <div class="operator-greeting">
-      <span class="eyebrow">Welcome Back to Wealth Intelligence</span>
-      <h1>Good evening, ${operatorName}</h1>
+      <button class="wi-logo-btn" id="wi-logo-home" type="button" aria-label="Return to Wealth Intelligence dashboard">
+        <span class="wi-logo-mark">A</span>
+      </button>
+      <div>
+        <span class="eyebrow">Welcome Back to Wealth Intelligence</span>
+        <h1>Good evening, ${operatorName}</h1>
+      </div>
     </div>
     <div class="spacer"></div>
     <div class="operator-controls" aria-label="Operator controls">
