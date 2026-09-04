@@ -4,7 +4,7 @@ import { goalDelta, riskConcentration, flaggedPositions, rmEconomics, FLAG_THRES
 
 export const S = {
   instruments: {}, portfolios: [], signals: {}, prevSignals: {},
-  portfolio: null, lens: "d", selIso: null, goalSel: null, tab: "pf",
+  portfolio: null, lens: "d", selIso: null, goalSel: null,
   household: false, live: false, actionState: {}, meta: {}
 };
 

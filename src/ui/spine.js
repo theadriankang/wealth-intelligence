@@ -2,9 +2,9 @@ import { S, actionState } from "../store.js";
 
 export function paintActions(onChange) {
   const p = S.portfolio, disc = p.mandate === "Discretionary";
-  document.getElementById("tn-act").textContent =
-    p.actions.filter(a => actionState(a) === "Drafted").length;
-  document.getElementById("actions").innerHTML = `
+  document.getElementById("seg-actions").innerHTML = `
+    <div class="seg-h"><span class="seg-n">04</span><h3>Recommended actions</h3>
+      <span class="c">${disc ? "discretionary" : "advisory · needs client decision"}</span></div>
     <p style="margin:0 0 15px; font-size:12.5px; color:var(--ink-3); line-height:1.6; max-width:62ch">
       ${disc
         ? "This is a <strong style='color:var(--ink-2)'>discretionary</strong> mandate — actions execute under standing authority and are reported to the client, with a suitability record generated at execution."
@@ -55,9 +55,12 @@ export function paintActions(onChange) {
 
 export function paintConversation() {
   const r = S.portfolio.relationship;
-  if (!r) { document.getElementById("conv").innerHTML =
-    `<div class="blk"><p>No relationship record for this mandate.</p></div>`; return; }
-  document.getElementById("conv").innerHTML = `
+  if (!r) { document.getElementById("seg-conv").innerHTML = `
+    <div class="seg-h"><span class="seg-n">05</span><h3>The conversation</h3></div>
+    <div class="blk"><p>No relationship record for this mandate.</p></div>`; return; }
+  document.getElementById("seg-conv").innerHTML = `
+    <div class="seg-h"><span class="seg-n">05</span><h3>The conversation</h3>
+      <span class="c">last contact ${r.last.date}</span></div>
     <div class="blk"><h3>Relationship</h3>
       <div class="meta-row" style="margin-bottom:11px">
         <div class="fct"><span class="k">Last contact</span><span class="v">${r.last.date} · ${r.last.channel}</span></div>

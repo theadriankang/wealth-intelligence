@@ -11,7 +11,6 @@ const COMPLY = [
 
 export function paintCompliance() {
   const p = S.portfolio;
-  document.getElementById("tn-comp").textContent = COMPLY.filter(c => c.s === "watch").length;
   const recs = p.actions.filter(a => actionState(a) !== "Drafted" || p.mandate === "Discretionary");
   const ck = chokepointExposure(positions(), S.instruments);
   document.getElementById("comp").innerHTML = `
@@ -65,4 +64,16 @@ export function paintEconomics() {
          ["Writing the file note", "The suitability record is generated as a by-product of the recommendation."],
          ["Triaging by memory", "The book is ordered by what actually moved, not by who called last."]]
         .map(x => `<div class="tp"><span class="num">·</span><p><strong style="color:var(--ink)">${x[0]}.</strong> ${x[1]}</p></div>`).join("")}</div>`;
+}
+
+/* The Evidence slide-over — painted on demand, not on every render. */
+export function openEvidence() {
+  paintCompliance(); paintEconomics();
+  document.getElementById("slideover").classList.add("on");
+  document.getElementById("scrim").classList.add("on");
+}
+
+export function closeEvidence() {
+  document.getElementById("slideover").classList.remove("on");
+  document.getElementById("scrim").classList.remove("on");
 }

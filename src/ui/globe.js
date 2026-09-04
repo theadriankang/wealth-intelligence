@@ -51,7 +51,7 @@ export function mountGlobe(el, { onSelect }) {
 }
 
 export function sizeGlobe() {
-  const el = document.querySelector(".globe-wrap");
+  const el = document.querySelector(".glass");
   if (globe && el?.clientWidth) globe.width(el.clientWidth).height(el.clientHeight);
 }
 

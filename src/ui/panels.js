@@ -34,7 +34,7 @@ export function paintBook(onPick) {
 
 export function paintHead(onHousehold) {
   const p = S.portfolio, L = p.lombard;
-  document.getElementById("client-head").innerHTML = `
+  document.getElementById("sit-head").innerHTML = `
     <h2>${p.name}</h2><span class="ref">${p.ref}</span>
     <span class="tag ${p.mandate === "Advisory" ? "adv" : "disc"}">${p.mandate} mandate</span>
     <div class="facts">
@@ -52,7 +52,10 @@ export function paintHead(onHousehold) {
 }
 
 export function paintGoals(onPick) {
-  document.getElementById("goals").innerHTML = goals().map(g => {
+  document.getElementById("seg-goals").innerHTML = `
+    <div class="seg-h"><span class="seg-n">02</span><h3>Goals at risk</h3>
+      <span class="c">${S.goalSel ? "1 filtered" : goals().length + " tracked"}</span></div>
+    ` + `<div class="goal-stack">` + goals().map(g => {
     const col = g.change < 0 ? P.UP[3] : g.change > 0 ? P.SEV.good : css("--ink-3");
     const bar = g.funded >= 95 ? P.SEV.good : g.funded >= 80 ? P.SEV.warn : P.UP[3];
     return `<button class="goal" data-g="${g.id}" aria-pressed="${S.goalSel === g.id}">
@@ -64,7 +67,7 @@ export function paintGoals(onPick) {
       <div class="gt2"><span>funded</span><span>${g.driverIds.length
         ? g.driverIds.length + " driving positions" : "cash and near-cash"}</span></div>
     </button>`;
-  }).join("");
+  }).join("") + `</div>`;
   document.querySelectorAll("[data-g]").forEach(b =>
     b.addEventListener("click", () => onPick(b.dataset.g)));
 }
@@ -111,58 +114,27 @@ export function paintTicker(feed = FEED) {
     : "Signals fetched from the live World Monitor feed.";
 }
 
-export function paintPfRail({ onClearGoal, onClearSel, onOpenPosition }) {
-  const L = LENSES().d, list = visibleRows(), all = rows();
-  const maxw = Math.max(...all.map(r => r.weightPct));
-  const g = goal();
-  const held = new Set(positions().map(p => p.instrumentId));
+/* segment 01 — Situation: what changed overnight, house-view tension, policy radar */
+export function paintSituation() {
   const sel = S.selIso ? S.signals[S.selIso] : null;
   const hv = sel ? reconcile(S.selIso, sel.riskDelta) : null;
-
+  const held = new Set(positions().map(p => p.instrumentId));
   const digest = sel
     ? sel.events.map(e => [e.at.split(" ").slice(-1)[0], e.source, `<strong>${e.text}</strong> — ${e.value}`])
     : topEvents(3);
 
-  document.getElementById("pfrail").innerHTML = `
-    ${g ? `<section class="sec" style="background:var(--panel-2)">
-      <div class="sec-h"><h2>Filtered by goal</h2><button class="ghost sm" id="clear-goal">Clear</button></div>
-      <p style="margin:0; font-size:12.5px; color:var(--ink-2); line-height:1.55">
-        Showing only the positions funding <strong style="color:var(--ink)">${g.name}</strong>
-        (${g.horizon}). The globe is filtered to match.</p></section>` : ""}
-
-    <section class="sec">
-      <div class="sec-h"><h2>${sel ? sel.name + " signals" : "What changed overnight"}</h2>
-        ${sel ? `<button class="ghost sm" id="clear-sel">Show all</button>` : ""}</div>
-      <div class="digest">${digest.map(e => `<article class="dg"><time>${e[0]}</time>
-        <div><p>${e[2]}</p><span class="src">${e[1]}</span></div></article>`).join("")}</div>
-      ${hv ? `<div class="hv ${hv.verdict}">
-        <div class="hd"><span class="vd" style="color:${hv.verdict === "tension" ? P.SEV.warn
-          : hv.verdict === "confirms" ? P.SEV.good : css("--ink-3")}">${hv.verdict}</span>
-          <span class="src">House view</span></div>
-        <p>${hv.line}</p>
-        ${hv.note ? `<div class="src2">“${hv.note}”</div>` : ""}
-        <div class="src2">${HOUSE_VIEW.source} · as of ${HOUSE_VIEW.asOf}</div></div>` : ""}
-    </section>
-
-    <section class="sec">
-      <div class="sec-h"><h2>Positions, by pressure</h2>
-        <span class="count">${list.length} of ${all.length}</span></div>
-      ${list.map(r => `<button class="card" data-t="${r.instrumentId}"
-        style="border-left-color:${L.col(r.riskDelta)}">
-        <div class="c-top"><span class="tickr">${r.instrumentId}</span>
-          <span class="cname">${r.name}</span>
-          <span class="delta" style="color:${L.col(r.riskDelta)}">${fmtD(r.riskDelta)}</span></div>
-        <div class="c-mid">
-          <span class="geo">${r.multi ? r.inst.exposures.length + " markets" : r.iso3}</span>
-          ${r.assetClass !== "equity" ? `<span class="ac-badge">${r.assetClass}</span>` : ""}
-          <span class="wt"><i style="width:${r.weightPct / maxw * 100}%"></i></span>
-          <span class="wtv">${r.weightPct.toFixed(1)}%</span></div>
-        ${lookThroughBar(r.inst, S.signals)}
-      </button>`).join("")}
-    </section>
-
-    <section class="sec">
-      <div class="sec-h"><h2>Policy radar</h2><span class="count">last 8 days</span></div>
+  document.getElementById("seg-situation").innerHTML = `
+    <div class="seg-h"><span class="seg-n">01</span><h3>Situation</h3>
+      <span class="c">${sel ? sel.name : "overnight"}</span></div>
+    <div class="digest">${digest.map(e => `<article class="dg"><time>${e[0]}</time>
+      <div><p>${e[2]}</p><span class="src">${e[1]}</span></div></article>`).join("")}</div>
+    ${hv ? `<div class="hv ${hv.verdict}">
+      <div class="hd"><span class="vd" style="color:${hv.verdict === "tension" ? P.SEV.warn
+        : hv.verdict === "confirms" ? P.SEV.good : css("--ink-3")}">${hv.verdict}</span>
+        <span class="src">House view</span></div>
+      <p>${hv.line}</p>${hv.note ? `<div class="src2">“${hv.note}”</div>` : ""}
+      <div class="src2">${HOUSE_VIEW.source} · as of ${HOUSE_VIEW.asOf}</div></div>` : ""}
+    <div class="policy-radar">
       <div class="st-ax"><span>← easing</span><span>tightening →</span></div>
       ${POLICY.map(p => {
         const w = Math.abs(p.stance) / 3 * 50;
@@ -180,11 +152,39 @@ export function paintPfRail({ onClearGoal, onClearSel, onOpenPosition }) {
             : `<span class="chip" style="color:var(--ink-4)">no position</span>`}</div>
         </div></article>`;
       }).join("")}
-    </section>`;
+    </div>`;
+}
+
+/* segment 03 — Positions under pressure (+ goal-filter notice) */
+export function paintPositions({ onClearGoal, onClearSel, onOpenPosition }) {
+  const L = LENSES().d, list = visibleRows(), all = rows();
+  const maxw = Math.max(...all.map(r => r.weightPct));
+  const g = goal();
+
+  document.getElementById("seg-positions").innerHTML = `
+    <div class="seg-h"><span class="seg-n">03</span><h3>Positions under pressure</h3>
+      <span class="c">${list.length} of ${all.length}</span></div>
+    ${g ? `<div class="filter-note">Showing only the positions funding
+      <strong>${g.name}</strong> (${g.horizon}). The globe is filtered to match.
+      <button class="ghost sm" id="clear-goal">Clear</button></div>` : ""}
+    ${S.selIso ? `<div class="filter-note">Filtered to ${S.selIso}.
+      <button class="ghost sm" id="clear-sel">Show all</button></div>` : ""}
+    ${list.map(r => `<button class="card" data-t="${r.instrumentId}"
+      style="border-left-color:${L.col(r.riskDelta)}">
+      <div class="c-top"><span class="tickr">${r.instrumentId}</span>
+        <span class="cname">${r.name}</span>
+        <span class="delta" style="color:${L.col(r.riskDelta)}">${fmtD(r.riskDelta)}</span></div>
+      <div class="c-mid">
+        <span class="geo">${r.multi ? r.inst.exposures.length + " markets" : r.iso3}</span>
+        ${r.assetClass !== "equity" ? `<span class="ac-badge">${r.assetClass}</span>` : ""}
+        <span class="wt"><i style="width:${r.weightPct / maxw * 100}%"></i></span>
+        <span class="wtv">${r.weightPct.toFixed(1)}%</span></div>
+      ${lookThroughBar(r.inst, S.signals)}
+    </button>`).join("")}`;
 
   document.getElementById("clear-goal")?.addEventListener("click", onClearGoal);
   document.getElementById("clear-sel")?.addEventListener("click", onClearSel);
-  document.querySelectorAll("#pfrail [data-t]").forEach(b =>
+  document.querySelectorAll("#seg-positions [data-t]").forEach(b =>
     b.addEventListener("click", () => onOpenPosition(b.dataset.t)));
 }
 
