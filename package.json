@@ -13,7 +13,7 @@
     "dev:all": "concurrently -n web,api -c cyan,magenta \"npm:dev\" \"npm:server\"",
     "intel": "node scripts/build-intel.js",
     "agent": "node scripts/run-agent.js",
-    "test": "node scripts/test-fx.js && node scripts/test-intel.js && node scripts/test-agent.js && node --test src/eval/ src/market/ src/store.test.js"
+    "test": "node scripts/test-fx.js && node scripts/test-intel.js && node scripts/test-agent.js && node --test 'src/**/*.test.js'"
   },
   "dependencies": {
     "animejs": "^4.5.0",
