@@ -8,6 +8,7 @@ import "dotenv/config";
 import express from "express";
 import { fetchWorldMonitor } from "./worldmonitor.js";
 import { callLLM } from "./llm.js";
+import { runPolicySentinelScan } from "./policy-sentinel.js";
 
 const app = express();
 app.use(express.json({ limit: "2mb" }));
@@ -19,6 +20,7 @@ app.get("/api/health", (_req, res) => res.json({
   ok: true,
   offline: process.env.OFFLINE === "1",
   worldmonitorKey: !!process.env.WORLDMONITOR_API_KEY,
+  tinyfishKey: !!process.env.TINYFISH_API_KEY,
   llm: process.env.ANTHROPIC_API_KEY ? "anthropic" : process.env.OPENAI_API_KEY ? "openai" : "none"
 }));
 
@@ -42,6 +44,15 @@ app.post("/api/llm", async (req, res) => {
     res.json({ result: await callLLM(req.body) });
   } catch (err) {
     console.warn("[llm]", err.message);
+    res.status(502).json({ error: err.message });
+  }
+});
+
+app.post("/api/policy-scan", async (req, res) => {
+  try {
+    res.json(await runPolicySentinelScan(req.body || {}));
+  } catch (err) {
+    console.warn("[policy-scan]", err.message);
     res.status(502).json({ error: err.message });
   }
 });

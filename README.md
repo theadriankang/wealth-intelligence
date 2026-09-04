@@ -50,6 +50,51 @@ Everything downstream reads the shapes in `src/model/schema.js`.
 
 See `docs/ARCHITECTURE.md` and `docs/FRIDAY-CHECKLIST.md`.
 
+## TinyFish live policy scan
+
+Policy Sentinel uses TinyFish Search first, then TinyFish Fetch:
+
+1. Search discovers the freshest official source across MAS, BIS, Fed, and ECB domains.
+2. Fetch extracts clean markdown from the selected URL.
+3. The server classifies the fetched document into stance, urgency, affected assets, citations, and the Evidence Trial drawer.
+
+Local route:
+
+```bash
+npm run dev:all
+curl -X POST http://localhost:8787/api/policy-scan \
+  -H "Content-Type: application/json" \
+  -d '{"query":"latest MAS monetary policy statement Singapore","includeDomains":"mas.gov.sg,bis.org"}'
+```
+
+Vercel route after deploy:
+
+```text
+/api/policy-scan
+```
+
+Add these Vercel environment variables:
+
+```bash
+TINYFISH_API_KEY=tf_live_or_test_key_here
+POLICY_SCAN_QUERY=latest MAS monetary policy statement central bank policy speech Singapore
+POLICY_SCAN_DOMAINS=mas.gov.sg,bis.org,federalreserve.gov,ecb.europa.eu
+POLICY_SCAN_LOCATION=SG
+POLICY_SCAN_LANGUAGE=en
+TINYFISH_FETCH_TTL=0
+TINYFISH_FETCH_TIMEOUT_MS=45000
+OFFLINE=0
+```
+
+Optional keys used by the existing app:
+
+```bash
+WORLDMONITOR_API_KEY=
+ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
+LLM_MODEL=
+```
+
 ## Honest limitations
 
 - All data is fabricated. The disclaimer strip stays until it isn't.

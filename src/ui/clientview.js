@@ -5,6 +5,7 @@
  * goals, plainly, and what the adviser wants to talk about. Light, calm, printable.
  */
 import { S, goals, flagged } from "../store.js";
+import * as M from "./motion.js";
 
 export function renderClientView(root) {
   const p = S.portfolio, gs = goals();
@@ -47,6 +48,7 @@ export function renderClientView(root) {
     nothing has been actioned on your account. Figures are indicative and, in this prototype,
     fabricated for demonstration.</p>
   </div></div>`;
+  requestAnimationFrame(() => M.clientView(root));
 }
 
 /** The adviser's notes are written to the adviser. Soften the register for the client. */

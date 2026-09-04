@@ -10,8 +10,10 @@ import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTick
   paintSituation, paintPositions } from "./ui/panels.js";
 import { paintActions, paintConversation } from "./ui/spine.js";
 import { openEvidence, closeEvidence } from "./ui/evidence.js";
-import { initDrawers, openPosition, openBrief } from "./ui/drawers.js";
+import { initDrawers, openPosition, openBrief, openPolicyTrial } from "./ui/drawers.js";
 import { renderClientView } from "./ui/clientview.js";
+import * as M from "./ui/motion.js";
+import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
 
 const root = document.getElementById("root");
 let feed = FEED.slice(), lateIdx = 0, since = 0;
@@ -23,6 +25,7 @@ async function boot() {
   const data = await loadData(CONFIG.ADAPTER);
   Object.assign(S, data);
   S.portfolio = S.portfolios[0];
+  S.policyScan = FALLBACK_SCAN;
 
   // Live signals where possible; fixtures otherwise. Never blocks the first paint.
   const isos = new Set();
@@ -43,6 +46,7 @@ async function boot() {
     mountGlobe(document.getElementById("globe"), { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
     wire();
     renderAll();
+    M.boot();
     requestAnimationFrame(() => sizeGlobe());
   };
 
@@ -60,6 +64,7 @@ async function boot() {
 
 function wire() {
   document.getElementById("brief-btn").addEventListener("click", openBrief);
+  document.getElementById("policy-scan-btn").addEventListener("click", runPolicySentinel);
 
   document.querySelectorAll("[data-lens]").forEach(b => b.addEventListener("click", () => {
     S.lens = b.dataset.lens;
@@ -100,10 +105,29 @@ function refresh(what) {
 const railHandlers = {
   onClearGoal: () => { S.goalSel = null; renderAll(); },
   onClearSel: () => { S.selIso = null; refresh("globe"); },
-  onOpenPosition: openPosition
+  onOpenPosition: openPosition,
+  onRunPolicyScan: runPolicySentinel,
+  onOpenPolicyTrial: openPolicyTrial
 };
 
+async function runPolicySentinel() {
+  S.policyScanState = "running";
+  renderAll();
+  const btn = document.getElementById("policy-scan-btn");
+  if (btn) btn.textContent = "Scanning policy...";
+  S.policyScan = await runPolicyScan();
+  S.policyScanState = "idle";
+  since = 0;
+  renderAll();
+  openPolicyTrial();
+}
+
 export function renderAll() {
+  const policyBtn = document.getElementById("policy-scan-btn");
+  if (policyBtn) {
+    policyBtn.textContent = S.policyScanState === "running" ? "Scanning policy..." : "Run live policy scan";
+    policyBtn.disabled = S.policyScanState === "running";
+  }
   paintBook(id => {
     S.portfolio = S.portfolios.find(p => p.id === id);
     S.selIso = null; S.goalSel = null; S.household = false;

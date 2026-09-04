@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/api/policy-scan", "destination": "/api/policy-scan" },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}

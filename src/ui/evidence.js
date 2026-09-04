@@ -1,6 +1,7 @@
 import { S, actionState, economics, flagged, positions } from "../store.js";
 import { ECONOMICS_BASELINE } from "../model/scoring.js";
 import { chokepointExposure } from "../model/lookthrough.js";
+import * as M from "./motion.js";
 
 const COMPLY = [
   { t:"Sanctions screening", s:"ok", d:"Holdings and known counterparties screened against consolidated lists. No designations, no new listings in the last 24 hours." },
@@ -31,6 +32,10 @@ export function paintCompliance() {
       <tbody>${recs.length ? recs.map(a => `<tr><td>${a.title}<div class="e">${a.target}</div></td>
         <td>${p.mandate}</td><td class="v">${actionState(a)}</td><td class="v">04 Sep 08:40</td></tr>`).join("")
         : `<tr><td colspan="4" style="color:var(--ink-4)">No records yet — generated when a proposal is put to the client or executed.</td></tr>`}</tbody></table></div>`;
+  M.once("comp", S.portfolio.id, () => {
+    M.enter("#comp .comp-hero, #comp .blk", { y: 10, delay: 60, duration: 420 });
+    M.enter("#comp .crow", { y: 5, delay: 26, duration: 340, from: 120 });
+  });
 }
 
 /** The operating-leverage tab: what this saves, stated as assumptions, not claims. */
@@ -64,6 +69,10 @@ export function paintEconomics() {
          ["Writing the file note", "The suitability record is generated as a by-product of the recommendation."],
          ["Triaging by memory", "The book is ordered by what actually moved, not by who called last."]]
         .map(x => `<div class="tp"><span class="num">·</span><p><strong style="color:var(--ink)">${x[0]}.</strong> ${x[1]}</p></div>`).join("")}</div>`;
+  M.once("econ", S.portfolio.id + "|" + e.affected, () => {
+    M.economics();
+    M.enter("#econ .blk", { y: 10, delay: 70, duration: 420, from: 160 });
+  });
 }
 
 /* The Evidence slide-over — painted on demand, not on every render. */
