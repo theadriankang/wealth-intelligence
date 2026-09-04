@@ -12,6 +12,7 @@ import { paintActions, paintConversation, paintCompliance, paintEconomics } from
 import { initDrawers, openPosition, openBrief, openPolicyTrial } from "./ui/drawers.js";
 import { renderClientView } from "./ui/clientview.js";
 import * as M from "./ui/motion.js";
+import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
 
 const root = document.getElementById("root");
 let feed = FEED.slice(), lateIdx = 0, since = 0;
