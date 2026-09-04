@@ -23,8 +23,8 @@ test("templateNarration produces a thesis + summary with no imperative verbs or 
   for (const v of ["buy ", "sell ", "execute ", "switch "]) {
     assert.ok(!(`${thesis} ${summary}`.toLowerCase().includes(v)));
   }
-  assert.ok(!/risk|urgent|this week|health/i.test(summary), "summary must describe the portfolio, not its risk/health state");
-  assert.ok(summary.includes("TSM"), "summary describes the current top holding");
+  assert.ok(!/this week|urgent|health reads|opportunit/i.test(summary), "summary must describe the portfolio, not its risk/health state");
+  assert.ok(!/TSM|DBS/.test(summary), "summary should stay general, not name specific positions");
   assert.equal(health, ce.health);
   assert.equal(healthBand, ce.healthBand);
   assert.deepEqual(concentration, grounding.fallbackConcentration);
@@ -59,6 +59,18 @@ test("validateAiScore rejects a hallucinated country", () => {
 test("validateAiScore rejects a non-numeric concentration percentage", () => {
   const data = { thesis: "t", summary: "s", health: 55, concentration: { pct: "high", countries: ["TWN"] } };
   assert.equal(validateAiScore(data, ["TWN"]), false);
+});
+
+test("validateAiScore rejects thesis+summary over the 80-word combined cap", () => {
+  const data = { thesis: Array(50).fill("word").join(" "), summary: Array(40).fill("word").join(" "),
+    health: 55, concentration: { pct: 40, countries: ["TWN"] } };
+  assert.equal(validateAiScore(data, ["TWN"]), false);
+});
+
+test("validateAiScore accepts thesis+summary at the 80-word combined cap", () => {
+  const data = { thesis: Array(40).fill("word").join(" "), summary: Array(40).fill("word").join(" "),
+    health: 55, concentration: { pct: 40, countries: ["TWN"] } };
+  assert.equal(validateAiScore(data, ["TWN"]), true);
 });
 
 test("factsHash changes when household toggles, stays stable otherwise", () => {

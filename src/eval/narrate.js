@@ -4,15 +4,16 @@ import { HEALTH_BANDS } from "./rubric.js";
 const SYSTEM =
   "You write a relationship manager's internal client-facing explanation and score the " +
   "portfolio. Arrange only the facts given — never invent a position, signal, or country. " +
-  "`thesis` states the mandate and what the portfolio is built to fund. `summary` factually " +
-  "describes the current portfolio's composition — size, number of positions, concentration by " +
-  "theme or market. `summary` must NOT mention risks, opportunities, urgency, or anything " +
-  "time-framed like 'this week' — that commentary belongs in a different, separate briefing, not " +
-  "in this explanation. No client-facing advice, never the words buy / sell / execute / switch. " +
+  "`thesis` states the mandate and what the portfolio is built to fund. `summary` gives a brief, " +
+  "general overview of the current investments — the broad asset mix or theme, not specific " +
+  "positions, tickers, or weights. `summary` must NOT mention risks, opportunities, urgency, or " +
+  "anything time-framed like 'this week' — that commentary belongs in a different, separate " +
+  "briefing, not in this explanation. Keep `thesis` and `summary` together to at most 80 words " +
+  "combined. No client-facing advice, never the words buy / sell / execute / switch. " +
   "Compute `health` (0-100, overall portfolio health) and `concentration` (risk-weighted " +
   "concentration of deteriorating exposure, 0-100, plus the driving countries) from the numbers " +
   "given — do not just describe them qualitatively. `concentration.countries` must only contain " +
-  "country codes present in the facts. Two short paragraphs for thesis/summary. Return JSON only.";
+  "country codes present in the facts. Return JSON only.";
 const SCHEMA = {
   health: "number 0-100 — overall portfolio health given the facts",
   concentration: {
@@ -20,7 +21,9 @@ const SCHEMA = {
     countries: "array of ISO3 codes present in the facts, most significant first"
   },
   thesis: "string — what the portfolio is built to do",
-  summary: "string — a factual description of the current portfolio's composition; no risk, opportunity, or this-week commentary"
+  summary: "string — a brief, general overview of the current investments (broad asset mix/theme, " +
+    "not specific positions or weights); no risk, opportunity, or this-week commentary. thesis + " +
+    "summary combined must be 80 words or fewer."
 };
 
 export function templateNarration(clientEval, portfolio, fallbackConcentration) {
@@ -28,11 +31,9 @@ export function templateNarration(clientEval, portfolio, fallbackConcentration) 
   const thesis =
     `A ${portfolio.mandate.toLowerCase()} mandate on a ${(portfolio.riskProfile || "").toLowerCase()} profile (${portfolio.riskBand}). ` +
     `The book is built to fund ${goals || "the client's stated objectives"}, and the position mix reflects that horizon.`;
-  const positions = portfolio.positions || [];
-  const top = [...positions].sort((a, b) => b.weightPct - a.weightPct)[0];
+  const riskProfile = (portfolio.riskProfile || "the client's").toLowerCase();
   const summary =
-    `The book currently holds ${positions.length} position${positions.length === 1 ? "" : "s"}` +
-    (top ? `, led by ${top.instrumentId} at ${top.weightPct.toFixed(1)}% of the portfolio.` : ".");
+    `The portfolio holds a diversified mix of investments consistent with the ${riskProfile} risk profile and the ${portfolio.mandate.toLowerCase()} mandate.`;
   return {
     health: clientEval.health, healthBand: clientEval.healthBand,
     concentration: fallbackConcentration, scoreSource: "deterministic",
@@ -40,9 +41,12 @@ export function templateNarration(clientEval, portfolio, fallbackConcentration) 
   };
 }
 
+const wordCount = s => s.trim().split(/\s+/).filter(Boolean).length;
+
 /** Shape guard for a candidate AI response before it's trusted as health/concentration. */
 export function validateAiScore(data, countryCodes) {
   if (!data || typeof data.thesis !== "string" || typeof data.summary !== "string") return false;
+  if (wordCount(data.thesis) + wordCount(data.summary) > 80) return false;
   if (typeof data.health !== "number" || !Number.isFinite(data.health) || data.health < 0 || data.health > 100) return false;
   const conc = data.concentration;
   if (!conc || typeof conc.pct !== "number" || !Number.isFinite(conc.pct) || conc.pct < 0 || conc.pct > 100) return false;
