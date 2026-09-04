@@ -9,6 +9,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "server": "node server/index.js",
+    "dossiers": "node scripts/build-dossiers.js",
     "dev:all": "concurrently -n web,api -c cyan,magenta \"npm:dev\" \"npm:server\""
   },
   "dependencies": {
