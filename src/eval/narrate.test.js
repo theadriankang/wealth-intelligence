@@ -9,7 +9,7 @@ const ce = { health: 62, healthBand: "watch", risks: [{ text: "Concentration is 
 test("templateNarration produces a thesis + summary with no imperative verbs", () => {
   const { thesis, summary } = templateNarration(ce, p);
   assert.ok(thesis.length > 20 && summary.length > 20);
-  for (const v of ["buy ", "sell ", "execute"]) {
+  for (const v of ["buy ", "sell ", "execute ", "switch "]) {
     assert.ok(!(`${thesis} ${summary}`.toLowerCase().includes(v)));
   }
   assert.ok(/watch|strained|strong/.test(summary));

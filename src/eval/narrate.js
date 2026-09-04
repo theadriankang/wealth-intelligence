@@ -27,11 +27,12 @@ export async function narrateClient(clientEval, portfolio, rmNotes = []) {
     opportunities: (clientEval.opportunities || []).map(o => o.text),
     rmNotes
   };
-  const res = await generateBrief({
-    system: SYSTEM,
-    prompt: `Facts:\n${JSON.stringify(facts, null, 2)}`,
-    schema: SCHEMA
-  });
+  let res;
+  try {
+    res = await generateBrief({ system: SYSTEM, prompt: `Facts:\n${JSON.stringify(facts, null, 2)}`, schema: SCHEMA });
+  } catch {
+    return templateNarration(clientEval, portfolio);
+  }
   if (res.ok && res.data && typeof res.data.thesis === "string" && typeof res.data.summary === "string") {
     return { thesis: res.data.thesis, summary: res.data.summary };
   }
