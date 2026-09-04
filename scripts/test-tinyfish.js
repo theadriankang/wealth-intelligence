@@ -41,6 +41,54 @@ check("a JS shell is rejected", !validateDoc(SHELL).ok);
 
 console.log(`\n${fail ? "FAILED" : "PASSED"}  ${pass} passed, ${fail} failed`);
 
+const arg = f => { const i = process.argv.indexOf(f); return i > -1 ? process.argv[i + 1] : null; };
+
+// --search "..."  : raw TinyFish Search, with this repo's candidate scores alongside.
+// Use it to see WHY a URL was chosen or rejected before touching the full pipeline.
+if (process.argv.includes("--search")) {
+  const { search } = await import("../server/tinyfish.js");
+  const q = arg("--search");
+  const domains = arg("--domains");
+  console.log(`\n— TinyFish Search — "${q}"${domains ? ` (domains: ${domains})` : ""}`);
+  const t0 = Date.now();
+  const hits = await search({
+    query: q,
+    purpose: "Find official regulator or central bank communications for a wealth-advisory policy signal.",
+    includeDomains: domains || undefined,
+    domainType: arg("--type") || "news",
+    numResults: Number(arg("--n") || 10),
+    location: "SG", language: "en"
+  });
+  console.log(`${hits.length} results in ${Date.now() - t0}ms\n`);
+  hits.map(h => ({ ...h, score: scoreCandidate(h) }))
+      .sort((a, b) => b.score - a.score)
+      .forEach(h => {
+        const verdict = h.score > 0 ? "KEEP  " : "REJECT";
+        console.log(`${verdict} ${String(h.score).padStart(6)}  ${h.title?.slice(0, 70)}`);
+        console.log(`                ${h.url}`);
+      });
+  process.exit(0);
+}
+
+// --fetch "url"  : fetch one URL and run it through the document validator.
+if (process.argv.includes("--fetch")) {
+  const { fetchDocs } = await import("../server/tinyfish.js");
+  const url = arg("--fetch");
+  console.log(`\n— TinyFish Fetch — ${url}`);
+  const t0 = Date.now();
+  const { docs, errors } = await fetchDocs([url], { excludeSelectors: ["nav", "header", "footer"] });
+  console.log(`${docs.length} doc(s), ${errors.length} error(s) in ${Date.now() - t0}ms`);
+  errors.forEach(e => console.log(`  error: ${e.url} — ${e.error}`));
+  docs.forEach(d => {
+    const v = validateDoc(d);
+    console.log(`\ntitle: ${d.title}`);
+    console.log(`valid: ${v.ok}${v.ok ? "" : "  — " + v.reasons.join("; ")}`);
+    console.log(`chars: ${v.chars}   link density: ${v.linkDensity}   terms: ${v.terms.join(", ")}`);
+    console.log(`\nfirst 600 chars:\n${d.text.slice(0, 600)}`);
+  });
+  process.exit(0);
+}
+
 if (process.argv.includes("--live")) {
   const countries = process.argv.find(a => /^[A-Z]{3}(,[A-Z]{3})*$/.test(a)) || "SGP";
   console.log(`\n— live scan (${countries}) — key present: ${hasKey()}`);
