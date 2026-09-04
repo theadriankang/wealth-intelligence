@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Title screen + client view</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=JetBrains+Mono:wght@400;500;700&family=Spectral:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --black:#08090b; --near:#0d0e11; --line:#1c1d22;
+    --ink:#eceded; --ink-2:#a0a2a8; --ink-3:#63656c; --ink-4:#3f4147;
+    --amber:#f5c542; --amber-2:#f0a03c; --ember:#e2683c; --good:#4a9d8e;
+    --disp:"Bricolage Grotesque",sans-serif; --mono:"JetBrains Mono",monospace; --serif:"Spectral",Georgia,serif;
+    /* client-view light inversion */
+    --paper:#f6f3ec; --paper-2:#fffdf8; --paper-line:#ddd6c4;
+    --pink:#1c1a17; --pink-2:#5a554a; --oxblood:#8a3324; --teal:#1f6f5c;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:#17181c;color:var(--ink);font-family:var(--mono);font-size:14px}
+  .frame{max-width:1240px;margin:0 auto;padding:34px 24px 90px}
+  .frame > h1{font-family:var(--disp);font-weight:800;font-size:19px;letter-spacing:-.02em;margin:0 0 5px}
+  .frame > .lede{font-size:12.5px;color:var(--ink-3);margin:0 0 24px;line-height:1.6;max-width:78ch}
+  .lab{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:26px 0 10px}
+
+  .shell{border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--near);cursor:pointer;transition:border-color .15s;margin-bottom:8px}
+  .shell:hover{border-color:#33343c}
+  .shell.selected{border-color:var(--amber);box-shadow:0 0 0 3px rgba(245,197,66,.16)}
+
+  /* ---------- 1 · TITLE SCREEN ---------- */
+  .title{height:560px;position:relative;overflow:hidden;display:flex;flex-direction:column;
+    background:
+      radial-gradient(ellipse 46% 44% at 50% 34%, rgba(245,197,66,.16), transparent 68%),
+      radial-gradient(ellipse 90% 60% at 50% 118%, rgba(0,0,0,.6), transparent 55%),
+      var(--black)}
+  .title::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E")}
+  .title .ghost-globe{position:absolute;left:50%;top:60%;width:640px;height:640px;transform:translate(-50%,-50%);
+    border-radius:50%;border:1px solid rgba(245,197,66,.14);
+    background:radial-gradient(circle at 44% 40%, rgba(245,197,66,.05), transparent 62%);
+    box-shadow:inset 0 0 120px rgba(245,197,66,.06)}
+  .title .ghost-globe::before,.title .ghost-globe::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid rgba(245,197,66,.08)}
+  .title .ghost-globe::before{transform:scaleX(.4)}
+  .title .ghost-globe::after{transform:scaleY(.4)}
+
+  .title .top{position:relative;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:18px 26px;
+    font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-4)}
+  .title .center{position:relative;z-index:2;flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:0 30px}
+  .title .kicker{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--amber);margin-bottom:20px}
+  .title h2{font-family:var(--disp);font-weight:800;font-size:52px;line-height:1.02;letter-spacing:-.03em;margin:0 0 20px;max-width:16ch}
+  .title h2 em{font-style:normal;color:var(--amber);text-shadow:0 0 30px rgba(245,197,66,.4)}
+  .title .thesis{font-family:var(--serif);font-size:17px;line-height:1.6;color:var(--ink-2);max-width:52ch;margin:0 0 34px}
+  .title .enter{font-family:var(--mono);font-size:12px;letter-spacing:.06em;text-transform:uppercase;
+    background:var(--amber);color:var(--black);border:0;border-radius:7px;padding:13px 26px;font-weight:700;cursor:pointer;
+    box-shadow:0 0 40px rgba(245,197,66,.3)}
+  .title .enter .arrow{margin-left:8px}
+  .title .foot{position:relative;z-index:2;padding:16px 26px;border-top:1px solid var(--line);
+    display:flex;gap:16px;font-size:10px;color:var(--ink-4);letter-spacing:.03em}
+  .title .foot b{color:var(--amber-2);font-weight:500}
+
+  /* ---------- 2 · CLIENT VIEW (light inversion) ---------- */
+  .cv{background:var(--paper);color:var(--pink);font-family:var(--serif);min-height:620px;padding:40px 46px 60px;position:relative}
+  .cv .back{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--pink-2);
+    border:1px solid var(--paper-line);border-radius:6px;padding:6px 11px;background:var(--paper-2);display:inline-block;margin-bottom:30px}
+  .cv h2{font-family:var(--disp);font-weight:700;font-size:30px;letter-spacing:-.015em;margin:0 0 6px;color:#12100d}
+  .cv .sub{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--pink-2);margin:0 0 30px}
+  .cv .lead{font-size:19px;line-height:1.62;color:#24211c;margin:0 0 30px;padding-bottom:26px;border-bottom:1px solid var(--paper-line)}
+  .cv .lead em{font-style:italic;color:var(--oxblood)}
+  .cv-goal{display:grid;grid-template-columns:1fr auto;gap:5px 20px;align-items:baseline;padding:17px 0;border-bottom:1px solid #e8e1cf}
+  .cv-goal .n{font-family:var(--disp);font-weight:700;font-size:17px}
+  .cv-goal .h{grid-column:1;font-family:var(--mono);font-size:11px;color:var(--pink-2)}
+  .cv-goal .p{grid-row:1/3;font-family:var(--disp);font-weight:800;font-size:26px;color:var(--oxblood)}
+  .cv-goal .tr{grid-column:1/3;height:5px;border-radius:3px;background:#e6ddc9;overflow:hidden;margin-top:8px}
+  .cv-goal .tr i{display:block;height:100%;border-radius:3px;background:var(--oxblood)}
+  .cv .talk{margin-top:32px;background:var(--paper-2);border:1px solid var(--paper-line);border-radius:10px;padding:24px 26px}
+  .cv .talk h3{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--pink-2);margin:0 0 14px}
+  .cv .talk p{font-size:15px;line-height:1.66;color:#2b2822;margin:0 0 12px}
+  .cv .talk p:last-child{margin:0}
+  .cv .foot{margin-top:30px;font-family:var(--mono);font-size:10px;line-height:1.7;color:#9a9074}
+
+  .note{font-size:11px;color:var(--ink-3);line-height:1.6;margin:10px 0 0}
+  .note b{color:var(--ink)}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="frame">
+  <h1>The two remaining surfaces</h1>
+  <p class="lede">Piece 3 (file / module plan) is text — it's in the terminal. Here are the two visual ones: the title screen you land on, and the client view you flip the laptop to. Click either shell if it's right; corrections in the terminal.</p>
+
+  <div class="lab">1 · Title screen — the 5-second frame before the cockpit</div>
+  <div class="shell" data-choice="title-screen" onclick="toggleSelect(this)">
+    <div class="title">
+      <div class="ghost-globe"></div>
+      <div class="top"><span>Julius Baer · SingHacks 2026</span><span>Prototype · fabricated data</span></div>
+      <div class="center">
+        <div class="kicker">From portfolio monitoring to</div>
+        <h2>Wealth <em>Intelligence</em></h2>
+        <p class="thesis">An adviser cockpit that reads a client's portfolio against live world signals — and answers the question a private bank actually cares about: does this change whether my client gets what they want, and what do I say to them about it?</p>
+        <button class="enter">Enter the cockpit <span class="arrow">→</span></button>
+      </div>
+      <div class="foot">
+        <span><b>Look-through</b> a fund is not a country</span>
+        <span><b>Citation gate</b> every claim sourced or dropped</span>
+        <span><b>Prepare once</b> deliver to the whole book</span>
+      </div>
+    </div>
+  </div>
+  <p class="note"><b>Behaviour:</b> full-bleed, one viewport, no scroll. Kicker + title fade up, thesis follows, button last (staggered, ~600ms total). "Enter" reveals the cockpit — same page, no reload, so the globe keeps its warm-up. Skippable with any key. Under <code>prefers-reduced-motion</code> everything is just present. On <code>?view=client</code> it's bypassed entirely.</p>
+
+  <div class="lab">2 · Client view — <code>?view=client</code>, the calm light inversion</div>
+  <div class="shell" data-choice="client-view" onclick="toggleSelect(this)">
+    <div class="cv">
+      <span class="back">← Back to cockpit</span>
+      <h2>Your portfolio, this week</h2>
+      <p class="sub">C. &amp; M. Bergmann · prepared by A. Kessler · 4 Sep 2026</p>
+      <p class="lead">One development matters for you this week. Heightened tension around the Taiwan Strait has pushed back the funding confidence of your <em>2027 property purchase</em> — the rest of your plan is unchanged.</p>
+
+      <div class="cv-goal">
+        <span class="n">Property purchase</span>
+        <span class="p">71%</span>
+        <span class="h">2027 · CHF 4.0M · down from 87% last week</span>
+        <span class="tr"><i style="width:71%"></i></span>
+      </div>
+      <div class="cv-goal">
+        <span class="n">Retirement income</span>
+        <span class="p">96%</span>
+        <span class="h">2035 · on track, no change</span>
+        <span class="tr"><i style="width:96%;background:var(--teal)"></i></span>
+      </div>
+
+      <div class="talk">
+        <h3>What we propose</h3>
+        <p>Reducing one semiconductor holding by a third brings your regional exposure back within the range we agreed, and frees roughly CHF 180,000 toward the purchase. Nothing needs to happen today — we'll walk through it at your review on the 19th.</p>
+        <p>If you'd rather keep the holding, there is a lower-cost option that caps the specific downside for two quarters instead. Both are on the table.</p>
+      </div>
+
+      <p class="foot">Funding confidence is a modelled estimate from your goals, holdings and current market signals — not a guarantee. Figures shown are illustrative for this prototype. Not investment advice.</p>
+    </div>
+  </div>
+  <p class="note"><b>Inversion, not a re-theme:</b> same information architecture as the cockpit's spine, but paper ground, Spectral throughout, oxblood + teal instead of glowing amber, no ticker, no globe, no motion. The jolt when you turn the laptop from the near-black cockpit to this is deliberate — it signals "this part is for you."</p>
+</div>
+</body>
+</html>

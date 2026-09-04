@@ -3,7 +3,3 @@ dist
 .env
 .DS_Store
 *.log
-.superpowers/
-.claude
-.superpowers
-ClAUDE.md
