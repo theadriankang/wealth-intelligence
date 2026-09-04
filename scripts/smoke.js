@@ -21,15 +21,29 @@ const head = t => console.log(`\n${t}`);
 
 /* ── 1. the pure code ──────────────────────────────────────────────────── */
 head("Unit tests");
-try {
-  const out = execSync("node --test 'src/**/*.test.js' 2>&1", { encoding: "utf8", shell: "/bin/bash" });
-  const n = (out.match(/^# pass (\d+)/m) || [])[1];
-  const f = (out.match(/^# fail (\d+)/m) || [])[1];
-  Number(f) ? bad("node --test", `${f} failing — run 'npm test' to see which`)
-            : ok("node --test", `${n} passing`);
-} catch (e) {
-  const f = (String(e.stdout || "").match(/^# fail (\d+)/m) || [])[1];
-  bad("node --test", f ? `${f} failing — run 'npm test'` : "the runner itself failed");
+{
+  // Parsed defensively on purpose. An earlier version printed "PASS — undefined
+  // passing" when the summary line did not match: a check that cannot read its
+  // own result must fail, or a green run hides a broken suite.
+  const run = () => {
+    try { return execSync("node --test 'src/**/*.test.js' 2>&1", { encoding: "utf8", shell: "/bin/bash" }); }
+    catch (e) { return String(e.stdout || "") + String(e.stderr || ""); }
+  };
+  const out = run();
+  const num = re => { const m = out.match(re); return m ? Number(m[1]) : null; };
+  const passed = num(/^# pass (\d+)/m);
+  const failed = num(/^# fail (\d+)/m);
+  const total  = num(/^# tests (\d+)/m);
+
+  if (passed === null || failed === null) {
+    bad("node --test", `could not read the summary — last line: ${out.trim().split("\n").pop()}`);
+  } else if (failed > 0) {
+    bad("node --test", `${failed} of ${total} failing — run 'npm test' to see which`);
+  } else if (passed < 40) {
+    bad("node --test", `only ${passed} tests ran; expected 48 — did a test file get skipped?`);
+  } else {
+    ok("node --test", `${passed} passing`);
+  }
 }
 
 /* ── 2. the data the demo reads ────────────────────────────────────────── */
