@@ -415,7 +415,13 @@ async function runPolicySentinel() {
   renderAll();
   const btn = document.getElementById("policy-scan-btn");
   if (btn) btn.textContent = "Scanning portfolio...";
-  S.policyScan = await runPolicyScan();
+  // Scoped to whichever client is actually in view (S.portfolio, same as the priority rail this
+  // is triggered from) — a selected globe country narrows the scan to just that one issuer,
+  // matching the "resolve issuers from portfolio exposure" design this endpoint documents but,
+  // before this fix, never actually received.
+  const countries = S.selIso ? [S.selIso] : isoWeightsForPortfolio(S.portfolio).slice(0, 3);
+  const exposures = namedExposuresForPolicyScan(S.portfolio);
+  S.policyScan = await runPolicyScan(countries, exposures);
   S.policyScanState = "idle";
   since = 0;
   refreshEvaluation();
@@ -481,6 +487,24 @@ function isoWeightsForPortfolio(p, goalId = null) {
     }
   }
   return [...weights.entries()].sort((a, b) => b[1] - a[1]).map(([iso]) => iso);
+}
+
+/** Named holdings, per country, for Policy Sentinel — [{iso3, name, weightPct}], heaviest first.
+ * Sibling to isoWeightsForPortfolio (same source, same weighting) but keeps the instrument name
+ * instead of collapsing to a country total: server/policy-sentinel.js names the actual holdings
+ * a classified document is relevant to, rather than a fixed demo market. Capped at 20 so the scan
+ * request body stays small regardless of how large a household's book gets. */
+function namedExposuresForPolicyScan(p) {
+  const rows = [];
+  for (const pos of p.positions || []) {
+    const inst = S.instruments[pos.instrumentId];
+    for (const ex of inst?.exposures || []) {
+      const weightPct = (pos.weightPct || 0) * (ex.weight || 1);
+      if (weightPct <= 0.0001) continue;
+      rows.push({ iso3: ex.iso3, name: inst.name || pos.instrumentId, weightPct });
+    }
+  }
+  return rows.sort((a, b) => b.weightPct - a.weightPct).slice(0, 20);
 }
 
 function focusPortfolio(p) {

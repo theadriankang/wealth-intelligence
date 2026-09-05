@@ -58,9 +58,18 @@ let lastScan = null;
 
 export const currentPolicyScan = () => lastScan || FALLBACK_SCAN;
 
-export async function runPolicyScan() {
+/** `countries` — ISO3 codes to resolve issuers for (server falls back to Singapore/MAS when
+ * empty, so a caller that means "scan for this client" must pass its actual exposure, not omit
+ * this). `exposures` — that same client's holdings, [{iso3, name, weightPct}] heaviest first —
+ * used server-side to name real affected holdings instead of a fixed demo market. Both are the
+ * caller's responsibility because only the caller (main.js) knows which portfolio is in view. */
+export async function runPolicyScan(countries = [], exposures = []) {
   try {
-    const res = await fetch("/api/policy-scan", { method: "POST" });
+    const res = await fetch("/api/policy-scan", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ countries, exposures })
+    });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const scan = await res.json();
     lastScan = normaliseScan(scan, "live");

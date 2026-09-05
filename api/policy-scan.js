@@ -9,8 +9,10 @@ export default async function handler(req, res) {
     const body = req.method === "POST" ? req.body || {} : {};
     const pick = k => body[k] ?? req.query?.[k];
     const countries = pick("countries");
+    const exposures = pick("exposures");
     const scan = await runPolicySentinelScan({
       countries: Array.isArray(countries) ? countries : String(countries || "").split(",").filter(Boolean),
+      exposures: Array.isArray(exposures) ? exposures : [],
       query: pick("query"),
       recencyMinutes: pick("recencyMinutes"),
       afterDate: pick("afterDate"),
