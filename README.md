@@ -86,13 +86,25 @@ TINYFISH_FETCH_TIMEOUT_MS=45000
 OFFLINE=0
 ```
 
-Optional keys used by the existing app:
+### AI narration and the Copilot
+
+`/api/llm` is also a Vercel route (`api/llm.js`), the counterpart to the local
+`POST http://localhost:8787/api/llm` served by `npm run server`/`npm run dev:all`.
+Without a key set **on Vercel** — not just in your local `.env` — every client
+narration and Copilot answer silently falls back to the deterministic template,
+even though it works fine locally:
+
+```bash
+ANTHROPIC_API_KEY=
+# or
+OPENAI_API_KEY=
+LLM_MODEL=
+```
+
+Other optional keys used by the existing app:
 
 ```bash
 WORLDMONITOR_API_KEY=
-ANTHROPIC_API_KEY=
-OPENAI_API_KEY=
-LLM_MODEL=
 ```
 
 ## Honest limitations
