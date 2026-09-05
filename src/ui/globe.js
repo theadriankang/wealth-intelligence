@@ -42,6 +42,10 @@ let globe = null;
 let idleTimer = null;
 const DEFAULT_VIEW = { lat:14, lng:104, altitude:2.15 };
 const FOCUS_IDLE_MS = 25000;
+const MAP = { w:1000, h:520 };
+let selectCountry = null;
+let mapViewBox = { x:0, y:0, w:MAP.w, h:MAP.h };
+let mapDrag = null;
 
 function scheduleIdleReset() {
   clearTimeout(idleTimer);
@@ -115,11 +119,16 @@ function countryTooltip({ countryName, iso, exposureMeta, signal, lens }) {
 }
 
 export function mountGlobe(el, { onSelect, onOpenClient }) {
-  globe = Globe({ animateIn:false })(el)
+  el.innerHTML = `<div class="globe-3d-host"></div>`;
+  const globeHost = el.querySelector(".globe-3d-host");
+  selectCountry = onSelect || null;
+
+  globe = Globe({ animateIn:false })(globeHost)
     .backgroundColor("rgba(0,0,0,0)")
     .showAtmosphere(true).atmosphereColor("#9ec5ff").atmosphereAltitude(0.18)
     .polygonsData(COUNTRIES.features)
     .polygonSideColor(() => "rgba(63,84,62,0.18)")
+    .polygonLabel(() => "")
     .onPolygonClick(f => onSelect(exposure()[a3(f)] ? a3(f) : null))
     .pointLat("lat").pointLng("lng").pointAltitude(0.012).pointRadius(0.27)
     .pointLabel(p => `<div class="gt"><div class="n">${p.name}</div>
@@ -161,6 +170,12 @@ export function mountGlobe(el, { onSelect, onOpenClient }) {
 }
 
 export function focusGlobeOnCountries(isos = []) {
+  if (S.route === "client") {
+    const iso = isos.find(x => COUNTRY_VIEW[x]);
+    if (iso) S.selIso = iso;
+    renderClientMap();
+    return;
+  }
   if (!globe) return;
   const iso = isos.find(x => COUNTRY_VIEW[x]);
   if (!iso) return;
@@ -170,6 +185,11 @@ export function focusGlobeOnCountries(isos = []) {
 }
 
 export function resetGlobeView() {
+  if (S.route === "client") {
+    S.selIso = null;
+    renderClientMap();
+    return;
+  }
   if (!globe) return;
   S.selIso = null;
   globe.pointOfView(DEFAULT_VIEW, 900);
@@ -178,12 +198,20 @@ export function resetGlobeView() {
 }
 
 export function sizeGlobe() {
-  const el = document.querySelector(".globe-wrap");
+  const el = document.querySelector(".globe-3d-host") || document.getElementById("globe");
   if (globe && el?.clientWidth) globe.width(el.clientWidth).height(el.clientHeight);
 }
 
 export function paintGlobe() {
+  const clientMap = S.route === "client";
+  setGeoMode(clientMap);
+  if (clientMap) {
+    renderClientMap();
+    return;
+  }
   if (!globe) return;
+  document.querySelector(".client-map-host")?.setAttribute("hidden", "");
+  document.querySelector(".globe-3d-host")?.removeAttribute("hidden");
   const ex = exposure(), L = LENSES()[S.lens];
   const ws = Object.values(ex).map(e => e.weightPct);
   const maxw = ws.length ? Math.max(...ws) : 1;
@@ -200,10 +228,7 @@ export function paintGlobe() {
     return L.col(L.val(sig(iso)));
   });
   globe.polygonStrokeColor(f => ex[a3(f)] ? "rgba(74,92,118,0.42)" : "rgba(74,92,118,0.10)");
-  globe.polygonLabel(f => {
-    const iso = a3(f), e = ex[iso], s = sig(iso);
-    return countryTooltip({ countryName:f.properties.name, iso, exposureMeta:e, signal:s, lens:L });
-  });
+  globe.polygonLabel(() => "");
 
   /* points: chokepoints + any exposed micro-state */
   const pts = CHOKEPOINTS.map(c => ({ ...c, kind:"Chokepoint", detail:c.detail }));
@@ -219,6 +244,191 @@ export function paintGlobe() {
 }
 
 export const isoFromFeature = a3;
+
+function setGeoMode(clientMap) {
+  const wrap = document.querySelector(".globe-wrap");
+  wrap?.classList.toggle("client-map-mode", clientMap);
+  const hint = wrap?.querySelector(".hint");
+  if (hint) hint.textContent = clientMap ? "Drag to pan · click a country" : "Drag to rotate · click a country";
+  const riskButton = wrap?.querySelector('[data-lens="d"]');
+  if (riskButton) riskButton.textContent = clientMap ? "Risk" : "Risk Δ";
+}
+
+function ensureMapHost() {
+  const el = document.getElementById("globe");
+  if (!el) return null;
+  if (!panel) mountPanel(el);
+  let host = el.querySelector(".client-map-host");
+  if (!host) {
+    host = document.createElement("div");
+    host.className = "client-map-host";
+    el.appendChild(host);
+  }
+  return host;
+}
+
+function project(lng, lat) {
+  return [((lng + 180) / 360) * MAP.w, ((88 - Math.max(-86, Math.min(86, lat))) / 176) * MAP.h];
+}
+
+function ringPath(ring) {
+  return ring.map(([lng, lat], i) => {
+    const [x, y] = project(lng, lat);
+    return `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`;
+  }).join(" ") + "Z";
+}
+
+function featurePath(f) {
+  const polys = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
+  return polys.flatMap(poly => poly.map(ringPath)).join(" ");
+}
+
+function mapFill(lens, signal, meta) {
+  if (!signal || !meta) return "rgba(210,226,242,.58)";
+  const value = lens.val(signal);
+  if (value > 0) return "rgba(239,112,118,.58)";
+  if (value < 0) return "rgba(56,138,221,.54)";
+  return "rgba(99,190,165,.46)";
+}
+
+function markerTone(lens, signal, meta) {
+  if (!signal || !meta) return "#8fb4dc";
+  const value = lens.val(signal);
+  if (meta.weightPct >= 20) return "#f09835";
+  if (value > 0) return "#ef7076";
+  if (value < 0) return "#2e83ff";
+  return "#43b98f";
+}
+
+function regionFor(iso) {
+  if (["CHN","IND","JPN","KOR","SGP","TWN"].includes(iso)) return "Asia";
+  if (["GBR","DEU","CHE","NLD"].includes(iso)) return "Europe";
+  if (iso === "USA") return "North America";
+  if (iso === "BRA") return "Latin America";
+  if (iso === "SAU") return "Middle East";
+  return "Other";
+}
+
+function mapSummary(ex) {
+  const exposed = Object.entries(ex).filter(([, e]) => e?.weightPct > 0);
+  const regions = exposed.reduce((acc, [iso, e]) => {
+    const r = regionFor(iso);
+    acc[r] = (acc[r] || 0) + e.weightPct;
+    return acc;
+  }, {});
+  const topRegion = Object.entries(regions).sort((a, b) => b[1] - a[1])[0]?.[0];
+  const max = exposed.reduce((m, [, e]) => Math.max(m, e.weightPct || 0), 0);
+  const concentration = max >= 20 ? "Elevated" : max >= 10 ? "Watch" : "Moderate";
+  return `<div class="client-map-summary">
+    <span><b>${exposed.length}</b> countries exposed</span>
+    ${topRegion ? `<span>Top region: <b>${esc(topRegion)}</b></span>` : ""}
+    ${exposed.length ? `<span>Concentration: <b>${concentration}</b></span>` : ""}
+  </div>`;
+}
+
+function labelFor(iso, p) {
+  const [x, y] = project(p.lng, p.lat);
+  const dx = iso === "USA" ? -96 : iso === "CHN" ? 58 : iso === "IND" ? 48 : iso === "SGP" ? 50 : iso === "GBR" ? -64 : 36;
+  const dy = iso === "USA" ? 38 : iso === "CHN" ? -4 : iso === "IND" ? 26 : iso === "SGP" ? 4 : iso === "GBR" ? 28 : 18;
+  const name = S.signals[iso]?.name || POINT_STATES[iso]?.name || iso;
+  return `<g class="map-label">
+    <path d="M${x.toFixed(1)} ${y.toFixed(1)} L${(x + dx - 10).toFixed(1)} ${(y + dy).toFixed(1)}"></path>
+    <circle cx="${(x + dx - 14).toFixed(1)}" cy="${(y + dy).toFixed(1)}" r="2.3"></circle>
+    <text x="${(x + dx).toFixed(1)}" y="${(y + dy + 4).toFixed(1)}">${esc(name)}</text>
+  </g>`;
+}
+
+function renderClientMap() {
+  const host = ensureMapHost();
+  if (!host) return;
+  document.querySelector(".globe-3d-host")?.setAttribute("hidden", "");
+  host.hidden = false;
+  if (globe) globe.controls().autoRotate = false;
+
+  const ex = exposure(), L = LENSES()[S.lens];
+  const sig = iso => S.signals[iso];
+  const paths = COUNTRIES.features.map(f => {
+    const iso = a3(f), e = ex[iso], s = sig(iso);
+    const selected = iso && S.selIso === iso;
+    const fill = mapFill(L, s, e);
+    const opacity = e ? Math.min(.72, .34 + ((e.weightPct || 0) / 100)) : .52;
+    return `<path class="map-country${selected ? " is-selected" : ""}" data-iso="${iso || ""}"
+      d="${featurePath(f)}" fill="${fill}" opacity="${opacity.toFixed(2)}"></path>`;
+  }).join("");
+
+  const lanes = LANES.slice(0, 7).map(a => {
+    const [sx, sy] = project(a.sLng, a.sLat);
+    const [exx, ey] = project(a.eLng, a.eLat);
+    const mx = (sx + exx) / 2, my = Math.min(sy, ey) - Math.abs(exx - sx) * 0.12;
+    return `<path class="map-arc ${a.hot ? "is-hot" : ""}" d="M${sx.toFixed(1)} ${sy.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${exx.toFixed(1)} ${ey.toFixed(1)}"></path>`;
+  }).join("");
+
+  const markers = Object.entries(COUNTRY_VIEW).map(([iso, p]) => {
+    const e = ex[iso], s = sig(iso);
+    if (!e || !s) return "";
+    const [x, y] = project(p.lng, p.lat);
+    const col = markerTone(L, s, e);
+    const height = Math.max(18, Math.min(54, 16 + (e.weightPct || 0) * 1.2));
+    const hot = e.weightPct >= 20 || S.selIso === iso;
+    return `<g class="map-marker" data-iso="${iso}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" style="--marker:${col}">
+      ${hot ? `<circle class="marker-glow" r="24"></circle><circle class="marker-glow wide" r="34"></circle>` : ""}
+      <line y1="-${height.toFixed(0)}" y2="-10"></line><circle r="11"></circle><circle r="4.5"></circle>
+    </g>`;
+  }).join("");
+  const labels = Object.entries(ex).sort((a, b) => (b[1].weightPct || 0) - (a[1].weightPct || 0))
+    .slice(0, 5)
+    .map(([iso]) => COUNTRY_VIEW[iso] ? labelFor(iso, COUNTRY_VIEW[iso]) : "")
+    .join("");
+
+  host.innerHTML = `<div class="client-map-head"><span>◎</span><div><h2>Geographic Exposure</h2><p>Where your portfolio is exposed to geopolitical, policy and reputational risk.</p></div></div>
+  ${mapSummary(ex)}
+  <svg class="client-map-svg" viewBox="${mapViewBox.x} ${mapViewBox.y} ${mapViewBox.w} ${mapViewBox.h}" role="img" aria-label="Client exposure map">
+    <defs>
+      <radialGradient id="mapGlow" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#fafdff"/><stop offset="68%" stop-color="#eaf5ff"/><stop offset="100%" stop-color="#dceaff"/></radialGradient>
+    </defs>
+    <rect width="${MAP.w}" height="${MAP.h}" fill="url(#mapGlow)"></rect>
+    <g class="map-arcs">${lanes}</g>
+    <g class="map-countries">${paths}</g>
+    <g class="map-labels">${labels}</g>
+    <g class="map-markers">${markers}</g>
+  </svg>
+  <div class="client-map-legend"><span><i class="risk"></i>Capital at risk</span><span><i class="good"></i>Improving</span><span><i class="bad"></i>Deteriorating</span><span><i class="hot"></i>Concentration hotspot</span></div>
+  <div class="client-map-foot">Global view. Real-time intelligence.</div>`;
+  wireClientMap(host);
+}
+
+function wireClientMap(host) {
+  const svg = host.querySelector("svg");
+  if (!svg) return;
+  svg.addEventListener("pointerdown", ev => {
+    mapDrag = { x:ev.clientX, y:ev.clientY, box:{ ...mapViewBox }, moved:false };
+    svg.setPointerCapture?.(ev.pointerId);
+  });
+  svg.addEventListener("pointermove", ev => {
+    if (!mapDrag) return;
+    const scaleX = mapViewBox.w / Math.max(1, svg.clientWidth);
+    const scaleY = mapViewBox.h / Math.max(1, svg.clientHeight);
+    const dx = (ev.clientX - mapDrag.x) * scaleX;
+    const dy = (ev.clientY - mapDrag.y) * scaleY;
+    if (Math.abs(dx) + Math.abs(dy) > 4) mapDrag.moved = true;
+    mapViewBox.x = Math.max(0, Math.min(MAP.w - mapViewBox.w, mapDrag.box.x - dx));
+    mapViewBox.y = Math.max(0, Math.min(MAP.h - mapViewBox.h, mapDrag.box.y - dy));
+    svg.setAttribute("viewBox", `${mapViewBox.x} ${mapViewBox.y} ${mapViewBox.w} ${mapViewBox.h}`);
+  });
+  svg.addEventListener("pointerup", () => { setTimeout(() => { mapDrag = null; }, 0); });
+  svg.addEventListener("pointerleave", scheduleHide);
+  svg.addEventListener("mouseover", ev => {
+    const node = ev.target.closest("[data-iso]");
+    const iso = node?.dataset.iso;
+    if (iso && exposure()[iso] && S.signals[iso]) showMapPanel(iso, node);
+  });
+  svg.addEventListener("click", ev => {
+    const node = ev.target.closest("[data-iso]");
+    const iso = node?.dataset.iso;
+    if (!iso || mapDrag?.moved) return;
+    selectCountry?.(exposure()[iso] ? iso : null);
+  });
+}
 
 
 /* ============================================================================
@@ -287,11 +497,12 @@ function position(f) {
   if (!pt || !isFinite(pt.x)) return;
   const host = panel.parentElement.getBoundingClientRect();
   const w = panel.offsetWidth || 268, h = panel.offsetHeight || 220;
-  /* sit beside the country, never on top of it; flip near the edges */
-  let x = pt.x + 26, y = pt.y - h / 2;
-  if (x + w > host.width - 8) x = pt.x - w - 26;
+  const reservedTop = parseFloat(getComputedStyle(panel.parentElement).getPropertyValue("--globe-panel-top")) || 76;
+  /* Keep detail cards in the right-side reading lane so they do not cover the legend. */
+  let x = host.width - w - 20, y = pt.y - h / 2;
+  if (pt.x > host.width - w - 56) x = pt.x - w - 26;
   panel.style.left = Math.max(8, Math.min(host.width - w - 8, x)) + "px";
-  panel.style.top = Math.max(8, Math.min(host.height - h - 8, y)) + "px";
+  panel.style.top = Math.max(reservedTop, Math.min(host.height - h - 8, y)) + "px";
 }
 
 function showPanel(iso, f) {
@@ -305,6 +516,46 @@ function showPanel(iso, f) {
   cancelAnimationFrame(rafId);
   const track = () => { if (openIso) { position(f); rafId = requestAnimationFrame(track); } };
   track();
+}
+
+function showMapPanel(iso, node) {
+  clearTimeout(hideTimer);
+  cancelAnimationFrame(rafId);
+  if (iso !== openIso) {
+    panel.innerHTML = mapPanelHtml(iso);
+    openIso = iso;
+  }
+  panel.hidden = false;
+  positionMapPanel(node);
+}
+
+function mapPanelHtml(iso) {
+  const ex = exposure(), L = LENSES()[S.lens];
+  const e = ex[iso], s = S.signals[iso];
+  if (!e || !s) return "";
+  const v = L.val(s);
+  const label = v > 0 ? "Elevated" : v < 0 ? "Improving" : "Stable";
+  return `<div class="gt-map-tip">
+    <div class="gt-map-title">${flagMark(iso, s.name)}<b>${esc(s.name)}</b><em>${label}</em></div>
+    <div class="gt-map-row"><span>Exposure</span><b>${e.weightPct.toFixed(1)}%</b></div>
+    <div class="gt-map-row"><span>${esc(L.label.split(",")[0])}</span><b style="color:${L.col(v)}">${L.fmt(v)}</b></div>
+    <div class="gt-map-row"><span>Holdings</span><b>${e.instrumentIds.length}</b></div>
+  </div>`;
+}
+
+function positionMapPanel(node) {
+  if (!panel || !node) return;
+  const host = panel.parentElement.getBoundingClientRect();
+  const target = node.getBoundingClientRect();
+  const w = panel.offsetWidth || 268, h = panel.offsetHeight || 220;
+  const reservedTop = parseFloat(getComputedStyle(panel.parentElement).getPropertyValue("--globe-panel-top")) || 76;
+  const targetX = target.left - host.left + target.width / 2;
+  const targetY = target.top - host.top + target.height / 2;
+  let x = targetX + 18;
+  if (x + w > host.width - 12) x = targetX - w - 18;
+  let y = targetY - h / 2;
+  panel.style.left = Math.max(8, Math.min(host.width - w - 8, x)) + "px";
+  panel.style.top = Math.max(reservedTop, Math.min(host.height - h - 8, y)) + "px";
 }
 
 function panelHtml(iso) {
