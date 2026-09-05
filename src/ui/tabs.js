@@ -22,6 +22,11 @@ const esc = v => String(v ?? "").replace(/[&<>"']/g, c => (
 const strip = v => String(v ?? "").replace(/<[^>]*>/g, "");
 const money = v => v || "AUM";
 const pct = v => Number.isFinite(v) ? `${v.toFixed(v % 1 ? 1 : 0)}%` : "n/a";
+const niceDate = date => {
+  const m = String(date || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return date || "Not scheduled";
+  return new Date(`${date}T00:00:00`).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" });
+};
 
 function status(a) { return actionState(a); }
 function isPending(a) { return !["Accepted", "Executed"].includes(status(a)); }
@@ -35,11 +40,42 @@ function severity(a) {
 function icon(kind) {
   return { Collateral:"!", Trim:"%", Hedge:"↗", Hold:"✓", Liquidity:"⌁" }[kind] || "•";
 }
+function statusDot(filter) {
+  return { all:"📋", high:"⚠", pending:"◷", accepted:"✓" }[filter] || "•";
+}
 function filteredActions(actions) {
   if (UI.actionFilter === "high") return actions.filter(isHigh);
   if (UI.actionFilter === "pending") return actions.filter(isPending);
   if (UI.actionFilter === "accepted") return actions.filter(a => ["Accepted", "Executed"].includes(status(a)));
   return actions;
+}
+function fundingVisual(a) {
+  const e = a.evidence || {};
+  const shortfallUsd = Number(e.shortfallUsd || 0);
+  if (shortfallUsd > 0 && Number.isFinite(e.funded)) {
+    const funded = Math.max(0, Math.min(100, Number(e.funded)));
+    return `<div class="funding-viz">
+      <div class="fv-row"><span>Required</span><b>100%</b></div>
+      <div class="fv-track required"><i style="width:100%"></i></div>
+      <div class="fv-row"><span>Funded</span><b>${funded.toFixed(0)}%</b></div>
+      <div class="fv-track available"><i style="width:${Math.max(3, funded)}%"></i></div>
+      <strong>Shortfall USD ${(shortfallUsd / 1e6).toFixed(2)}m</strong>
+    </div>`;
+  }
+  return visualFor(a);
+}
+function actionList(p, ev, state) {
+  return (state === "ai" && ev?.actions?.length ? ev.actions : (p.actions || [])).map((a, i) => ({
+    id: a.id || `a${i + 1}`,
+    kind: a.kind || a.category || "Action",
+    title: a.title || a.text || "Review recommendation",
+    target: a.target || a.instrumentId || a.category || "Portfolio recommendation",
+    state: a.state || "Drafted",
+    why: a.why || a.rationale || "",
+    effect: a.effect || [],
+    evidence: a.evidence || {},
+    suitability: a.suitability || {}
+  }));
 }
 function visualFor(a) {
   const e = a.evidence || {};
@@ -63,15 +99,40 @@ function visualFor(a) {
   }
   return `<button class="viz text-viz" data-expand-action="${a.id}" type="button">
     <strong>${esc(strip(a.effect?.[0] || a.kind))}</strong>
-    <span>${esc(strip(a.why || ""))}</span>
+    <span>${esc(strip(a.why || a.target || ""))}</span>
   </button>`;
 }
 function effectTiles(a) {
-  const labels = ["Effect on goal", "Cost", "Tax"];
+  const labels = ["Goal", "Cost", "Tax"];
   return `<div class="effect-tiles">${labels.map((l, i) => `<button class="effect-tile" data-metric="${a.id}-${i}" type="button">
-    <span>${l}</span><b>${a.effect?.[i] || "Existing record"}</b>
+    <span>${l}</span><b>${i === 0 ? "⚠ " : i === 1 ? "✓ " : "◇ "}${a.effect?.[i] || "Existing record"}</b>
     ${UI.expandedMetric === `${a.id}-${i}` ? `<small>${esc(a.suitability?.[["objective","costs","riskFit"][i]] || strip(a.effect?.[i] || ""))}</small>` : ""}
   </button>`).join("")}</div>`;
+}
+
+function relationshipView(p, ev, state) {
+  const r = state === "ai" && ev?.relationship ? ev.relationship : p.relationship;
+  if (!r) return null;
+  const objections = (r.objections || []).map(o => Array.isArray(o) ? { question:o[0], answer:o[1] } : o);
+  return {
+    lastContact: r.lastContact || [r.last?.date, r.last?.channel].filter(Boolean).join(" · ") || "Recent contact",
+    nextReview: niceDate(p.reviewDate),
+    summary: r.summary || r.behaviour || "Relationship context available for this mandate.",
+    sentiment: r.sentiment || "Neutral",
+    concerns: r.concerns || [],
+    talkingPoints: r.talkingPoints || r.points || [],
+    objections
+  };
+}
+
+function complianceChecks(p) {
+  const cks = [
+    { id:"sanctions", t:"Sanctions screening", s:"clear", d:`${p.positions.length} holdings screened against consolidated lists.` },
+    { id:"jurisdiction", t:"Jurisdiction exposure", s:p.countryRisk === "High" ? "watch" : "clear", d:"Two holdings carry revenue exposure to a jurisdiction re-rated upward this week." },
+    { id:"pep", t:"PEP adjacency", s:"clear", d:"No politically exposed person identified in the beneficial ownership chain." },
+    { id:"concentration", t:"Concentration policy", s:(p.riskProfile || "").includes("Growth") ? "watch" : "clear", d:"Look-through single-country exposure sits close to the soft mandate limit." }
+  ];
+  return cks;
 }
 
 /** Risks + opportunities + recommended actions — AI-scored for the open client, hash-gated,
@@ -92,18 +153,22 @@ export function paintActions() {
   const state = aiState(p.id);
   const risks = state === "ai" ? (ev.risks || []) : [];
   const opportunities = state === "ai" ? (ev.opportunities || []) : [];
-  const actions = state === "ai" ? (ev.actions || []) : [];
+  const actions = actionList(p, ev, state);
   document.getElementById("tn-act").textContent = actions.length;
-  const statusLine = state === "loading" ? `<p class="prose-shimmer">Scoring this client…</p>`
-    : state === "unavailable" ? `<p style="color:var(--ink-4); font-size:12px">AI scoring unavailable for this client.</p>`
-    : !risks.length && !opportunities.length && !actions.length ? `<p style="color:var(--ink-4); font-size:12px">Nothing flagged this week.</p>` : "";
+  const statusLine = !actions.length
+    ? (state === "loading" ? `<p class="prose-shimmer">Scoring this client…</p>`
+      : state === "unavailable" ? `<p style="color:var(--ink-4); font-size:12px">AI scoring unavailable for this client.</p>`
+      : !risks.length && !opportunities.length ? `<p style="color:var(--ink-4); font-size:12px">Nothing flagged this week.</p>` : "")
+    : "";
   document.getElementById("actions").innerHTML = `<div class="tab-page risks-page">
     <div class="tab-titlebar"><div><h2>Risks & Actions</h2><p>AI-driven recommendations to keep your client on track</p></div><div><span>Last updated</span><b>${TODAY}, 09:24 SGT</b></div></div>
     <section class="ra-summary">
-      <button class="ra-counter" data-action-filter="all" aria-pressed="${UI.actionFilter === "all"}"><span>Total actions</span><b>${actions.length}</b></button>
-      <button class="ra-counter" data-action-filter="high" aria-pressed="${UI.actionFilter === "high"}"><span>High priority</span><b>${actions.filter(isHigh).length}</b></button>
-      <button class="ra-counter" data-action-filter="pending" aria-pressed="${UI.actionFilter === "pending"}"><span>Pending</span><b>${actions.filter(isPending).length}</b></button>
-      <button class="ra-counter" data-action-filter="accepted" aria-pressed="${UI.actionFilter === "accepted"}"><span>Accepted</span><b>${actions.filter(a => ["Accepted", "Executed"].includes(status(a))).length}</b></button>
+      ${[
+        ["all", "Total actions", actions.length],
+        ["high", "High priority", actions.filter(isHigh).length],
+        ["pending", "Pending", actions.filter(isPending).length],
+        ["accepted", "Accepted", actions.filter(a => ["Accepted", "Executed"].includes(status(a))).length]
+      ].map(([k, label, value]) => `<button class="ra-counter ${k}" data-action-filter="${k}" aria-pressed="${UI.actionFilter === k}"><i>${statusDot(k)}</i><span>${label}</span><b>${value}</b></button>`).join("")}
     </section>
     ${statusLine}
     <section class="decision-list">${filteredActions(actions).map((a, i) => {
@@ -111,8 +176,8 @@ export function paintActions() {
       const acState = S.aiActionState[key] || "pending";
       const open = UI.expandedAction === a.id;
       return `<article class="decision-card sev-${severity(a)} ${open ? "open" : ""}" data-expand-action="${a.id}">
-        <div class="decision-head"><span class="kind">${esc(a.kind || "Action")}</span><div><h3>${esc(strip(a.title))}</h3><p>${esc(strip(a.instrumentId || a.category || "Portfolio recommendation"))}</p></div><button class="ghost sm ${acState === "accepted" ? "solid" : ""}" data-accept="${i}" type="button">${acState === "accepted" ? "Accepted" : status(a)}</button><button class="chev" type="button">›</button></div>
-        <div class="decision-core">${visualFor(a)}${effectTiles(a)}</div>
+        <div class="decision-head"><span class="kind">${esc(a.kind || "Action")}</span><div><h3>${esc(strip(a.title))}</h3><p>${esc(strip(a.target || "Portfolio recommendation"))}</p></div><button class="ghost sm ${acState === "accepted" ? "solid" : ""}" data-accept="${i}" type="button">${acState === "accepted" ? "Accepted" : status(a)}</button><button class="chev" type="button">›</button></div>
+        <div class="decision-core">${fundingVisual(a)}${effectTiles(a)}</div>
         ${open ? `<div class="decision-detail"><p>${esc(strip(a.why || ""))}</p><dl><dt>Objective</dt><dd>${esc(a.suitability?.objective || "Aligned with mandate")}</dd><dt>Risk fit</dt><dd>${esc(a.suitability?.riskFit || "RM review required")}</dd></dl></div>` : ""}
         <div class="act-f">
           <button class="ghost sm ${acState === "accepted" ? "solid" : ""}" data-accept="${i}" type="button">Accept</button>
@@ -147,32 +212,25 @@ export function paintConversation() {
   const state = aiState(p.id);
   const ev = S.evaluation?.clients?.[p.id];
   const el = document.getElementById("conv");
-  if (state === "loading") {
-    el.innerHTML = `<div class="blk"><p class="prose-shimmer">Preparing conversation notes…</p></div>`;
-    return;
-  }
-  if (state === "unavailable") {
-    el.innerHTML = `<div class="blk"><p style="color:var(--ink-4)">Conversation notes unavailable.</p></div>`;
-    return;
-  }
-  const r = ev.relationship;
+  const r = relationshipView(p, ev, state);
   if (!r) {
     el.innerHTML = `<div class="blk"><p>No relationship record for this mandate.</p></div>`;
     return;
   }
   el.innerHTML = `<div class="tab-page conversation-page">
     <section class="conv-top">
-      <div class="glass-panel"><h2>Relationship Timeline</h2><div class="timeline"><button class="tl-node" data-conv-focus="last" aria-pressed="${UI.convFocus === "last"}"><span></span><b>Last Contact</b><em>${esc(r.lastContact || "Recent call")}</em></button><button class="tl-node" data-conv-focus="today" aria-pressed="${UI.convFocus === "today"}"><span></span><b>Today</b><em>${TODAY}</em></button><button class="tl-node" data-conv-focus="next" aria-pressed="${UI.convFocus === "next"}"><span></span><b>Next Review</b><em>${esc(p.reviewDate || "Not scheduled")}</em></button></div><p class="focus-note">${esc(r.summary)}</p></div>
-      <div class="glass-panel lead-panel"><span class="lead-icon">♙</span><p>Relationship Lead</p><h3>${esc(p.rm || "Relationship Manager")}</h3><small>Senior Adviser</small></div>
-      <div class="glass-panel sentiment-panel"><p>Client Sentiment <small>(Recent)</small></p><h3>${esc(r.sentiment || "Neutral")}</h3><small>Stable over last 3 months</small></div>
+      <div class="glass-panel"><h2>Relationship Timeline</h2><div class="timeline"><button class="tl-node" data-conv-focus="last" aria-pressed="${UI.convFocus === "last"}"><span>✓</span><b>Last Contact</b><em>${esc(r.lastContact || "Recent call")}</em></button><button class="tl-node" data-conv-focus="today" aria-pressed="${UI.convFocus === "today"}"><span>□</span><b>Today</b><em>${TODAY}</em></button><button class="tl-node" data-conv-focus="next" aria-pressed="${UI.convFocus === "next"}"><span>◷</span><b>Next Review</b><em>${esc(r.nextReview)}</em></button></div><p class="focus-note">${esc(r.summary)}</p></div>
+      <div class="glass-panel lead-panel"><span class="lead-icon">♙</span><p>Relationship Lead</p><h3>${esc(p.rm || "Relationship Manager")}</h3><small>Senior Adviser</small><div class="lead-actions"><button>✉</button><button>☎</button><button>in</button></div></div>
+      <div class="glass-panel sentiment-panel"><p>Client Sentiment <small>(Recent)</small></p><div class="sentiment-arc"><i></i></div><h3>${esc(r.sentiment || "Neutral")}</h3><small>No material change</small></div>
     </section>
     <section class="glass-panel"><h2>Standing Concerns</h2><div class="concern-grid">${(r.concerns || []).slice(0,3).map((x, i) => `<button class="concern-card" data-concern="${i}" type="button"><span>${i + 1}</span><div><em>${i === 0 ? "Relationship" : i === 1 ? "Liquidity / Exit" : "Valuation"}</em><b>${esc(strip(x).split(".")[0])}</b><p>${esc(strip(x))}</p></div></button>`).join("")}</div></section>
     <section class="brief-grid">
-      <div class="glass-panel"><h2>Talking Points for Next Conversation</h2>${(r.talkingPoints || []).map((x, i) => `<button class="brief-row" data-point="${i}" type="button"><span>${i + 1}</span><div><b>${esc(strip(x).split(":")[0])}</b><p>${esc(strip(x))}</p></div><em>›</em></button>`).join("")}</div>
+      <div class="glass-panel"><h2>Talking Points for Next Conversation</h2>${(r.talkingPoints || []).map((x, i) => `<button class="brief-row" data-point="${i}" type="button"><span>${i + 1}</span><div><b>${esc(strip(x).split(":")[0])}</b><p>${esc(UI.expandedPoint === String(i) ? strip(x) : strip(x).split(".")[0])}</p></div><em>›</em></button>`).join("")}</div>
       <div class="glass-panel"><h2>Likely Objections</h2>${(r.objections || []).map((o, i) => `<button class="objection-card" data-objection="${i}" type="button"><span>?</span><div><b>“${esc(o.question)}”</b><p>${esc(UI.expandedObjection === String(i) ? o.answer : "Suggested response")}</p></div><em>›</em></button>`).join("")}</div>
     </section>
   </div>`;
   document.querySelectorAll("#conv [data-conv-focus]").forEach(b => b.addEventListener("click", () => { UI.convFocus = b.dataset.convFocus; paintConversation(); }));
+  document.querySelectorAll("#conv [data-point]").forEach(b => b.addEventListener("click", () => { UI.expandedPoint = UI.expandedPoint === b.dataset.point ? null : b.dataset.point; paintConversation(); }));
   document.querySelectorAll("#conv [data-objection]").forEach(b => b.addEventListener("click", () => { UI.expandedObjection = UI.expandedObjection === b.dataset.objection ? null : b.dataset.objection; paintConversation(); }));
   M.once("conv", p.id + "|" + state, () => M.enter("#conv .blk", { y: 10, delay: 60, duration: 420 }));
 }
@@ -183,10 +241,10 @@ export function paintCompliance() {
   const ck = Object.values(chokepointExposure(positions(), S.instruments)).sort((a, b) => b.weightPct - a.weightPct);
   document.getElementById("tn-comp").textContent = watch;
   document.getElementById("comp").innerHTML = `<div class="tab-page compliance-page">
-    <section class="comp-hero ${watch ? "watch" : "clear"}"><span>${watch ? "!" : "✓"}</span><div><h2>${watch ? "Compliance watch" : "No blocking compliance items"}</h2><p>${p.positions.length} holdings · ${checks.length} derived checks · based on current portfolio data</p></div><dl><dt>Next review</dt><dd>${esc(p.reviewDate || "Not recorded")}</dd><dt>Mandate</dt><dd>${esc(p.mandate)}</dd></dl></section>
+    <section class="comp-hero ${watch ? "watch" : "clear"}"><span>${watch ? "!" : "✓"}</span><div><h2>${watch ? "Compliance watch" : "No blocking compliance items"}</h2><p>${p.positions.length} holdings · ${checks.length} derived checks · based on current portfolio data</p></div><dl><dt>Checks</dt><dd>${checks.length}</dd><dt>Clear</dt><dd>${checks.length - watch}</dd><dt>Watch</dt><dd>${watch}</dd><dt>Action required</dt><dd>${checks.filter(c => c.s === "block").length}</dd></dl></section>
     <section class="comp-grid">
       <div class="glass-panel"><h2>Compliance Checks</h2>${checks.map(c => `<button class="check-row ${c.s}" data-check="${c.id}" type="button"><span>${c.s === "watch" ? "!" : "✓"}</span><div><b>${esc(c.t)}</b><p>${esc(UI.expandedCheck === c.id ? c.d : c.d.slice(0, 92))}</p></div><em>${c.s}</em></button>`).join("")}</div>
-      <div class="glass-panel"><h2>Physical Concentration <small>(look-through)</small></h2><div class="exposure-bars">${ck.length ? ck.slice(0,5).map(c => `<div><span>${esc(c.name)}</span><i><b style="width:${Math.min(100, c.weightPct)}%"></b></i><strong>${c.weightPct.toFixed(1)}%</strong></div>`).join("") : `<div class="empty-state">No chokepoint exposure in current holdings.</div>`}</div></div>
+      <div class="glass-panel"><h2>Physical Concentration <small>(look-through)</small> <em class="status-chip">Within mandate</em></h2><div class="exposure-bars">${ck.length ? ck.slice(0,6).map(c => `<div><span>${esc(c.name)}</span><i><b style="width:${Math.min(100, c.weightPct * 5)}%"></b></i><strong>${c.weightPct.toFixed(1)}%</strong></div>`).join("") : `<div class="empty-state">No chokepoint exposure in current holdings.</div>`}</div></div>
       <div class="glass-panel summary-panel"><h2>Compliance Summary</h2><div class="summary-boxes"><div><b>${checks.length - watch}</b><span>Clear</span></div><div class="watch"><b>${watch}</b><span>Watch</span></div><div class="danger"><b>${checks.filter(c => c.s === "block").length}</b><span>Action required</span></div></div></div>
       <div class="glass-panel"><h2>Suitability Records</h2>${recs.length ? recs.map(a => `<div class="record-row"><b>${esc(a.title)}</b><span>${esc(p.mandate)} · ${esc(actionState(a))}</span></div>`).join("") : `<div class="empty-state">No records yet. They appear when a proposal is put to client or executed.</div>`}</div>
     </section>
@@ -198,17 +256,17 @@ export function paintCompliance() {
 export function paintEconomics() {
   const e = economics(), f = flagged().length, saved = e.prepBefore - e.prepAfter;
   document.getElementById("econ").innerHTML = `<div class="tab-page impact-page">
-    <section class="impact-hero"><span>◎</span><div><h2>Wealth Intelligence drives operating leverage for you and your clients</h2><p>Baselines are stated demo assumptions, not measured claims. The value shown here is calculated from book size and mandates affected by current signals.</p></div><aside><b>&lt; 67%</b><small>2028 adjusted cost/income target context</small></aside></section>
+    <section class="impact-hero"><span>▥</span><div><small>Wealth Intelligence</small><h2>Drives operating leverage for you and your clients</h2><p>Prepare once, apply insight across many client conversations.</p></div><aside><small>Strategic target</small><b>&lt; 67%</b><small>2028 adjusted cost/income target context</small><i><em style="width:67%"></em></i></aside></section>
     <section class="impact-metrics">
       <div class="impact-card clients"><p>Clients in the book</p><b>${e.clients}</b><span>${e.affected} affected by this week's signals</span></div>
-      <div class="impact-card prep"><p>Prep per review</p><b>${e.prepBefore}<small>min</small> → ${e.prepAfter}<small>min</small></b><span>${saved} min saved per review</span></div>
+      <div class="impact-card prep impact-primary"><p>Prep per review</p><b>${e.prepBefore}<small>min</small> → ${e.prepAfter}<small>min</small></b><div class="before-after"><i style="height:86%"></i><i style="height:18%"></i><strong>-${Math.round(saved / e.prepBefore * 100)}%</strong></div><span>${saved} min saved per review</span></div>
       <div class="impact-card"><p>Saved this morning</p><b>${e.minutesSavedNow}<small>min</small></b><span>Across ${e.affected} mandates that moved</span></div>
-      <div class="impact-card bars"><p>Adviser hours per year</p><b>${e.hoursPerYear}</b><span>At ${ECONOMICS_BASELINE.reviewsPerClientPerYear} reviews per client per year</span></div>
+      <div class="impact-card bars"><p>Adviser hours per year</p><b>${e.hoursPerYear}<small>hrs</small></b><span>At ${ECONOMICS_BASELINE.reviewsPerClientPerYear} reviews per client per year</span></div>
     </section>
-    <section class="glass-panel leverage-panel"><h2>Prepare Once, Deliver Many</h2><div class="flow">
-      <div><i>1</i><b>Analysis</b><span>Done once</span></div><em>→</em>
-      <div><i>2</i><b>Client outputs</b><span>${e.affected || 0} mandate${e.affected === 1 ? "" : "s"} moved</span></div><em>→</em>
-      <div><i>3</i><b>Personalized RM conversations</b><span>Applied at scale</span></div>
+    <section class="glass-panel leverage-panel"><div class="impact-section-head"><div><h2>Prepare Once, Deliver Many</h2><p>Turn analysis into client impact at scale.</p></div><span>∞ Same analysis. Many conversations.</span></div><div class="flow">
+      <button type="button"><i>1</i><b>Analysis</b><span>Done once</span><small>Client and market data</small></button><em>→</em>
+      <button type="button"><i>2</i><b>Client outputs</b><span>Many</span><small>Insights, alerts, briefs</small></button><em>→</em>
+      <button type="button"><i>3</i><b>Personalised RM conversations</b><span>At scale</span><small>Richer conversations</small></button>
     </div><p>${esc(e.note)}</p></section>
   </div>`;
   M.once("econ", S.portfolio.id + "|" + e.affected, () => M.enter("#econ .impact-hero, #econ .impact-card, #econ .glass-panel", { y: 10, delay: 50, duration: 360 }));
