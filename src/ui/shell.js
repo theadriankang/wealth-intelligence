@@ -98,9 +98,9 @@ export const shellHtml = (operator = {}) => {
               <button data-lens="tone" aria-pressed="false">Tone</button>
               <button data-lens="pol" aria-pressed="false">Policy</button>
             </div>
-            <div class="overlay evid liquid-glass">
-              <div class="k" id="ev-k">Risk-weighted concentration</div>
-              <div class="big" id="ev-v">—</div>
+            <div class="overlay evid liquid-glass" id="evid-card" hidden>
+              <div class="k" id="ev-k"></div>
+              <div class="big" id="ev-v"></div>
               <div class="sm" id="ev-s"></div>
             </div>
             <div class="overlay legend liquid-glass">

@@ -48,14 +48,16 @@ function scoreLabel(meta) {
   return String(sidebarScore(meta));
 }
 
+/** Feeds .client-insight — already the labelled "insight" slot on the card, so the text itself
+ * doesn't need to re-announce "AI" on every line too. */
 function aiInsight(meta) {
-  if (meta.band === "loading") return "AI: Scoring…";
-  if (meta.band === "unavailable") return "AI: Unavailable";
-  if (meta.band === "critical") return meta.ltv ? "AI ALERT: Margin Call Risk" : "AI ALERT: Urgent Rebalance";
-  if (meta.band === "high") return meta.driver === "Collateral/Leverage" ? "AI INSIGHT: Risk Limit Warning" : `AI INSIGHT: ${meta.driver} Pressure`;
-  if (meta.band === "medium") return meta.dueSoon ? "AI NOTICE: Annual Review Due" : `AI NOTICE: ${meta.driver} Watch`;
-  if (/No urgent/i.test(meta.reason)) return "AI: Healthy Portfolio";
-  return "AI: Stable Portfolio";
+  if (meta.band === "loading") return "Scoring…";
+  if (meta.band === "unavailable") return "Unavailable";
+  if (meta.band === "critical") return meta.ltv ? "ALERT: Margin Call Risk" : "ALERT: Urgent Rebalance";
+  if (meta.band === "high") return meta.driver === "Collateral/Leverage" ? "INSIGHT: Risk Limit Warning" : `INSIGHT: ${meta.driver} Pressure`;
+  if (meta.band === "medium") return meta.dueSoon ? "NOTICE: Annual Review Due" : `NOTICE: ${meta.driver} Watch`;
+  if (/No urgent/i.test(meta.reason)) return "Healthy Portfolio";
+  return "Stable Portfolio";
 }
 
 function aumNumber(p) {
@@ -82,8 +84,7 @@ function sortClients(list, metas) {
 function clientCard(p, m) {
   return `<button class="cl rm-client ${m.band}" data-cl="${p.id}" aria-current="${p.id === S.portfolio.id}">
     <span class="client-accent" aria-hidden="true"></span>
-    <span class="client-top"><span class="nm">${p.name}</span><span class="client-aum">${p.aum}</span></span>
-    <span class="client-meta">Mandate: ${p.riskProfile}</span>
+    <span class="client-top"><span class="nm">${p.name}</span><span class="client-aum">${p.currency ? p.currency + " " : ""}${p.aum}</span></span>
     <span class="client-insight"><span class="score-pill">${scoreLabel(m)}</span><span>${aiInsight(m)}</span><span class="chev">›</span></span>
   </button>`;
 }
@@ -133,12 +134,20 @@ function clientMeta(p) {
       S.instruments[pos.instrumentId]?.exposures?.map(e => e.iso3) || []))]
       .filter(iso => (S.signals[iso]?.riskDelta || 0) >= 6).slice(0, 3);
     const worst = fl[0];
-    const scoreState = aiState(p.id); // "loading" | "ai" | "unavailable"
+    const scoreState = aiState(p.id); // "loading" | "ai" | "unavailable" — AI freshness, for the scoreSource tag below
     const cachedAi = S.narratedHash[p.id];
-    const urgency = scoreState === "ai" ? Math.round(100 - cachedAi.health) : null;
-    const band = scoreState === "ai"
+    // cachedAi.health is populated by EITHER narrateClient()'s AI-success branch or its
+    // templateNarration() fallback (see eval/narrate.js) — the deterministic engine always
+    // computes a real, trustworthy health number even when the AI's own independent read gets
+    // rejected (routinely — see AI_SCORE_BAND — not a failure). Gating this on
+    // scoreState === "ai" meant every client whose AI read didn't validate showed as
+    // permanently "unavailable" here, with no health/urgency/band at all, even though a good
+    // deterministic score existed the whole time. That was the health metric "not computing".
+    const health = cachedAi?.health;
+    const urgency = Number.isFinite(health) ? Math.round(100 - health) : null;
+    const band = urgency !== null
       ? (urgency >= 80 ? "critical" : urgency >= 60 ? "high" : urgency >= 35 ? "medium" : "low")
-      : scoreState;
+      : scoreState; // "loading" — narration hasn't resolved for this portfolio at all yet
     const reason = ltv && p.lombard.currentLtv ? `LTV ${p.lombard.currentLtv.toFixed(2)}% vs ${p.lombard.marginCallLtv.toFixed(0)}% trigger`
       : ltv ? `Collateral headroom at ${p.lombard.headroomPct}%`
       : worst ? `${worst.instrumentId} pressure +${worst.riskDelta.toFixed(0)}`
@@ -299,9 +308,16 @@ export function paintHead(onHousehold) {
   const meta = clientMeta(p);
   const ev = S.evaluation?.clients?.[p.id];
   const state = aiState(p.id);
-  const healthDisplay = state === "ai" ? `${Math.round(ev.health)} · ${ev.healthBand}`
-    : state === "loading" ? shimmer
-    : `<span style="color:var(--ink-4)">Unavailable</span>`;
+  // evaluateClient() (clientEval.js) always computes a real, deterministic health/healthBand as
+  // part of the base evaluation — before narration ever touches it, and still there untouched
+  // as the fallback whenever the AI's own independent read doesn't validate (routinely — see
+  // AI_SCORE_BAND — not a failure). Gating this on state === "ai" meant "Health" showed
+  // "Unavailable" any time that happened, even though ev.health was sitting right there valid
+  // the whole time — that was the health metric "not computing". Only the prose fields
+  // (overview/thesis/summary) genuinely need to wait for narration: evaluateClient() returns
+  // those as null, it doesn't write prose.
+  const healthDisplay = ev ? `${Math.round(ev.health)} · ${ev.healthBand}` : shimmer;
+  const healthTag = ev ? `<span class="mode ${state === "ai" ? "ai" : ""}" style="margin-left:6px">${state === "ai" ? "ai-scored" : "deterministic"}</span>` : "";
   const overviewBlock = state === "ai"
     ? `<p class="prose">${ev.overview}</p>`
     : state === "loading" ? `<p class="prose-shimmer">Generating overview…</p>`
@@ -312,8 +328,7 @@ export function paintHead(onHousehold) {
     <div class="facts">
       <div class="fct"><span class="k">${S.household ? "Household" : "AUM"}</span><span class="v">${p.currency} ${S.household ? (p.householdAum || p.aum) : p.aum}</span></div>
       <div class="fct"><span class="k">Risk profile</span><span class="v">${p.riskProfile} · ${p.riskBand}</span></div>
-      <div class="fct"><span class="k">Health</span><span class="v">${healthDisplay}
-        ${state === "ai" ? `<span class="mode ai" style="margin-left:6px">ai-scored</span>` : ""}</span></div>
+      <div class="fct"><span class="k">Health</span><span class="v">${healthDisplay}${healthTag}</span></div>
       ${L ? `<div class="fct"><span class="k">Lombard headroom</span><span class="v" style="color:${L.headroomPct < 25 ? P.SEV.warn : "inherit"}">${L.headroomPct}% <span style="color:var(--ink-4)">from ${L.prevHeadroomPct}%</span></span></div>` : ""}
       <div class="fct"><span class="k">Next review</span><span class="v">${p.reviewDate}</span></div>
       ${p.householdPositions ? `<button class="hh" id="hh-btn" aria-pressed="${S.household}"><span class="sw"></span>Household · ${(p.entities || []).length} entities</button>` : ""}
@@ -342,33 +357,20 @@ export function paintGoals(onPick) {
   M.once("goals", S.portfolio.id + "|" + S.household, M.goals);
 }
 
+/** The globe overlay card — shows only when a goal is selected ("this goal moved this week,
+ * driven by X · Y · Z"). The risk-weighted concentration default shown here with no goal
+ * selected was removed for a cleaner home page; the same figure still lives on the Compliance
+ * tab (Physical Concentration), so nothing is lost, just not duplicated over the globe. */
 export function paintEvidence() {
-  const ev = S.evaluation?.clients?.[S.portfolio.id];
+  const card = document.getElementById("evid-card");
   const g = S.goalSel ? goals().find(x => x.id === S.goalSel) : null;
-  if (g) {
-    document.getElementById("ev-k").textContent = "This goal moved";
-    document.getElementById("ev-v").textContent = fmtD(g.change) + " pts";
-    const drv = g.contributions.slice(0, 3).map(c => c.instrumentId).join(" · ");
-    document.getElementById("ev-s").innerHTML = `this week, driven by<br><span style="font-family:var(--mono);color:var(--ink-2)">${drv || "no market driver"}</span>`;
-    M.once("evid", "g:" + g.id + ":" + g.change, M.evidence);
-    return;
-  }
-  const state = aiState(S.portfolio.id);
-  document.getElementById("ev-k").textContent = "Risk-weighted concentration";
-  if (state === "ai") {
-    const c = ev.concentration;
-    document.getElementById("ev-v").textContent = Math.round(c.pct) + "%";
-    document.getElementById("ev-s").innerHTML =
-      `of deteriorating exposure in three countries<br><span style="font-family:var(--mono);color:var(--ink-2)">${c.countries.join(" · ")}</span>
-      <span class="mode ai" style="margin-left:6px">ai-scored</span>`;
-  } else if (state === "loading") {
-    document.getElementById("ev-v").innerHTML = shimmer;
-    document.getElementById("ev-s").innerHTML = `<span style="color:var(--ink-4)">Scoring in progress</span>`;
-  } else {
-    document.getElementById("ev-v").textContent = "—";
-    document.getElementById("ev-s").innerHTML = `<span style="color:var(--ink-4)">Unavailable</span>`;
-  }
-  M.once("evid", "c:" + S.portfolio.id + ":" + state, M.evidence);
+  if (!g) { if (card) card.hidden = true; return; }
+  if (card) card.hidden = false;
+  document.getElementById("ev-k").textContent = "This goal moved";
+  document.getElementById("ev-v").textContent = fmtD(g.change) + " pts";
+  const drv = g.contributions.slice(0, 3).map(c => c.instrumentId).join(" · ");
+  document.getElementById("ev-s").innerHTML = `this week, driven by<br><span style="font-family:var(--mono);color:var(--ink-2)">${drv || "no market driver"}</span>`;
+  M.once("evid", "g:" + g.id + ":" + g.change, M.evidence);
 }
 
 export function paintLegend() {
@@ -407,7 +409,10 @@ export function paintTicker(feed = FEED) {
 
 export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle }) {
   const p = S.portfolio, meta = clientMeta(p), L = LENSES().d;
-  const urgent = S.portfolios.filter(x => clientHasIso(x, S.selIso)).map(x => ({ p:x, m:clientMeta(x) }))
+  // Book-wide (every other client, not just the open one) — skip scoring the whole book here
+  // when it won't even be shown (see urgentSection below), rather than paying for clientMeta()
+  // on ~20 portfolios every render for a section that's dropped entirely on this route.
+  const urgent = S.route === "client" ? [] : S.portfolios.filter(x => clientHasIso(x, S.selIso)).map(x => ({ p:x, m:clientMeta(x) }))
     .sort((a,b) => (b.m.urgency ?? -1) - (a.m.urgency ?? -1)).slice(0,5);
   const digest = S.selIso ? S.signals[S.selIso]?.events || [] : topEventsRaw(4);
   const top = meta.fl[0];
@@ -429,40 +434,27 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
     if (!id || cardWasSwiped) return;
     if (S.portfolios.some(p => p.id === id)) onOpenClient?.(id);
   };
-  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card urgent-carousel" tabindex="0" aria-label="Urgent client reviews"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div>${activeUrgent ? urgentReviewCard(activeUrgent, activeIndex, urgent.length) : `<div class="empty-state">No urgent reviews for this scope.</div>`}<div class="urgent-nav"><button class="urgent-arrow" type="button" data-urg-nav="-1" aria-label="Previous urgent review">‹</button><div class="urgent-dots">${urgent.map((_, i) => `<button class="dot" type="button" data-urg-dot="${i}" aria-label="Urgent review ${i + 1}" aria-pressed="${i === activeIndex}"></button>`).join("")}</div><button class="urgent-arrow" type="button" data-urg-nav="1" aria-label="Next urgent review">›</button></div></section>
+  // The urgent-reviews carousel is a book-wide priority queue — which OTHER clients need
+  // attention — which doesn't make sense once you're already looking at one specific client's
+  // analysis; it's dropped entirely there rather than just visually tucked away. Everything
+  // else in the rail (Live Intelligence, Positions by pressure, AI Copilot) is genuinely about
+  // the open client, so it stays.
+  const urgentSection = S.route === "client" ? "" : `<section class="priority-card urgent-carousel" tabindex="0" aria-label="Urgent client reviews"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div>${activeUrgent ? urgentReviewCard(activeUrgent, activeIndex, urgent.length) : `<div class="empty-state">No urgent reviews for this scope.</div>`}<div class="urgent-nav"><button class="urgent-arrow" type="button" data-urg-nav="-1" aria-label="Previous urgent review">‹</button><div class="urgent-dots">${urgent.map((_, i) => `<button class="dot" type="button" data-urg-dot="${i}" aria-label="Urgent review ${i + 1}" aria-pressed="${i === activeIndex}"></button>`).join("")}</div><button class="urgent-arrow" type="button" data-urg-nav="1" aria-label="Next urgent review">›</button></div></section>`;
+  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button>${urgentSection}
     <section class="priority-card"><div class="sec-h"><h2>Live Intelligence</h2><button class="ghost sm" id="clear-sel">Reset view</button></div><div class="situation-list">${digest.map(e => signalCard(e)).join("")}</div><div class="policy-mini"><span>Policy Sentinel</span><b>${scan.signal.stance}</b><button class="ghost sm" id="rail-policy-open">Evidence</button></div></section>
     <section class="priority-card positions-mini"><div class="sec-h"><h2>Positions by pressure</h2><span class="count">top 4</span></div>${visibleRows().slice(0,4).map(r => `<button class="mini-pos" data-t="${r.instrumentId}"><span class="tickr">${r.instrumentId}</span><span>${r.name}</span><b style="color:${L.col(r.riskDelta)}">${fmtD(r.riskDelta)}</b></button>`).join("")}</section>
     <section class="priority-card copilot-card"><div class="sec-h"><h2>AI Copilot</h2><span class="spark">✦</span></div><p>Ask about this client, a holding, or a market signal.</p><button class="suggest" data-coprompt="Prepare a call brief for ${p.name}">Prepare call brief</button><button class="suggest" data-coprompt="Show liquidity risks for ${p.name}">Show liquidity risks</button><button class="ghost solid" id="open-copilot">Open copilot</button></section>`;
   document.getElementById("priority-open")?.addEventListener("click", () => top ? onOpenPosition(top.instrumentId) : onRunPolicyScan());
   document.getElementById("clear-sel")?.addEventListener("click", onClearSel);
-  // #pfrail is the static <aside> from shell.js — paintPfRail only ever replaces its innerHTML,
-  // never the node itself, and this function reruns on nearly every interaction (every arrow/dot
-  // click calls it directly; renderAll() calls it on everything else). A bare addEventListener
-  // here stacked one more delegated handler onto the same persistent node every single repaint —
-  // click "next" once and you had 1 handler firing; click it again and 2 handlers each fired (one
-  // of which re-triggers this same repaint), then 4, then 8 — visibly, progressively slower with
-  // every click. rewire() swaps the handler instead of stacking it.
-  rewire(document.getElementById("pfrail"), "click", e => {
-    const nav = e.target.closest("[data-urg-nav]");
-    if (nav) {
-      e.preventDefault();
-      e.stopPropagation();
-      moveUrgent(Number(nav.dataset.urgNav));
-      return;
-    }
-    const dot = e.target.closest("[data-urg-dot]");
-    if (dot) {
-      e.preventDefault();
-      e.stopPropagation();
-      jumpUrgent(Number(dot.dataset.urgDot) || 0);
-      return;
-    }
-    const open = e.target.closest("[data-open-client]");
-    if (!open || cardWasSwiped) return;
-    e.preventDefault();
-    e.stopPropagation();
-    openUrgentClient(open.dataset.openClient);
-  });
+  // Nav arrows, dots, and "Open client review" are all children re-created fresh inside #pfrail's
+  // innerHTML above (unlike #pfrail itself, which is the static persistent <aside> from
+  // shell.js) — a plain addEventListener here is safe, the old buttons and their listeners are
+  // thrown away with the old markup on the next paintPfRail() call. This used to ALSO be wired
+  // through a delegated click handler on #pfrail itself (rewire()'d to avoid leaking, per the
+  // comment that used to be here) — a second, redundant system handling the exact same clicks.
+  // stopPropagation() in these handlers meant it likely never double-fired, but two independent
+  // systems owning the same buttons is exactly the kind of thing that causes "sometimes nothing
+  // happens" bugs, so it's gone — this is the only place these clicks are handled now.
   document.querySelectorAll("#pfrail [data-urg-nav]").forEach(b => b.addEventListener("click", e => {
     e.preventDefault();
     e.stopPropagation();
@@ -476,6 +468,7 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
   document.querySelectorAll("#pfrail [data-open-client]").forEach(b => b.addEventListener("click", e => {
     e.preventDefault();
     e.stopPropagation();
+    if (cardWasSwiped) return;
     openUrgentClient(b.dataset.openClient);
   }));
   document.querySelector("#pfrail .urgent-carousel")?.addEventListener("keydown", e => {
@@ -536,7 +529,7 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
       setTimeout(() => { cardWasSwiped = false; }, 0);
     });
   }
-  M.once("rail", [p.id, S.selIso, S.goalSel, S.household].join("|"), M.rail);
+  M.once("rail", [p.id, S.selIso, S.goalSel, S.household, S.urgentReviewIndex].join("|"), M.rail);
 }
 
 /** The AI Copilot's ask box, actually routed to the model now (askCopilot in eval/narrate.js,

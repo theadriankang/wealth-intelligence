@@ -1,7 +1,6 @@
-import { S, actionState, economics, positions, aiState } from "../store.js";
+import { S, actionState, economics, aiState } from "../store.js";
 import { P } from "./palette.js";
 import { ECONOMICS_BASELINE } from "../model/scoring.js";
-import { chokepointExposure } from "../model/lookthrough.js";
 import * as M from "./motion.js";
 
 const UI = {
@@ -15,7 +14,6 @@ const UI = {
   expandedCheck: null
 };
 
-const TODAY = "13 Nov 2026";
 const esc = v => String(v ?? "").replace(/[&<>"']/g, c => (
   { "&":"&amp;", "<":"&lt;", ">":"&gt;", "\"":"&quot;", "'":"&#39;" }[c]
 ));
@@ -27,27 +25,49 @@ const niceDate = date => {
   if (!m) return date || "Not scheduled";
   return new Date(`${date}T00:00:00`).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" });
 };
+/** "Today" is the book's as-of snapshot (S.meta.asOf — "2025-12-31" through "2026-08-26" on the
+ * Julius Baer adapter, see adapters/jb/build.js's SNAPSHOTS/TODAY), not a fixed hardcoded date —
+ * it moves with switchSnapshot() like everything else on the page. The demo adapter has no
+ * snapshot concept at all, so it falls back to the real calendar date rather than a made-up one. */
+const today = () => S.meta?.asOf ? niceDate(S.meta.asOf) : new Date().toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" });
 
 function status(a) { return actionState(a); }
-function isPending(a) { return !["Accepted", "Executed"].includes(status(a)); }
-function isHigh(a) { return ["Urgent"].includes(status(a)) || ["Collateral", "Trim"].includes(a.kind); }
-function severity(a) {
-  if (status(a) === "Urgent") return "critical";
-  if (a.kind === "Collateral" || a.kind === "Trim") return "high";
-  if (a.kind === "Hedge" || a.kind === "Hold") return "medium";
-  return "opportunity";
+/** The RM's own Accept/Reject/Complete click (S.aiActionState, keyed by this action's stable
+ * position in the full actionList()) is authoritative over the deterministic/AI-drafted status —
+ * a click is a real decision that happened; `status(a)` is just where the recommendation started
+ * out. Accept is a toggle (click again to put it back to pending); Reject and Complete both
+ * remove the item from every list in this tab — Reject because it never happened, Complete
+ * because it's done and the Risks & Actions queue is for open work, not a done-items archive
+ * (the Compliance tab's Suitability Records is that archive — see paintCompliance below). */
+function decisionFor(a) { return S.aiActionState[S.portfolio.id + "|" + a._idx]; }
+function isRejected(a) { return decisionFor(a) === "rejected"; }
+function isCompleted(a) { return decisionFor(a) === "completed"; }
+function effectiveStatus(a) {
+  const decision = decisionFor(a);
+  if (decision === "accepted") return "Accepted";
+  if (decision === "rejected") return "Rejected";
+  if (decision === "completed") return "Completed";
+  return status(a);
 }
-function icon(kind) {
-  return { Collateral:"!", Trim:"%", Hedge:"↗", Hold:"✓", Liquidity:"⌁" }[kind] || "•";
+function isPending(a) { return !["Accepted", "Executed", "Rejected", "Completed"].includes(effectiveStatus(a)); }
+/** High priority is the AI's (or, when it's unavailable, the deterministic engine's) own call —
+ * see actions[].priority in eval/narrate.js — not a hardcoded guess from the action's kind. */
+function isHigh(a) { return !isRejected(a) && !isCompleted(a) && a.priority === "high"; }
+function severity(a) {
+  if (effectiveStatus(a) === "Urgent") return "critical";
+  if (a.priority === "high") return "high";
+  if (a.priority === "medium") return "medium";
+  return "opportunity";
 }
 function statusDot(filter) {
   return { all:"📋", high:"⚠", pending:"◷", accepted:"✓" }[filter] || "•";
 }
 function filteredActions(actions) {
-  if (UI.actionFilter === "high") return actions.filter(isHigh);
-  if (UI.actionFilter === "pending") return actions.filter(isPending);
-  if (UI.actionFilter === "accepted") return actions.filter(a => ["Accepted", "Executed"].includes(status(a)));
-  return actions;
+  const live = actions.filter(a => !isRejected(a) && !isCompleted(a));
+  if (UI.actionFilter === "high") return live.filter(isHigh);
+  if (UI.actionFilter === "pending") return live.filter(isPending);
+  if (UI.actionFilter === "accepted") return live.filter(a => ["Accepted", "Executed"].includes(effectiveStatus(a)));
+  return live;
 }
 function fundingVisual(a) {
   const e = a.evidence || {};
@@ -66,12 +86,19 @@ function fundingVisual(a) {
 }
 function actionList(p, ev, state) {
   return (state === "ai" && ev?.actions?.length ? ev.actions : (p.actions || [])).map((a, i) => ({
+    _idx: i, // stable position in the FULL list — the key S.aiActionState's accept/reject decisions are keyed on, so a decision survives filtering the tab between All/High/Pending/Accepted
     id: a.id || `a${i + 1}`,
     kind: a.kind || a.category || "Action",
     title: a.title || a.text || "Review recommendation",
     target: a.target || a.instrumentId || a.category || "Portfolio recommendation",
     state: a.state || "Drafted",
     why: a.why || a.rationale || "",
+    // ev.actions (AI, or its deterministic fallback) always carries its own priority — see
+    // eval/narrate.js. The static per-portfolio fixture (p.actions, shown before narration has
+    // resolved even once) predates that field, so it gets the same kind-based guess the whole
+    // tab used to run on, purely so "High priority" isn't empty pre-boot — not a claim that this
+    // came from any scoring.
+    priority: a.priority || (["Collateral", "Trim"].includes(a.kind) ? "high" : ["Hedge", "Hold"].includes(a.kind) ? "medium" : null),
     effect: a.effect || [],
     evidence: a.evidence || {},
     suitability: a.suitability || {}
@@ -125,14 +152,15 @@ function relationshipView(p, ev, state) {
   };
 }
 
-function complianceChecks(p) {
-  const cks = [
-    { id:"sanctions", t:"Sanctions screening", s:"clear", d:`${p.positions.length} holdings screened against consolidated lists.` },
-    { id:"jurisdiction", t:"Jurisdiction exposure", s:p.countryRisk === "High" ? "watch" : "clear", d:"Two holdings carry revenue exposure to a jurisdiction re-rated upward this week." },
-    { id:"pep", t:"PEP adjacency", s:"clear", d:"No politically exposed person identified in the beneficial ownership chain." },
-    { id:"concentration", t:"Concentration policy", s:(p.riskProfile || "").includes("Growth") ? "watch" : "clear", d:"Look-through single-country exposure sits close to the soft mandate limit." }
-  ];
-  return cks;
+/** The caption under the sentiment label — reacts to the actual reading instead of a fixed
+ * "No material change" regardless of what it says (the arc's colour reacts too, via the
+ * data-sentiment attribute set on .sentiment-panel — see styles.css). */
+function sentimentNote(sentiment) {
+  return {
+    Positive: "Trending well — a good moment to raise new ideas.",
+    Cautious: "Some hesitation on record — go in prepared.",
+    Concerned: "Address this directly at the next contact."
+  }[sentiment] || "No material change.";
 }
 
 /** Risks + opportunities + recommended actions — AI-scored for the open client, hash-gated,
@@ -152,50 +180,65 @@ export function paintActions() {
   const risks = state === "ai" ? (ev.risks || []) : [];
   const opportunities = state === "ai" ? (ev.opportunities || []) : [];
   const actions = actionList(p, ev, state);
-  document.getElementById("tn-act").textContent = actions.length;
+  const live = actions.filter(a => !isRejected(a) && !isCompleted(a));
+  document.getElementById("tn-act").textContent = live.length;
   const statusLine = !actions.length
     ? (state === "loading" ? `<p class="prose-shimmer">Scoring this client…</p>`
       : state === "unavailable" ? `<p style="color:var(--ink-4); font-size:12px">AI scoring unavailable for this client.</p>`
       : !risks.length && !opportunities.length ? `<p style="color:var(--ink-4); font-size:12px">Nothing flagged this week.</p>` : "")
     : "";
   document.getElementById("actions").innerHTML = `<div class="tab-page risks-page">
-    <div class="tab-titlebar"><div><h2>Risks & Actions</h2><p>AI-driven recommendations to keep your client on track</p></div><div><span>Last updated</span><b>${TODAY}, 09:24 SGT</b></div></div>
+    <div class="tab-titlebar"><div><h2>Risks & Actions</h2><p>AI-driven recommendations to keep your client on track</p></div><div><span>Last updated</span><b>${today()}, 09:24 SGT</b></div></div>
     <section class="ra-summary">
       ${[
-        ["all", "Total actions", actions.length],
-        ["high", "High priority", actions.filter(isHigh).length],
-        ["pending", "Pending", actions.filter(isPending).length],
-        ["accepted", "Accepted", actions.filter(a => ["Accepted", "Executed"].includes(status(a))).length]
+        ["all", "Total actions", live.length],
+        ["high", "High priority", live.filter(isHigh).length],
+        ["pending", "Pending", live.filter(isPending).length],
+        ["accepted", "Accepted", live.filter(a => ["Accepted", "Executed"].includes(effectiveStatus(a))).length]
       ].map(([k, label, value]) => `<button class="ra-counter ${k}" data-action-filter="${k}" aria-pressed="${UI.actionFilter === k}"><i>${statusDot(k)}</i><span>${label}</span><b>${value}</b></button>`).join("")}
     </section>
     ${statusLine}
-    <section class="decision-list">${filteredActions(actions).map((a, i) => {
-      const key = p.id + "|" + i;
-      const acState = S.aiActionState[key] || "pending";
+    <section class="decision-list">${filteredActions(actions).map(a => {
+      const acState = effectiveStatus(a);
+      const accepted = acState === "Accepted";
       const open = UI.expandedAction === a.id;
       return `<article class="decision-card sev-${severity(a)} ${open ? "open" : ""}" data-expand-action="${a.id}">
-        <div class="decision-head"><span class="kind">${esc(a.kind || "Action")}</span><div><h3>${esc(strip(a.title))}</h3><p>${esc(strip(a.target || "Portfolio recommendation"))}</p></div><button class="ghost sm ${acState === "accepted" ? "solid" : ""}" data-accept="${i}" type="button">${acState === "accepted" ? "Accepted" : status(a)}</button><button class="chev" type="button">›</button></div>
+        <div class="decision-head"><div><h3>${esc(strip(a.title))}</h3><p>${esc(strip(a.target || "Portfolio recommendation"))}</p></div><button class="ghost sm ${accepted ? "solid" : ""}" data-accept="${a._idx}" type="button">${acState}</button><button class="chev" type="button">›</button></div>
         <div class="decision-core">${fundingVisual(a)}${effectTiles(a)}</div>
         ${open ? `<div class="decision-detail"><p>${esc(strip(a.why || ""))}</p><dl><dt>Objective</dt><dd>${esc(a.suitability?.objective || "Aligned with mandate")}</dd><dt>Risk fit</dt><dd>${esc(a.suitability?.riskFit || "RM review required")}</dd></dl></div>` : ""}
         <div class="act-f">
-          <button class="ghost sm ${acState === "accepted" ? "solid" : ""}" data-accept="${i}" type="button">Accept</button>
-          <button class="ghost sm ${acState === "rejected" ? "solid" : ""}" data-reject="${i}" type="button">Reject</button>
+          <button class="ghost sm ${accepted ? "solid" : ""}" data-accept="${a._idx}" type="button">${accepted ? "Accepted ✓ (click to undo)" : "Accept"}</button>
+          <button class="ghost sm" data-reject="${a._idx}" type="button">Reject</button>
+          ${accepted ? `<button class="ghost sm" data-complete="${a._idx}" type="button">Mark as complete</button>` : ""}
         </div>
       </article>`;
     }).join("")}</section>
   </div>`;
   document.querySelectorAll("#actions [data-action-filter]").forEach(b => b.addEventListener("click", () => { UI.actionFilter = b.dataset.actionFilter; paintActions(); }));
   document.querySelectorAll("#actions [data-expand-action]").forEach(b => b.addEventListener("click", e => {
-    if (e.target.closest("[data-accept],[data-reject],[data-metric]")) return;
+    if (e.target.closest("[data-accept],[data-reject],[data-complete],[data-metric]")) return;
     UI.expandedAction = UI.expandedAction === b.dataset.expandAction ? null : b.dataset.expandAction;
     paintActions();
   }));
   document.querySelectorAll("#actions [data-metric]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); UI.expandedMetric = UI.expandedMetric === b.dataset.metric ? null : b.dataset.metric; paintActions(); }));
+  // Accept/Reject/Complete write the RM's real decision into S.aiActionState, keyed by each
+  // action's stable _idx (its position in the FULL actionList(), not the filtered view on
+  // screen) — see decisionFor/effectiveStatus above. Accept is a toggle: clicking it again on an
+  // already-accepted item clears the decision, putting it back in Pending. Reject and Complete
+  // both drop the item out of every filter here (isRejected/isCompleted in filteredActions) —
+  // Reject because it never happened, Complete because it's done (it still lives on in the
+  // Compliance tab's Suitability Records, which reads effectiveStatus the same way).
   document.querySelectorAll("#actions [data-accept]").forEach(b => b.addEventListener("click", () => {
-    S.aiActionState[p.id + "|" + b.dataset.accept] = "accepted"; paintActions();
+    const key = p.id + "|" + b.dataset.accept;
+    if (S.aiActionState[key] === "accepted") delete S.aiActionState[key];
+    else S.aiActionState[key] = "accepted";
+    paintActions();
   }));
   document.querySelectorAll("#actions [data-reject]").forEach(b => b.addEventListener("click", () => {
     S.aiActionState[p.id + "|" + b.dataset.reject] = "rejected"; paintActions();
+  }));
+  document.querySelectorAll("#actions [data-complete]").forEach(b => b.addEventListener("click", () => {
+    S.aiActionState[p.id + "|" + b.dataset.complete] = "completed"; paintActions();
   }));
   M.once("actions", S.portfolio.id + "|" + state, M.actions);
 }
@@ -215,11 +258,12 @@ export function paintConversation() {
     el.innerHTML = `<div class="blk"><p>No relationship record for this mandate.</p></div>`;
     return;
   }
+  const sentiment = r.sentiment || "Neutral";
   el.innerHTML = `<div class="tab-page conversation-page">
     <section class="conv-top">
-      <div class="glass-panel"><h2>Relationship Timeline</h2><div class="timeline"><button class="tl-node" data-conv-focus="last" aria-pressed="${UI.convFocus === "last"}"><span>✓</span><b>Last Contact</b><em>${esc(r.lastContact || "Recent call")}</em></button><button class="tl-node" data-conv-focus="today" aria-pressed="${UI.convFocus === "today"}"><span>□</span><b>Today</b><em>${TODAY}</em></button><button class="tl-node" data-conv-focus="next" aria-pressed="${UI.convFocus === "next"}"><span>◷</span><b>Next Review</b><em>${esc(r.nextReview)}</em></button></div><p class="focus-note">${esc(r.summary)}</p></div>
+      <div class="glass-panel"><h2>Relationship Timeline</h2><div class="timeline"><button class="tl-node" data-conv-focus="last" aria-pressed="${UI.convFocus === "last"}"><span>✓</span><b>Last Contact</b><em>${esc(r.lastContact || "Recent call")}</em></button><button class="tl-node" data-conv-focus="today" aria-pressed="${UI.convFocus === "today"}"><span>□</span><b>Today</b><em>${today()}</em></button><button class="tl-node" data-conv-focus="next" aria-pressed="${UI.convFocus === "next"}"><span>◷</span><b>Next Review</b><em>${esc(r.nextReview)}</em></button></div><p class="focus-note">${esc(r.summary)}</p></div>
       <div class="glass-panel lead-panel"><span class="lead-icon">♙</span><p>Relationship Lead</p><h3>${esc(p.rm || "Relationship Manager")}</h3><small>Senior Adviser</small><div class="lead-actions"><button>✉</button><button>☎</button><button>in</button></div></div>
-      <div class="glass-panel sentiment-panel"><p>Client Sentiment <small>(Recent)</small></p><div class="sentiment-arc"><i></i></div><h3>${esc(r.sentiment || "Neutral")}</h3><small>No material change</small></div>
+      <div class="glass-panel sentiment-panel" data-sentiment="${sentiment.toLowerCase()}"><p>Client Sentiment <small>(Recent)</small></p><div class="sentiment-arc"><i></i></div><h3>${esc(sentiment)}</h3><small>${esc(sentimentNote(sentiment))}</small></div>
     </section>
     <section class="glass-panel"><h2>Standing Concerns</h2><div class="concern-grid">${(r.concerns || []).slice(0,3).map((x, i) => `<button class="concern-card" data-concern="${i}" type="button"><span>${i + 1}</span><div><em>${i === 0 ? "Relationship" : i === 1 ? "Liquidity / Exit" : "Valuation"}</em><b>${esc(strip(x).split(".")[0])}</b><p>${esc(strip(x))}</p></div></button>`).join("")}</div></section>
     <section class="brief-grid">
@@ -233,19 +277,16 @@ export function paintConversation() {
   M.once("conv", p.id + "|" + state, () => M.enter("#conv .blk", { y: 10, delay: 60, duration: 420 }));
 }
 
-/** Compliance checks — AI-generated per client from real CSV facts (PEP status, tax domicile,
- * KYC review date, look-through concentration against the mandate's bands), not the generic
- * fixed checklist every client used to see. Deterministic fallback when the model is unavailable
- * or invalid draws on the same facts (fallbackComplianceChecks in eval/narrate.js) rather than
- * inventing a screening result. The chokepoint table and suitability-record table below are
- * unrelated deterministic data (look-through math, the static per-portfolio action list) and are
- * untouched. */
-/** Compliance checks are AI-generated per client from real CSV facts (PEP status, tax domicile,
- * KYC review date, look-through concentration against the mandate's bands) — see
- * eval/narrate.js. The visual design (comp-hero/comp-grid/glass-panel) is main's; the data
- * source is ev.complianceChecks (AI, with the same loading/unavailable states as everywhere
- * else) rather than main's `complianceChecks(p)`, which doesn't exist anywhere in the codebase
- * — calling it would throw ReferenceError. */
+/** Every figure on this tab is AI-generated (or, when the model is unavailable/invalid, the
+ * deterministic engine's own verbatim numbers) — none of it is a static per-client checklist:
+ *  - complianceChecks: PEP status, tax domicile, KYC review timing, concentration-vs-mandate.
+ *  - physicalConcentration: the look-through chokepoint breakdown, verified against the bank's
+ *    own chokepointExposure() figures within AI_SCORE_BAND (see eval/narrate.js) rather than
+ *    rendered from that computation directly.
+ *  - Suitability Records: shares the same actions/decisions as the Risks & Actions tab (see
+ *    actionList/effectiveStatus above) — a record only appears once it reflects what was
+ *    actually decided, never a separate invented audit trail.
+ * See eval/narrate.js for the full schema and the AI_SCORE_BAND validation that backs it. */
 export function paintCompliance() {
   const p = S.portfolio;
   const ev = S.evaluation?.clients?.[p.id];
@@ -259,19 +300,32 @@ export function paintCompliance() {
   // clientEval.js's topic:"chokepoint" risks feeding that same check), so its clear/watch status
   // is an actual answer, not an unconditional "Within mandate" claim with nothing behind it.
   const concCheck = checks.find(c => c.t === "Concentration policy") || null;
-  const recs = (p.actions || []).filter(a => actionState(a) !== "Drafted" || p.mandate === "Discretionary");
-  const ck = Object.values(chokepointExposure(positions(), S.instruments)).sort((a, b) => b.weightPct - a.weightPct);
+  // Suitability Records shares the exact same actions the Risks & Actions tab shows and tracks
+  // Accept/Reject on (see actionList/effectiveStatus/isRejected above) — a record only appears
+  // here once it reflects a real RM decision (or the mandate is Discretionary, where the bank
+  // acts without one), never a second, disconnected notion of "what got put to the client."
+  const actions = actionList(p, ev, state);
+  const recs = actions.filter(a => !isRejected(a) && (effectiveStatus(a) !== "Drafted" || p.mandate === "Discretionary"));
+  // AI-generated (or, when unavailable, the deterministic engine's own verbatim figures) — see
+  // physicalConcentration in eval/narrate.js. Not the raw chokepointExposure() computation
+  // rendered directly: even this exposure breakdown goes through the same AI-narration path (and
+  // the same never-shown-when-unavailable rule) as every other Compliance/Impact figure.
+  const ck = state === "ai" ? [...(ev.physicalConcentration || [])].sort((a, b) => b.weightPct - a.weightPct) : [];
   document.getElementById("tn-comp").textContent = watch;
   const checksPanel = state === "loading" ? `<div class="glass-panel"><h2>Compliance Checks</h2><p class="prose-shimmer">Scoring compliance…</p></div>`
     : state === "unavailable" ? `<div class="glass-panel"><h2>Compliance Checks</h2><p style="color:var(--ink-4)">Compliance checks unavailable.</p></div>`
     : `<div class="glass-panel"><h2>Compliance Checks</h2>${checks.map(c => `<button class="check-row ${c.s}" data-check="${c.id}" type="button"><span>${c.s === "watch" ? "!" : "✓"}</span><div><b>${esc(c.t)}</b><p>${esc(UI.expandedCheck === c.id ? c.d : c.d.slice(0, 92))}</p></div><em>${c.s}</em></button>`).join("")}</div>`;
+  const concPanelHeading = `Physical Concentration <small>(look-through)</small>${concCheck ? ` <em class="status-chip${concCheck.s === "watch" ? " watch" : ""}">${concCheck.s === "watch" ? "Elevated" : "Within mandate"}</em>` : ""}`;
+  const concPanel = state === "loading" ? `<div class="glass-panel"><h2>${concPanelHeading}</h2><p class="prose-shimmer">Scoring concentration…</p></div>`
+    : state === "unavailable" ? `<div class="glass-panel"><h2>${concPanelHeading}</h2><p style="color:var(--ink-4)">Concentration breakdown unavailable.</p></div>`
+    : `<div class="glass-panel"><h2>${concPanelHeading}</h2><div class="exposure-bars">${ck.length ? ck.slice(0,6).map(c => `<div><span>${esc(c.name)}</span><i><b style="width:${Math.min(100, c.weightPct * 5)}%"></b></i><strong>${c.weightPct.toFixed(1)}%</strong></div>`).join("") : `<div class="empty-state">No chokepoint exposure in current holdings.</div>`}</div></div>`;
   document.getElementById("comp").innerHTML = `<div class="tab-page compliance-page">
     <section class="comp-hero ${watch ? "watch" : "clear"}"><span>${watch ? "!" : "✓"}</span><div><h2>${watch ? "Compliance watch" : "No blocking compliance items"}</h2><p>${p.positions.length} holdings · ${checks.length} derived checks · based on current portfolio data${state === "ai" ? ` <span class="mode ai" style="margin-left:6px">ai-scored</span>` : ""}</p></div><dl><dt>Next review</dt><dd>${esc(p.reviewDate || "Not recorded")}</dd><dt>Mandate</dt><dd>${esc(p.mandate)}</dd></dl></section>
     <section class="comp-grid">
       ${checksPanel}
-      <div class="glass-panel"><h2>Physical Concentration <small>(look-through)</small>${concCheck ? ` <em class="status-chip${concCheck.s === "watch" ? " watch" : ""}">${concCheck.s === "watch" ? "Elevated" : "Within mandate"}</em>` : ""}</h2><div class="exposure-bars">${ck.length ? ck.slice(0,6).map(c => `<div><span>${esc(c.name)}</span><i><b style="width:${Math.min(100, c.weightPct * 5)}%"></b></i><strong>${c.weightPct.toFixed(1)}%</strong></div>`).join("") : `<div class="empty-state">No chokepoint exposure in current holdings.</div>`}</div></div>
+      ${concPanel}
       <div class="glass-panel summary-panel"><h2>Compliance Summary</h2><div class="summary-boxes"><div><b>${checks.length - watch}</b><span>Clear</span></div><div class="watch"><b>${watch}</b><span>Watch</span></div><div class="danger"><b>${checks.filter(c => c.s === "block").length}</b><span>Action required</span></div></div></div>
-      <div class="glass-panel"><h2>Suitability Records</h2>${recs.length ? recs.map(a => `<div class="record-row"><b>${esc(a.title)}</b><span>${esc(p.mandate)} · ${esc(actionState(a))}</span></div>`).join("") : `<div class="empty-state">No records yet. They appear when a proposal is put to client or executed.</div>`}</div>
+      <div class="glass-panel"><h2>Suitability Records</h2>${recs.length ? recs.map(a => `<div class="record-row"><b>${esc(a.title)}</b><span>${esc(p.mandate)} · ${esc(effectiveStatus(a))}</span>${a.why ? `<p>${esc(strip(a.why))}</p>` : ""}</div>`).join("") : `<div class="empty-state">No records yet. They appear when a proposal is put to client or executed.</div>`}</div>
     </section>
   </div>`;
   document.querySelectorAll("[data-check]").forEach(b => b.addEventListener("click", () => { UI.expandedCheck = UI.expandedCheck === b.dataset.check ? null : b.dataset.check; paintCompliance(); }));

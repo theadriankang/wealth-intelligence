@@ -1063,6 +1063,24 @@ button:disabled{opacity:.58; cursor:wait}
   .client-rail .book-h{padding-right:48px}
   .priority-stack{padding-top:42px}
 }
+/* Client workbench: the priority rail (Live Intelligence, Positions by pressure, AI Copilot —
+   Urgent reviews was already dropped above) is book-wide content, not about whichever client is
+   open, so on this route it's removed outright rather than tucked into a popup — an earlier
+   version popped it up on demand via the "Action rail" button; this replaces that entirely.
+   Unconditional (no media guard): gone at every viewport width. The dashboard is unaffected. */
+.client-workbench .priority-stack{
+  display:none;
+}
+.client-workbench #open-priority-rail{
+  display:none; /* nothing left for it to open */
+}
+@media (min-width:1281px){
+  .client-workbench .mission-stage{
+    /* Drop the third grid track entirely — otherwise the now-hidden priority-stack would still
+       reserve its ~350–390px column width as blank space; the cockpit gets that width instead. */
+    grid-template-columns:minmax(292px,320px) minmax(0,1fr);
+  }
+}
 @media (max-width:1100px){
   .mission-stage{grid-template-columns:1fr; overflow-y:auto}
   .client-rail,.priority-stack{min-height:360px}
@@ -2688,12 +2706,6 @@ body{
   text-align:right;
 }
 
-.client-meta{
-  color:#66738a;
-  font-size:11.5px;
-  font-weight:560;
-}
-
 .client-insight{
   display:flex;
   align-items:center;
@@ -3489,7 +3501,7 @@ body{
   gap:12px;
 }
 .decision-head{
-  grid-template-columns:118px minmax(0, 1fr) auto auto;
+  grid-template-columns:minmax(0, 1fr) auto auto;
   align-items:center;
 }
 .decision-head h3{
@@ -3687,7 +3699,15 @@ body{
   align-content:center;
   min-height:160px;
   text-align:center;
+  --sentiment:#6b8cff; /* default/unknown reads as the same neutral blue as data-sentiment="neutral" */
 }
+/* Reactive to the actual AI (or deterministic-heuristic) sentiment reading — see
+   sentimentNote()/data-sentiment in ui/tabs.js. One variable drives both the arc's colour and
+   the label below it, so they can never disagree with each other. */
+.sentiment-panel[data-sentiment="positive"]{--sentiment:#1eb07e}
+.sentiment-panel[data-sentiment="neutral"]{--sentiment:#6b8cff}
+.sentiment-panel[data-sentiment="cautious"]{--sentiment:#eaa02a}
+.sentiment-panel[data-sentiment="concerned"]{--sentiment:#ef3e57}
 .lead-icon{
   display:grid;
   place-items:center;
@@ -3708,6 +3728,9 @@ body{
 .sentiment-panel h3{
   margin-top:8px;
   font-size:19px;
+}
+.sentiment-panel h3{
+  color:var(--sentiment);
 }
 .lead-panel small,
 .sentiment-panel small{
@@ -4013,25 +4036,8 @@ body{
 }
 
 .decision-head{
-  grid-template-columns:108px minmax(0, 1fr) auto auto;
+  grid-template-columns:minmax(0, 1fr) auto auto;
 }
-
-.decision-card .kind{
-  justify-self:start;
-  padding:7px 12px;
-  border:1px solid rgba(255,49,95,.16);
-  border-radius:14px;
-  background:rgba(255,49,95,.10);
-  color:#ef3158;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.04em;
-  text-transform:uppercase;
-}
-
-.decision-card.sev-high .kind{background:rgba(255,122,26,.11);border-color:rgba(255,122,26,.22);color:#f06b13}
-.decision-card.sev-medium .kind{background:rgba(244,176,0,.12);border-color:rgba(244,176,0,.24);color:#b77f00}
-.decision-card.sev-opportunity .kind{background:rgba(34,183,143,.11);border-color:rgba(34,183,143,.24);color:#0b9872}
 
 .funding-viz{
   display:grid;
@@ -4110,9 +4116,10 @@ body{
   height:72px;
   margin:8px auto 2px;
   border-radius:160px 160px 0 0;
-  background:conic-gradient(from 235deg, #ff8dab 0 24%, #dfe7f6 24% 43%, #7edbb0 43% 68%, transparent 68% 100%);
+  background:conic-gradient(from 235deg, var(--sentiment) 0 68%, #dfe7f6 68% 100%);
   mask:radial-gradient(circle at 50% 100%, transparent 0 46px, #000 47px);
   -webkit-mask:radial-gradient(circle at 50% 100%, transparent 0 46px, #000 47px);
+  transition:background .3s ease;
 }
 
 .concern-card p,
@@ -4479,7 +4486,6 @@ body{
   gap:9px;
 }
 .rm-client .client-top,
-.rm-client .client-meta,
 .rm-client .client-insight{
   min-width:0;
 }
@@ -4525,17 +4531,6 @@ body{
   line-height:1;
   letter-spacing:.08em;
   text-transform:uppercase;
-}
-.rm-client .client-meta{
-  display:block;
-  margin-top:10px;
-  color:#657188;
-  font-size:12.5px;
-  line-height:1.2;
-  font-weight:560;
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
 }
 .rm-client .client-insight{
   display:grid!important;
@@ -5368,6 +5363,14 @@ body{position:fixed; inset:0}
 
 .tab-page{
   overflow-x:hidden;
+  /* Query CONTAINER width, not viewport width — .conv-top's three-column layout was collapsing
+     based on @media (max-width:1120px), but this app's rails (the client book, the priority
+     rail) eat ~590px of any viewport before .tab-page ever sees it, so a completely ordinary
+     13" laptop (1280–1440px wide) leaves .tab-page only ~650–850px — well under what the
+     3-column layout needs, but well above 1120px, so the collapse never fired and the sentiment
+     panel got squeezed to almost nothing. container-type reacts to the space actually available
+     here, regardless of viewport size or how wide the rails are. */
+  container-type:inline-size;
 }
 
 .tab-titlebar h2{
@@ -5440,11 +5443,6 @@ body{position:fixed; inset:0}
   margin-top:12px;
   padding-top:10px;
   border-top:1px solid rgba(178,193,226,.55);
-}
-
-.conversation-page .conv-top{
-  grid-template-columns:minmax(0, 1.8fr) minmax(190px, .7fr) minmax(230px, 1fr);
-  align-items:stretch;
 }
 
 .conversation-page .glass-panel{
@@ -5649,7 +5647,6 @@ body{position:fixed; inset:0}
     inset:164px 0 0;
     height:calc(100% - 164px);
   }
-  .conversation-page .conv-top,
   .impact-page .impact-hero{
     grid-template-columns:1fr;
   }
@@ -5720,7 +5717,7 @@ body{position:fixed; inset:0}
 }
 
 .risks-page .decision-head{
-  grid-template-columns:minmax(84px, auto) minmax(0, 1fr) auto 32px;
+  grid-template-columns:minmax(0, 1fr) auto 32px;
 }
 
 .risks-page .decision-core{
@@ -5739,8 +5736,25 @@ body{position:fixed; inset:0}
   justify-content:flex-start;
 }
 
+/* This app's rails (the client book on the left, the priority rail on the right) eat roughly
+   590px of any viewport before .tab-page ever sees it, so an entirely ordinary 13" laptop
+   (1280–1440px wide) leaves this page only ~650–850px to work with — well under what a
+   3-column layout needs (this rule's own minmax floors alone sum past 780px), but comfortably
+   above any of the old @media (max-width:1100–1280px) collapse rules that used to guard this,
+   since those react to the whole *window*, not the space actually available here. Three
+   generations of that viewport-based guessing (each tuning slightly different numbers, none of
+   which ever actually fired in the size range that mattered) previously lived at this selector;
+   replaced by the @container rule below, which reacts to the real available width regardless of
+   viewport size or rail widths — this was the sentiment panel getting squeezed almost out of
+   view on real laptops. */
 .conversation-page .conv-top{
   grid-template-columns:minmax(360px, 1.8fr) minmax(180px, .72fr) minmax(220px, .95fr);
+  align-items:stretch;
+}
+@container (max-width:960px){
+  .conversation-page .conv-top{
+    grid-template-columns:1fr;
+  }
 }
 
 .conversation-page .tl-node{
@@ -5844,9 +5858,6 @@ body{position:fixed; inset:0}
 }
 
 @media (max-width:1280px){
-  .conversation-page .conv-top{
-    grid-template-columns:minmax(0, 1.55fr) minmax(180px, .75fr) minmax(210px, .9fr);
-  }
   .impact-page .impact-metrics{
     grid-template-columns:repeat(2, minmax(0, 1fr))!important;
   }
@@ -5871,7 +5882,6 @@ body{position:fixed; inset:0}
   .impact-page .impact-hero{
     grid-template-columns:1fr;
   }
-  .conversation-page .conv-top,
   .conversation-page .concern-grid{
     grid-template-columns:1fr;
   }
