@@ -4576,10 +4576,11 @@ body{position:fixed; inset:0}
   width:240px;
   max-height:none;
   overflow:visible;
-  /* The card is sticky and parks over the right-hand third of the map — which on this projection
-     is Japan, Korea, Hong Kong and Singapore. If it ate the pointer it would make the markers it
-     covers unhoverable, so the card itself is transparent to the cursor and only its controls
-     take clicks. Nothing here needs hover-to-keep any more: it no longer hides on mouse-out. */
+  /* The card parks over the right-hand third of the map — which on this projection is Japan,
+     Korea, Hong Kong and Singapore. If it ate the pointer it would make the markers it covers
+     unhoverable, and worse, holding the cursor over it would keep it open forever. Transparent
+     to the cursor: moving onto it reaches the map underneath, which closes it like any other
+     non-country surface. */
   pointer-events:none;
 }
 
@@ -4594,35 +4595,10 @@ body{position:fixed; inset:0}
 
 .gt-map-title{
   display:grid;
-  grid-template-columns:auto minmax(0, 1fr) auto auto;
+  grid-template-columns:auto minmax(0, 1fr) auto;
   gap:8px;
   align-items:center;
 }
-
-/* The card is sticky now, so it needs a way out that isn't "hover something else". */
-.gt-map-close{
-  width:20px; height:20px;
-  display:grid; place-items:center;
-  margin:-2px -2px -2px 0;
-  padding:0;
-  border:0; border-radius:50%;
-  background:transparent;
-  color:#93a0b5;
-  font-size:15px; line-height:1;
-  cursor:pointer;
-  opacity:0; /* revealed on hover/focus — a permanent × on twenty glances is visual noise */
-  transition:opacity .16s ease, background .16s ease, color .16s ease;
-}
-
-/* Always present in map mode — the card can't detect hover on itself there (see pointer-events
-   above), and a dismiss control you can't find is not a dismiss control. */
-.globe-wrap.client-map-mode .gt-map-close{ opacity:.45 }
-
-.gt-panel:hover .gt-map-close,
-.gt-map-close:hover,
-.gt-map-close:focus-visible{ opacity:1 }
-
-.gt-map-close:hover{ background:rgba(17,34,64,.07); color:#25344f }
 
 
 .gt-map-title b{

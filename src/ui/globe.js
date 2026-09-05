@@ -448,15 +448,18 @@ function wireClientMap(host) {
     svg.setAttribute("viewBox", `${mapViewBox.x} ${mapViewBox.y} ${mapViewBox.w} ${mapViewBox.h}`);
   });
   svg.addEventListener("pointerup", () => { setTimeout(() => { mapDrag = null; }, 0); });
-  // Deliberately NO pointerleave -> scheduleHide here, unlike the 3D globe. On a flat map the
-  // card is the thing you read, and reading it means moving the cursor off the country that
-  // opened it. Auto-hiding on exit made the RM re-hover a 12px marker every time they glanced
-  // away. It stays until it is replaced by another country, dismissed, or the exposure it
-  // describes stops existing — see hoverMapCountry / the Escape and ocean-click handlers below.
+  svg.addEventListener("pointerleave", scheduleHide);
+  // The card tracks the cursor's hover state exactly: any move onto something that isn't an
+  // exposed country — open water, an unexposed neighbour, the header strip — closes it. mouseover
+  // is enough (rather than mousemove) because it fires on every element change, and the card
+  // itself is pointer-events:none in map mode, so travelling across it doesn't hold it open.
+  // scheduleHide's 260ms grace is what stops the card strobing while crossing the thin gaps
+  // between two adjacent markers in the European cluster.
   svg.addEventListener("mouseover", ev => {
     const node = ev.target.closest("[data-iso]");
     const iso = node?.dataset.iso;
     if (iso && exposure()[iso] && S.signals[iso]) showMapPanel(iso, node);
+    else scheduleHide();
   });
   svg.addEventListener("click", ev => {
     const node = ev.target.closest("[data-iso]");
@@ -605,8 +608,7 @@ function mapPanelHtml(iso) {
   const v = L.val(s);
   const label = v > 0 ? "Elevated" : v < 0 ? "Improving" : "Stable";
   return `<div class="gt-map-tip">
-    <div class="gt-map-title">${flagMark(iso, s.name)}<b>${esc(s.name)}</b><em>${label}</em>
-      <button class="gt-map-close" data-close-panel type="button" aria-label="Dismiss ${esc(s.name)} card">×</button></div>
+    <div class="gt-map-title">${flagMark(iso, s.name)}<b>${esc(s.name)}</b><em>${label}</em></div>
     <div class="gt-map-row"><span>Exposure</span><b>${e.weightPct.toFixed(1)}%</b></div>
     <div class="gt-map-row"><span>${esc(L.label.split(",")[0])}</span><b style="color:${L.col(v)}">${L.fmt(v)}</b></div>
     <div class="gt-map-row"><span>Holdings</span><b>${e.instrumentIds.length}</b></div>
