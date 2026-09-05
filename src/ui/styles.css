@@ -4995,7 +4995,14 @@ body{position:fixed; inset:0}
   cursor:pointer;
 }
 
-.map-country:hover,
+/* Countries outside the portfolio are context, not targets: readable, but no
+ * hover affordance and no click emphasis. */
+.map-country.is-base{
+  stroke:rgba(255,255,255,.55);
+  cursor:default;
+}
+
+.map-country:not(.is-base):hover,
 .map-country.is-selected{
   opacity:.95;
   filter:drop-shadow(0 0 14px rgba(88,148,220,.30));
