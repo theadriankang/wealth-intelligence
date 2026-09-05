@@ -42,7 +42,13 @@ let globe = null;
 let idleTimer = null;
 const DEFAULT_VIEW = { lat:14, lng:104, altitude:2.15 };
 const FOCUS_IDLE_MS = 25000;
-const MAP = { w:1000, h:520 };
+/* Equirectangular window. The poles are dropped so the drawn world fills a wide
+ * panel instead of floating in two bands of empty ocean; h is derived from the
+ * window so the projection stays undistorted. */
+const MAP_LAT_TOP = 84, MAP_LAT_BOT = -58;
+const MAP = { w:1000, h:Math.round(1000 * (MAP_LAT_TOP - MAP_LAT_BOT) / 360) };
+/* Polar features have no exposure and only survive the crop as smeared bands. */
+const MAP_SKIP = new Set(["Antarctica", "Fr. S. Antarctic Lands"]);
 let selectCountry = null;
 let mapViewBox = { x:0, y:0, w:MAP.w, h:MAP.h };
 let mapDrag = null;
@@ -237,14 +243,23 @@ function ensureMapHost() {
 }
 
 function project(lng, lat) {
-  return [((lng + 180) / 360) * MAP.w, ((88 - Math.max(-86, Math.min(86, lat))) / 176) * MAP.h];
+  const span = MAP_LAT_TOP - MAP_LAT_BOT;
+  const clamped = Math.max(MAP_LAT_BOT, Math.min(MAP_LAT_TOP, lat));
+  return [((lng + 180) / 360) * MAP.w, ((MAP_LAT_TOP - clamped) / span) * MAP.h];
 }
 
+/* Rings that straddle the antimeridian (Russia, Fiji) would otherwise be drawn
+ * as a band sweeping the full width of the map. Unwrap them into one continuous
+ * ring, then draw a second copy shifted a full turn west so the wrapped tail
+ * still appears on the other edge. */
 function ringPath(ring) {
-  return ring.map(([lng, lat], i) => {
-    const [x, y] = project(lng, lat);
+  const wraps = ring.some(([lng]) => lng > 100) && ring.some(([lng]) => lng < -100);
+  const draw = shift => ring.map(([lng, lat], i) => {
+    const unwrapped = wraps && lng < 0 ? lng + 360 : lng;
+    const [x, y] = project(unwrapped + shift, lat);
     return `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`;
   }).join(" ") + "Z";
+  return wraps ? `${draw(0)} ${draw(-360)}` : draw(0);
 }
 
 function featurePath(f) {
@@ -252,8 +267,13 @@ function featurePath(f) {
   return polys.flatMap(poly => poly.map(ringPath)).join(" ");
 }
 
+/* The base map has to stay legible against a near-white panel without competing
+ * with the portfolio countries, so it is a desaturated slate rather than a tint
+ * of the background. */
+const MAP_BASE_FILL = "#93a9c4";
+
 function mapFill(lens, signal, meta) {
-  if (!signal || !meta) return "rgba(210,226,242,.58)";
+  if (!signal || !meta) return MAP_BASE_FILL;
   const value = lens.val(signal);
   if (value > 0) return "rgba(239,112,118,.58)";
   if (value < 0) return "rgba(56,138,221,.54)";
@@ -316,12 +336,13 @@ function renderClientMap() {
 
   const ex = exposure(), L = LENSES()[S.lens];
   const sig = iso => S.signals[iso];
-  const paths = COUNTRIES.features.map(f => {
+  const paths = COUNTRIES.features.filter(f => !MAP_SKIP.has(f.properties?.name)).map(f => {
     const iso = a3(f), e = ex[iso], s = sig(iso);
     const selected = iso && S.selIso === iso;
+    const held = Boolean(e && s);
     const fill = mapFill(L, s, e);
-    const opacity = e ? Math.min(.72, .34 + ((e.weightPct || 0) / 100)) : .52;
-    return `<path class="map-country${selected ? " is-selected" : ""}" data-iso="${iso || ""}"
+    const opacity = held ? Math.min(.84, .5 + ((e.weightPct || 0) / 70)) : .58;
+    return `<path class="map-country${held ? "" : " is-base"}${selected ? " is-selected" : ""}" data-iso="${iso || ""}"
       d="${featurePath(f)}" fill="${fill}" opacity="${opacity.toFixed(2)}"></path>`;
   }).join("");
 
@@ -351,7 +372,7 @@ function renderClientMap() {
 
   host.innerHTML = `<div class="client-map-head"><span>◎</span><div><h2>Geographic Exposure</h2><p>Where your portfolio is exposed to geopolitical, policy and reputational risk.</p></div></div>
   ${mapSummary(ex)}
-  <svg class="client-map-svg" viewBox="${mapViewBox.x} ${mapViewBox.y} ${mapViewBox.w} ${mapViewBox.h}" role="img" aria-label="Client exposure map">
+  <svg class="client-map-svg" viewBox="${mapViewBox.x} ${mapViewBox.y} ${mapViewBox.w} ${mapViewBox.h}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Client exposure map">
     <defs>
       <radialGradient id="mapGlow" cx="50%" cy="50%" r="70%"><stop offset="0%" stop-color="#fafdff"/><stop offset="68%" stop-color="#eaf5ff"/><stop offset="100%" stop-color="#dceaff"/></radialGradient>
     </defs>
@@ -532,12 +553,11 @@ function panelHtml(iso) {
   const e = ex[iso], s = S.signals[iso];
   if (!e || !s) return "";
 
-  const ws = Object.values(ex).map(x => x.weightPct);
-  const maxw = ws.length ? Math.max(...ws) : 1;
   const d = s.riskDelta;
   const tag = d > 0 ? ["worsening", "up"] : d < 0 ? ["improving", "dn"] : ["flat", "fl"];
-  const share = Math.max(4, Math.min(100, (e.weightPct / maxw) * 100));
   const clients = clientsExposedIn(iso);
+  const bookSize = (S.portfolios || []).length || clients.length;
+  const share = Math.max(4, Math.min(100, bookSize ? (clients.length / bookSize) * 100 : 0));
 
   const bubbles = clients.slice(0, 6).map((c, i) => `
     <button class="gt-bub" data-open-client="${esc(c.id)}" style="--i:${i}"
@@ -565,8 +585,8 @@ function panelHtml(iso) {
       <span class="gt-tag gt-${tag[1]}">${tag[0]}</span></div>
 
     <div class="gt-hero">
-      <span class="gt-big">${e.weightPct.toFixed(1)}<i>%</i></span>
-      <span class="gt-cap">capital at risk</span>
+      <span class="gt-big">${clients.length}</span>
+      <span class="gt-cap">client${clients.length === 1 ? "" : "s"} with positions here</span>
     </div>
     <div class="gt-bar"><i style="width:${share.toFixed(0)}%; background:${L.col(L.val(s))}"></i></div>
 
@@ -577,7 +597,7 @@ function panelHtml(iso) {
     </div>
 
     ${clients.length ? `<div class="gt-clients">
-      <div class="gt-lb">${clients.length} client${clients.length > 1 ? "s" : ""} exposed
+      <div class="gt-lb">Exposed clients
         <em>hover to open</em></div>
       <div class="gt-bubs">${bubbles}${clients.length > 6
         ? `<span class="gt-more">+${clients.length - 6}</span>` : ""}</div>
