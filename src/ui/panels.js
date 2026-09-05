@@ -159,6 +159,22 @@ function reviewDateLabel(date) {
   return new Date(`${date}T00:00:00`).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" });
 }
 
+/** The single most urgent AI finding for this client, as a one-liner — the top risk if the model
+ * flagged one, else the top recommended action, else a plain "nothing flagged" line. Same
+ * loading/unavailable states as everywhere else the AI narration shows up: never a guess dressed
+ * up as an answer. */
+function urgentOneLiner(p) {
+  const state = aiState(p.id);
+  if (state === "loading") return `<span class="prose-shimmer">Analysing…</span>`;
+  if (state !== "ai") return `<span style="color:var(--ink-4)">Analysis unavailable</span>`;
+  const ev = S.evaluation?.clients?.[p.id];
+  const risk = (ev?.risks || [])[0];
+  if (risk) return `<strong>Risk</strong> ${risk.text}`;
+  const action = (ev?.actions || [])[0];
+  if (action) return `<strong>${action.kind}</strong> ${action.title}`;
+  return `<span style="color:var(--ink-4)">Nothing urgent flagged</span>`;
+}
+
 function urgentReviewCard({ p, m }, index, total) {
   const band = m.band;
   const badge = band === "critical" ? "Critical attention" : band === "high" ? "High attention"
@@ -176,6 +192,7 @@ function urgentReviewCard({ p, m }, index, total) {
     <button class="risk-callout ${band}" data-cl="${p.id}">
       <b>${scoreLabel(m)}</b><span><strong>${aiInsight(m)}</strong>${m.reason}</span><em>›</em>
     </button>
+    <p class="urgent-one-liner">${urgentOneLiner(p)}</p>
     <div class="next-review"><span>▣</span><div><small>Next Review</small><b>${reviewDateLabel(p.reviewDate)}</b></div></div>
     <button class="open-review" data-open-client="${p.id}" type="button">Open client review <span>→</span></button>
   </article>`;

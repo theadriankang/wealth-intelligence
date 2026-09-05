@@ -258,13 +258,24 @@ function navigateToClient(id) {
   renderAll();
 }
 
-/** The whole deterministic evaluation, recomputed from current signals/policy scan. Pure — no I/O, no LLM. */
+/** The whole deterministic evaluation, recomputed from current signals/policy scan. Pure — no
+ * I/O, no LLM. Called on every poll tick and policy scan, so it mints a brand-new client object
+ * per portfolio each time — any already-computed AI narration is reapplied onto those fresh
+ * objects here so a live signal tick doesn't blank an already-scored client back to "loading".
+ * This never asks the model again: maybeNarratePortfolio computes a client's AI score once and
+ * S.narratedHash holds it for the rest of the session (until switchSnapshot deliberately clears
+ * it) — a signal drifting, a poll tick, or opening/reopening a client never changes the number an
+ * RM is looking at. */
 function refreshEvaluation() {
   S.evaluation = runEvaluation({
     portfolios: S.portfolios, instruments: S.instruments,
     signals: S.signals, prevSignals: S.prevSignals,
     market: marketData, policyScan: S.policyScan
   });
+  for (const [id, cached] of Object.entries(S.narratedHash)) {
+    const ev = S.evaluation.clients[id];
+    if (ev) copyNarratedFields(ev, cached);
+  }
 }
 
 function rmNotesFor(p) { return (p.relationship?.concerns || []); }
@@ -329,48 +340,38 @@ function copyNarratedFields(target, src) {
 
 /**
  * Narration is the one LLM call per portfolio — every portfolio in the book gets scored once at
- * boot (narrateAllPortfolios), and any portfolio's facts moving afterward (positions, signals,
- * the household toggle on whichever one is open, or the policy scan) re-asks just that one. It
- * carries health, the risk-weighted concentration figure, a prose overview, risk findings,
- * opportunities, recommended actions, relationship notes, compliance checks, and the impact
- * narrative — nothing here ever falls back to showing a deterministic number: aiState()
- * (store.js) reports "loading" until this resolves, then "ai" on success or "unavailable" on
- * failure, and every render site switches on that instead of reading a number that might be a
- * guess. The deterministic engine still runs (it grounds the model's prompt and is what
- * `grounding`/`clientEval` hand to it) — it's just never displayed as if it were a live read.
- * Each evaluation mints fresh client objects with these fields absent, so the answer is cached
- * in `S.narratedHash` (portfolioId → { hash, health, healthBand, concentration, scoreSource,
- * overview, risks, opportunities, actions, relationship, complianceChecks, impactNarrative })
- * and copied back onto the live object; an unchanged hash never reaches the model. `inflight`
- * makes that guarantee hold for calls that overlap in time, not just in sequence.
+ * boot (narrateAllPortfolios) and that's it: opening a client, switching tabs, toggling
+ * household, or the live signal feed ticking never re-asks the model. The score an RM sees is
+ * the score it stays at for the session, not something that can visibly shift under them while
+ * they're looking at it. (switchSnapshot is the one deliberate exception — loading a different
+ * as-of date is a genuine change of "now", so it clears S.narratedHash and re-runs
+ * narrateAllPortfolios from scratch.) It carries health, the risk-weighted concentration figure,
+ * a prose overview, risk findings, opportunities, recommended actions, relationship notes,
+ * compliance checks, and the impact narrative — nothing here ever falls back to showing a
+ * deterministic number: aiState() (store.js) reports "loading" until this resolves, then "ai" on
+ * success or "unavailable" on failure, and every render site switches on that instead of reading
+ * a number that might be a guess. The deterministic engine still runs (it grounds the model's
+ * prompt and is what `grounding`/`clientEval` hand to it) — it's just never displayed as if it
+ * were a live read. The answer is cached in `S.narratedHash` (portfolioId → { hash, health,
+ * healthBand, concentration, scoreSource, overview, risks, opportunities, actions, relationship,
+ * complianceChecks, impactNarrative }) and copied back onto the live object; a cache hit never
+ * reaches the model. `inflight` makes that guarantee hold for calls that overlap in time, not
+ * just in sequence.
  */
-const inflight = new Set(); // `${portfolioId}|${hash}` — one narration per client per hash
+const inflight = new Set(); // `${portfolioId}|${hash}` — guards against asking twice concurrently
 
 async function maybeNarratePortfolio(p) {
   const id = p?.id;
   const ev = S.evaluation?.clients?.[id];
-  if (!ev) return;
+  // Already scored — the AI score is computed once and frozen for the session (see
+  // refreshEvaluation for how it survives later evaluation refreshes). Never re-ask the model
+  // just because a client got opened again or the facts moved under it.
+  if (!ev || S.narratedHash[id]) return;
   const grounding = withPortfolioContext(p, buildGrounding);
   const hash = factsHash(id, grounding);
 
-  const cached = S.narratedHash[id];
-  if (cached?.hash === hash) {
-    if (ev.overview !== cached.overview) {
-      copyNarratedFields(ev, cached);
-      // Health/overview live in the client header (paintHead), concentration in the globe
-      // overlay (paintEvidence), risks/opportunities/actions in the Risks & Actions tab,
-      // relationship in the Conversation tab, and complianceChecks/impactNarrative in the
-      // Compliance/Impact tabs — but the book list and priority rail show every portfolio's
-      // score too, not just the open one, so this repaints regardless of which portfolio just
-      // resolved. renderAll() is cheap and this branch is rare (only fires once per resolved
-      // narration, on a cache hit for a stale object).
-      renderAll();
-    }
-    return;
-  }
-
   const key = `${id}|${hash}`;
-  if (inflight.has(key)) return; // same client, same facts, already asking
+  if (inflight.has(key)) return; // same client, already asking
   inflight.add(key);
   let narrated;
   try {
@@ -379,21 +380,14 @@ async function maybeNarratePortfolio(p) {
     inflight.delete(key);
   }
 
-  // A poll (or a household toggle) may have moved the facts mid-await: an answer for
-  // superseded facts is discarded — whatever triggered the change makes its own call.
   const live = S.evaluation?.clients?.[id];
-  if (!live || factsHash(id, withPortfolioContext(p, buildGrounding)) !== hash) return;
+  if (!live || S.narratedHash[id]) return; // scored by someone else while this call was in flight
   S.narratedHash[id] = { hash, ...narrated };
   copyNarratedFields(live, narrated);
   // Every render of the book list / priority rail reads every portfolio's aiState(), so a
   // freshly-scored client shows up there immediately — not just when it happens to be the one
   // open. This is what makes narrateAllPortfolios() actually feel automatic at boot.
   renderAll();
-}
-
-function maybeNarrateOpenClient() {
-  if (!S.portfolio) return;
-  return maybeNarratePortfolio(S.portfolio);
 }
 
 /** Fired once at boot: scores every portfolio in the book so an RM opening any client sees an
@@ -474,7 +468,6 @@ export function renderAll() {
   paintCompliance();
   paintEconomics();
   applyLiquidGlass();
-  maybeNarrateOpenClient(); // hash-gated: only asks the model again if the open client's facts moved
 }
 
 function isoWeightsForPortfolio(p, goalId = null) {
