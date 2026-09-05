@@ -402,6 +402,17 @@ function renderClientMap() {
   <div class="client-map-legend"><span><i class="risk"></i>Capital at risk</span><span><i class="good"></i>Improving</span><span><i class="bad"></i>Deteriorating</span><span><i class="hot"></i>Concentration hotspot</span></div>
   <div class="client-map-foot">Global view. Real-time intelligence.</div>`;
   wireClientMap(host);
+  // The card now outlives the hover that opened it, which means it also has to outlive the
+  // re-render that a lens switch, a signal poll or a narration landing triggers — otherwise a
+  // sticky card would quietly go stale, showing last minute's numbers under this minute's lens.
+  // Re-paint it in place, re-anchor it, and drop it only if the exposure itself is gone.
+  if (openIso && panel && !panel.hidden) {
+    if (ex[openIso] && sig(openIso)) {
+      panel.innerHTML = mapPanelHtml(openIso);
+      markMapActive(host, openIso);
+      positionMapPanel(mapAnchor(host, openIso, null));
+    } else hidePanel();
+  }
 }
 
 function wireClientMap(host) {
@@ -423,7 +434,11 @@ function wireClientMap(host) {
     svg.setAttribute("viewBox", `${mapViewBox.x} ${mapViewBox.y} ${mapViewBox.w} ${mapViewBox.h}`);
   });
   svg.addEventListener("pointerup", () => { setTimeout(() => { mapDrag = null; }, 0); });
-  svg.addEventListener("pointerleave", scheduleHide);
+  // Deliberately NO pointerleave -> scheduleHide here, unlike the 3D globe. On a flat map the
+  // card is the thing you read, and reading it means moving the cursor off the country that
+  // opened it. Auto-hiding on exit made the RM re-hover a 12px marker every time they glanced
+  // away. It stays until it is replaced by another country, dismissed, or the exposure it
+  // describes stops existing — see hoverMapCountry / the Escape and ocean-click handlers below.
   svg.addEventListener("mouseover", ev => {
     const node = ev.target.closest("[data-iso]");
     const iso = node?.dataset.iso;
@@ -432,9 +447,28 @@ function wireClientMap(host) {
   svg.addEventListener("click", ev => {
     const node = ev.target.closest("[data-iso]");
     const iso = node?.dataset.iso;
-    if (!iso || mapDrag?.moved) return;
-    selectCountry?.(exposure()[iso] ? iso : null);
+    // Clicking open water or an unexposed country is the "I'm done with this card" gesture —
+    // the same click that already clears the country selection.
+    if (!iso || !exposure()[iso]) { if (!mapDrag?.moved) { selectCountry?.(null); hidePanel(); } return; }
+    if (mapDrag?.moved) return;
+    selectCountry?.(iso);
   });
+}
+
+/** Marks the country path and its marker as the one the open card is describing, so the card and
+ * the map stay visually tied together once the cursor has moved away from either. */
+function markMapActive(host, iso) {
+  if (!host) return;
+  host.querySelectorAll(".is-active").forEach(n => n.classList.remove("is-active"));
+  if (!iso) return;
+  host.querySelectorAll(`[data-iso="${CSS.escape(iso)}"]`).forEach(n => n.classList.add("is-active"));
+}
+
+/** The marker is what the eye reads as "the pin", so anchor the card beside it rather than beside
+ * the country polygon's bounding box — which for a country like the US or Russia puts the card
+ * a continent away from the thing it describes. */
+function mapAnchor(host, iso, fallback) {
+  return host?.querySelector(`.map-marker[data-iso="${CSS.escape(iso)}"]`) || fallback;
 }
 
 
@@ -460,12 +494,14 @@ function mountPanel(el) {
   panel.addEventListener("pointerenter", () => clearTimeout(hideTimer));
   panel.addEventListener("pointerleave", scheduleHide);
   panel.addEventListener("click", ev => {
+    if (ev.target.closest("[data-close-panel]")) { ev.stopPropagation(); hidePanel(); return; }
     const b = ev.target.closest("[data-open-client]");
     if (!b) return;
     ev.stopPropagation();
     hidePanel();
     openClient?.(b.dataset.openClient);
   });
+  addEventListener("keydown", ev => { if (ev.key === "Escape" && !panel.hidden) hidePanel(); });
 }
 
 function scheduleHide() {
@@ -477,7 +513,8 @@ function hidePanel() {
   clearTimeout(hideTimer);
   cancelAnimationFrame(rafId);
   openIso = null;
-  if (panel) panel.hidden = true;
+  markMapActive(document.querySelector(".client-map-host"), null);
+  if (panel) { panel.hidden = true; panel.classList.remove("is-gliding", "is-swapping"); }
   if (globe && wasRotating) { globe.controls().autoRotate = true; wasRotating = false; }
 }
 
@@ -528,12 +565,23 @@ function showPanel(iso, f) {
 function showMapPanel(iso, node) {
   clearTimeout(hideTimer);
   cancelAnimationFrame(rafId);
+  const host = node?.closest(".client-map-host") || document.querySelector(".client-map-host");
+  const wasOpen = !panel.hidden;
   if (iso !== openIso) {
     panel.innerHTML = mapPanelHtml(iso);
     openIso = iso;
+    // Restart the content-swap keyframe. Without the reflow the class is added and removed inside
+    // one frame and the browser never plays it, so moving between two countries would snap.
+    panel.classList.remove("is-swapping");
+    void panel.offsetWidth;
+    panel.classList.add("is-swapping");
   }
+  // Only glide between positions once it is already on screen — the first appearance should fade
+  // in where it belongs, not slide in from wherever the previous card happened to sit.
+  panel.classList.toggle("is-gliding", wasOpen);
   panel.hidden = false;
-  positionMapPanel(node);
+  markMapActive(host, iso);
+  positionMapPanel(mapAnchor(host, iso, node));
 }
 
 function mapPanelHtml(iso) {
@@ -543,7 +591,8 @@ function mapPanelHtml(iso) {
   const v = L.val(s);
   const label = v > 0 ? "Elevated" : v < 0 ? "Improving" : "Stable";
   return `<div class="gt-map-tip">
-    <div class="gt-map-title">${flagMark(iso, s.name)}<b>${esc(s.name)}</b><em>${label}</em></div>
+    <div class="gt-map-title">${flagMark(iso, s.name)}<b>${esc(s.name)}</b><em>${label}</em>
+      <button class="gt-map-close" data-close-panel type="button" aria-label="Dismiss ${esc(s.name)} card">×</button></div>
     <div class="gt-map-row"><span>Exposure</span><b>${e.weightPct.toFixed(1)}%</b></div>
     <div class="gt-map-row"><span>${esc(L.label.split(",")[0])}</span><b style="color:${L.col(v)}">${L.fmt(v)}</b></div>
     <div class="gt-map-row"><span>Holdings</span><b>${e.instrumentIds.length}</b></div>

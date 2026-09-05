@@ -4048,6 +4048,21 @@ body{position:fixed; inset:0}
 @keyframes gt-in{from{opacity:0; transform:translateY(3px) scale(.985)}}
 @media (prefers-reduced-motion:reduce){.gt-panel{animation:none}}
 
+/* Moving between two countries reads as one card travelling, not two cards blinking. Only
+   applied once the card is already on screen (see showMapPanel) so the first open still fades
+   in where it belongs instead of flying across the map. */
+.gt-panel.is-gliding{
+  transition:left .26s cubic-bezier(.22,.61,.36,1), top .26s cubic-bezier(.22,.61,.36,1);
+}
+
+.gt-panel.is-swapping .gt-map-tip{ animation:gt-swap .22s ease-out }
+@keyframes gt-swap{from{opacity:.25; transform:translateY(-2px)}}
+
+@media (prefers-reduced-motion:reduce){
+  .gt-panel.is-gliding{transition:none}
+  .gt-panel.is-swapping .gt-map-tip{animation:none}
+}
+
 .gt-clients{padding:9px 13px 10px; border-top:1px solid rgba(25,33,45,.07)}
 .gt-clients .gt-lb{display:flex; align-items:baseline; justify-content:space-between; gap:8px}
 .gt-clients .gt-lb em{font-style:normal; text-transform:none; letter-spacing:0;
@@ -4403,6 +4418,29 @@ body{position:fixed; inset:0}
   stroke-width:3;
 }
 
+/* The country the open card describes. Because the card outlives the hover, this is the only
+   thing telling the RM which of twenty markers they are still reading about. */
+.map-country.is-active{
+  stroke:var(--ink-1, #1f2b45);
+  stroke-width:1.1;
+  vector-effect:non-scaling-stroke;
+  opacity:1 !important;
+}
+
+.map-marker.is-active .marker-disc{
+  fill:#fff;
+  stroke-width:3.2;
+}
+
+.map-marker.is-active .marker-ripple{
+  stroke-width:3.4;
+}
+
+.map-marker.is-active line{
+  opacity:1;
+  stroke-width:5;
+}
+
 @keyframes marker-ripple{
   0%   { transform:scale(.72); opacity:0 }
   12%  { opacity:.55 }
@@ -4540,10 +4578,31 @@ body{position:fixed; inset:0}
 
 .gt-map-title{
   display:grid;
-  grid-template-columns:auto minmax(0, 1fr) auto;
+  grid-template-columns:auto minmax(0, 1fr) auto auto;
   gap:8px;
   align-items:center;
 }
+
+/* The card is sticky now, so it needs a way out that isn't "hover something else". */
+.gt-map-close{
+  width:20px; height:20px;
+  display:grid; place-items:center;
+  margin:-2px -2px -2px 0;
+  padding:0;
+  border:0; border-radius:50%;
+  background:transparent;
+  color:#93a0b5;
+  font-size:15px; line-height:1;
+  cursor:pointer;
+  opacity:0; /* revealed on hover/focus — a permanent × on twenty glances is visual noise */
+  transition:opacity .16s ease, background .16s ease, color .16s ease;
+}
+
+.gt-panel:hover .gt-map-close,
+.gt-map-close:focus-visible{ opacity:1 }
+
+.gt-map-close:hover{ background:rgba(17,34,64,.07); color:#25344f }
+
 
 .gt-map-title b{
   min-width:0;
