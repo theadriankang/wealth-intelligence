@@ -9,9 +9,25 @@ import express from "express";
 import { fetchWorldMonitor } from "./worldmonitor.js";
 import { callLLM } from "./llm.js";
 import { runPolicySentinelScan } from "./policy-sentinel.js";
+import { checkRateLimit, clientIp } from "./rate-limit.js";
 
 const app = express();
 app.use(express.json({ limit: "2mb" }));
+
+/** Neither /api/llm nor /api/policy-scan has any user-auth in front of it — this app has no
+ * login system at all, so a real person and a script hitting the endpoint directly are
+ * indistinguishable. This caps cost/abuse regardless of who's asking; see rate-limit.js for why
+ * it's per-IP rather than any form of shared secret. */
+function rateLimited(limit) {
+  return (req, res, next) => {
+    const { allowed, retryAfterSec } = checkRateLimit(clientIp(req), { limit });
+    if (!allowed) {
+      res.setHeader("Retry-After", String(retryAfterSec));
+      return res.status(429).json({ error: "Too many requests, try again shortly." });
+    }
+    next();
+  };
+}
 
 const cache = new Map();
 const TTL = 60_000;
@@ -39,7 +55,7 @@ app.get("/api/signals", async (req, res) => {
   }
 });
 
-app.post("/api/llm", async (req, res) => {
+app.post("/api/llm", rateLimited(40), async (req, res) => {
   try {
     res.json({ result: await callLLM(req.body) });
   } catch (err) {
@@ -48,7 +64,7 @@ app.post("/api/llm", async (req, res) => {
   }
 });
 
-app.post("/api/policy-scan", async (req, res) => {
+app.post("/api/policy-scan", rateLimited(10), async (req, res) => {
   try {
     res.json(await runPolicySentinelScan(req.body || {}));
   } catch (err) {
