@@ -353,7 +353,7 @@ function copyNarratedFields(target, src) {
   target.concentration = src.concentration; target.scoreSource = src.scoreSource;
   target.risks = src.risks; target.opportunities = src.opportunities; target.actions = src.actions;
   target.relationship = src.relationship;
-  target.complianceChecks = src.complianceChecks; target.impactNarrative = src.impactNarrative;
+  target.complianceChecks = src.complianceChecks;
   target.physicalConcentration = src.physicalConcentration;
 }
 
@@ -365,16 +365,16 @@ function copyNarratedFields(target, src) {
  * they're looking at it. (switchSnapshot is the one deliberate exception — loading a different
  * as-of date is a genuine change of "now", so it clears S.narratedHash and re-runs
  * narrateAllPortfolios from scratch.) It carries health, the risk-weighted concentration figure,
- * a prose overview, risk findings, opportunities, recommended actions, relationship notes,
- * compliance checks, and the impact narrative — nothing here ever falls back to showing a
- * deterministic number: aiState() (store.js) reports "loading" until this resolves, then "ai" on
- * success or "unavailable" on failure, and every render site switches on that instead of reading
- * a number that might be a guess. The deterministic engine still runs (it grounds the model's
- * prompt and is what `grounding`/`clientEval` hand to it) — it's just never displayed as if it
- * were a live read. The answer is cached in `S.narratedHash` (portfolioId → { hash, health,
- * healthBand, concentration, scoreSource, overview, risks, opportunities, actions, relationship,
- * complianceChecks, impactNarrative }) and copied back onto the live object; a cache hit never
- * reaches the model. `inflight` makes that guarantee hold for calls that overlap in time, not
+ * a prose overview, risk findings, opportunities, recommended actions, relationship notes, and
+ * compliance checks — nothing here ever falls back to showing a deterministic number: aiState()
+ * (store.js) reports "loading" until this resolves, then "ai" on success or "unavailable" on
+ * failure, and every render site switches on that instead of reading a number that might be a
+ * guess. The deterministic engine still runs (it grounds the model's prompt and is what
+ * `grounding`/`clientEval` hand to it) — it's just never displayed as if it were a live read.
+ * The answer is cached in `S.narratedHash` (portfolioId → { hash, health, healthBand,
+ * concentration, scoreSource, overview, risks, opportunities, actions, relationship,
+ * complianceChecks, physicalConcentration }) and copied back onto the live object; a cache hit
+ * never reaches the model. `inflight` makes that guarantee hold for calls that overlap in time, not
  * just in sequence.
  */
 const inflight = new Set(); // `${portfolioId}|${hash}` — guards against asking twice concurrently

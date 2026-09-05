@@ -6,9 +6,9 @@ const SYSTEM =
   "portfolio. Arrange only the facts given — never invent a position, signal, country, or life " +
   "detail. " +
   "Write every prose field (overview, risks[].text, opportunities[].text, actions[].title/why, " +
-  "relationship's summary/concerns/talkingPoints/objections, complianceChecks[].detail, " +
-  "impactNarrative) like a quick catch-up note a colleague reads before calling the client — " +
-  "not a research report or a compliance memo. Plain, spoken language: 'tied up in' rather than " +
+  "relationship's summary/concerns/talkingPoints/objections, complianceChecks[].detail) like a " +
+  "quick catch-up note a colleague reads before calling the client — not a research report or a " +
+  "compliance memo. Plain, spoken language: 'tied up in' rather than " +
   "'concentrated exposure', 'under pressure' rather than 'deteriorating', 'slipped below X%' " +
   "rather than 'crossed a funding-confidence band'. Keep every specific number, name, and " +
   "country — simplify the words around them, not the substance. " +
@@ -52,10 +52,6 @@ const SYSTEM =
   "`detail` is the plain-language sentence explaining it. status is 'watch' only when the fact " +
   "itself supports concern (e.g. pepStatus is Yes, or a position's weight exceeds a mandate " +
   "band's maxSingle), otherwise 'clear'. " +
-  "For `impactNarrative`, one short prose paragraph (60 words or fewer, not a list) on what this " +
-  "specific client's mandate concretely involves this review — holdings count, mandate " +
-  "complexity, what's flagged — grounded only in this client's own facts, never a book-wide or " +
-  "generic operating-leverage claim. " +
   "For `physicalConcentration`, restate the bank's own look-through chokepoint breakdown given " +
   "in `chokepoints` — this is a verification pass over the bank's own figures, not a fresh " +
   "estimate: every entry's `name` must be one of the names given in `chokepoints`, and its " +
@@ -63,7 +59,7 @@ const SYSTEM =
   "name. Omit a chokepoint from `chokepoints` rather than inventing one; empty array if " +
   "`chokepoints` is empty. " +
   "Nowhere in the response — overview, risks, opportunities, actions, relationship, " +
-  "complianceChecks, or impactNarrative — use the words buy / sell / execute / switch; these are " +
+  "or complianceChecks — use the words buy / sell / execute / switch; these are " +
   "internal findings and recommendations for the RM, never client-facing advice or trade " +
   "instructions. Compute `health` and `concentration` from the numbers given, not qualitatively. " +
   "The facts include `referenceHealth` and `referenceConcentrationPct` — the bank's own " +
@@ -106,9 +102,6 @@ const SCHEMA = {
     "'KYC review', 'Concentration policy'), status: 'clear'|'watch', detail: string (one sentence " +
     "citing the specific fact behind it) } — one per compliance-relevant fact actually present in " +
     "the facts given, no invented checks",
-  impactNarrative: "string — one prose paragraph, 60 words or fewer, on what this specific " +
-    "client's mandate concretely involves this review (holdings count, mandate complexity, " +
-    "what's flagged); never a book-wide or generic claim",
   physicalConcentration: "array of up to 6 objects { name: string (must be one of the names " +
     "given in `chokepoints`), weightPct: number (within " + AI_SCORE_BAND + " points of the " +
     "weightPct given for that name in `chokepoints`) } — a restatement/verification of the " +
@@ -135,11 +128,10 @@ export function templateNarration(clientEval, portfolio, grounding) {
   }));
   const relationship = fallbackRelationship(portfolio.relationship);
   const complianceChecks = fallbackComplianceChecks(portfolio, grounding, clientEval);
-  const impactNarrative = fallbackImpactNarrative(portfolio, clientEval);
   return {
     health: clientEval.health, healthBand: clientEval.healthBand,
     concentration: grounding?.fallbackConcentration, scoreSource: "deterministic",
-    overview, risks, opportunities, actions, relationship, complianceChecks, impactNarrative,
+    overview, risks, opportunities, actions, relationship, complianceChecks,
     physicalConcentration: grounding?.chokepoints ?? []
   };
 }
@@ -172,15 +164,6 @@ function fallbackComplianceChecks(portfolio, grounding, clientEval) {
     detail: concentrationFlagged ? "A larger share than usual is tied up in one place, above what's typical for this mandate."
       : "Holdings are well spread out — nothing unusual for this mandate." });
   return checks;
-}
-
-function fallbackImpactNarrative(portfolio, clientEval) {
-  const n = (portfolio.positions || []).length;
-  const flagged = (clientEval.risks || []).length;
-  return `Reviewing ${portfolio.ref}'s ${portfolio.mandate.toLowerCase()} mandate covers ${n} holding${n === 1 ? "" : "s"}` +
-    (flagged
-      ? `, and ${flagged} ${flagged === 1 ? "is" : "are"} already flagged below — nothing to chase down from scratch.`
-      : ", with nothing flagged for this review.");
 }
 
 function fallbackRelationship(r) {
@@ -246,7 +229,7 @@ const CHECK_STATUSES = ["clear", "watch"];
 
 /** Shape guard for a candidate AI response before it's trusted as
  * health/concentration/overview/risks/opportunities/actions/relationship/complianceChecks/
- * impactNarrative/physicalConcentration.
+ * physicalConcentration.
  * `reference`, when given ({ health, concentrationPct, chokepoints }), is the deterministic
  * engine's own read of the same facts — a response is rejected in full (not partially merged) if
  * its health or concentration.pct drifts more than AI_SCORE_BAND points from it, or if any
@@ -276,7 +259,6 @@ export function validateAiScore(data, countryCodes, reference) {
   if (!Array.isArray(data.complianceChecks) || data.complianceChecks.length > 4) return false;
   if (data.complianceChecks.some(c => !c || !nonEmptyString(c.item) || !CHECK_STATUSES.includes(c.status)
     || !nonEmptyString(c.detail) || HAS_IMPERATIVE.test(c.detail))) return false;
-  if (!nonEmptyString(data.impactNarrative) || HAS_IMPERATIVE.test(data.impactNarrative) || wordCount(data.impactNarrative) > 60) return false;
   if (!Array.isArray(data.physicalConcentration) || data.physicalConcentration.length > 6) return false;
   if (reference?.chokepoints) {
     const byName = new Map(reference.chokepoints.map(c => [c.name, c.weightPct]));
@@ -376,7 +358,7 @@ export async function narrateClient(clientEval, portfolio, rmNotes = [], groundi
       overview: res.data.overview,
       risks: res.data.risks, opportunities: res.data.opportunities, actions: res.data.actions,
       relationship: res.data.relationship,
-      complianceChecks: res.data.complianceChecks, impactNarrative: res.data.impactNarrative,
+      complianceChecks: res.data.complianceChecks,
       physicalConcentration: res.data.physicalConcentration
     };
   }
