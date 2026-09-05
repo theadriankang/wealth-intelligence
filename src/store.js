@@ -15,8 +15,7 @@ export const S = {
   clientSort: "urgency-desc", filtersOpen: false,
   driverFilter: "all", profileFilter: "all", bookingFilter: "all", aumFilter: "all",
   clientDrawerOpen: false, railDrawerOpen: false,
-  aiActionState: {},
-  urgentReviewIndex: 0
+  aiActionState: {}
 };
 
 export const positions = () => {

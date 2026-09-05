@@ -22,8 +22,7 @@ const aiExtras = {
   risks: [{ text: "Concentration is live in Taiwan.", severity: "high", category: "concentration" }],
   opportunities: [{ text: "Policy easing in Vietnam supports the education goal." }],
   actions: [{ kind: "Reduce risk", category: "rebalancing", title: "Trim the concentrated sleeve.", why: "Taiwan exposure sits above the mandate line.", priority: "high" }],
-  complianceChecks: [{ item: "Tax domicile", status: "clear", detail: "On record: Switzerland." }],
-  impactNarrative: "Reviewing PF-0003's advisory mandate covers 2 holdings, with 1 flagged exposure pre-identified."
+  complianceChecks: [{ item: "Tax domicile", status: "clear", detail: "On record: Switzerland." }]
 };
 
 const grounding = {
@@ -88,15 +87,12 @@ test("templateNarration omits the tax-domicile clause when grounding has none", 
   assert.ok(!/tax domicile/i.test(overview));
 });
 
-test("templateNarration produces complianceChecks grounded in pepStatus/taxDomicile and an impactNarrative naming real counts", () => {
-  const { complianceChecks, impactNarrative } = templateNarration(ce, p, grounding);
+test("templateNarration produces complianceChecks grounded in pepStatus/taxDomicile", () => {
+  const { complianceChecks } = templateNarration(ce, p, grounding);
   assert.ok(complianceChecks.some(c => c.item === "PEP status" && c.status === "clear"));
   assert.ok(complianceChecks.some(c => c.item === "Tax domicile" && /Switzerland/.test(c.detail)));
   assert.ok(complianceChecks.some(c => c.item === "Concentration policy" && c.status === "watch"),
     "the fixture's clientEval has a concentration risk finding, so this should read watch");
-  assert.ok(impactNarrative.includes("PF-0003"));
-  assert.ok(impactNarrative.includes("2 holdings"));
-  assert.ok(impactNarrative.split(/\s+/).filter(Boolean).length <= 60);
 });
 
 test("templateNarration's PEP check flags watch when pepStatus is Yes", () => {
@@ -117,7 +113,6 @@ test("narrateClient falls back to the template when the LLM is unavailable", asy
   assert.equal(r.relationship.concerns.length, 1);
   assert.equal(r.relationship.sentiment, "Cautious");
   assert.ok(r.complianceChecks.length > 0);
-  assert.equal(typeof r.impactNarrative, "string");
   assert.deepEqual(r.physicalConcentration, grounding.chokepoints);
   assert.equal(r.actions[0].priority, "high", "urgency 70 on the fixture action clears URGENT_CUTOFF");
 });
@@ -126,7 +121,7 @@ const base = () => ({
   overview: "A balanced mandate built to fund two goals.",
   health: 55, concentration: { pct: 40, countries: ["TWN"] },
   risks: [], opportunities: [], actions: [], relationship: null,
-  complianceChecks: [], impactNarrative: "Reviewing this mandate covers two holdings, with none flagged.",
+  complianceChecks: [],
   physicalConcentration: []
 });
 
@@ -299,16 +294,6 @@ test("validateAiScore rejects more than 4 compliance checks", () => {
 
 test("validateAiScore rejects a compliance check with an invalid status", () => {
   const data = { ...base(), complianceChecks: [{ item: "Tax domicile", status: "flagged", detail: "On record." }] };
-  assert.equal(validateAiScore(data, ["TWN"]), false);
-});
-
-test("validateAiScore rejects an impactNarrative over the 60-word cap", () => {
-  const data = { ...base(), impactNarrative: Array(61).fill("word").join(" ") };
-  assert.equal(validateAiScore(data, ["TWN"]), false);
-});
-
-test("validateAiScore rejects an imperative verb inside impactNarrative", () => {
-  const data = { ...base(), impactNarrative: "Sell the concentrated sleeve before the next review." };
   assert.equal(validateAiScore(data, ["TWN"]), false);
 });
 

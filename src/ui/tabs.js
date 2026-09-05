@@ -1,6 +1,6 @@
-import { S, actionState, economics, aiState } from "../store.js";
+import { S, actionState, aiState, positions } from "../store.js";
 import { P } from "./palette.js";
-import { ECONOMICS_BASELINE } from "../model/scoring.js";
+import { countryExposure } from "../model/lookthrough.js";
 import * as M from "./motion.js";
 
 const UI = {
@@ -75,10 +75,8 @@ function fundingVisual(a) {
   if (shortfallUsd > 0 && Number.isFinite(e.funded)) {
     const funded = Math.max(0, Math.min(100, Number(e.funded)));
     return `<div class="funding-viz">
-      <div class="fv-row"><span>Required</span><b>100%</b></div>
-      <div class="fv-track required"><i style="width:100%"></i></div>
-      <div class="fv-row"><span>Funded</span><b>${funded.toFixed(0)}%</b></div>
-      <div class="fv-track available"><i style="width:${Math.max(3, funded)}%"></i></div>
+      <div class="funded-track"><i style="width:${Math.max(3, funded)}%"></i></div>
+      <b>${funded.toFixed(0)}% funded</b>
       <strong>Shortfall USD ${(shortfallUsd / 1e6).toFixed(2)}m</strong>
     </div>`;
   }
@@ -108,10 +106,8 @@ function visualFor(a) {
   const e = a.evidence || {};
   if (Number.isFinite(e.ltv) && Number.isFinite(e.trigger)) {
     const headroom = e.trigger - e.ltv;
-    const fill = Math.min(100, Math.max(0, e.ltv / e.trigger * 100));
     return `<button class="viz threshold-viz" data-expand-action="${a.id}" type="button">
       <div><b>${e.ltv.toFixed(2)}%</b><span>vs ${e.trigger}% trigger</span></div>
-      <div class="bar"><i style="width:${fill}%"></i><em style="left:100%"></em></div>
       <small>Remaining headroom ${headroom.toFixed(2)}pp</small>
     </button>`;
   }
@@ -203,7 +199,7 @@ export function paintActions() {
       const accepted = acState === "Accepted";
       const open = UI.expandedAction === a.id;
       return `<article class="decision-card sev-${severity(a)} ${open ? "open" : ""}" data-expand-action="${a.id}">
-        <div class="decision-head"><div><h3>${esc(strip(a.title))}</h3><p>${esc(strip(a.target || "Portfolio recommendation"))}</p></div><button class="ghost sm ${accepted ? "solid" : ""}" data-accept="${a._idx}" type="button">${acState}</button><button class="chev" type="button">›</button></div>
+        <div class="decision-head"><div><h3>${esc(strip(a.title))}</h3></div><button class="ghost sm ${accepted ? "solid" : ""}" data-accept="${a._idx}" type="button">${acState}</button><button class="chev" type="button">›</button></div>
         <div class="decision-core">${fundingVisual(a)}${effectTiles(a)}</div>
         ${open ? `<div class="decision-detail"><p>${esc(strip(a.why || ""))}</p><dl><dt>Objective</dt><dd>${esc(a.suitability?.objective || "Aligned with mandate")}</dd><dt>Risk fit</dt><dd>${esc(a.suitability?.riskFit || "RM review required")}</dd></dl></div>` : ""}
         <div class="act-f">
@@ -263,7 +259,7 @@ export function paintConversation() {
     <section class="conv-top">
       <div class="glass-panel"><h2>Relationship Timeline</h2><div class="timeline"><button class="tl-node" data-conv-focus="last" aria-pressed="${UI.convFocus === "last"}"><span>✓</span><b>Last Contact</b><em>${esc(r.lastContact || "Recent call")}</em></button><button class="tl-node" data-conv-focus="today" aria-pressed="${UI.convFocus === "today"}"><span>□</span><b>Today</b><em>${today()}</em></button><button class="tl-node" data-conv-focus="next" aria-pressed="${UI.convFocus === "next"}"><span>◷</span><b>Next Review</b><em>${esc(r.nextReview)}</em></button></div><p class="focus-note">${esc(r.summary)}</p></div>
       <div class="glass-panel lead-panel"><span class="lead-icon">♙</span><p>Relationship Lead</p><h3>${esc(p.rm || "Relationship Manager")}</h3><small>Senior Adviser</small><div class="lead-actions"><button>✉</button><button>☎</button><button>in</button></div></div>
-      <div class="glass-panel sentiment-panel" data-sentiment="${sentiment.toLowerCase()}"><p>Client Sentiment <small>(Recent)</small></p><div class="sentiment-arc"><i></i></div><h3>${esc(sentiment)}</h3><small>${esc(sentimentNote(sentiment))}</small></div>
+      <div class="glass-panel sentiment-panel" data-sentiment="${sentiment.toLowerCase()}"><p>Client Sentiment <small>(Recent)</small></p><h3>${esc(sentiment)}</h3><small>${esc(sentimentNote(sentiment))}</small></div>
     </section>
     <section class="glass-panel"><h2>Standing Concerns</h2><div class="concern-grid">${(r.concerns || []).slice(0,3).map((x, i) => `<button class="concern-card" data-concern="${i}" type="button"><span>${i + 1}</span><div><em>${i === 0 ? "Relationship" : i === 1 ? "Liquidity / Exit" : "Valuation"}</em><b>${esc(strip(x).split(".")[0])}</b><p>${esc(strip(x))}</p></div></button>`).join("")}</div></section>
     <section class="brief-grid">
@@ -332,33 +328,52 @@ export function paintCompliance() {
   M.once("comp", p.id + "|" + state, () => M.enter("#comp .comp-hero, #comp .glass-panel", { y: 10, delay: 50, duration: 360 }));
 }
 
-/** The operating-leverage tab. The numeric tiles/leverage-panel are a book-wide deterministic
- * formula (rmEconomics — legitimate arithmetic, not a claim about any one client, so it stays
- * deterministic — this part is main's design, unchanged). The hero paragraph is AI-generated and
- * client-specific instead of main's generic "Wealth Intelligence drives operating leverage..."
- * copy — what THIS mandate concretely involves this review, grounded only in this client's own
- * facts. Same loading/unavailable states as everywhere else. */
-export function paintEconomics() {
+const SEV_RANK = { Severe: 4, High: 3, Medium: 2, Low: 1 };
+
+/** Every event, from event_log.csv via S.signals[iso].events (see adapters/jb/signals.js), that
+ * touches a country this portfolio actually has look-through exposure to — not book-wide market
+ * commentary, and not goal-scoped (uses positions(), the whole portfolio, regardless of which
+ * goal is selected). A "Global" event reaches every country's list, so the same story can arrive
+ * from several exposed countries at once — deduped by event id, keeping every country it matched
+ * on so the card can cite all of them, ranked by whichever is the client's largest exposure. */
+function portfolioNews(limit = 15) {
+  const ex = countryExposure(positions(), S.instruments);
+  const byId = new Map();
+  for (const iso3 of Object.keys(ex)) {
+    for (const e of S.signals[iso3]?.events || []) {
+      const hit = byId.get(e.id);
+      if (hit) hit.countries.push({ iso3, weightPct: ex[iso3].weightPct });
+      else byId.set(e.id, { ...e, countries: [{ iso3, weightPct: ex[iso3].weightPct }] });
+    }
+  }
+  return [...byId.values()].sort((a, b) =>
+    (b.at || "").localeCompare(a.at || "") || (SEV_RANK[b.severity] || 0) - (SEV_RANK[a.severity] || 0)
+  ).slice(0, limit);
+}
+
+function newsItem(e) {
+  const top = [...e.countries].sort((a, b) => b.weightPct - a.weightPct)[0];
+  const sev = e.severity === "Severe" ? "crit" : e.severity === "High" ? "serious" : "warn";
+  const more = e.countries.length - 1;
+  return `<article class="sit news-item">
+    <time>${esc((e.at || "").split(" ").slice(-1)[0])}</time><span class="dot" style="background:${P.SEV[sev] || P.SEV.warn}"></span>
+    <div><h3>${esc(e.text)}</h3>${e.transmission ? `<p>${esc(e.transmission)}</p>` : ""}
+      <span class="src">${esc(top?.iso3 || e.region)}${top ? ` · ${top.weightPct.toFixed(1)}% of portfolio` : ""}${more ? ` · +${more} more ${more === 1 ? "country" : "countries"}` : ""} · ${esc(e.source)}</span>
+    </div>
+  </article>`;
+}
+
+/** This client's own portfolio news — replaces what used to be here (a book-wide operating-
+ * leverage argument: deterministic RM-economics tiles that read the same no matter which client
+ * was open, plus static "Prepare Once, Deliver Many" marketing copy). Deterministic and cited
+ * like the ticker and Live Intelligence — a news feed shouldn't be AI-narrated, it should just
+ * state its source. */
+export function paintNews() {
   const p = S.portfolio;
-  const e = economics(), saved = e.prepBefore - e.prepAfter;
-  const ev = S.evaluation?.clients?.[p.id];
-  const state = aiState(p.id);
-  const heroBody = state === "ai" ? `${esc(ev.impactNarrative)} <span class="mode ai" style="margin-left:6px">ai-scored</span>`
-    : state === "loading" ? `<span class="prose-shimmer">Scoring this client's impact…</span>`
-    : `<span style="color:var(--ink-4)">Impact narrative unavailable.</span>`;
-  document.getElementById("econ").innerHTML = `<div class="tab-page impact-page">
-    <section class="impact-hero"><span>◎</span><div><h2>This client's operating impact</h2><p>${heroBody}</p></div><aside><small>Strategic target</small><b>&lt; 67%</b><small>2028 adjusted cost/income target context</small><i><em style="width:67%"></em></i></aside></section>
-    <section class="impact-metrics">
-      <div class="impact-card clients"><p>Clients in the book</p><b>${e.clients}</b><span>${e.affected} affected by this week's signals</span></div>
-      <div class="impact-card prep impact-primary"><p>Prep per review</p><b>${e.prepBefore}<small>min</small> → ${e.prepAfter}<small>min</small></b><div class="before-after"><i style="height:86%"></i><i style="height:18%"></i><strong>-${Math.round(saved / e.prepBefore * 100)}%</strong></div><span>${saved} min saved per review</span></div>
-      <div class="impact-card"><p>Saved this morning</p><b>${e.minutesSavedNow}<small>min</small></b><span>Across ${e.affected} mandates that moved</span></div>
-      <div class="impact-card bars"><p>Adviser hours per year</p><b>${e.hoursPerYear}<small>hrs</small></b><span>At ${ECONOMICS_BASELINE.reviewsPerClientPerYear} reviews per client per year</span></div>
-    </section>
-    <section class="glass-panel leverage-panel"><div class="impact-section-head"><div><h2>Prepare Once, Deliver Many</h2><p>Turn analysis into client impact at scale.</p></div><span>∞ Same analysis. Many conversations.</span></div><div class="flow">
-      <button type="button"><i>1</i><b>Analysis</b><span>Done once</span><small>Client and market data</small></button><em>→</em>
-      <button type="button"><i>2</i><b>Client outputs</b><span>Many</span><small>Insights, alerts, briefs</small></button><em>→</em>
-      <button type="button"><i>3</i><b>Personalised RM conversations</b><span>At scale</span><small>Richer conversations</small></button>
-    </div><p>${esc(e.note)}</p></section>
+  const news = portfolioNews();
+  document.getElementById("econ").innerHTML = `<div class="tab-page news-page">
+    <div class="tab-titlebar"><div><h2>Portfolio News</h2><p>Sourced from ${esc(p.name)}'s own look-through exposure — every story cites where it came from.</p></div></div>
+    <section class="news-list">${news.length ? news.map(newsItem).join("") : `<div class="empty-state">No news for this portfolio's current look-through exposure.</div>`}</section>
   </div>`;
-  M.once("econ", p.id + "|" + state + "|" + e.affected, () => M.enter("#econ .impact-hero, #econ .impact-card, #econ .glass-panel", { y: 10, delay: 50, duration: 360 }));
+  M.once("econ", p.id + "|" + news.map(n => n.id).join(","), () => M.enter("#econ .news-item", { y: 10, delay: 40, duration: 340 }));
 }

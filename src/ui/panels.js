@@ -162,71 +162,6 @@ function clientMeta(p) {
   });
 }
 
-function initials(name) {
-  return String(name || "RM").split(/\s+/).filter(Boolean).slice(0, 2).map(x => x[0]).join("").toUpperCase();
-}
-
-const PROFILE_IMAGES = {
-  "Ravi Chandrasekaran": "/avatars/ravi-chandrasekaran.png",
-  "Fong Enterprises Family Office": "/avatars/fong-enterprises.png",
-  "Zhang Meiling": "/avatars/zhang-meiling.png",
-  "Tan Boon Huat": "/avatars/tan-boon-huat.png",
-  "Kim Do-Yoon": "/avatars/kim-do-yoon.png"
-};
-
-function profileAvatar(p) {
-  const src = PROFILE_IMAGES[p.name];
-  return src
-    ? `<div class="profile-avatar has-photo"><img src="${src}" alt="${p.name} profile portrait" loading="lazy"></div>`
-    : `<div class="profile-avatar">${initials(p.name)}</div>`;
-}
-
-function reviewDateLabel(date) {
-  const d = String(date || "").match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if (!d) return date || "Not scheduled";
-  return new Date(`${date}T00:00:00`).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" });
-}
-
-/** The single most urgent AI finding for this client — the top risk if the model flagged one,
- * else the top recommended action, else a plain "nothing flagged" line. Feeds the risk-callout's
- * own <strong>/detail pair (label bolded, detail trailing plain text) rather than a separate
- * one-liner paragraph underneath — one line per card, not two. Same loading/unavailable states as
- * everywhere else the AI narration shows up: never a guess dressed up as an answer. */
-function urgentFinding(p) {
-  const state = aiState(p.id);
-  if (state === "loading") return { label: `<span class="prose-shimmer">Analysing…</span>`, detail: "" };
-  if (state !== "ai") return { label: "Analysis unavailable", detail: "" };
-  const ev = S.evaluation?.clients?.[p.id];
-  const risk = (ev?.risks || [])[0];
-  if (risk) return { label: "Risk", detail: risk.text };
-  const action = (ev?.actions || [])[0];
-  if (action) return { label: action.kind, detail: action.title };
-  return { label: "Nothing urgent flagged", detail: "" };
-}
-
-function urgentReviewCard({ p, m }, index, total) {
-  const band = m.band;
-  const badge = band === "critical" ? "Critical attention" : band === "high" ? "High attention"
-    : band === "medium" ? "Medium attention" : band === "low" ? "Low attention"
-    : band === "loading" ? "Scoring…" : "Attention unavailable";
-  const finding = urgentFinding(p);
-  return `<article class="urgent-swipe-card ${band}" data-urgent-card>
-    <div class="urgent-card-top"><span class="attention-badge ${band}"><i></i>${badge}</span><span>${index + 1} / ${total}</span></div>
-    ${profileAvatar(p)}
-    <h3>${p.name}</h3>
-    <p class="client-type">${m.source}</p>
-    <div class="profile-facts">
-      <div><span>AUM</span><b>${p.currency || ""} ${p.aum}</b></div>
-      <div><span>Mandate</span><b>${p.riskProfile || p.mandate}</b></div>
-    </div>
-    <button class="risk-callout ${band}" data-cl="${p.id}">
-      <b>${scoreLabel(m)}</b><span><strong>${finding.label}</strong>${finding.detail}</span><em>›</em>
-    </button>
-    <div class="next-review"><span>▣</span><div><small>Next Review</small><b>${reviewDateLabel(p.reviewDate)}</b></div></div>
-    <button class="open-review" data-open-client="${p.id}" type="button">Open client review <span>→</span></button>
-  </article>`;
-}
-
 function clientMatches(p, meta) {
   const filter = S.clientFilter || "all";
   const q = (S.clientSearch || "").trim().toLowerCase();
@@ -253,6 +188,13 @@ function clientMatches(p, meta) {
  * changed, and reordering moves the existing node rather than rebuilding it.
  *
  * `rows` is [id, html] in the order the list should end up in.
+ *
+ * `wasCursor` is captured before a changed node is replaced, not compared after: `node` gets
+ * reassigned to the fresh replacement, so comparing the reassigned `node` against `cursor` would
+ * compare the new element to a reference that `replaceWith` has already detached from the DOM —
+ * `host.insertBefore(fresh, cursor)` then throws NotFoundError the moment the card that changed
+ * happens to be sitting at the current cursor position (the ordinary case: a card's own content
+ * updates in place, nothing reordered around it).
  */
 function reconcileBook(host, rows, emptyHtml) {
   if (!host) return;
@@ -277,6 +219,7 @@ function reconcileBook(host, rows, emptyHtml) {
 
   for (const [id, html] of rows) {
     let node = existing.get(id);
+    const wasCursor = node === cursor;
     if (node && node.outerHTML !== html) {
       scratch.innerHTML = html;
       const fresh = scratch.firstElementChild;
@@ -288,8 +231,8 @@ function reconcileBook(host, rows, emptyHtml) {
       node = scratch.firstElementChild;
       existing.set(id, node);
     }
-    if (node === cursor) cursor = cursor.nextElementSibling;
-    else host.insertBefore(node, cursor);
+    if (wasCursor) cursor = node.nextElementSibling;
+    else if (node !== cursor) host.insertBefore(node, cursor);
   }
 
   for (const [id, node] of existing) {
@@ -467,129 +410,26 @@ export function paintTicker(feed = FEED) {
   tag.textContent = mode === "live" ? "live feed" : mode === "fixtures" ? "fixtures" : "…";
 }
 
+/** The priority rail — Live Intelligence, Positions by pressure, AI Copilot. Used to lead with
+ * an "Urgent reviews" carousel (which OTHER clients across the book need attention) — removed
+ * entirely: it's book-wide content that doesn't belong once you're focused on one client, and
+ * on the dashboard it was still just one more thing competing with Live Intelligence for the
+ * same slot. Live Intelligence is the first section now, on every route. */
 export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle }) {
   const p = S.portfolio, meta = clientMeta(p), L = LENSES().d;
-  // Book-wide (every other client, not just the open one) — skip scoring the whole book here
-  // when it won't even be shown (see urgentSection below), rather than paying for clientMeta()
-  // on ~20 portfolios every render for a section that's dropped entirely on this route.
-  const urgent = S.route === "client" ? [] : S.portfolios.filter(x => clientHasIso(x, S.selIso)).map(x => ({ p:x, m:clientMeta(x) }))
-    .sort((a,b) => (b.m.urgency ?? -1) - (a.m.urgency ?? -1)).slice(0,5);
   const digest = S.selIso ? S.signals[S.selIso]?.events || [] : topEventsRaw(4);
   const top = meta.fl[0];
   const scan = S.policyScan || currentPolicyScan();
-  const activeIndex = urgent.length ? Math.min(S.urgentReviewIndex || 0, urgent.length - 1) : 0;
-  const activeUrgent = urgent[activeIndex];
-  let cardWasSwiped = false;
-  const moveUrgent = delta => {
-    if (!urgent.length) return;
-    S.urgentReviewIndex = (activeIndex + delta + urgent.length) % urgent.length;
-    paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle });
-  };
-  const jumpUrgent = index => {
-    if (!urgent.length) return;
-    S.urgentReviewIndex = Math.max(0, Math.min(urgent.length - 1, index));
-    paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle });
-  };
-  const openUrgentClient = id => {
-    if (!id || cardWasSwiped) return;
-    if (S.portfolios.some(p => p.id === id)) onOpenClient?.(id);
-  };
-  // The urgent-reviews carousel is a book-wide priority queue — which OTHER clients need
-  // attention — which doesn't make sense once you're already looking at one specific client's
-  // analysis; it's dropped entirely there rather than just visually tucked away. Everything
-  // else in the rail (Live Intelligence, Positions by pressure, AI Copilot) is genuinely about
-  // the open client, so it stays.
-  const urgentSection = S.route === "client" ? "" : `<section class="priority-card urgent-carousel" tabindex="0" aria-label="Urgent client reviews"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div>${activeUrgent ? urgentReviewCard(activeUrgent, activeIndex, urgent.length) : `<div class="empty-state">No urgent reviews for this scope.</div>`}<div class="urgent-nav"><button class="urgent-arrow" type="button" data-urg-nav="-1" aria-label="Previous urgent review">‹</button><div class="urgent-dots">${urgent.map((_, i) => `<button class="dot" type="button" data-urg-dot="${i}" aria-label="Urgent review ${i + 1}" aria-pressed="${i === activeIndex}"></button>`).join("")}</div><button class="urgent-arrow" type="button" data-urg-nav="1" aria-label="Next urgent review">›</button></div></section>`;
-  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button>${urgentSection}
-    <section class="priority-card"><div class="sec-h"><h2>Live Intelligence</h2><button class="ghost sm" id="clear-sel">Reset view</button></div><div class="situation-list">${digest.map(e => signalCard(e)).join("")}</div><div class="policy-mini"><span>Policy Sentinel</span><b>${scan.signal.stance}</b><button class="ghost sm" id="rail-policy-open">Evidence</button></div></section>
+  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button>
+    <section class="priority-card live-card"><div class="sec-h"><h2>Live Intelligence</h2><button class="ghost sm" id="clear-sel">Reset view</button></div><div class="situation-list">${digest.map(e => signalCard(e)).join("")}</div><div class="policy-mini"><span>Policy Sentinel</span><b>${scan.signal.stance}</b><button class="ghost sm" id="rail-policy-open">Evidence</button></div></section>
     <section class="priority-card positions-mini"><div class="sec-h"><h2>Positions by pressure</h2><span class="count">top 4</span></div>${visibleRows().slice(0,4).map(r => `<button class="mini-pos" data-t="${r.instrumentId}"><span class="tickr">${r.instrumentId}</span><span>${r.name}</span><b style="color:${L.col(r.riskDelta)}">${fmtD(r.riskDelta)}</b></button>`).join("")}</section>
     <section class="priority-card copilot-card"><div class="sec-h"><h2>AI Copilot</h2><span class="spark">✦</span></div><p>Ask about this client, a holding, or a market signal.</p><button class="suggest" data-coprompt="Prepare a call brief for ${p.name}">Prepare call brief</button><button class="suggest" data-coprompt="Show liquidity risks for ${p.name}">Show liquidity risks</button><button class="ghost solid" id="open-copilot">Open copilot</button></section>`;
   document.getElementById("priority-open")?.addEventListener("click", () => top ? onOpenPosition(top.instrumentId) : onRunPolicyScan());
   document.getElementById("clear-sel")?.addEventListener("click", onClearSel);
-  // Nav arrows, dots, and "Open client review" are all children re-created fresh inside #pfrail's
-  // innerHTML above (unlike #pfrail itself, which is the static persistent <aside> from
-  // shell.js) — a plain addEventListener here is safe, the old buttons and their listeners are
-  // thrown away with the old markup on the next paintPfRail() call. This used to ALSO be wired
-  // through a delegated click handler on #pfrail itself (rewire()'d to avoid leaking, per the
-  // comment that used to be here) — a second, redundant system handling the exact same clicks.
-  // stopPropagation() in these handlers meant it likely never double-fired, but two independent
-  // systems owning the same buttons is exactly the kind of thing that causes "sometimes nothing
-  // happens" bugs, so it's gone — this is the only place these clicks are handled now.
-  document.querySelectorAll("#pfrail [data-urg-nav]").forEach(b => b.addEventListener("click", e => {
-    e.preventDefault();
-    e.stopPropagation();
-    moveUrgent(Number(b.dataset.urgNav));
-  }));
-  document.querySelectorAll("#pfrail [data-urg-dot]").forEach(b => b.addEventListener("click", e => {
-    e.preventDefault();
-    e.stopPropagation();
-    jumpUrgent(Number(b.dataset.urgDot) || 0);
-  }));
-  document.querySelectorAll("#pfrail [data-open-client]").forEach(b => b.addEventListener("click", e => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (cardWasSwiped) return;
-    openUrgentClient(b.dataset.openClient);
-  }));
-  document.querySelector("#pfrail .urgent-carousel")?.addEventListener("keydown", e => {
-    if (e.key === "ArrowLeft") { e.preventDefault(); moveUrgent(-1); }
-    if (e.key === "ArrowRight") { e.preventDefault(); moveUrgent(1); }
-    if ((e.key === "Enter" || e.key === " ") && activeUrgent) {
-      e.preventDefault();
-      openUrgentClient(activeUrgent.p.id);
-    }
-  });
   document.querySelectorAll("#pfrail [data-cl]").forEach(b => b.addEventListener("click", () => onOpenClient?.(b.dataset.cl)));
   document.querySelectorAll("#pfrail [data-iso]").forEach(b => b.addEventListener("click", () => onSelectIso?.(b.dataset.iso)));
   document.querySelectorAll("#pfrail [data-t]").forEach(b => b.addEventListener("click", () => onOpenPosition(b.dataset.t)));
-  const swipeTarget = document.querySelector("#pfrail .urgent-carousel");
-  if (swipeTarget) {
-    let startX = 0;
-    let startY = 0;
-    let tracking = false;
-    cardWasSwiped = false;
-    const finishSwipe = (x, y) => {
-      const dx = x - startX;
-      const dy = Math.abs((y || 0) - startY);
-      if (Math.abs(dx) < 34 || Math.abs(dx) < dy * 1.2 || !urgent.length) return;
-      cardWasSwiped = true;
-      moveUrgent(dx < 0 ? 1 : -1);
-    };
-    swipeTarget.addEventListener("pointerdown", e => {
-      if (e.target.closest("[data-urg-nav],[data-urg-dot],[data-open-client]")) return;
-      startX = e.clientX;
-      startY = e.clientY;
-      tracking = true;
-      cardWasSwiped = false;
-      swipeTarget.setPointerCapture?.(e.pointerId);
-    });
-    swipeTarget.addEventListener("pointerup", e => {
-      if (!tracking) return;
-      tracking = false;
-      finishSwipe(e.clientX, e.clientY);
-    });
-    swipeTarget.addEventListener("pointercancel", () => { tracking = false; });
-    swipeTarget.addEventListener("touchstart", e => {
-      const t = e.changedTouches?.[0];
-      if (!t || e.target.closest("[data-urg-nav],[data-urg-dot],[data-open-client]")) return;
-      startX = t.clientX;
-      startY = t.clientY;
-      tracking = true;
-      cardWasSwiped = false;
-    }, { passive:true });
-    swipeTarget.addEventListener("touchend", e => {
-      if (!tracking) return;
-      const t = e.changedTouches?.[0];
-      tracking = false;
-      if (t) finishSwipe(t.clientX, t.clientY);
-    }, { passive:true });
-    swipeTarget.addEventListener("touchcancel", () => { tracking = false; }, { passive:true });
-    swipeTarget.addEventListener("click", () => {
-      if (!cardWasSwiped) return;
-      setTimeout(() => { cardWasSwiped = false; }, 0);
-    });
-  }
-  M.once("rail", [p.id, S.selIso, S.goalSel, S.household, S.urgentReviewIndex].join("|"), M.rail);
+  M.once("rail", [p.id, S.selIso, S.goalSel, S.household].join("|"), M.rail);
 }
 
 /** The AI Copilot's ask box, actually routed to the model now (askCopilot in eval/narrate.js,

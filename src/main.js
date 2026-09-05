@@ -12,7 +12,7 @@ import { focusGlobeOnCountries, mountGlobe, paintGlobe, resetGlobeView, sizeGlob
 import { mountGoogleGlobe } from "./ui/googleGlobe.js";
 import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTicker, paintPfRail, paintCopilot }
   from "./ui/panels.js";
-import { paintActions, paintConversation, paintCompliance, paintEconomics } from "./ui/tabs.js";
+import { paintActions, paintConversation, paintCompliance, paintNews } from "./ui/tabs.js";
 import { initDrawers, openPosition, openPolicyTrial } from "./ui/drawers.js";
 import * as M from "./ui/motion.js";
 import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
@@ -59,7 +59,15 @@ async function boot() {
   S.policyScan = FALLBACK_SCAN;
   const isos = collectIsos(S.portfolios, S.instruments);
   const usesDatasetSignals = await loadSignals(data, isos);
-  readRouteFromLocation();
+  // Every fresh load starts at the homepage, regardless of whatever URL happens to be in the
+  // address bar (a refresh on /clients/PF-0003, a bookmark, a shared link) — readRouteFromLocation()
+  // would otherwise jump straight into that client's tab. history.replaceState (not pushState)
+  // so this doesn't add a spurious back-button entry; normal in-app navigation (navigateToClient,
+  // the logo, browser back/forward) still goes through readRouteFromLocation()/popstate exactly
+  // as before this line.
+  S.route = "dashboard";
+  S.tab = "pf";
+  history.replaceState(null, "", "/");
 
   root.innerHTML = shellHtml(S.operator);
   installLiquidGlass();
@@ -147,6 +155,12 @@ function wire() {
     history.pushState(null, "", "/");
     resetGlobeView();
     renderAll();
+    // The globe's WebGL canvas sits inside #pane-pf, which was hidden (0×0) the whole time a
+    // non-Overview tab was open on the client workbench — sizeGlobe() (which forces globe.gl to
+    // re-measure and re-render) is otherwise only ever called from the tab-click handler below,
+    // never on a route change back to the dashboard. Without it the canvas can come back stale
+    // or simply not repaint, which is the "globe doesn't appear anymore" glitch.
+    requestAnimationFrame(sizeGlobe);
   });
 
   document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => {
@@ -347,7 +361,7 @@ function copyNarratedFields(target, src) {
   target.concentration = src.concentration; target.scoreSource = src.scoreSource;
   target.risks = src.risks; target.opportunities = src.opportunities; target.actions = src.actions;
   target.relationship = src.relationship;
-  target.complianceChecks = src.complianceChecks; target.impactNarrative = src.impactNarrative;
+  target.complianceChecks = src.complianceChecks;
   target.physicalConcentration = src.physicalConcentration;
 }
 
@@ -359,16 +373,16 @@ function copyNarratedFields(target, src) {
  * they're looking at it. (switchSnapshot is the one deliberate exception — loading a different
  * as-of date is a genuine change of "now", so it clears S.narratedHash and re-runs
  * narrateAllPortfolios from scratch.) It carries health, the risk-weighted concentration figure,
- * a prose overview, risk findings, opportunities, recommended actions, relationship notes,
- * compliance checks, and the impact narrative — nothing here ever falls back to showing a
- * deterministic number: aiState() (store.js) reports "loading" until this resolves, then "ai" on
- * success or "unavailable" on failure, and every render site switches on that instead of reading
- * a number that might be a guess. The deterministic engine still runs (it grounds the model's
- * prompt and is what `grounding`/`clientEval` hand to it) — it's just never displayed as if it
- * were a live read. The answer is cached in `S.narratedHash` (portfolioId → { hash, health,
- * healthBand, concentration, scoreSource, overview, risks, opportunities, actions, relationship,
- * complianceChecks, impactNarrative }) and copied back onto the live object; a cache hit never
- * reaches the model. `inflight` makes that guarantee hold for calls that overlap in time, not
+ * a prose overview, risk findings, opportunities, recommended actions, relationship notes, and
+ * compliance checks — nothing here ever falls back to showing a deterministic number: aiState()
+ * (store.js) reports "loading" until this resolves, then "ai" on success or "unavailable" on
+ * failure, and every render site switches on that instead of reading a number that might be a
+ * guess. The deterministic engine still runs (it grounds the model's prompt and is what
+ * `grounding`/`clientEval` hand to it) — it's just never displayed as if it were a live read.
+ * The answer is cached in `S.narratedHash` (portfolioId → { hash, health, healthBand,
+ * concentration, scoreSource, overview, risks, opportunities, actions, relationship,
+ * complianceChecks, physicalConcentration }) and copied back onto the live object; a cache hit
+ * never reaches the model. `inflight` makes that guarantee hold for calls that overlap in time, not
  * just in sequence.
  */
 const inflight = new Set(); // `${portfolioId}|${hash}` — guards against asking twice concurrently
@@ -513,7 +527,7 @@ export function renderAll() {
   paintActions();
   paintConversation();
   paintCompliance();
-  paintEconomics();
+  paintNews();
   applyLiquidGlass();
 }
 
