@@ -177,6 +177,69 @@ function clientMatches(p, meta) {
   return true;
 }
 
+
+/**
+ * Rewrites #book in place instead of through innerHTML.
+ *
+ * The book repaints on nearly every render, and the AI scores land one client at a time
+ * during boot — twenty separate renders. Replacing the container's innerHTML each time
+ * destroys and recreates every card, so untouched clients visibly blink and the whole list
+ * re-runs its entrance animation. Here a card is only rewritten when its own markup actually
+ * changed, and reordering moves the existing node rather than rebuilding it.
+ *
+ * `rows` is [id, html] in the order the list should end up in.
+ *
+ * `wasCursor` is captured before a changed node is replaced, not compared after: `node` gets
+ * reassigned to the fresh replacement, so comparing the reassigned `node` against `cursor` would
+ * compare the new element to a reference that `replaceWith` has already detached from the DOM —
+ * `host.insertBefore(fresh, cursor)` then throws NotFoundError the moment the card that changed
+ * happens to be sitting at the current cursor position (the ordinary case: a card's own content
+ * updates in place, nothing reordered around it).
+ */
+function reconcileBook(host, rows, emptyHtml) {
+  if (!host) return;
+  if (!rows.length) {
+    if (host.dataset.state !== "empty" || host.innerHTML !== emptyHtml) {
+      host.innerHTML = emptyHtml;
+      host.dataset.state = "empty";
+    }
+    return;
+  }
+  if (host.dataset.state === "empty") { host.innerHTML = ""; delete host.dataset.state; }
+
+  const existing = new Map();
+  for (const node of [...host.children]) {
+    const id = node.dataset?.cl;
+    if (id && !existing.has(id)) existing.set(id, node);
+    else node.remove(); // stale or duplicate
+  }
+
+  const scratch = document.createElement("div");
+  let cursor = host.firstElementChild;
+
+  for (const [id, html] of rows) {
+    let node = existing.get(id);
+    const wasCursor = node === cursor;
+    if (node && node.outerHTML !== html) {
+      scratch.innerHTML = html;
+      const fresh = scratch.firstElementChild;
+      node.replaceWith(fresh);
+      node = fresh;
+      existing.set(id, node);
+    } else if (!node) {
+      scratch.innerHTML = html;
+      node = scratch.firstElementChild;
+      existing.set(id, node);
+    }
+    if (wasCursor) cursor = node.nextElementSibling;
+    else if (node !== cursor) host.insertBefore(node, cursor);
+  }
+
+  for (const [id, node] of existing) {
+    if (!rows.some(r => r[0] === id)) node.remove();
+  }
+}
+
 export function paintBook(onPick) {
   const metas = new Map(S.portfolios.map(p => [p.id, clientMeta(p)]));
   const filtered = S.portfolios.filter(p => clientMatches(p, metas.get(p.id)))
@@ -198,10 +261,11 @@ export function paintBook(onPick) {
     if (el) el.value = value || "all";
   }
   const active = activeClientFilters();
-  document.getElementById("book").innerHTML = filtered.map(p => {
-    const m = metas.get(p.id);
-    return clientCard(p, m);
-  }).join("") || `<div class="empty-state">No clients match ${active.length ? active.join(" · ") : "the current search"}.</div>`;
+  reconcileBook(
+    document.getElementById("book"),
+    filtered.map(p => [p.id, clientCard(p, metas.get(p.id))]),
+    `<div class="empty-state">No clients match ${active.length ? active.join(" · ") : "the current search"}.</div>`
+  );
   // [data-cl] cards are recreated fresh with #book's innerHTML above, so a plain addEventListener
   // is fine there. Everything below targets controls from the *static* shell markup (shell.js) —
   // paintBook only ever updates their value/attributes, never recreates them — and paintBook runs
@@ -222,7 +286,11 @@ export function paintBook(onPick) {
     rewire(document.getElementById(id), "change", e => { S[key] = e.target.value; paintBook(onPick); });
   }
   rewire(document.getElementById("client-search"), "input", e => { S.clientSearch = e.target.value; paintBook(onPick); });
-  M.once("book", filtered.map(p => p.id).join("|") + S.clientFilter, () => M.enter("#book .cl", { y: 6, delay: 22, duration: 340 }));
+  // Keyed on *which* clients are listed, not the order they are in. Urgency only exists once the
+  // AI has scored a client, so the order churns all through boot; replaying the entrance
+  // animation on every reshuffle is the flicker this reconcile was meant to remove.
+  M.once("book", [...filtered.map(p => p.id)].sort().join("|") + S.clientFilter, () =>
+    M.enter("#book .cl", { y: 6, delay: 22, duration: 340 }));
 }
 
 function activeClientFilters() {

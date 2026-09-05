@@ -423,7 +423,17 @@ async function maybeNarratePortfolio(p) {
   // Every render of the book list / priority rail reads every portfolio's aiState(), so a
   // freshly-scored client shows up there immediately — not just when it happens to be the one
   // open. This is what makes narrateAllPortfolios() actually feel automatic at boot.
-  renderAll();
+  // Coalesced: narrateAllPortfolios resolves 20 clients a few hundred ms apart, and one full
+  // renderAll each would repaint the whole cockpit 20 times. Batch them onto the next frame.
+  scheduleRender();
+}
+
+/* One render per frame, however many callers ask for it in between. */
+let renderQueued = false;
+function scheduleRender() {
+  if (renderQueued) return;
+  renderQueued = true;
+  requestAnimationFrame(() => { renderQueued = false; renderAll(); });
 }
 
 /** Fired once at boot: scores every portfolio in the book so an RM opening any client sees an
