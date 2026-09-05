@@ -4359,6 +4359,15 @@ body{position:fixed; inset:0}
   pointer-events:none;
 }
 
+/* Invisible, ripple-sized hover/click target. Sits first in the group so it never paints over the
+   pin, and is the only part of the marker that takes the pointer. */
+.marker-hit{
+  fill:#fff;
+  opacity:0;
+  pointer-events:all;
+  cursor:pointer;
+}
+
 .map-marker line{
   stroke:var(--marker);
   stroke-width:4;
@@ -4567,7 +4576,14 @@ body{position:fixed; inset:0}
   width:240px;
   max-height:none;
   overflow:visible;
+  /* The card is sticky and parks over the right-hand third of the map — which on this projection
+     is Japan, Korea, Hong Kong and Singapore. If it ate the pointer it would make the markers it
+     covers unhoverable, so the card itself is transparent to the cursor and only its controls
+     take clicks. Nothing here needs hover-to-keep any more: it no longer hides on mouse-out. */
+  pointer-events:none;
 }
+
+.globe-wrap.client-map-mode .gt-panel button{ pointer-events:auto }
 
 .gt-map-tip{
   display:grid;
@@ -4598,7 +4614,12 @@ body{position:fixed; inset:0}
   transition:opacity .16s ease, background .16s ease, color .16s ease;
 }
 
+/* Always present in map mode — the card can't detect hover on itself there (see pointer-events
+   above), and a dismiss control you can't find is not a dismiss control. */
+.globe-wrap.client-map-mode .gt-map-close{ opacity:.45 }
+
 .gt-panel:hover .gt-map-close,
+.gt-map-close:hover,
 .gt-map-close:focus-visible{ opacity:1 }
 
 .gt-map-close:hover{ background:rgba(17,34,64,.07); color:#25344f }

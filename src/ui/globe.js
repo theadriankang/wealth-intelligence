@@ -353,13 +353,26 @@ function renderClientMap() {
     return `<path class="map-arc ${a.hot ? "is-hot" : ""}" d="M${sx.toFixed(1)} ${sy.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${exx.toFixed(1)} ${ey.toFixed(1)}"></path>`;
   }).join("");
 
+  // Each marker carries an invisible hit circle the size of its own ripple. Singapore, Hong Kong
+  // and Switzerland are a few pixels of coastline at this projection — asking an RM to land the
+  // cursor on the polygon itself made the smallest, often heaviest-weighted positions the hardest
+  // ones to inspect. The ripple is already the thing the eye treats as the target, so it is the
+  // thing the pointer targets too.
+  //
   // The ripple is a live sonar ping, not decoration: its cadence carries weight. A country
   // holding more of the book pings faster (2.6s down to 1.5s), so the eye is pulled to the
   // concentrated exposures before it reads a single number — and the whole map is desynchronised
   // by a per-marker delay, because markers pulsing in lockstep read as a loading state rather
   // than as twenty independent positions. Purely CSS/SMIL-free (see .marker-ripple in
   // styles.css), so it costs nothing per frame and stops dead under prefers-reduced-motion.
-  const markers = Object.entries(COUNTRY_VIEW).map(([iso, p], i) => {
+  // Heaviest first so the lightest markers paint last and sit on top. In the European cluster the
+  // hit circles overlap, and SVG hit-testing gives the win to whatever is later in the document —
+  // without this ordering a large neighbour would swallow the hover for Switzerland or the
+  // Netherlands, which are exactly the ones too small to hover on the polygon.
+  const markerOrder = Object.entries(COUNTRY_VIEW)
+    .filter(([iso]) => ex[iso] && sig(iso))
+    .sort((a, b) => (ex[b[0]].weightPct || 0) - (ex[a[0]].weightPct || 0));
+  const markers = markerOrder.map(([iso, p], i) => {
     const e = ex[iso], s = sig(iso);
     if (!e || !s) return "";
     const [x, y] = project(p.lng, p.lat);
@@ -376,6 +389,7 @@ function renderClientMap() {
     const spread = (2.4 + Math.min(weight, 30) / 22).toFixed(2);
     return `<g class="map-marker${hot ? " is-hot" : ""}" data-iso="${iso}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"
       style="--marker:${col};--ripple-period:${period.toFixed(2)}s;--ripple-delay:-${delay}s;--ripple-spread:${spread}">
+      <circle class="marker-hit" r="20"></circle>
       <circle class="marker-ripple" r="11"></circle>
       <circle class="marker-ripple lag" r="11"></circle>
       ${hot ? `<circle class="marker-glow" r="24"></circle><circle class="marker-glow wide" r="34"></circle>` : ""}
