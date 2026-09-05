@@ -4,6 +4,13 @@ export const COUNTRY_BANDS = { low: 25, elevated: 50, high: 72 };
 export const HEALTH_PENALTIES = { goalGap: 1.8, concentration: 0.15, concHardMult: 1.3, exposure: 1.0, lombard: 16, mandateFit: 0.2 };
 export const HEALTH_BANDS = { strong: 75, watch: 50 };
 
+// The AI-narrated health/concentration reading is a bounded gut-check on the
+// deterministic engine above, not a free estimate: narrate.js hands the model
+// the deterministic figure as `referenceHealth`/`referenceConcentrationPct` and
+// validateAiScore() rejects (falls back to the deterministic value in full) any
+// response that drifts more than this many points from it, in either direction.
+export const AI_SCORE_BAND = 6;
+
 export const CONC_SOFT = 10;
 export const CONC_HARD = 12;
 

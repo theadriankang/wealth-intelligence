@@ -24,6 +24,10 @@ export const shellHtml = (operator = {}) => {
       </div>
     </div>
     <div class="spacer"></div>
+    <label class="snapshot-picker" id="snapshot-picker" hidden>
+      <span>Snapshot</span>
+      <select id="snapshot-select"></select>
+    </label>
     <div class="operator-controls" aria-label="Operator controls">
       <button class="icon-btn has-alert" type="button" aria-label="Notifications">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>

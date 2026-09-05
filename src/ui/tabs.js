@@ -1,4 +1,4 @@
-import { S, actionState, economics, flagged, positions, rows, aiState } from "../store.js";
+import { S, actionState, economics, positions, aiState } from "../store.js";
 import { P } from "./palette.js";
 import { ECONOMICS_BASELINE } from "../model/scoring.js";
 import { chokepointExposure } from "../model/lookthrough.js";
@@ -144,8 +144,6 @@ function complianceChecks(p) {
  *    from portfolio.mandate — never asked of or trusted from the model.
  *  - Human oversight: Accept/Reject on every action, tracked in S.aiActionState. Nothing here
  *    executes anything; this is a record of what the RM decided, not an execution trigger.
- *  - Traceability: the exact facts behind the current risks/actions are inspectable via the
- *    "Inspect data used" toggle in the client header (paintHead), reading groundingUsed.
  */
 export function paintActions() {
   const p = S.portfolio;
@@ -235,28 +233,67 @@ export function paintConversation() {
   M.once("conv", p.id + "|" + state, () => M.enter("#conv .blk", { y: 10, delay: 60, duration: 420 }));
 }
 
+/** Compliance checks — AI-generated per client from real CSV facts (PEP status, tax domicile,
+ * KYC review date, look-through concentration against the mandate's bands), not the generic
+ * fixed checklist every client used to see. Deterministic fallback when the model is unavailable
+ * or invalid draws on the same facts (fallbackComplianceChecks in eval/narrate.js) rather than
+ * inventing a screening result. The chokepoint table and suitability-record table below are
+ * unrelated deterministic data (look-through math, the static per-portfolio action list) and are
+ * untouched. */
+/** Compliance checks are AI-generated per client from real CSV facts (PEP status, tax domicile,
+ * KYC review date, look-through concentration against the mandate's bands) — see
+ * eval/narrate.js. The visual design (comp-hero/comp-grid/glass-panel) is main's; the data
+ * source is ev.complianceChecks (AI, with the same loading/unavailable states as everywhere
+ * else) rather than main's `complianceChecks(p)`, which doesn't exist anywhere in the codebase
+ * — calling it would throw ReferenceError. */
 export function paintCompliance() {
-  const p = S.portfolio, checks = complianceChecks(p), watch = checks.filter(c => c.s === "watch").length;
+  const p = S.portfolio;
+  const ev = S.evaluation?.clients?.[p.id];
+  const state = aiState(p.id);
+  const checks = state === "ai"
+    ? (ev.complianceChecks || []).map((c, i) => ({ id: `c${i}`, s: c.status, t: c.item, d: c.detail }))
+    : [];
+  const watch = checks.filter(c => c.s === "watch").length;
+  // Drives the Physical Concentration panel's status chip below — real, not decorative: the
+  // AI's own "Concentration policy" check already covers chokepoint-driven concentration (see
+  // clientEval.js's topic:"chokepoint" risks feeding that same check), so its clear/watch status
+  // is an actual answer, not an unconditional "Within mandate" claim with nothing behind it.
+  const concCheck = checks.find(c => c.t === "Concentration policy") || null;
   const recs = (p.actions || []).filter(a => actionState(a) !== "Drafted" || p.mandate === "Discretionary");
   const ck = Object.values(chokepointExposure(positions(), S.instruments)).sort((a, b) => b.weightPct - a.weightPct);
   document.getElementById("tn-comp").textContent = watch;
+  const checksPanel = state === "loading" ? `<div class="glass-panel"><h2>Compliance Checks</h2><p class="prose-shimmer">Scoring compliance…</p></div>`
+    : state === "unavailable" ? `<div class="glass-panel"><h2>Compliance Checks</h2><p style="color:var(--ink-4)">Compliance checks unavailable.</p></div>`
+    : `<div class="glass-panel"><h2>Compliance Checks</h2>${checks.map(c => `<button class="check-row ${c.s}" data-check="${c.id}" type="button"><span>${c.s === "watch" ? "!" : "✓"}</span><div><b>${esc(c.t)}</b><p>${esc(UI.expandedCheck === c.id ? c.d : c.d.slice(0, 92))}</p></div><em>${c.s}</em></button>`).join("")}</div>`;
   document.getElementById("comp").innerHTML = `<div class="tab-page compliance-page">
-    <section class="comp-hero ${watch ? "watch" : "clear"}"><span>${watch ? "!" : "✓"}</span><div><h2>${watch ? "Compliance watch" : "No blocking compliance items"}</h2><p>${p.positions.length} holdings · ${checks.length} derived checks · based on current portfolio data</p></div><dl><dt>Checks</dt><dd>${checks.length}</dd><dt>Clear</dt><dd>${checks.length - watch}</dd><dt>Watch</dt><dd>${watch}</dd><dt>Action required</dt><dd>${checks.filter(c => c.s === "block").length}</dd></dl></section>
+    <section class="comp-hero ${watch ? "watch" : "clear"}"><span>${watch ? "!" : "✓"}</span><div><h2>${watch ? "Compliance watch" : "No blocking compliance items"}</h2><p>${p.positions.length} holdings · ${checks.length} derived checks · based on current portfolio data${state === "ai" ? ` <span class="mode ai" style="margin-left:6px">ai-scored</span>` : ""}</p></div><dl><dt>Next review</dt><dd>${esc(p.reviewDate || "Not recorded")}</dd><dt>Mandate</dt><dd>${esc(p.mandate)}</dd></dl></section>
     <section class="comp-grid">
-      <div class="glass-panel"><h2>Compliance Checks</h2>${checks.map(c => `<button class="check-row ${c.s}" data-check="${c.id}" type="button"><span>${c.s === "watch" ? "!" : "✓"}</span><div><b>${esc(c.t)}</b><p>${esc(UI.expandedCheck === c.id ? c.d : c.d.slice(0, 92))}</p></div><em>${c.s}</em></button>`).join("")}</div>
-      <div class="glass-panel"><h2>Physical Concentration <small>(look-through)</small> <em class="status-chip">Within mandate</em></h2><div class="exposure-bars">${ck.length ? ck.slice(0,6).map(c => `<div><span>${esc(c.name)}</span><i><b style="width:${Math.min(100, c.weightPct * 5)}%"></b></i><strong>${c.weightPct.toFixed(1)}%</strong></div>`).join("") : `<div class="empty-state">No chokepoint exposure in current holdings.</div>`}</div></div>
+      ${checksPanel}
+      <div class="glass-panel"><h2>Physical Concentration <small>(look-through)</small>${concCheck ? ` <em class="status-chip${concCheck.s === "watch" ? " watch" : ""}">${concCheck.s === "watch" ? "Elevated" : "Within mandate"}</em>` : ""}</h2><div class="exposure-bars">${ck.length ? ck.slice(0,6).map(c => `<div><span>${esc(c.name)}</span><i><b style="width:${Math.min(100, c.weightPct * 5)}%"></b></i><strong>${c.weightPct.toFixed(1)}%</strong></div>`).join("") : `<div class="empty-state">No chokepoint exposure in current holdings.</div>`}</div></div>
       <div class="glass-panel summary-panel"><h2>Compliance Summary</h2><div class="summary-boxes"><div><b>${checks.length - watch}</b><span>Clear</span></div><div class="watch"><b>${watch}</b><span>Watch</span></div><div class="danger"><b>${checks.filter(c => c.s === "block").length}</b><span>Action required</span></div></div></div>
       <div class="glass-panel"><h2>Suitability Records</h2>${recs.length ? recs.map(a => `<div class="record-row"><b>${esc(a.title)}</b><span>${esc(p.mandate)} · ${esc(actionState(a))}</span></div>`).join("") : `<div class="empty-state">No records yet. They appear when a proposal is put to client or executed.</div>`}</div>
     </section>
   </div>`;
   document.querySelectorAll("[data-check]").forEach(b => b.addEventListener("click", () => { UI.expandedCheck = UI.expandedCheck === b.dataset.check ? null : b.dataset.check; paintCompliance(); }));
-  M.once("comp", S.portfolio.id, () => M.enter("#comp .comp-hero, #comp .glass-panel", { y: 10, delay: 50, duration: 360 }));
+  M.once("comp", p.id + "|" + state, () => M.enter("#comp .comp-hero, #comp .glass-panel", { y: 10, delay: 50, duration: 360 }));
 }
 
+/** The operating-leverage tab. The numeric tiles/leverage-panel are a book-wide deterministic
+ * formula (rmEconomics — legitimate arithmetic, not a claim about any one client, so it stays
+ * deterministic — this part is main's design, unchanged). The hero paragraph is AI-generated and
+ * client-specific instead of main's generic "Wealth Intelligence drives operating leverage..."
+ * copy — what THIS mandate concretely involves this review, grounded only in this client's own
+ * facts. Same loading/unavailable states as everywhere else. */
 export function paintEconomics() {
-  const e = economics(), f = flagged().length, saved = e.prepBefore - e.prepAfter;
+  const p = S.portfolio;
+  const e = economics(), saved = e.prepBefore - e.prepAfter;
+  const ev = S.evaluation?.clients?.[p.id];
+  const state = aiState(p.id);
+  const heroBody = state === "ai" ? `${esc(ev.impactNarrative)} <span class="mode ai" style="margin-left:6px">ai-scored</span>`
+    : state === "loading" ? `<span class="prose-shimmer">Scoring this client's impact…</span>`
+    : `<span style="color:var(--ink-4)">Impact narrative unavailable.</span>`;
   document.getElementById("econ").innerHTML = `<div class="tab-page impact-page">
-    <section class="impact-hero"><span>▥</span><div><small>Wealth Intelligence</small><h2>Drives operating leverage for you and your clients</h2><p>Prepare once, apply insight across many client conversations.</p></div><aside><small>Strategic target</small><b>&lt; 67%</b><small>2028 adjusted cost/income target context</small><i><em style="width:67%"></em></i></aside></section>
+    <section class="impact-hero"><span>◎</span><div><h2>This client's operating impact</h2><p>${heroBody}</p></div><aside><small>Strategic target</small><b>&lt; 67%</b><small>2028 adjusted cost/income target context</small><i><em style="width:67%"></em></i></aside></section>
     <section class="impact-metrics">
       <div class="impact-card clients"><p>Clients in the book</p><b>${e.clients}</b><span>${e.affected} affected by this week's signals</span></div>
       <div class="impact-card prep impact-primary"><p>Prep per review</p><b>${e.prepBefore}<small>min</small> → ${e.prepAfter}<small>min</small></b><div class="before-after"><i style="height:86%"></i><i style="height:18%"></i><strong>-${Math.round(saved / e.prepBefore * 100)}%</strong></div><span>${saved} min saved per review</span></div>
@@ -269,5 +306,5 @@ export function paintEconomics() {
       <button type="button"><i>3</i><b>Personalised RM conversations</b><span>At scale</span><small>Richer conversations</small></button>
     </div><p>${esc(e.note)}</p></section>
   </div>`;
-  M.once("econ", S.portfolio.id + "|" + e.affected, () => M.enter("#econ .impact-hero, #econ .impact-card, #econ .glass-panel", { y: 10, delay: 50, duration: 360 }));
+  M.once("econ", p.id + "|" + state + "|" + e.affected, () => M.enter("#econ .impact-hero, #econ .impact-card, #econ .glass-panel", { y: 10, delay: 50, duration: 360 }));
 }

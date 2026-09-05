@@ -132,3 +132,17 @@ export function documentTypeFor(title = "", url = "") {
   if (/press.?release|media.?release/.test(t)) return "Press release";
   return "Policy communication";
 }
+
+/** Which of the client's actual holdings a classified document is relevant to — the fix for a
+ * scan always naming Singapore/DBS regardless of which issuer/country was actually classified.
+ * `exposures` is the caller's own portfolio holdings, [{iso3, name, weightPct}], heaviest first;
+ * only the ones matching the document's own country are relevant, so a Fed statement names US
+ * holdings and a BOJ statement names Japanese ones, never a name from an unrelated country.
+ * Returns up to `limit` holding names, or [] when the client has none in that country at all —
+ * callers decide the wording for that case rather than this function inventing a claim. */
+export function assetsForCountry(exposures, country, limit = 4) {
+  return (exposures || [])
+    .filter(e => e?.iso3 === country && typeof e.name === "string" && e.name)
+    .slice(0, limit)
+    .map(e => e.name);
+}

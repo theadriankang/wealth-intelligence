@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { templateNarration, narrateClient, validateAiScore, factsHash } from "./narrate.js";
+import { AI_SCORE_BAND } from "./rubric.js";
 
 const p = { name: "Bergmann Family Office", ref: "PF-0003", mandate: "Advisory", riskProfile: "Balanced", riskBand: "8–14% vol",
   goals: [{ name: "Zurich property acquisition", horizon: "Q2 2027" }, { name: "Retirement drawdown", horizon: "from 2034" }],
@@ -20,7 +21,9 @@ const ce = {
 const aiExtras = {
   risks: [{ text: "Concentration is live in Taiwan.", severity: "high", category: "concentration" }],
   opportunities: [{ text: "Policy easing in Vietnam supports the education goal." }],
-  actions: [{ kind: "Reduce risk", category: "rebalancing", title: "Trim the concentrated sleeve.", why: "Taiwan exposure sits above the mandate line." }]
+  actions: [{ kind: "Reduce risk", category: "rebalancing", title: "Trim the concentrated sleeve.", why: "Taiwan exposure sits above the mandate line." }],
+  complianceChecks: [{ item: "Tax domicile", status: "clear", detail: "On record: Switzerland." }],
+  impactNarrative: "Reviewing PF-0003's advisory mandate covers 2 holdings, with 1 flagged exposure pre-identified."
 };
 
 const grounding = {
@@ -34,21 +37,23 @@ const grounding = {
   taxDomicile: "Switzerland",
   lifeStage: "Wealth accumulation",
   objectives: "Preserve family wealth and fund the Zurich property purchase.",
-  sourceOfWealth: "Inherited"
+  sourceOfWealth: "Inherited",
+  pepStatus: "No",
+  mandateBands: [{ assetClass: "Equity", min: 20, target: 40, max: 60, maxSingle: 15, notes: "" }]
 };
 
-test("templateNarration produces bullet-point explanation, no imperative verbs or risk talk", () => {
-  const { explanation, health, healthBand, concentration, scoreSource, risks, opportunities, actions, relationship } =
+test("templateNarration produces a prose overview (not bullets), no imperative verbs or risk talk", () => {
+  const { overview, health, healthBand, concentration, scoreSource, risks, opportunities, actions, relationship } =
     templateNarration(ce, p, grounding);
-  assert.ok(Array.isArray(explanation) && explanation.length >= 2 && explanation.length <= 5);
-  const joined = explanation.join(" ");
-  assert.ok(joined.split(/\s+/).filter(Boolean).length <= 100);
+  assert.equal(typeof overview, "string");
+  assert.ok(overview.split(/\s+/).filter(Boolean).length <= 100);
+  assert.ok(!overview.includes("\n") && !/^[-*•]/.test(overview.trim()), "overview must be prose, not a bullet list");
   for (const v of ["buy ", "sell ", "execute ", "switch "]) {
-    assert.ok(!joined.toLowerCase().includes(v));
+    assert.ok(!overview.toLowerCase().includes(v));
   }
-  assert.ok(!/this week|urgent|health reads|opportunit|risk/i.test(joined), "explanation must describe the client/portfolio, not risk/health state");
-  assert.ok(!/TSM|DBS/.test(joined), "explanation should stay general, not name specific positions");
-  assert.ok(explanation.some(b => b.includes("Switzerland")), "explanation surfaces tax domicile when present in grounding");
+  assert.ok(!/this week|urgent|health reads|opportunit|^risk/i.test(overview), "overview must describe the client/portfolio, not risk/health state");
+  assert.ok(!/TSM|DBS/.test(overview), "overview should stay general, not name specific positions");
+  assert.ok(overview.includes("Switzerland"), "overview surfaces tax domicile when present in grounding");
   assert.equal(health, ce.health);
   assert.equal(healthBand, ce.healthBand);
   assert.deepEqual(concentration, grounding.fallbackConcentration);
@@ -66,15 +71,31 @@ test("templateNarration returns relationship: null when the portfolio has no rel
   assert.equal(relationship, null);
 });
 
-test("templateNarration omits the tax-domicile bullet when grounding has none", () => {
-  const { explanation } = templateNarration(ce, p, { ...grounding, taxDomicile: null });
-  assert.ok(!explanation.some(b => /tax domicile/i.test(b)));
+test("templateNarration omits the tax-domicile clause when grounding has none", () => {
+  const { overview } = templateNarration(ce, p, { ...grounding, taxDomicile: null });
+  assert.ok(!/tax domicile/i.test(overview));
+});
+
+test("templateNarration produces complianceChecks grounded in pepStatus/taxDomicile and an impactNarrative naming real counts", () => {
+  const { complianceChecks, impactNarrative } = templateNarration(ce, p, grounding);
+  assert.ok(complianceChecks.some(c => c.item === "PEP status" && c.status === "clear"));
+  assert.ok(complianceChecks.some(c => c.item === "Tax domicile" && /Switzerland/.test(c.detail)));
+  assert.ok(complianceChecks.some(c => c.item === "Concentration policy" && c.status === "watch"),
+    "the fixture's clientEval has a concentration risk finding, so this should read watch");
+  assert.ok(impactNarrative.includes("PF-0003"));
+  assert.ok(impactNarrative.includes("2 holdings"));
+  assert.ok(impactNarrative.split(/\s+/).filter(Boolean).length <= 60);
+});
+
+test("templateNarration's PEP check flags watch when pepStatus is Yes", () => {
+  const { complianceChecks } = templateNarration(ce, p, { ...grounding, pepStatus: "Yes" });
+  assert.ok(complianceChecks.some(c => c.item === "PEP status" && c.status === "watch"));
 });
 
 test("narrateClient falls back to the template when the LLM is unavailable", async () => {
   // no server in node:test → generateBrief's fetch("/api/llm") throws (no base URL) → { ok:false }
   const r = await narrateClient(ce, p, ["client wants the 2027 goal de-risked"], grounding);
-  assert.ok(Array.isArray(r.explanation) && r.explanation.length > 0);
+  assert.equal(typeof r.overview, "string");
   assert.equal(r.health, ce.health);
   assert.deepEqual(r.concentration, grounding.fallbackConcentration);
   assert.equal(r.scoreSource, "deterministic");
@@ -82,12 +103,15 @@ test("narrateClient falls back to the template when the LLM is unavailable", asy
   assert.equal(r.opportunities.length, 1);
   assert.equal(r.actions.length, 1);
   assert.equal(r.relationship.concerns.length, 1);
+  assert.ok(r.complianceChecks.length > 0);
+  assert.equal(typeof r.impactNarrative, "string");
 });
 
 const base = () => ({
-  explanation: ["A balanced mandate built to fund two goals."],
+  overview: "A balanced mandate built to fund two goals.",
   health: 55, concentration: { pct: 40, countries: ["TWN"] },
-  risks: [], opportunities: [], actions: [], relationship: null
+  risks: [], opportunities: [], actions: [], relationship: null,
+  complianceChecks: [], impactNarrative: "Reviewing this mandate covers two holdings, with none flagged."
 });
 
 test("validateAiScore accepts a well-formed AI response", () => {
@@ -125,13 +149,41 @@ test("validateAiScore rejects an imperative verb inside a risk, opportunity, or 
   assert.equal(validateAiScore({ ...base(), actions: [{ kind: "Rebalance", category: "rebalancing", title: "Execute the trim.", why: "Concentration." }] }, ["TWN"]), false);
 });
 
-test("validateAiScore rejects an empty or oversized explanation array", () => {
-  assert.equal(validateAiScore({ ...base(), explanation: [] }, ["TWN"]), false);
-  assert.equal(validateAiScore({ ...base(), explanation: Array(6).fill("A short bullet.") }, ["TWN"]), false);
+test("validateAiScore rejects an empty overview", () => {
+  assert.equal(validateAiScore({ ...base(), overview: "" }, ["TWN"]), false);
 });
 
 test("validateAiScore rejects a health score out of range", () => {
   assert.equal(validateAiScore({ ...base(), health: 140 }, ["TWN"]), false);
+});
+
+test("validateAiScore accepts a health/concentration reading with no reference given (shape-only check)", () => {
+  assert.equal(validateAiScore({ ...base(), ...aiExtras }, ["TWN"]), true);
+});
+
+test("validateAiScore accepts a health score right at the edge of the reference band", () => {
+  const data = { ...base(), ...aiExtras, health: 55 + AI_SCORE_BAND };
+  assert.equal(validateAiScore(data, ["TWN"], { health: 55, concentrationPct: 40 }), true);
+});
+
+test("validateAiScore rejects a health score one point past the reference band", () => {
+  const data = { ...base(), health: 55 + AI_SCORE_BAND + 1 };
+  assert.equal(validateAiScore(data, ["TWN"], { health: 55, concentrationPct: 40 }), false);
+});
+
+test("validateAiScore rejects a health score below the reference band", () => {
+  const data = { ...base(), health: 55 - AI_SCORE_BAND - 1 };
+  assert.equal(validateAiScore(data, ["TWN"], { health: 55, concentrationPct: 40 }), false);
+});
+
+test("validateAiScore rejects a concentration.pct past the reference band", () => {
+  const data = { ...base(), concentration: { pct: 40 + AI_SCORE_BAND + 1, countries: ["TWN"] } };
+  assert.equal(validateAiScore(data, ["TWN"], { health: 55, concentrationPct: 40 }), false);
+});
+
+test("validateAiScore ignores the band check when the reference itself is missing a number", () => {
+  const data = { ...base(), ...aiExtras, health: 99 };
+  assert.equal(validateAiScore(data, ["TWN"], { health: undefined, concentrationPct: undefined }), true);
 });
 
 test("validateAiScore rejects a hallucinated country", () => {
@@ -142,9 +194,14 @@ test("validateAiScore rejects a non-numeric concentration percentage", () => {
   assert.equal(validateAiScore({ ...base(), concentration: { pct: "high", countries: ["TWN"] } }, ["TWN"]), false);
 });
 
-test("validateAiScore rejects an explanation over the 100-word cap", () => {
-  const data = { ...base(), explanation: [Array(101).fill("word").join(" ")] };
+test("validateAiScore rejects an overview over the 100-word cap", () => {
+  const data = { ...base(), overview: Array(101).fill("word").join(" ") };
   assert.equal(validateAiScore(data, ["TWN"]), false);
+});
+
+test("validateAiScore accepts an overview at the 100-word cap", () => {
+  const data = { ...base(), ...aiExtras, overview: Array(100).fill("word").join(" ") };
+  assert.equal(validateAiScore(data, ["TWN"]), true);
 });
 
 const validRelationship = {
@@ -178,9 +235,24 @@ test("validateAiScore rejects an imperative verb inside relationship content", (
   assert.equal(validateAiScore(data, ["TWN"]), false);
 });
 
-test("validateAiScore accepts an explanation at the 100-word cap", () => {
-  const data = { ...base(), ...aiExtras, explanation: [Array(100).fill("word").join(" ")] };
-  assert.equal(validateAiScore(data, ["TWN"]), true);
+test("validateAiScore rejects more than 4 compliance checks", () => {
+  const data = { ...base(), complianceChecks: Array(5).fill({ item: "Tax domicile", status: "clear", detail: "On record." }) };
+  assert.equal(validateAiScore(data, ["TWN"]), false);
+});
+
+test("validateAiScore rejects a compliance check with an invalid status", () => {
+  const data = { ...base(), complianceChecks: [{ item: "Tax domicile", status: "flagged", detail: "On record." }] };
+  assert.equal(validateAiScore(data, ["TWN"]), false);
+});
+
+test("validateAiScore rejects an impactNarrative over the 60-word cap", () => {
+  const data = { ...base(), impactNarrative: Array(61).fill("word").join(" ") };
+  assert.equal(validateAiScore(data, ["TWN"]), false);
+});
+
+test("validateAiScore rejects an imperative verb inside impactNarrative", () => {
+  const data = { ...base(), impactNarrative: "Sell the concentrated sleeve before the next review." };
+  assert.equal(validateAiScore(data, ["TWN"]), false);
 });
 
 test("factsHash changes when household toggles, stays stable otherwise", () => {

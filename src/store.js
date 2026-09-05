@@ -11,10 +11,12 @@ export const S = {
   policyScan: null, policyScanState: "idle",
   evaluation: null, narratedHash: {},
   clientFilter: "all", clientSearch: "", copilotOpen: false, copilotDraft: "",
+  copilotAsking: false, copilotAnswer: null, copilotAnsweredFor: null,
   clientSort: "urgency-desc", filtersOpen: false,
   driverFilter: "all", profileFilter: "all", bookingFilter: "all", aumFilter: "all",
   clientDrawerOpen: false, railDrawerOpen: false,
-  inspectDataOpen: false, aiActionState: {}
+  aiActionState: {},
+  urgentReviewIndex: 0
 };
 
 export const positions = () => {

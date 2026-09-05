@@ -16,7 +16,7 @@ import { initDrawers, openPosition, openPolicyTrial } from "./ui/drawers.js";
 import * as M from "./ui/motion.js";
 import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
 import { runEvaluation } from "./eval/evaluate.js";
-import { narrateClient, factsHash } from "./eval/narrate.js";
+import { narrateClient, factsHash, askCopilot } from "./eval/narrate.js";
 import * as marketData from "./market/index.js";
 
 const root = document.getElementById("root");
@@ -24,20 +24,19 @@ let feed = FEED.slice(), lateIdx = 0, since = 0;
 
 boot();
 
-async function boot() {
-  initPalette();
-  const data = await loadData(CONFIG.ADAPTER);
-  Object.assign(S, data);
-  S.portfolio = S.portfolios[0];
-  S.operator = currentOperator(data);
-  S.policyScan = FALLBACK_SCAN;
-  const usesDatasetSignals = data.meta?.source === "julius-baer";
-
-  // Live signals where possible; fixtures otherwise. Never blocks the first paint.
+function collectIsos(portfolios, instruments) {
   const isos = new Set();
-  for (const p of S.portfolios) for (const pos of p.positions) {
-    for (const e of S.instruments[pos.instrumentId]?.exposures || []) isos.add(e.iso3);
+  for (const p of portfolios) for (const pos of p.positions) {
+    for (const e of instruments[pos.instrumentId]?.exposures || []) isos.add(e.iso3);
   }
+  return isos;
+}
+
+/** Live signals where possible; fixtures/dataset-calibrated signals otherwise. Never blocks the
+ * first paint. Returns whether this adapter carries its own pre-computed signals (in which case
+ * boot() must not start a live poll on top of them). */
+async function loadSignals(data, isos) {
+  const usesDatasetSignals = data.meta?.source === "julius-baer";
   if (usesDatasetSignals) {
     S.signals = data.signals;
     S.prevSignals = data.prevSignals;
@@ -47,6 +46,18 @@ async function boot() {
     const sig = await fetchSignals([...isos], { offline: CONFIG.OFFLINE });
     S.signals = sig.signals; S.prevSignals = sig.prevSignals; S.live = sig.live;
   }
+  return usesDatasetSignals;
+}
+
+async function boot() {
+  initPalette();
+  const data = await loadData(CONFIG.ADAPTER);
+  Object.assign(S, data);
+  S.portfolio = S.portfolios[0];
+  S.operator = currentOperator(data);
+  S.policyScan = FALLBACK_SCAN;
+  const isos = collectIsos(S.portfolios, S.instruments);
+  const usesDatasetSignals = await loadSignals(data, isos);
   readRouteFromLocation();
 
   root.innerHTML = shellHtml(S.operator);
@@ -89,6 +100,7 @@ async function boot() {
     </div>`;
   }
   wire();
+  paintSnapshotPicker();
   refreshEvaluation();
   renderAll();
   M.boot();
@@ -108,7 +120,7 @@ function wire() {
     if (!S.copilotOpen) return;
     if (e.target.closest("#copilot")) return;
     S.copilotOpen = false;
-    paintCopilot({ onToggle: railHandlers.onCopilotToggle });
+    paintCopilot({ onToggle: railHandlers.onCopilotToggle, onAsk: askCopilotQuestion });
   });
 
   document.getElementById("open-client-rail")?.addEventListener("click", () => { S.clientDrawerOpen = true; S.railDrawerOpen = false; syncDrawers(); });
@@ -162,6 +174,51 @@ function wire() {
     }, 21000);
   }
   addEventListener("popstate", () => { readRouteFromLocation(); renderAll(); });
+  document.getElementById("snapshot-select")?.addEventListener("change", e => switchSnapshot(e.target.value));
+}
+
+/** Shows/hides and fills the top-right snapshot picker from S.meta.snapshots/asOf — present
+ * only on adapters that expose multiple calibrated points in time (the Julius Baer dataset's
+ * five: 2025-12-31 through 2026-08-26). Absent entirely on the demo adapter. */
+function paintSnapshotPicker() {
+  const wrap = document.getElementById("snapshot-picker");
+  const select = document.getElementById("snapshot-select");
+  if (!wrap || !select) return;
+  const snapshots = S.meta?.snapshots;
+  if (!snapshots?.length) { wrap.hidden = true; return; }
+  wrap.hidden = false;
+  select.innerHTML = snapshots.map(d =>
+    `<option value="${d}" ${d === S.meta.asOf ? "selected" : ""}>${d}</option>`).join("");
+}
+
+/**
+ * Reloads the whole book "as of" a different calibrated snapshot — the same adapter, the same
+ * seam (loadData(CONFIG.ADAPTER, { asOf })), just a different point in time, so an RM (or a
+ * judge) can see how the AI's read of the same clients changes as market conditions move.
+ * Keeps the currently open client selected across the switch when it still exists in the new
+ * snapshot. Every prior AI answer is for facts that no longer apply, so S.narratedHash/
+ * S.aiActionState are cleared and the whole book is re-scored from scratch — this is a genuine
+ * change of "now", not a signals poll tick.
+ */
+async function switchSnapshot(asOf) {
+  const select = document.getElementById("snapshot-select");
+  if (select) select.disabled = true;
+  try {
+    const keepId = S.portfolio?.id;
+    const data = await loadData(CONFIG.ADAPTER, { asOf });
+    Object.assign(S, data);
+    S.portfolio = S.portfolios.find(p => p.id === keepId) || S.portfolios[0];
+    S.operator = currentOperator(data);
+    S.narratedHash = {}; S.aiActionState = {};
+    since = 0;
+    await loadSignals(data, collectIsos(S.portfolios, S.instruments));
+    refreshEvaluation();
+    paintSnapshotPicker();
+    renderAll();
+    narrateAllPortfolios();
+  } finally {
+    if (select) select.disabled = false;
+  }
 }
 
 function refresh(what) {
@@ -201,13 +258,24 @@ function navigateToClient(id) {
   renderAll();
 }
 
-/** The whole deterministic evaluation, recomputed from current signals/policy scan. Pure — no I/O, no LLM. */
+/** The whole deterministic evaluation, recomputed from current signals/policy scan. Pure — no
+ * I/O, no LLM. Called on every poll tick and policy scan, so it mints a brand-new client object
+ * per portfolio each time — any already-computed AI narration is reapplied onto those fresh
+ * objects here so a live signal tick doesn't blank an already-scored client back to "loading".
+ * This never asks the model again: maybeNarratePortfolio computes a client's AI score once and
+ * S.narratedHash holds it for the rest of the session (until switchSnapshot deliberately clears
+ * it) — a signal drifting, a poll tick, or opening/reopening a client never changes the number an
+ * RM is looking at. */
 function refreshEvaluation() {
   S.evaluation = runEvaluation({
     portfolios: S.portfolios, instruments: S.instruments,
     signals: S.signals, prevSignals: S.prevSignals,
     market: marketData, policyScan: S.policyScan
   });
+  for (const [id, cached] of Object.entries(S.narratedHash)) {
+    const ev = S.evaluation.clients[id];
+    if (ev) copyNarratedFields(ev, cached);
+  }
 }
 
 function rmNotesFor(p) { return (p.relationship?.concerns || []); }
@@ -255,62 +323,55 @@ function buildGrounding() {
     taxDomicile: jb?.taxDomicile ?? null,
     lifeStage: jb?.lifeStage ?? null,
     objectives: jb?.objectives ?? null,
-    sourceOfWealth: jb?.sourceOfWealth ?? null
+    sourceOfWealth: jb?.sourceOfWealth ?? null,
+    pepStatus: jb?.pepStatus ?? null,
+    mandateBands: jb?.mandateBands ?? []
   };
 }
 
 function copyNarratedFields(target, src) {
-  target.explanation = src.explanation;
+  target.overview = src.overview;
   target.health = src.health; target.healthBand = src.healthBand;
   target.concentration = src.concentration; target.scoreSource = src.scoreSource;
   target.risks = src.risks; target.opportunities = src.opportunities; target.actions = src.actions;
   target.relationship = src.relationship;
+  target.complianceChecks = src.complianceChecks; target.impactNarrative = src.impactNarrative;
 }
 
 /**
  * Narration is the one LLM call per portfolio — every portfolio in the book gets scored once at
- * boot (narrateAllPortfolios), and any portfolio's facts moving afterward (positions, signals,
- * the household toggle on whichever one is open, or the policy scan) re-asks just that one. It
- * carries health, the risk-weighted concentration figure, a bullet-point explanation, risk
- * findings, opportunities, recommended actions, and relationship notes — nothing here ever falls
- * back to showing a deterministic number: aiState() (store.js) reports "loading" until this
- * resolves, then "ai" on success or "unavailable" on failure, and every render site switches on
- * that instead of reading a number that might be a guess. The deterministic engine still runs
- * (it grounds the model's prompt and is what `grounding`/`clientEval` hand to it) — it's just
- * never displayed as if it were a live read. Each evaluation mints fresh client objects with
- * these fields absent, so the answer is cached in `S.narratedHash` (portfolioId → { hash,
- * health, healthBand, concentration, scoreSource, explanation, risks, opportunities, actions,
- * relationship }) and copied back onto the live object; an unchanged hash never reaches the
- * model. `inflight` makes that guarantee hold for calls that overlap in time, not just in
- * sequence. `groundingUsed` is stashed on the live object too — the exact facts behind the
- * current answer, for the traceability panel.
+ * boot (narrateAllPortfolios) and that's it: opening a client, switching tabs, toggling
+ * household, or the live signal feed ticking never re-asks the model. The score an RM sees is
+ * the score it stays at for the session, not something that can visibly shift under them while
+ * they're looking at it. (switchSnapshot is the one deliberate exception — loading a different
+ * as-of date is a genuine change of "now", so it clears S.narratedHash and re-runs
+ * narrateAllPortfolios from scratch.) It carries health, the risk-weighted concentration figure,
+ * a prose overview, risk findings, opportunities, recommended actions, relationship notes,
+ * compliance checks, and the impact narrative — nothing here ever falls back to showing a
+ * deterministic number: aiState() (store.js) reports "loading" until this resolves, then "ai" on
+ * success or "unavailable" on failure, and every render site switches on that instead of reading
+ * a number that might be a guess. The deterministic engine still runs (it grounds the model's
+ * prompt and is what `grounding`/`clientEval` hand to it) — it's just never displayed as if it
+ * were a live read. The answer is cached in `S.narratedHash` (portfolioId → { hash, health,
+ * healthBand, concentration, scoreSource, overview, risks, opportunities, actions, relationship,
+ * complianceChecks, impactNarrative }) and copied back onto the live object; a cache hit never
+ * reaches the model. `inflight` makes that guarantee hold for calls that overlap in time, not
+ * just in sequence.
  */
-const inflight = new Set(); // `${portfolioId}|${hash}` — one narration per client per hash
+const inflight = new Set(); // `${portfolioId}|${hash}` — guards against asking twice concurrently
 
 async function maybeNarratePortfolio(p) {
   const id = p?.id;
   const ev = S.evaluation?.clients?.[id];
-  if (!ev) return;
+  // Already scored — the AI score is computed once and frozen for the session (see
+  // refreshEvaluation for how it survives later evaluation refreshes). Never re-ask the model
+  // just because a client got opened again or the facts moved under it.
+  if (!ev || S.narratedHash[id]) return;
   const grounding = withPortfolioContext(p, buildGrounding);
   const hash = factsHash(id, grounding);
 
-  const cached = S.narratedHash[id];
-  if (cached?.hash === hash) {
-    ev.groundingUsed = grounding;
-    if (ev.explanation !== cached.explanation) {
-      copyNarratedFields(ev, cached);
-      // Health/explanation live in the client header (paintHead), concentration in the globe
-      // overlay (paintEvidence), risks/opportunities/actions in the Risks & Actions tab, and
-      // relationship in the Conversation tab (paintConversation) — renderAll() repaints all of
-      // them; it's cheap and this branch is rare (only fires once per resolved narration, on a
-      // cache hit for a stale object). Only worth a repaint if this portfolio is the one open.
-      if (S.portfolio?.id === id) renderAll();
-    }
-    return;
-  }
-
   const key = `${id}|${hash}`;
-  if (inflight.has(key)) return; // same client, same facts, already asking
+  if (inflight.has(key)) return; // same client, already asking
   inflight.add(key);
   let narrated;
   try {
@@ -319,19 +380,14 @@ async function maybeNarratePortfolio(p) {
     inflight.delete(key);
   }
 
-  // A poll (or a household toggle) may have moved the facts mid-await: an answer for
-  // superseded facts is discarded — whatever triggered the change makes its own call.
   const live = S.evaluation?.clients?.[id];
-  if (!live || factsHash(id, withPortfolioContext(p, buildGrounding)) !== hash) return;
+  if (!live || S.narratedHash[id]) return; // scored by someone else while this call was in flight
   S.narratedHash[id] = { hash, ...narrated };
-  live.groundingUsed = grounding;
   copyNarratedFields(live, narrated);
-  if (S.portfolio?.id === id) renderAll();
-}
-
-function maybeNarrateOpenClient() {
-  if (!S.portfolio) return;
-  return maybeNarratePortfolio(S.portfolio);
+  // Every render of the book list / priority rail reads every portfolio's aiState(), so a
+  // freshly-scored client shows up there immediately — not just when it happens to be the one
+  // open. This is what makes narrateAllPortfolios() actually feel automatic at boot.
+  renderAll();
 }
 
 /** Fired once at boot: scores every portfolio in the book so an RM opening any client sees an
@@ -359,12 +415,38 @@ async function runPolicySentinel() {
   renderAll();
   const btn = document.getElementById("policy-scan-btn");
   if (btn) btn.textContent = "Scanning portfolio...";
-  S.policyScan = await runPolicyScan();
+  // Scoped to whichever client is actually in view (S.portfolio, same as the priority rail this
+  // is triggered from) — a selected globe country narrows the scan to just that one issuer,
+  // matching the "resolve issuers from portfolio exposure" design this endpoint documents but,
+  // before this fix, never actually received.
+  const countries = S.selIso ? [S.selIso] : isoWeightsForPortfolio(S.portfolio).slice(0, 3);
+  const exposures = namedExposuresForPolicyScan(S.portfolio);
+  S.policyScan = await runPolicyScan(countries, exposures);
   S.policyScanState = "idle";
   since = 0;
   refreshEvaluation();
   renderAll();
   openPolicyTrial();
+}
+
+/** The AI Copilot's "ask anything" box, actually routed now instead of showing a static
+ * placeholder. One-off per question — not cached/hash-gated like narrateClient, since a
+ * question isn't a recurring fact-driven score. If the client changes while the answer is in
+ * flight, the answer is discarded rather than attached to the wrong client (copilotAnsweredFor
+ * lets paintCopilot only ever show an answer that belongs to the portfolio on screen). */
+async function askCopilotQuestion(question) {
+  const q = question?.trim();
+  const forId = S.portfolio?.id;
+  if (!q || !forId) return;
+  S.copilotAsking = true;
+  renderAll();
+  const grounding = buildGrounding(); // S.portfolio is already the client being asked about
+  const res = await askCopilot(q, S.portfolio, grounding, rmNotesFor(S.portfolio));
+  S.copilotAsking = false;
+  if (S.portfolio?.id !== forId) return; // switched clients mid-ask; the answer no longer applies
+  S.copilotAnsweredFor = forId;
+  S.copilotAnswer = res.ok ? res.answer : "Couldn't find an answer from the current portfolio data — try rephrasing.";
+  renderAll();
 }
 
 export function renderAll() {
@@ -392,7 +474,6 @@ export function renderAll() {
   paintCompliance();
   paintEconomics();
   applyLiquidGlass();
-  maybeNarrateOpenClient(); // hash-gated: only asks the model again if the open client's facts moved
 }
 
 function isoWeightsForPortfolio(p, goalId = null) {
@@ -406,6 +487,24 @@ function isoWeightsForPortfolio(p, goalId = null) {
     }
   }
   return [...weights.entries()].sort((a, b) => b[1] - a[1]).map(([iso]) => iso);
+}
+
+/** Named holdings, per country, for Policy Sentinel — [{iso3, name, weightPct}], heaviest first.
+ * Sibling to isoWeightsForPortfolio (same source, same weighting) but keeps the instrument name
+ * instead of collapsing to a country total: server/policy-sentinel.js names the actual holdings
+ * a classified document is relevant to, rather than a fixed demo market. Capped at 20 so the scan
+ * request body stays small regardless of how large a household's book gets. */
+function namedExposuresForPolicyScan(p) {
+  const rows = [];
+  for (const pos of p.positions || []) {
+    const inst = S.instruments[pos.instrumentId];
+    for (const ex of inst?.exposures || []) {
+      const weightPct = (pos.weightPct || 0) * (ex.weight || 1);
+      if (weightPct <= 0.0001) continue;
+      rows.push({ iso3: ex.iso3, name: inst.name || pos.instrumentId, weightPct });
+    }
+  }
+  return rows.sort((a, b) => b.weightPct - a.weightPct).slice(0, 20);
 }
 
 function focusPortfolio(p) {

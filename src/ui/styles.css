@@ -92,9 +92,13 @@ button{font:inherit; color:inherit}
 .tick-lab{flex:none; display:flex; align-items:center; gap:6px; padding:0 13px; height:100%;
   border-right:1px solid var(--line); font-family:var(--mono); font-size:9.5px;
   letter-spacing:.09em; text-transform:uppercase; color:var(--ink-3); background:var(--panel-2)}
-.tick-view{flex:1; overflow:hidden; height:100%}
+.tick-view{flex:1; overflow:hidden; height:100%; contain:layout paint style}
+/* will-change promotes the scrolling track to its own compositor layer, so translateX never
+   forces a repaint of an ancestor's backdrop-filter (the liquid-glass header) — see the
+   .market-ticker.liquid-glass rule below, which used to share a paint pass with this animation
+   and ran at a noticeably low frame rate as a result. */
 .tick-run{display:flex; align-items:center; gap:26px; height:100%; width:max-content;
-  animation:mq 64s linear infinite; padding-left:16px}
+  animation:mq 64s linear infinite; padding-left:16px; will-change:transform}
 .tick-strip:hover .tick-run{animation-play-state:paused}
 @keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .tk{display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--ink-2); white-space:nowrap}
@@ -152,11 +156,6 @@ button{font:inherit; color:inherit}
 .head-prose{flex-basis:100%; display:flex; flex-direction:column; gap:4px; margin-top:2px}
 .head-prose .prose{margin:0; font-size:12px; line-height:1.5; color:var(--ink-2); max-width:72ch}
 .prose-shimmer{display:inline-block; color:var(--ink-4); animation:prose-pulse 1.3s ease-in-out infinite}
-.explain-list{margin:0 0 4px; padding-left:18px; font-size:12px; line-height:1.6; color:var(--ink-2); max-width:72ch}
-.explain-list li{margin-bottom:2px}
-.inspect-data{margin:2px 0 0; padding:10px 12px; background:var(--panel-2); border:1px solid var(--line);
-  border-radius:8px; font-family:var(--mono); font-size:10.5px; line-height:1.5; color:var(--ink-3);
-  max-height:260px; overflow:auto; white-space:pre-wrap; word-break:break-word}
 @keyframes prose-pulse{0%,100%{opacity:.35}50%{opacity:.85}}
 .hh .sw{width:24px; height:13px; border-radius:7px; background:var(--line); position:relative; flex:none}
 .hh .sw::after{content:""; position:absolute; top:2px; left:2px; width:9px; height:9px;
@@ -914,6 +913,12 @@ button:disabled{opacity:.58; cursor:wait}
   background:var(--panel); color:var(--ink-2); padding:6px 7px; font:inherit; font-size:10px;
   letter-spacing:0; text-transform:none; outline:0}
 .filter-panel select:focus{border-color:var(--dn-3); color:var(--ink)}
+.snapshot-picker{display:flex; align-items:center; gap:7px; font-family:var(--mono); font-size:10px;
+  letter-spacing:.05em; text-transform:uppercase; color:var(--ink-4)}
+.snapshot-picker select{border:1px solid var(--line); border-radius:6px; background:var(--panel);
+  color:var(--ink-2); padding:5px 8px; font:inherit; font-size:10.5px; letter-spacing:0;
+  text-transform:none; outline:0; cursor:pointer}
+.snapshot-picker select:focus{border-color:var(--dn-3); color:var(--ink)}
 .book-list{min-height:0}
 .rm-client{grid-template-columns:10px minmax(0,1fr) auto; gap:5px 9px; padding:12px 12px;
   margin:0 4px; border-radius:7px}
@@ -2374,13 +2379,18 @@ body{
   min-width:0;
 }
 
+/* The single canonical animation-duration for this track — previously overridden three times
+   further down the file (48s/96s, then 96s/192s, then 118.6s/237.2s), each an attempt to fix
+   ticker jank by slowing the animation down rather than fixing its paint cost. The real fix is
+   the will-change:transform + contain pairing above (.tick-run/.tick-view); this is just the
+   speed, tuned once, not layered three deep. */
 .market-ticker .tick-run{
   gap:22px;
-  animation-duration:48s;
+  animation-duration:118.6s;
 }
 
 .market-ticker:hover .tick-run{
-  animation-duration:96s;
+  animation-duration:237.2s;
 }
 
 .market-ticker .tk{
@@ -2634,6 +2644,7 @@ body{
 .rm-client.high{--card-accent:#f4761f; --card-tint:rgba(244,118,31,.075); --card-border:rgba(244,118,31,.24)}
 .rm-client.medium{--card-accent:#e1a31a; --card-tint:rgba(225,163,26,.085); --card-border:rgba(225,163,26,.25)}
 .rm-client.low{--card-accent:#22bd73; --card-tint:rgba(34,189,115,.070); --card-border:rgba(34,189,115,.23)}
+.rm-client.loading,.rm-client.unavailable{--card-accent:#8a93a6; --card-tint:rgba(138,147,166,.06); --card-border:rgba(138,147,166,.20)}
 .rm-client.critical,.rm-client.high,.rm-client.medium,.rm-client.low{
   background:linear-gradient(135deg, rgba(255,255,255,.82), var(--card-tint));
   border-color:var(--card-border);
@@ -2765,15 +2776,6 @@ body{
   .filter-panel{
     top:184px;
   }
-}
-
-/* Targeted performance and clipping cleanup. */
-.market-ticker .tick-run{
-  animation-duration:96s;
-}
-
-.market-ticker:hover .tick-run{
-  animation-duration:192s;
 }
 
 .client-workbench .ch{
@@ -2993,6 +2995,13 @@ body{
   color:#178962;
 }
 
+.attention-badge.loading,.attention-badge.unavailable{
+  border-color:rgba(138,147,166,.24);
+  background:rgba(241,243,247,.78);
+  color:#5b6472;
+}
+.attention-badge.loading i{animation:prose-pulse 1.3s ease-in-out infinite}
+
 .profile-avatar{
   position:relative;
   z-index:1;
@@ -3151,6 +3160,14 @@ body{
 .risk-callout.low strong{
   color:#138a61;
 }
+
+.risk-callout.loading,.risk-callout.unavailable{
+  border-color:rgba(138,147,166,.24);
+  background:rgba(241,243,247,.82);
+}
+.risk-callout.loading b,.risk-callout.unavailable b{background:#8a93a6}
+.risk-callout.loading strong,.risk-callout.unavailable strong{color:#5b6472}
+.risk-callout.loading b{animation:prose-pulse 1.3s ease-in-out infinite}
 
 .risk-callout em{
   color:#2d62e8;
@@ -4146,6 +4163,13 @@ body{
   text-transform:uppercase;
 }
 
+/* Physical Concentration's chip when the AI's own Concentration policy check reads "watch" —
+   same amber the rest of the app uses for a medium-severity finding (.risk-callout.medium). */
+.status-chip.watch{
+  background:rgba(239,166,20,.16);
+  color:#bd7900;
+}
+
 .impact-hero{
   grid-template-columns:180px 1fr minmax(280px,.45fr);
 }
@@ -4362,13 +4386,6 @@ body{
 }
 .operator-greeting > div{
   min-width:0;
-}
-
-.market-ticker .tick-run{
-  animation-duration:118.6s;
-}
-.market-ticker:hover .tick-run{
-  animation-duration:237.2s;
 }
 
 .client-insight .chev,

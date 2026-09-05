@@ -15,7 +15,7 @@
 import { search, fetchDocs, hasKey } from "./tinyfish.js";
 import {
   ISSUERS, GLOBAL_ISSUER, rankCandidates, validateDoc,
-  evidenceQuote, issuerFor, documentTypeFor
+  evidenceQuote, issuerFor, documentTypeFor, assetsForCountry
 } from "./policy-routing.js";
 
 const MAS_URL = "https://www.mas.gov.sg/news/monetary-policy-statements";
@@ -85,7 +85,7 @@ export async function runPolicySentinelScan(opts = {}) {
         searchSnippet: cand.snippet,
         searchPosition: cand.position,
         candidateScore: cand.score
-      }, doc.text, "tinyfish", { trace, rejected, checked: ranked.length });
+      }, doc.text, "tinyfish", { trace, rejected, checked: ranked.length, exposures: opts.exposures });
     }
 
     throw new Error(`no candidate passed document validation (${rejected.join("; ")})`);
@@ -115,6 +115,14 @@ function buildScan(source, text, mode, meta = {}) {
   const stance = score >= 0.25 ? "hawkish" : score <= -0.25 ? "dovish" : "neutral";
   const quote = evidenceQuote(text) || `${source.issuer} document retained in full for audit.`;
   const urgency = source.issuer === "MAS" || Math.abs(score) > 0.45 ? "high" : "medium";
+  // Named per the document's own country, not a fixed demo market — a Fed statement names US
+  // holdings, a BOJ statement names Japanese ones. Empty when the client has no holdings in that
+  // country at all; the rmBrief line below phrases that case honestly rather than naming assets
+  // that aren't actually held.
+  const affectedAssets = assetsForCountry(meta.exposures, source.country);
+  const clientRelevance = affectedAssets.length
+    ? `Client relevance: ${affectedAssets.join(", ")} should be reviewed in context.`
+    : `Client relevance: no direct ${source.country} holdings on this book — review as a market-wide signal only.`;
 
   return {
     mode,
@@ -126,7 +134,7 @@ function buildScan(source, text, mode, meta = {}) {
       stance,
       stanceScore: score,
       policyActionType: source.documentType,
-      affectedAssets: ["DBS", "SGD", "Singapore financials", "USD rates sensitivity"],
+      affectedAssets,
       urgency,
       confidence: mode === "tinyfish" ? 0.86 : 0.72,
       whyFlagged: `A ${source.documentType.toLowerCase()} from ${source.issuer} was located on an official domain, fetched, validated as a genuine policy document, and classified.`
@@ -153,7 +161,7 @@ function buildScan(source, text, mode, meta = {}) {
     ],
     rmBrief: [
       `What changed: ${source.issuer} published a ${source.documentType.toLowerCase()}, classified ${stance}.`,
-      "Client relevance: SGD exposure, Singapore financials, and USD-rate-sensitive holdings should be reviewed in context.",
+      clientRelevance,
       "RM prompt: Ask whether the client's near-term goals require liquidity certainty before discussing any product action.",
       "Do not say: buy, sell, switch, or guarantee. This is an internal intelligence flag for adviser review."
     ],

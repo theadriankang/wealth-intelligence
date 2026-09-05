@@ -9,28 +9,48 @@ import * as M from "./motion.js";
 const SCALE = { total:20 };
 export const RISK_THRESHOLDS = { critical:80, high:60, medium:35 };
 
-function riskLevelFor(score) {
-  if (score >= RISK_THRESHOLDS.critical) return "critical";
-  if (score >= RISK_THRESHOLDS.high) return "high";
-  if (score >= RISK_THRESHOLDS.medium) return "medium";
-  return "low";
+/**
+ * Most paint* functions replace an element's innerHTML wholesale, so a plain addEventListener
+ * on anything inside it is safe — the old node (and its listener) is thrown away with the old
+ * markup. But a handful of controls (the book's filter row, sort/search inputs, the priority
+ * rail's own container) live in the *static* shell markup (shell.js) — paint only ever mutates
+ * their attributes/value, never their identity. Wiring those with a bare addEventListener inside
+ * a function that repaints on every render (paintBook/paintPfRail run on nearly every click)
+ * stacks up one more listener per repaint, forever: the element fires N handlers on the Nth
+ * repaint, each of which triggers another repaint that adds a (N+1)th — visibly, progressively
+ * slower with every click. rewire() replaces whatever handler it last attached instead of
+ * stacking a new one alongside it. */
+function rewire(el, type, handler) {
+  if (!el) return;
+  const key = `_rewired_${type}`;
+  if (el[key]) el.removeEventListener(type, el[key]);
+  el[key] = handler;
+  el.addEventListener(type, handler);
 }
 
-function sidebarScore(p, meta) {
-  const b = meta.breakdown || {};
-  let score = meta.urgency
-    + (b.collateralRisk || 0) * 2.4
-    + (b.liquidityRisk || 0) * 1.2
-    + (b.mandateRisk || 0) * 1.1
-    + (b.complianceRisk || 0) * 1.4
-    + (meta.fl?.length || 0) * 6;
-  if (meta.ltv) score = Math.max(score, 68);
-  if (meta.dueSoon) score = Math.max(score, 45);
-  if (p.riskProfile === "Dynamic Opportunistic") score += 8;
-  return Math.min(100, Math.round(score));
+/**
+ * score/band here are NOT recomputed — they defer entirely to clientMeta()'s aiState()-derived
+ * meta.urgency/meta.band. An earlier version of this file computed its own weighted score
+ * (referencing meta.breakdown, a field clientMeta() no longer produces — it silently degraded
+ * to a fallback formula instead of throwing) and displayed it regardless of whether the AI had
+ * actually scored the client yet. That's the exact "never show a number that might be a guess"
+ * regression the loading/unavailable states exist to prevent, so score is null — and rendered
+ * as a state, not a number — until aiState() reports "ai". See clientMeta() in this file and
+ * aiState() in store.js.
+ */
+function riskLevelFor(meta) { return meta.band; } // "critical"|"high"|"medium"|"low"|"loading"|"unavailable"
+
+function sidebarScore(meta) { return meta.urgency; } // number 0-100, or null while loading/unavailable
+
+function scoreLabel(meta) {
+  if (meta.band === "loading") return "…";
+  if (meta.band === "unavailable") return "n/a";
+  return String(sidebarScore(meta));
 }
 
 function aiInsight(meta) {
+  if (meta.band === "loading") return "AI: Scoring…";
+  if (meta.band === "unavailable") return "AI: Unavailable";
   if (meta.band === "critical") return meta.ltv ? "AI ALERT: Margin Call Risk" : "AI ALERT: Urgent Rebalance";
   if (meta.band === "high") return meta.driver === "Collateral/Leverage" ? "AI INSIGHT: Risk Limit Warning" : `AI INSIGHT: ${meta.driver} Pressure`;
   if (meta.band === "medium") return meta.dueSoon ? "AI NOTICE: Annual Review Due" : `AI NOTICE: ${meta.driver} Watch`;
@@ -48,26 +68,23 @@ function sortClients(list, metas) {
   const riskRank = { critical:4, high:3, medium:2, low:1 };
   return list.sort((a, b) => {
     const am = metas.get(a.id), bm = metas.get(b.id);
-    const as = sidebarScore(a, am), bs = sidebarScore(b, bm);
-    const ar = riskLevelFor(as), br = riskLevelFor(bs);
+    const as = sidebarScore(am), bs = sidebarScore(bm);
     switch (S.clientSort || "urgency-desc") {
       case "aum-desc": return aumNumber(b) - aumNumber(a);
       case "name-asc": return a.name.localeCompare(b.name);
       case "review-asc": return String(a.reviewDate || "").localeCompare(String(b.reviewDate || ""));
-      case "risk-desc": return riskRank[br] - riskRank[ar] || bs - as;
-      default: return bs - as || String(a.reviewDate || "").localeCompare(String(b.reviewDate || ""));
+      case "risk-desc": return (riskRank[bm.band] ?? 0) - (riskRank[am.band] ?? 0) || (bs ?? -1) - (as ?? -1);
+      default: return (bs ?? -1) - (as ?? -1) || String(a.reviewDate || "").localeCompare(String(b.reviewDate || ""));
     }
   });
 }
 
 function clientCard(p, m) {
-  const score = sidebarScore(p, m);
-  const riskLevel = riskLevelFor(score);
-  return `<button class="cl rm-client ${riskLevel}" data-cl="${p.id}" aria-current="${p.id === S.portfolio.id}">
+  return `<button class="cl rm-client ${m.band}" data-cl="${p.id}" aria-current="${p.id === S.portfolio.id}">
     <span class="client-accent" aria-hidden="true"></span>
     <span class="client-top"><span class="nm">${p.name}</span><span class="client-aum">${p.aum}</span></span>
     <span class="client-meta">Mandate: ${p.riskProfile}</span>
-    <span class="client-insight"><span class="score-pill">${score}</span><span>${aiInsight({ ...m, band:riskLevel })}</span><span class="chev">›</span></span>
+    <span class="client-insight"><span class="score-pill">${scoreLabel(m)}</span><span>${aiInsight(m)}</span><span class="chev">›</span></span>
   </button>`;
 }
 
@@ -161,23 +178,40 @@ function reviewDateLabel(date) {
   return new Date(`${date}T00:00:00`).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" });
 }
 
+/** The single most urgent AI finding for this client — the top risk if the model flagged one,
+ * else the top recommended action, else a plain "nothing flagged" line. Feeds the risk-callout's
+ * own <strong>/detail pair (label bolded, detail trailing plain text) rather than a separate
+ * one-liner paragraph underneath — one line per card, not two. Same loading/unavailable states as
+ * everywhere else the AI narration shows up: never a guess dressed up as an answer. */
+function urgentFinding(p) {
+  const state = aiState(p.id);
+  if (state === "loading") return { label: `<span class="prose-shimmer">Analysing…</span>`, detail: "" };
+  if (state !== "ai") return { label: "Analysis unavailable", detail: "" };
+  const ev = S.evaluation?.clients?.[p.id];
+  const risk = (ev?.risks || [])[0];
+  if (risk) return { label: "Risk", detail: risk.text };
+  const action = (ev?.actions || [])[0];
+  if (action) return { label: action.kind, detail: action.title };
+  return { label: "Nothing urgent flagged", detail: "" };
+}
+
 function urgentReviewCard({ p, m }, index, total) {
-  const score = sidebarScore(p, m);
-  const band = riskLevelFor(score);
-  const badge = band === "critical" ? "Critical attention" : band === "high" ? "High attention" : band === "medium" ? "Medium attention" : "Low attention";
+  const band = m.band;
+  const badge = band === "critical" ? "Critical attention" : band === "high" ? "High attention"
+    : band === "medium" ? "Medium attention" : band === "low" ? "Low attention"
+    : band === "loading" ? "Scoring…" : "Attention unavailable";
+  const finding = urgentFinding(p);
   return `<article class="urgent-swipe-card ${band}" data-urgent-card>
     <div class="urgent-card-top"><span class="attention-badge ${band}"><i></i>${badge}</span><span>${index + 1} / ${total}</span></div>
-    <button class="profile-open" data-open-client="${p.id}" type="button">
-      ${profileAvatar(p)}
-      <span class="urgent-name">${p.name}</span>
-      <span class="client-type">${m.source}</span>
-      <span class="profile-facts">
-        <span><em>AUM</em><b>${p.currency || ""} ${p.aum}</b></span>
-        <span><em>Mandate</em><b>${p.riskProfile || p.mandate}</b></span>
-      </span>
-    </button>
-    <button class="risk-callout ${band}" data-open-client="${p.id}" type="button">
-      <b>${score}</b><span><strong>${aiInsight({ ...m, band })}</strong>${m.reason}</span><em>›</em>
+    ${profileAvatar(p)}
+    <h3>${p.name}</h3>
+    <p class="client-type">${m.source}</p>
+    <div class="profile-facts">
+      <div><span>AUM</span><b>${p.currency || ""} ${p.aum}</b></div>
+      <div><span>Mandate</span><b>${p.riskProfile || p.mandate}</b></div>
+    </div>
+    <button class="risk-callout ${band}" data-cl="${p.id}">
+      <b>${scoreLabel(m)}</b><span><strong>${finding.label}</strong>${finding.detail}</span><em>›</em>
     </button>
     <div class="next-review"><span>▣</span><div><small>Next Review</small><b>${reviewDateLabel(p.reviewDate)}</b></div></div>
     <button class="open-review" data-open-client="${p.id}" type="button">Open client review <span>→</span></button>
@@ -189,7 +223,7 @@ function clientMatches(p, meta) {
   const q = (S.clientSearch || "").trim().toLowerCase();
   const hay = [p.name, p.ref, meta.source, p.countryOfResidence, p.bookingCentre, p.currency].join(" ").toLowerCase();
   if (q && !hay.includes(q)) return false;
-  if (filter !== "all" && riskLevelFor(sidebarScore(p, meta)) !== filter) return false;
+  if (filter !== "all" && riskLevelFor(meta) !== filter) return false;
   if (S.driverFilter !== "all" && meta.driver !== S.driverFilter) return false;
   if (S.profileFilter !== "all" && p.riskProfile !== S.profileFilter) return false;
   if (S.bookingFilter !== "all" && p.bookingCentre !== S.bookingFilter) return false;
@@ -224,21 +258,26 @@ export function paintBook(onPick) {
     const m = metas.get(p.id);
     return clientCard(p, m);
   }).join("") || `<div class="empty-state">No clients match ${active.length ? active.join(" · ") : "the current search"}.</div>`;
+  // [data-cl] cards are recreated fresh with #book's innerHTML above, so a plain addEventListener
+  // is fine there. Everything below targets controls from the *static* shell markup (shell.js) —
+  // paintBook only ever updates their value/attributes, never recreates them — and paintBook runs
+  // on nearly every render, so those must use rewire() or they'd stack one more listener per
+  // repaint forever (see the comment on rewire() above, and paintPfRail's #pfrail fix).
   document.querySelectorAll("[data-cl]").forEach(b => b.addEventListener("click", () => onPick(b.dataset.cl)));
-  document.querySelectorAll("#client-filters [data-filter]").forEach(b => b.addEventListener("click", () => { S.clientFilter = b.dataset.filter; paintBook(onPick); }));
-  document.getElementById("filter-toggle")?.addEventListener("click", () => { S.filtersOpen = !S.filtersOpen; paintBook(onPick); });
-  document.getElementById("client-sort")?.addEventListener("change", e => { S.clientSort = e.target.value; paintBook(onPick); });
-  document.getElementById("risk-popover-filter")?.addEventListener("change", e => { S.clientFilter = e.target.value; paintBook(onPick); });
+  document.querySelectorAll("#client-filters [data-filter]").forEach(b => rewire(b, "click", () => { S.clientFilter = b.dataset.filter; paintBook(onPick); }));
+  rewire(document.getElementById("filter-toggle"), "click", () => { S.filtersOpen = !S.filtersOpen; paintBook(onPick); });
+  rewire(document.getElementById("client-sort"), "change", e => { S.clientSort = e.target.value; paintBook(onPick); });
+  rewire(document.getElementById("risk-popover-filter"), "change", e => { S.clientFilter = e.target.value; paintBook(onPick); });
   document.getElementById("view-all-clients")?.addEventListener("click", () => {
     S.clientFilter = "all"; S.clientSearch = ""; S.driverFilter = "all"; S.profileFilter = "all"; S.bookingFilter = "all"; S.aumFilter = "all"; paintBook(onPick);
   });
-  document.getElementById("clear-client-filters")?.addEventListener("click", () => {
+  rewire(document.getElementById("clear-client-filters"), "click", () => {
     S.clientFilter = "all"; S.clientSearch = ""; S.driverFilter = "all"; S.profileFilter = "all"; S.bookingFilter = "all"; S.aumFilter = "all"; paintBook(onPick);
   });
   for (const [id, key] of [["driver-filter", "driverFilter"], ["profile-filter", "profileFilter"], ["booking-filter", "bookingFilter"], ["aum-filter", "aumFilter"]]) {
-    document.getElementById(id)?.addEventListener("change", e => { S[key] = e.target.value; paintBook(onPick); });
+    rewire(document.getElementById(id), "change", e => { S[key] = e.target.value; paintBook(onPick); });
   }
-  document.getElementById("client-search")?.addEventListener("input", e => { S.clientSearch = e.target.value; paintBook(onPick); });
+  rewire(document.getElementById("client-search"), "input", e => { S.clientSearch = e.target.value; paintBook(onPick); });
   M.once("book", filtered.map(p => p.id).join("|") + S.clientFilter, () => M.enter("#book .cl", { y: 6, delay: 22, duration: 340 }));
 }
 
@@ -263,10 +302,10 @@ export function paintHead(onHousehold) {
   const healthDisplay = state === "ai" ? `${Math.round(ev.health)} · ${ev.healthBand}`
     : state === "loading" ? shimmer
     : `<span style="color:var(--ink-4)">Unavailable</span>`;
-  const explanationBlock = state === "ai"
-    ? `<ul class="explain-list">${(ev.explanation || []).map(b => `<li>${b}</li>`).join("")}</ul>`
-    : state === "loading" ? `<p class="prose-shimmer">Generating explanation…</p>`
-    : `<p style="color:var(--ink-4); font-size:12px">Explanation unavailable.</p>`;
+  const overviewBlock = state === "ai"
+    ? `<p class="prose">${ev.overview}</p>`
+    : state === "loading" ? `<p class="prose-shimmer">Generating overview…</p>`
+    : `<p style="color:var(--ink-4); font-size:12px">Overview unavailable.</p>`;
   document.getElementById("client-head").innerHTML = `
     <h2>${p.name}</h2><span class="ref">${p.ref}</span><span class="ref">${meta.source}</span>
     <span class="tag ${p.mandate === "Advisory" ? "adv" : "disc"}">${p.mandate} mandate</span>
@@ -280,15 +319,9 @@ export function paintHead(onHousehold) {
       ${p.householdPositions ? `<button class="hh" id="hh-btn" aria-pressed="${S.household}"><span class="sw"></span>Household · ${(p.entities || []).length} entities</button>` : ""}
     </div>
     <div class="head-prose">
-      ${explanationBlock}
-      <button class="ghost sm" id="inspect-data-btn" style="align-self:flex-start">${S.inspectDataOpen ? "Hide data used" : "Inspect data used"}</button>
-      ${S.inspectDataOpen ? `<pre class="inspect-data">${JSON.stringify(ev?.groundingUsed ?? {}, null, 2)}</pre>` : ""}
+      ${overviewBlock}
     </div>`;
   document.getElementById("hh-btn")?.addEventListener("click", onHousehold);
-  document.getElementById("inspect-data-btn")?.addEventListener("click", () => {
-    S.inspectDataOpen = !S.inspectDataOpen;
-    paintHead(onHousehold);
-  });
 }
 
 export function paintGoals(onPick) {
@@ -324,7 +357,7 @@ export function paintEvidence() {
   document.getElementById("ev-k").textContent = "Risk-weighted concentration";
   if (state === "ai") {
     const c = ev.concentration;
-    document.getElementById("ev-v").textContent = c.pct + "%";
+    document.getElementById("ev-v").textContent = Math.round(c.pct) + "%";
     document.getElementById("ev-s").innerHTML =
       `of deteriorating exposure in three countries<br><span style="font-family:var(--mono);color:var(--ink-2)">${c.countries.join(" · ")}</span>
       <span class="mode ai" style="margin-left:6px">ai-scored</span>`;
@@ -402,7 +435,14 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
     <section class="priority-card copilot-card"><div class="sec-h"><h2>AI Copilot</h2><span class="spark">✦</span></div><p>Ask about this client, a holding, or a market signal.</p><button class="suggest" data-coprompt="Prepare a call brief for ${p.name}">Prepare call brief</button><button class="suggest" data-coprompt="Show liquidity risks for ${p.name}">Show liquidity risks</button><button class="ghost solid" id="open-copilot">Open copilot</button></section>`;
   document.getElementById("priority-open")?.addEventListener("click", () => top ? onOpenPosition(top.instrumentId) : onRunPolicyScan());
   document.getElementById("clear-sel")?.addEventListener("click", onClearSel);
-  document.getElementById("pfrail")?.addEventListener("click", e => {
+  // #pfrail is the static <aside> from shell.js — paintPfRail only ever replaces its innerHTML,
+  // never the node itself, and this function reruns on nearly every interaction (every arrow/dot
+  // click calls it directly; renderAll() calls it on everything else). A bare addEventListener
+  // here stacked one more delegated handler onto the same persistent node every single repaint —
+  // click "next" once and you had 1 handler firing; click it again and 2 handlers each fired (one
+  // of which re-triggers this same repaint), then 4, then 8 — visibly, progressively slower with
+  // every click. rewire() swaps the handler instead of stacking it.
+  rewire(document.getElementById("pfrail"), "click", e => {
     const nav = e.target.closest("[data-urg-nav]");
     if (nav) {
       e.preventDefault();
@@ -499,13 +539,30 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
   M.once("rail", [p.id, S.selIso, S.goalSel, S.household].join("|"), M.rail);
 }
 
-export function paintCopilot({ onToggle }) {
+/** The AI Copilot's ask box, actually routed to the model now (askCopilot in eval/narrate.js,
+ * via main.js's askCopilotQuestion) instead of the old static "Drafting workspace for: X"
+ * placeholder. The answer shown is scoped to whichever client it was actually asked about
+ * (S.copilotAnsweredFor) — switching clients doesn't leave a stale answer from someone else's
+ * portfolio on screen. */
+export function paintCopilot({ onToggle, onAsk }) {
   const p = S.portfolio, open = S.copilotOpen;
   const prompts = ["Prepare call brief", "Show liquidity risks", "Summarise alerts", "Find clients affected by Singapore"];
-  document.getElementById("copilot").innerHTML = open ? `<div class="copilot-box"><div class="copilot-h"><div><h2><span>✦</span> AI Copilot</h2><p>Ask about this client, a holding, or market event</p></div><button class="x" id="copilot-close" aria-label="Close copilot">×</button></div><div class="prompt-grid">${prompts.map(x => `<button data-prompt="${x}">${x}</button>`).join("")}</div><div class="copilot-answer">${S.copilotDraft ? `Drafting workspace for: <b>${S.copilotDraft}</b><br><span>Will use portfolio, goals, RM notes and live signals when routing is connected.</span>` : "Select a prompt or ask a question to organise the RM workflow."}</div><div class="ask-row"><input value="${S.copilotDraft || ""}" placeholder="Ask anything..."><button>➤</button></div></div>` : `<button class="copilot-launch" id="copilot-open" aria-label="Open AI Copilot"><span>✦</span></button>`;
+  const answeredHere = S.copilotAnsweredFor === p.id;
+  const answerBody = S.copilotAsking ? `<span class="prose-shimmer">Thinking…</span>`
+    : answeredHere && S.copilotAnswer ? `${S.copilotAnswer} <span class="mode ai" style="margin-left:6px">ai-scored</span>`
+    : "Select a prompt or ask a question to organise the RM workflow.";
+  document.getElementById("copilot").innerHTML = open ? `<div class="copilot-box"><div class="copilot-h"><div><h2><span>✦</span> AI Copilot</h2><p>Ask about this client, a holding, or market event</p></div><button class="x" id="copilot-close" aria-label="Close copilot">×</button></div><div class="prompt-grid">${prompts.map(x => `<button data-prompt="${x}">${x}</button>`).join("")}</div><div class="copilot-answer">${answerBody}</div><div class="ask-row"><input id="copilot-input" value="${S.copilotDraft || ""}" placeholder="Ask anything..."><button id="copilot-ask" ${S.copilotAsking ? "disabled" : ""}>➤</button></div></div>` : `<button class="copilot-launch" id="copilot-open" aria-label="Open AI Copilot"><span>✦</span></button>`;
   document.getElementById("copilot-open")?.addEventListener("click", onToggle);
   document.getElementById("copilot-close")?.addEventListener("click", onToggle);
-  document.querySelectorAll("#copilot [data-prompt]").forEach(b => b.addEventListener("click", () => { S.copilotDraft = b.dataset.prompt; paintCopilot({ onToggle }); }));
+  document.querySelectorAll("#copilot [data-prompt]").forEach(b => b.addEventListener("click", () => {
+    S.copilotDraft = b.dataset.prompt;
+    onAsk?.(b.dataset.prompt);
+  }));
+  const input = document.getElementById("copilot-input");
+  const submit = () => onAsk?.(input?.value);
+  document.getElementById("copilot-ask")?.addEventListener("click", submit);
+  input?.addEventListener("keydown", e => { if (e.key === "Enter") submit(); });
+  input?.addEventListener("input", e => { S.copilotDraft = e.target.value; });
 }
 
 function topEventsRaw(n) {
