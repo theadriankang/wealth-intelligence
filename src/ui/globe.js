@@ -114,12 +114,13 @@ function countryTooltip({ countryName, iso, exposureMeta, signal, lens }) {
   </div>`;
 }
 
-export function mountGlobe(el, { onSelect }) {
+export function mountGlobe(el, { onSelect, onOpenClient }) {
   globe = Globe({ animateIn:false })(el)
     .backgroundColor("rgba(0,0,0,0)")
     .showAtmosphere(true).atmosphereColor("#9ec5ff").atmosphereAltitude(0.18)
     .polygonsData(COUNTRIES.features)
     .polygonSideColor(() => "rgba(63,84,62,0.18)")
+    .polygonLabel(() => "")
     .onPolygonClick(f => onSelect(exposure()[a3(f)] ? a3(f) : null))
     .pointLat("lat").pointLng("lng").pointAltitude(0.012).pointRadius(0.27)
     .pointLabel(p => `<div class="gt"><div class="n">${p.name}</div>
@@ -200,10 +201,7 @@ export function paintGlobe() {
     return L.col(L.val(sig(iso)));
   });
   globe.polygonStrokeColor(f => ex[a3(f)] ? "rgba(74,92,118,0.42)" : "rgba(74,92,118,0.10)");
-  globe.polygonLabel(f => {
-    const iso = a3(f), e = ex[iso], s = sig(iso);
-    return countryTooltip({ countryName:f.properties.name, iso, exposureMeta:e, signal:s, lens:L });
-  });
+  globe.polygonLabel(() => "");
 
   /* points: chokepoints + any exposed micro-state */
   const pts = CHOKEPOINTS.map(c => ({ ...c, kind:"Chokepoint", detail:c.detail }));
@@ -287,11 +285,12 @@ function position(f) {
   if (!pt || !isFinite(pt.x)) return;
   const host = panel.parentElement.getBoundingClientRect();
   const w = panel.offsetWidth || 268, h = panel.offsetHeight || 220;
+  const reservedTop = parseFloat(getComputedStyle(panel.parentElement).getPropertyValue("--globe-panel-top")) || 76;
   /* sit beside the country, never on top of it; flip near the edges */
   let x = pt.x + 26, y = pt.y - h / 2;
   if (x + w > host.width - 8) x = pt.x - w - 26;
   panel.style.left = Math.max(8, Math.min(host.width - w - 8, x)) + "px";
-  panel.style.top = Math.max(8, Math.min(host.height - h - 8, y)) + "px";
+  panel.style.top = Math.max(reservedTop, Math.min(host.height - h - 8, y)) + "px";
 }
 
 function showPanel(iso, f) {
