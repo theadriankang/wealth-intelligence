@@ -75,10 +75,8 @@ function fundingVisual(a) {
   if (shortfallUsd > 0 && Number.isFinite(e.funded)) {
     const funded = Math.max(0, Math.min(100, Number(e.funded)));
     return `<div class="funding-viz">
-      <div class="fv-row"><span>Required</span><b>100%</b></div>
-      <div class="fv-track required"><i style="width:100%"></i></div>
-      <div class="fv-row"><span>Funded</span><b>${funded.toFixed(0)}%</b></div>
-      <div class="fv-track available"><i style="width:${Math.max(3, funded)}%"></i></div>
+      <div class="funded-track"><i style="width:${Math.max(3, funded)}%"></i></div>
+      <b>${funded.toFixed(0)}% funded</b>
       <strong>Shortfall USD ${(shortfallUsd / 1e6).toFixed(2)}m</strong>
     </div>`;
   }
@@ -108,10 +106,8 @@ function visualFor(a) {
   const e = a.evidence || {};
   if (Number.isFinite(e.ltv) && Number.isFinite(e.trigger)) {
     const headroom = e.trigger - e.ltv;
-    const fill = Math.min(100, Math.max(0, e.ltv / e.trigger * 100));
     return `<button class="viz threshold-viz" data-expand-action="${a.id}" type="button">
       <div><b>${e.ltv.toFixed(2)}%</b><span>vs ${e.trigger}% trigger</span></div>
-      <div class="bar"><i style="width:${fill}%"></i><em style="left:100%"></em></div>
       <small>Remaining headroom ${headroom.toFixed(2)}pp</small>
     </button>`;
   }

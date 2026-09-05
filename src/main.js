@@ -59,7 +59,15 @@ async function boot() {
   S.policyScan = FALLBACK_SCAN;
   const isos = collectIsos(S.portfolios, S.instruments);
   const usesDatasetSignals = await loadSignals(data, isos);
-  readRouteFromLocation();
+  // Every fresh load starts at the homepage, regardless of whatever URL happens to be in the
+  // address bar (a refresh on /clients/PF-0003, a bookmark, a shared link) — readRouteFromLocation()
+  // would otherwise jump straight into that client's tab. history.replaceState (not pushState)
+  // so this doesn't add a spurious back-button entry; normal in-app navigation (navigateToClient,
+  // the logo, browser back/forward) still goes through readRouteFromLocation()/popstate exactly
+  // as before this line.
+  S.route = "dashboard";
+  S.tab = "pf";
+  history.replaceState(null, "", "/");
 
   root.innerHTML = shellHtml(S.operator);
   installLiquidGlass();

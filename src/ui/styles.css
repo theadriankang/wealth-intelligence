@@ -3151,6 +3151,20 @@ body{
 .viz small{
   color:#4c5f88;
 }
+/* No progress bar here — the client's actual LTV vs. the margin-call trigger is the finding
+   itself, so the percentages carry the whole visual rather than sharing it with a track. */
+.threshold-viz b{
+  font-size:34px;
+}
+.threshold-viz span{
+  font-size:15px;
+  font-weight:700;
+  color:#0d1728;
+}
+.threshold-viz small{
+  font-size:13px;
+  font-weight:600;
+}
 .bar{
   position:relative;
   height:11px;
@@ -3165,13 +3179,6 @@ body{
   background:linear-gradient(90deg,#2e65d4,#ff315f);
 }
 .bar.proposed i{background:linear-gradient(90deg,#69a3ff,#4d73e6)}
-.bar em{
-  position:absolute;
-  top:-7px;
-  width:2px;
-  height:25px;
-  background:#0f2d63;
-}
 .effect-tiles{
   display:grid;
   grid-template-columns:repeat(3, minmax(0, 1fr));
@@ -3554,39 +3561,25 @@ body{
   background:rgba(255,255,255,.56);
 }
 
-.fv-row{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  color:#596c91;
-  font-size:11px;
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-}
-
-.fv-row b{
-  color:#071740;
-  font-size:13px;
-  letter-spacing:0;
-  text-transform:none;
-}
-
-.fv-track{
+.funded-track{
   height:12px;
   border-radius:99px;
   background:#e3e9f4;
   overflow:hidden;
 }
 
-.fv-track i{
+.funded-track i{
   display:block;
   height:100%;
   border-radius:inherit;
+  background:linear-gradient(90deg,#2e83ff,#5f83ff);
 }
 
-.fv-track.required i{background:linear-gradient(90deg,#e5eaf4,#cfd8e8)}
-.fv-track.available i{background:linear-gradient(90deg,#2e83ff,#5f83ff)}
+.funding-viz b{
+  color:#071740;
+  font-size:13px;
+}
+
 .funding-viz strong{margin-top:4px;color:#06143a;font-size:17px}
 
 .effect-tile{
