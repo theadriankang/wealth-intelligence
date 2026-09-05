@@ -2,11 +2,13 @@
  * One function, two providers, JSON out. Whichever key is present wins.
  * Returns parsed JSON or throws — the client has a template fallback.
  *
- * temperature:0 on both providers — this app asks the model for numbers (health,
- * concentration) as well as prose, and a client-facing score has no business
- * sampling randomly run to run. Zero doesn't make the call bit-for-bit
- * deterministic (inference still isn't perfectly reproducible), but it removes
- * the bulk of the drift; narrate.js's AI_SCORE_BAND check catches what's left.
+ * temperature:0 and max_tokens:2000 on both providers, kept identical between them rather than
+ * each drifting to its own defaults. temperature:0 — this app asks the model for numbers
+ * (health, concentration) as well as prose, and a client-facing score has no business sampling
+ * randomly run to run. Zero doesn't make the call bit-for-bit deterministic (inference still
+ * isn't perfectly reproducible), but it removes the bulk of the drift; narrate.js's
+ * AI_SCORE_BAND check catches what's left. max_tokens:2000 bounds response size/cost on both
+ * providers — comfortably above what the largest schema (narrateClient's) needs in practice.
  */
 export async function callLLM({ system, prompt, schema }) {
   if (process.env.ANTHROPIC_API_KEY) return anthropic({ system, prompt, schema });
@@ -49,6 +51,7 @@ async function openai({ system, prompt, schema }) {
       model: process.env.LLM_MODEL || "gpt-4o",
       response_format: { type: "json_object" },
       temperature: 0,
+      max_tokens: 2000,
       messages: [
         { role: "system", content: system },
         { role: "user", content: `${prompt}\n\nSchema:\n${JSON.stringify(schema)}` }

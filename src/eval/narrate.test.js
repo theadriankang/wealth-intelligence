@@ -1,6 +1,6 @@
-import test from "node:test";
+import test, { after } from "node:test";
 import assert from "node:assert/strict";
-import { templateNarration, narrateClient, validateAiScore, factsHash } from "./narrate.js";
+import { templateNarration, narrateClient, validateAiScore, factsHash, askCopilot } from "./narrate.js";
 import { AI_SCORE_BAND } from "./rubric.js";
 
 const p = { name: "Bergmann Family Office", ref: "PF-0003", mandate: "Advisory", riskProfile: "Balanced", riskBand: "8–14% vol",
@@ -271,4 +271,53 @@ test("factsHash changes when a position's risk delta, currency, or liquidity tie
   assert.notEqual(h1, factsHash("p1", movedRisk));
   assert.notEqual(h1, factsHash("p1", movedCcy));
   assert.notEqual(h1, factsHash("p1", movedLiq));
+});
+
+// askCopilot — previously had no test coverage at all. Mocks fetch (same approach as
+// llm/client.test.js) so success/imperative-rejection/empty-answer/network-failure can each be
+// exercised deterministically, rather than only ever observing the network-failure path the way
+// a real dev-server-less test run naturally falls into.
+const originalFetch = globalThis.fetch;
+after(() => { globalThis.fetch = originalFetch; });
+const mockAnswer = answer => {
+  globalThis.fetch = async () => ({ ok: true, json: async () => ({ result: { answer } }) });
+};
+
+test("askCopilot returns the model's answer when it's a clean, grounded response", async () => {
+  mockAnswer("The Zurich property acquisition goal is 62% funded, targeted for Q2 2027.");
+  const res = await askCopilot("What's the biggest funding goal?", p, grounding, []);
+  assert.equal(res.ok, true);
+  assert.equal(res.answer, "The Zurich property acquisition goal is 62% funded, targeted for Q2 2027.");
+});
+
+test("askCopilot rejects an answer containing an imperative trade verb", async () => {
+  mockAnswer("You should sell the TSMC position before the next review.");
+  const res = await askCopilot("What should I do about Taiwan exposure?", p, grounding, []);
+  assert.equal(res.ok, false);
+  assert.equal(res.answer, null);
+});
+
+test("askCopilot rejects an empty answer", async () => {
+  mockAnswer("");
+  const res = await askCopilot("Anything urgent?", p, grounding, []);
+  assert.equal(res.ok, false);
+  assert.equal(res.answer, null);
+});
+
+test("askCopilot returns ok:false when the network call fails entirely", async () => {
+  globalThis.fetch = async () => { throw new Error("network down"); };
+  const res = await askCopilot("What's the biggest funding goal?", p, grounding, []);
+  assert.equal(res.ok, false);
+  assert.equal(res.answer, null);
+});
+
+test("askCopilot's request never includes the client's real name", async () => {
+  let sentBody;
+  globalThis.fetch = async (url, opts) => {
+    sentBody = JSON.parse(opts.body);
+    return { ok: true, json: async () => ({ result: { answer: "Fine either way." } }) };
+  };
+  await askCopilot("Any concerns?", p, grounding, []);
+  assert.ok(!sentBody.prompt.includes(p.name), "the client's real name must never reach the model");
+  assert.ok(sentBody.prompt.includes(p.ref), "the mandate reference should still identify the client internally");
 });

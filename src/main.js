@@ -444,21 +444,30 @@ async function runPolicySentinel() {
 
 /** The AI Copilot's "ask anything" box, actually routed now instead of showing a static
  * placeholder. One-off per question — not cached/hash-gated like narrateClient, since a
- * question isn't a recurring fact-driven score. If the client changes while the answer is in
- * flight, the answer is discarded rather than attached to the wrong client (copilotAnsweredFor
- * lets paintCopilot only ever show an answer that belongs to the portfolio on screen). */
+ * question isn't a recurring fact-driven score. Two ways an in-flight answer can stop applying
+ * by the time it resolves: the client changed (copilotAnsweredFor lets paintCopilot only ever
+ * show an answer that belongs to the portfolio on screen), or a newer question was asked before
+ * this one came back — copilotRequestSeq guards that: two questions in flight at once could
+ * resolve out of order, and without this check the *older* question's answer could land last and
+ * overwrite the newer one's, silently answering the wrong question. */
+let copilotRequestSeq = 0;
+
 async function askCopilotQuestion(question) {
   const q = question?.trim();
   const forId = S.portfolio?.id;
   if (!q || !forId) return;
+  const seq = ++copilotRequestSeq;
   S.copilotAsking = true;
   renderAll();
   const grounding = buildGrounding(); // S.portfolio is already the client being asked about
   const res = await askCopilot(q, S.portfolio, grounding, rmNotesFor(S.portfolio));
+  if (seq !== copilotRequestSeq) return; // a newer question is now in flight (or already answered)
   S.copilotAsking = false;
   if (S.portfolio?.id !== forId) return; // switched clients mid-ask; the answer no longer applies
   S.copilotAnsweredFor = forId;
   S.copilotAnswer = res.ok ? res.answer : "Couldn't find an answer from the current portfolio data — try rephrasing.";
+  if (res.ok) S.copilotDraft = ""; // clear the input for the next question; keep a failed
+                                    // question in place so the RM can edit and retry it
   renderAll();
 }
 
