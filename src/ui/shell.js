@@ -98,6 +98,16 @@ export const shellHtml = (operator = {}) => {
               <button data-lens="tone" aria-pressed="false">Tone</button>
               <button data-lens="pol" aria-pressed="false">Policy</button>
             </div>
+            <div class="overlay viewbar liquid-glass">
+              <label for="pf-view">View</label>
+              <select id="pf-view">
+                <option value="map">Exposure map</option>
+                <option value="country">Share by country</option>
+                <option value="holding">Share by holding</option>
+                <option value="asset">Share by asset class</option>
+                <option value="sector">Share by sector</option>
+              </select>
+            </div>
             <div class="overlay evid liquid-glass" id="evid-card" hidden>
               <div class="k" id="ev-k"></div>
               <div class="big" id="ev-v"></div>

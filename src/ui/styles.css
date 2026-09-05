@@ -5222,3 +5222,267 @@ body{position:fixed; inset:0}
     display:none;
   }
 }
+
+/* ============================================================================
+ * Composition view — donut + ranked list, sharing the Overview stage with the map.
+ * Slot in the same absolute footprint as .client-map-host so switching views does
+ * not reflow the cockpit around it.
+ * ========================================================================== */
+
+.viewbar{
+  right:22px;
+  bottom:14px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px 6px 12px;
+  border-radius:12px;
+}
+
+.viewbar label{
+  color:#6e7e9c;
+  font-size:11px;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+
+.viewbar select{
+  min-width:150px;
+  padding:5px 6px;
+  border:1px solid rgba(194,207,235,.8);
+  border-radius:8px;
+  background:rgba(255,255,255,.72);
+  color:#13244d;
+  font:inherit;
+  font-size:12.5px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.viewbar select:focus-visible{outline:2px solid #2a78d6; outline-offset:1px}
+
+/* In composition mode the map's own furniture is meaningless: the lens ramp encodes a
+   country signal, the legend explains column heights, the hint says "drag to pan". */
+.globe-wrap.composition-mode .lensbar,
+.globe-wrap.composition-mode .legend,
+.globe-wrap.composition-mode .hint,
+.globe-wrap.composition-mode .evid{
+  display:none!important;
+}
+
+/* The composition host is absolutely positioned inside #globe, which on the 3D-globe route
+   has no positioning of its own (only mountPanel sets it, and only in map mode). */
+#globe{position:relative}
+
+.composition-host{
+  position:absolute;
+  inset:0 0 58px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  padding:20px 22px 0;
+  overflow:hidden;
+}
+
+.composition-host[hidden]{display:none}
+
+.composition-head{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+}
+
+.composition-head h2{
+  margin:0;
+  color:#0d1d3f;
+  font-size:19px;
+  font-weight:800;
+  letter-spacing:-.01em;
+}
+
+.composition-head p{
+  margin:3px 0 0;
+  max-width:560px;
+  color:#6e7e9c;
+  font-size:12px;
+  line-height:1.4;
+}
+
+.composition-stats{
+  display:flex;
+  gap:20px;
+  margin:0;
+}
+
+.composition-stats div{margin:0}
+.composition-stats dt{
+  color:#8593ae;
+  font-size:10.5px;
+  font-weight:700;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
+.composition-stats dd{
+  margin:2px 0 0;
+  color:#0d1d3f;
+  font-size:15px;
+  font-weight:800;
+}
+.composition-stats .band.hot dd{color:#c8452f}
+.composition-stats .band.warm dd{color:#b07400}
+.composition-stats .band.calm dd{color:#1b8a5f}
+
+.composition-body{
+  display:grid;
+  grid-template-columns:210px minmax(0, 1fr);
+  align-items:center;
+  gap:26px;
+  min-height:0;
+  flex:1;
+}
+
+.comp-donut{
+  position:relative;
+  margin:0;
+  width:192px;
+  justify-self:center;
+}
+
+.comp-donut svg{display:block; width:100%; height:auto; overflow:visible}
+
+.comp-arc{
+  cursor:pointer;
+  transition:opacity .16s ease, transform .16s ease;
+  transform-box:fill-box;
+  transform-origin:96px 96px;
+}
+
+/* Dim the field rather than brighten the target — brightening changes the colour the
+   legend just promised, dimming does not. */
+.composition-host.has-focus .comp-arc{opacity:.28}
+.composition-host.has-focus .comp-arc.is-lit{opacity:1}
+
+.comp-centre{
+  position:absolute;
+  inset:0;
+  display:grid;
+  place-content:center;
+  text-align:center;
+  pointer-events:none;
+}
+
+.comp-centre b{
+  display:block;
+  color:#0d1d3f;
+  font-size:23px;
+  font-weight:800;
+  letter-spacing:-.02em;
+  line-height:1;
+}
+
+.comp-centre span{
+  display:block;
+  max-width:96px;
+  margin:4px auto 0;
+  overflow:hidden;
+  color:#6e7e9c;
+  font-size:10.5px;
+  line-height:1.25;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.comp-list{
+  display:grid;
+  gap:2px;
+  align-content:start;
+  max-height:100%;
+  padding-right:6px;
+  overflow-y:auto;
+}
+
+.comp-row{
+  display:grid;
+  grid-template-columns:10px minmax(80px, 150px) minmax(60px, 1fr) 48px;
+  align-items:center;
+  gap:10px;
+  padding:5px 8px;
+  border:0;
+  border-radius:8px;
+  background:transparent;
+  cursor:pointer;
+  font:inherit;
+  text-align:left;
+}
+
+.comp-row:hover,
+.comp-row:focus-visible{background:rgba(42,120,214,.07); outline:none}
+
+.comp-sw{
+  width:10px;
+  height:10px;
+  border-radius:3px;
+  background:var(--c);
+}
+
+.comp-name{
+  overflow:hidden;
+  color:#25344f;
+  font-size:12.5px;
+  font-weight:600;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.comp-track{
+  height:8px;
+  border-radius:99px;
+  background:rgba(19,36,77,.07);
+  overflow:hidden;
+}
+
+.comp-track i{
+  display:block;
+  height:100%;
+  border-radius:99px;
+  background:var(--c);
+}
+
+.comp-pct{
+  color:#0d1d3f;
+  font-size:12.5px;
+  font-weight:700;
+  font-variant-numeric:tabular-nums;
+  text-align:right;
+}
+
+.composition-foot{
+  padding:8px 0 12px;
+  color:#8593ae;
+  font-size:11px;
+  line-height:1.4;
+}
+
+.composition-empty{
+  display:grid;
+  place-items:center;
+  height:100%;
+  color:#8593ae;
+  font-size:13px;
+}
+
+@media (max-width:1120px){
+  .composition-body{
+    grid-template-columns:1fr;
+    align-content:start;
+    gap:14px;
+  }
+  .comp-donut{width:158px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .comp-arc{transition:none}
+}
