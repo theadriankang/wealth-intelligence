@@ -92,9 +92,13 @@ button{font:inherit; color:inherit}
 .tick-lab{flex:none; display:flex; align-items:center; gap:6px; padding:0 13px; height:100%;
   border-right:1px solid var(--line); font-family:var(--mono); font-size:9.5px;
   letter-spacing:.09em; text-transform:uppercase; color:var(--ink-3); background:var(--panel-2)}
-.tick-view{flex:1; overflow:hidden; height:100%}
+.tick-view{flex:1; overflow:hidden; height:100%; contain:layout paint style}
+/* will-change promotes the scrolling track to its own compositor layer, so translateX never
+   forces a repaint of an ancestor's backdrop-filter (the liquid-glass header) — see the
+   .market-ticker.liquid-glass rule below, which used to share a paint pass with this animation
+   and ran at a noticeably low frame rate as a result. */
 .tick-run{display:flex; align-items:center; gap:26px; height:100%; width:max-content;
-  animation:mq 64s linear infinite; padding-left:16px}
+  animation:mq 64s linear infinite; padding-left:16px; will-change:transform}
 .tick-strip:hover .tick-run{animation-play-state:paused}
 @keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 .tk{display:flex; align-items:center; gap:8px; font-size:11.5px; color:var(--ink-2); white-space:nowrap}
@@ -2375,13 +2379,18 @@ body{
   min-width:0;
 }
 
+/* The single canonical animation-duration for this track — previously overridden three times
+   further down the file (48s/96s, then 96s/192s, then 118.6s/237.2s), each an attempt to fix
+   ticker jank by slowing the animation down rather than fixing its paint cost. The real fix is
+   the will-change:transform + contain pairing above (.tick-run/.tick-view); this is just the
+   speed, tuned once, not layered three deep. */
 .market-ticker .tick-run{
   gap:22px;
-  animation-duration:48s;
+  animation-duration:118.6s;
 }
 
 .market-ticker:hover .tick-run{
-  animation-duration:96s;
+  animation-duration:237.2s;
 }
 
 .market-ticker .tk{
@@ -2767,15 +2776,6 @@ body{
   .filter-panel{
     top:184px;
   }
-}
-
-/* Targeted performance and clipping cleanup. */
-.market-ticker .tick-run{
-  animation-duration:96s;
-}
-
-.market-ticker:hover .tick-run{
-  animation-duration:192s;
 }
 
 .client-workbench .ch{
@@ -3173,24 +3173,6 @@ body{
   color:#2d62e8;
   font-style:normal;
   font-size:20px;
-}
-
-.urgent-one-liner{
-  position:relative;
-  z-index:1;
-  margin:7px 0 0;
-  overflow:hidden;
-  color:#415374;
-  font-size:11px;
-  line-height:1.3;
-  white-space:nowrap;
-  text-overflow:ellipsis;
-}
-
-.urgent-one-liner strong{
-  margin-right:5px;
-  color:#101f48;
-  font-size:11px;
 }
 
 .next-review{
@@ -4042,13 +4024,6 @@ body{
 }
 .operator-greeting > div{
   min-width:0;
-}
-
-.market-ticker .tick-run{
-  animation-duration:118.6s;
-}
-.market-ticker:hover .tick-run{
-  animation-duration:237.2s;
 }
 
 .client-insight .chev,

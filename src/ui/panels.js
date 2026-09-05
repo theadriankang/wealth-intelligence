@@ -10,6 +10,25 @@ const SCALE = { total:20 };
 export const RISK_THRESHOLDS = { critical:80, high:60, medium:35 };
 
 /**
+ * Most paint* functions replace an element's innerHTML wholesale, so a plain addEventListener
+ * on anything inside it is safe — the old node (and its listener) is thrown away with the old
+ * markup. But a handful of controls (the book's filter row, sort/search inputs, the priority
+ * rail's own container) live in the *static* shell markup (shell.js) — paint only ever mutates
+ * their attributes/value, never their identity. Wiring those with a bare addEventListener inside
+ * a function that repaints on every render (paintBook/paintPfRail run on nearly every click)
+ * stacks up one more listener per repaint, forever: the element fires N handlers on the Nth
+ * repaint, each of which triggers another repaint that adds a (N+1)th — visibly, progressively
+ * slower with every click. rewire() replaces whatever handler it last attached instead of
+ * stacking a new one alongside it. */
+function rewire(el, type, handler) {
+  if (!el) return;
+  const key = `_rewired_${type}`;
+  if (el[key]) el.removeEventListener(type, el[key]);
+  el[key] = handler;
+  el.addEventListener(type, handler);
+}
+
+/**
  * score/band here are NOT recomputed — they defer entirely to clientMeta()'s aiState()-derived
  * meta.urgency/meta.band. An earlier version of this file computed its own weighted score
  * (referencing meta.breakdown, a field clientMeta() no longer produces — it silently degraded
@@ -159,20 +178,21 @@ function reviewDateLabel(date) {
   return new Date(`${date}T00:00:00`).toLocaleDateString("en-GB", { day:"2-digit", month:"short", year:"numeric" });
 }
 
-/** The single most urgent AI finding for this client, as a one-liner — the top risk if the model
- * flagged one, else the top recommended action, else a plain "nothing flagged" line. Same
- * loading/unavailable states as everywhere else the AI narration shows up: never a guess dressed
- * up as an answer. */
-function urgentOneLiner(p) {
+/** The single most urgent AI finding for this client — the top risk if the model flagged one,
+ * else the top recommended action, else a plain "nothing flagged" line. Feeds the risk-callout's
+ * own <strong>/detail pair (label bolded, detail trailing plain text) rather than a separate
+ * one-liner paragraph underneath — one line per card, not two. Same loading/unavailable states as
+ * everywhere else the AI narration shows up: never a guess dressed up as an answer. */
+function urgentFinding(p) {
   const state = aiState(p.id);
-  if (state === "loading") return `<span class="prose-shimmer">Analysing…</span>`;
-  if (state !== "ai") return `<span style="color:var(--ink-4)">Analysis unavailable</span>`;
+  if (state === "loading") return { label: `<span class="prose-shimmer">Analysing…</span>`, detail: "" };
+  if (state !== "ai") return { label: "Analysis unavailable", detail: "" };
   const ev = S.evaluation?.clients?.[p.id];
   const risk = (ev?.risks || [])[0];
-  if (risk) return `<strong>Risk</strong> ${risk.text}`;
+  if (risk) return { label: "Risk", detail: risk.text };
   const action = (ev?.actions || [])[0];
-  if (action) return `<strong>${action.kind}</strong> ${action.title}`;
-  return `<span style="color:var(--ink-4)">Nothing urgent flagged</span>`;
+  if (action) return { label: action.kind, detail: action.title };
+  return { label: "Nothing urgent flagged", detail: "" };
 }
 
 function urgentReviewCard({ p, m }, index, total) {
@@ -180,6 +200,7 @@ function urgentReviewCard({ p, m }, index, total) {
   const badge = band === "critical" ? "Critical attention" : band === "high" ? "High attention"
     : band === "medium" ? "Medium attention" : band === "low" ? "Low attention"
     : band === "loading" ? "Scoring…" : "Attention unavailable";
+  const finding = urgentFinding(p);
   return `<article class="urgent-swipe-card ${band}" data-urgent-card>
     <div class="urgent-card-top"><span class="attention-badge ${band}"><i></i>${badge}</span><span>${index + 1} / ${total}</span></div>
     ${profileAvatar(p)}
@@ -190,9 +211,8 @@ function urgentReviewCard({ p, m }, index, total) {
       <div><span>Mandate</span><b>${p.riskProfile || p.mandate}</b></div>
     </div>
     <button class="risk-callout ${band}" data-cl="${p.id}">
-      <b>${scoreLabel(m)}</b><span><strong>${aiInsight(m)}</strong>${m.reason}</span><em>›</em>
+      <b>${scoreLabel(m)}</b><span><strong>${finding.label}</strong>${finding.detail}</span><em>›</em>
     </button>
-    <p class="urgent-one-liner">${urgentOneLiner(p)}</p>
     <div class="next-review"><span>▣</span><div><small>Next Review</small><b>${reviewDateLabel(p.reviewDate)}</b></div></div>
     <button class="open-review" data-open-client="${p.id}" type="button">Open client review <span>→</span></button>
   </article>`;
@@ -238,21 +258,26 @@ export function paintBook(onPick) {
     const m = metas.get(p.id);
     return clientCard(p, m);
   }).join("") || `<div class="empty-state">No clients match ${active.length ? active.join(" · ") : "the current search"}.</div>`;
+  // [data-cl] cards are recreated fresh with #book's innerHTML above, so a plain addEventListener
+  // is fine there. Everything below targets controls from the *static* shell markup (shell.js) —
+  // paintBook only ever updates their value/attributes, never recreates them — and paintBook runs
+  // on nearly every render, so those must use rewire() or they'd stack one more listener per
+  // repaint forever (see the comment on rewire() above, and paintPfRail's #pfrail fix).
   document.querySelectorAll("[data-cl]").forEach(b => b.addEventListener("click", () => onPick(b.dataset.cl)));
-  document.querySelectorAll("#client-filters [data-filter]").forEach(b => b.addEventListener("click", () => { S.clientFilter = b.dataset.filter; paintBook(onPick); }));
-  document.getElementById("filter-toggle")?.addEventListener("click", () => { S.filtersOpen = !S.filtersOpen; paintBook(onPick); });
-  document.getElementById("client-sort")?.addEventListener("change", e => { S.clientSort = e.target.value; paintBook(onPick); });
-  document.getElementById("risk-popover-filter")?.addEventListener("change", e => { S.clientFilter = e.target.value; paintBook(onPick); });
+  document.querySelectorAll("#client-filters [data-filter]").forEach(b => rewire(b, "click", () => { S.clientFilter = b.dataset.filter; paintBook(onPick); }));
+  rewire(document.getElementById("filter-toggle"), "click", () => { S.filtersOpen = !S.filtersOpen; paintBook(onPick); });
+  rewire(document.getElementById("client-sort"), "change", e => { S.clientSort = e.target.value; paintBook(onPick); });
+  rewire(document.getElementById("risk-popover-filter"), "change", e => { S.clientFilter = e.target.value; paintBook(onPick); });
   document.getElementById("view-all-clients")?.addEventListener("click", () => {
     S.clientFilter = "all"; S.clientSearch = ""; S.driverFilter = "all"; S.profileFilter = "all"; S.bookingFilter = "all"; S.aumFilter = "all"; paintBook(onPick);
   });
-  document.getElementById("clear-client-filters")?.addEventListener("click", () => {
+  rewire(document.getElementById("clear-client-filters"), "click", () => {
     S.clientFilter = "all"; S.clientSearch = ""; S.driverFilter = "all"; S.profileFilter = "all"; S.bookingFilter = "all"; S.aumFilter = "all"; paintBook(onPick);
   });
   for (const [id, key] of [["driver-filter", "driverFilter"], ["profile-filter", "profileFilter"], ["booking-filter", "bookingFilter"], ["aum-filter", "aumFilter"]]) {
-    document.getElementById(id)?.addEventListener("change", e => { S[key] = e.target.value; paintBook(onPick); });
+    rewire(document.getElementById(id), "change", e => { S[key] = e.target.value; paintBook(onPick); });
   }
-  document.getElementById("client-search")?.addEventListener("input", e => { S.clientSearch = e.target.value; paintBook(onPick); });
+  rewire(document.getElementById("client-search"), "input", e => { S.clientSearch = e.target.value; paintBook(onPick); });
   M.once("book", filtered.map(p => p.id).join("|") + S.clientFilter, () => M.enter("#book .cl", { y: 6, delay: 22, duration: 340 }));
 }
 
@@ -396,7 +421,14 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
     <section class="priority-card copilot-card"><div class="sec-h"><h2>AI Copilot</h2><span class="spark">✦</span></div><p>Ask about this client, a holding, or a market signal.</p><button class="suggest" data-coprompt="Prepare a call brief for ${p.name}">Prepare call brief</button><button class="suggest" data-coprompt="Show liquidity risks for ${p.name}">Show liquidity risks</button><button class="ghost solid" id="open-copilot">Open copilot</button></section>`;
   document.getElementById("priority-open")?.addEventListener("click", () => top ? onOpenPosition(top.instrumentId) : onRunPolicyScan());
   document.getElementById("clear-sel")?.addEventListener("click", onClearSel);
-  document.getElementById("pfrail")?.addEventListener("click", e => {
+  // #pfrail is the static <aside> from shell.js — paintPfRail only ever replaces its innerHTML,
+  // never the node itself, and this function reruns on nearly every interaction (every arrow/dot
+  // click calls it directly; renderAll() calls it on everything else). A bare addEventListener
+  // here stacked one more delegated handler onto the same persistent node every single repaint —
+  // click "next" once and you had 1 handler firing; click it again and 2 handlers each fired (one
+  // of which re-triggers this same repaint), then 4, then 8 — visibly, progressively slower with
+  // every click. rewire() swaps the handler instead of stacking it.
+  rewire(document.getElementById("pfrail"), "click", e => {
     const nav = e.target.closest("[data-urg-nav]");
     if (nav) {
       e.preventDefault();
