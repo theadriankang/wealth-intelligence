@@ -1,6 +1,7 @@
 import { CONFIG } from "./config.js";
 import { loadData } from "./adapters/index.js";
 import { S, rows, concentration } from "./store.js";
+import { chokepointExposure } from "./model/lookthrough.js";
 import { fetchSignals, pollSignals } from "./signals/worldmonitor.js";
 import { FEED, LATE_FEED } from "./signals/fixtures/signals.js";
 import { initPalette } from "./ui/palette.js";
@@ -317,11 +318,18 @@ function buildGrounding() {
     iso3: iso, name: S.signals[iso].name || iso, riskDelta: S.signals[iso].riskDelta
   }));
   const jb = S.portfolio.jb;
+  // The bank's own look-through chokepoint breakdown — same role as fallbackConcentration below:
+  // the AI's `physicalConcentration` (Compliance tab) is validated against these real figures
+  // (see AI_SCORE_BAND in narrate.js), and this is exactly what's shown if it's ever rejected.
+  const chokepoints = Object.values(chokepointExposure(list, S.instruments))
+    .map(c => ({ name: c.name, weightPct: Math.round(c.weightPct * 10) / 10 }))
+    .sort((a, b) => b.weightPct - a.weightPct);
   return {
     household: S.household,
     positions,
     countrySignals,
     fallbackConcentration: concentration(),
+    chokepoints,
     policyStance: S.policyScan?.signal?.stanceScore ?? null,
     baseCurrency: S.portfolio.currency ?? null,
     taxDomicile: jb?.taxDomicile ?? null,
@@ -340,6 +348,7 @@ function copyNarratedFields(target, src) {
   target.risks = src.risks; target.opportunities = src.opportunities; target.actions = src.actions;
   target.relationship = src.relationship;
   target.complianceChecks = src.complianceChecks; target.impactNarrative = src.impactNarrative;
+  target.physicalConcentration = src.physicalConcentration;
 }
 
 /**

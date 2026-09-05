@@ -21,7 +21,7 @@ const ce = {
 const aiExtras = {
   risks: [{ text: "Concentration is live in Taiwan.", severity: "high", category: "concentration" }],
   opportunities: [{ text: "Policy easing in Vietnam supports the education goal." }],
-  actions: [{ kind: "Reduce risk", category: "rebalancing", title: "Trim the concentrated sleeve.", why: "Taiwan exposure sits above the mandate line." }],
+  actions: [{ kind: "Reduce risk", category: "rebalancing", title: "Trim the concentrated sleeve.", why: "Taiwan exposure sits above the mandate line.", priority: "high" }],
   complianceChecks: [{ item: "Tax domicile", status: "clear", detail: "On record: Switzerland." }],
   impactNarrative: "Reviewing PF-0003's advisory mandate covers 2 holdings, with 1 flagged exposure pre-identified."
 };
@@ -32,6 +32,7 @@ const grounding = {
     countries: [{ iso3: "TWN", weight: 1 }] }],
   countrySignals: [{ iso3: "TWN", name: "Taiwan", riskDelta: 18 }],
   fallbackConcentration: { pct: 41, countries: ["TWN"] },
+  chokepoints: [{ name: "Taiwan Strait", weightPct: 18.5 }],
   policyStance: null,
   baseCurrency: "USD",
   taxDomicile: "Switzerland",
@@ -43,7 +44,7 @@ const grounding = {
 };
 
 test("templateNarration produces a prose overview (not bullets), no imperative verbs or risk talk", () => {
-  const { overview, health, healthBand, concentration, scoreSource, risks, opportunities, actions, relationship } =
+  const { overview, health, healthBand, concentration, scoreSource, risks, opportunities, actions, relationship, physicalConcentration } =
     templateNarration(ce, p, grounding);
   assert.equal(typeof overview, "string");
   assert.ok(overview.split(/\s+/).filter(Boolean).length <= 100);
@@ -60,10 +61,21 @@ test("templateNarration produces a prose overview (not bullets), no imperative v
   assert.equal(scoreSource, "deterministic");
   assert.deepEqual(risks, [{ text: ce.risks[0].text, severity: ce.risks[0].severity, category: "concentration" }]);
   assert.deepEqual(opportunities, [{ text: ce.opportunities[0].text }]);
-  assert.deepEqual(actions, [{ kind: "Reduce Risk", category: "rebalancing", title: ce.actions[0].text, why: ce.actions[0].reason }]);
+  assert.deepEqual(actions, [{ kind: "Reduce Risk", category: "rebalancing", title: ce.actions[0].text, why: ce.actions[0].reason, priority: "high" }]);
   assert.equal(relationship.concerns.length, 1);
   assert.equal(relationship.talkingPoints.length, 1);
   assert.deepEqual(relationship.objections, [{ question: p.relationship.objections[0][0], answer: p.relationship.objections[0][1] }]);
+  assert.equal(relationship.sentiment, "Cautious", "the fixture has a standing concern and an objection, so the keyword fallback reads Cautious");
+  assert.deepEqual(physicalConcentration, grounding.chokepoints, "deterministic fallback restates the bank's own chokepoint figures verbatim");
+});
+
+test("templateNarration's action priority follows the deterministic urgency thresholds (URGENT_CUTOFF/URGENCY.severityBase.medium)", () => {
+  const high = templateNarration({ ...ce, actions: [{ ...ce.actions[0], urgency: 70 }] }, p, grounding).actions[0];
+  const medium = templateNarration({ ...ce, actions: [{ ...ce.actions[0], urgency: 40 }] }, p, grounding).actions[0];
+  const low = templateNarration({ ...ce, actions: [{ ...ce.actions[0], urgency: 10 }] }, p, grounding).actions[0];
+  assert.equal(high.priority, "high");
+  assert.equal(medium.priority, "medium");
+  assert.equal(low.priority, "low");
 });
 
 test("templateNarration returns relationship: null when the portfolio has no relationship record", () => {
@@ -103,15 +115,19 @@ test("narrateClient falls back to the template when the LLM is unavailable", asy
   assert.equal(r.opportunities.length, 1);
   assert.equal(r.actions.length, 1);
   assert.equal(r.relationship.concerns.length, 1);
+  assert.equal(r.relationship.sentiment, "Cautious");
   assert.ok(r.complianceChecks.length > 0);
   assert.equal(typeof r.impactNarrative, "string");
+  assert.deepEqual(r.physicalConcentration, grounding.chokepoints);
+  assert.equal(r.actions[0].priority, "high", "urgency 70 on the fixture action clears URGENT_CUTOFF");
 });
 
 const base = () => ({
   overview: "A balanced mandate built to fund two goals.",
   health: 55, concentration: { pct: 40, countries: ["TWN"] },
   risks: [], opportunities: [], actions: [], relationship: null,
-  complianceChecks: [], impactNarrative: "Reviewing this mandate covers two holdings, with none flagged."
+  complianceChecks: [], impactNarrative: "Reviewing this mandate covers two holdings, with none flagged.",
+  physicalConcentration: []
 });
 
 test("validateAiScore accepts a well-formed AI response", () => {
@@ -141,6 +157,13 @@ test("validateAiScore rejects an action missing a required field", () => {
 test("validateAiScore rejects an action with an invalid category", () => {
   const data = { ...base(), actions: [{ kind: "Reduce risk", category: "market-timing", title: "Trim the sleeve.", why: "Concentration." }] };
   assert.equal(validateAiScore(data, ["TWN"]), false);
+});
+
+test("validateAiScore rejects an action with a missing or invalid priority", () => {
+  const missing = { ...base(), actions: [{ kind: "Reduce risk", category: "rebalancing", title: "Trim the sleeve.", why: "Concentration." }] };
+  const invalid = { ...base(), actions: [{ ...aiExtras.actions[0], priority: "urgent" }] };
+  assert.equal(validateAiScore(missing, ["TWN"]), false);
+  assert.equal(validateAiScore(invalid, ["TWN"]), false);
 });
 
 test("validateAiScore rejects an imperative verb inside a risk, opportunity, or action", () => {
@@ -181,6 +204,33 @@ test("validateAiScore rejects a concentration.pct past the reference band", () =
   assert.equal(validateAiScore(data, ["TWN"], { health: 55, concentrationPct: 40 }), false);
 });
 
+const chokeRef = { health: 55, concentrationPct: 40, chokepoints: [{ name: "Taiwan Strait", weightPct: 18.5 }] };
+
+test("validateAiScore accepts a physicalConcentration entry within the reference band", () => {
+  const data = { ...base(), physicalConcentration: [{ name: "Taiwan Strait", weightPct: 18.5 + AI_SCORE_BAND }] };
+  assert.equal(validateAiScore(data, ["TWN"], chokeRef), true);
+});
+
+test("validateAiScore rejects a physicalConcentration entry past the reference band", () => {
+  const data = { ...base(), physicalConcentration: [{ name: "Taiwan Strait", weightPct: 18.5 + AI_SCORE_BAND + 1 }] };
+  assert.equal(validateAiScore(data, ["TWN"], chokeRef), false);
+});
+
+test("validateAiScore rejects a physicalConcentration entry naming a chokepoint not in the reference", () => {
+  const data = { ...base(), physicalConcentration: [{ name: "Strait of Hormuz", weightPct: 18.5 }] };
+  assert.equal(validateAiScore(data, ["TWN"], chokeRef), false);
+});
+
+test("validateAiScore rejects any physicalConcentration entry when the reference has no chokepoints", () => {
+  const data = { ...base(), physicalConcentration: [{ name: "Taiwan Strait", weightPct: 18.5 }] };
+  assert.equal(validateAiScore(data, ["TWN"], { health: 55, concentrationPct: 40, chokepoints: [] }), false);
+});
+
+test("validateAiScore skips the physicalConcentration check entirely when no reference is given", () => {
+  const data = { ...base(), ...aiExtras, physicalConcentration: [{ name: "Anything", weightPct: 999 }] };
+  assert.equal(validateAiScore(data, ["TWN"]), true);
+});
+
 test("validateAiScore ignores the band check when the reference itself is missing a number", () => {
   const data = { ...base(), ...aiExtras, health: 99 };
   assert.equal(validateAiScore(data, ["TWN"], { health: undefined, concentrationPct: undefined }), true);
@@ -206,6 +256,7 @@ test("validateAiScore accepts an overview at the 100-word cap", () => {
 
 const validRelationship = {
   summary: "Last spoke in August, video call; the client prefers written follow-up.",
+  sentiment: "Cautious",
   concerns: ["Wants the Zurich purchase de-risked."],
   talkingPoints: ["Confirm the 2027 timeline still holds."],
   objections: [{ question: "Why not just hold more cash?", answer: "Cash drags on the funding goal over a 25-year horizon." }]
@@ -213,6 +264,12 @@ const validRelationship = {
 
 test("validateAiScore accepts a well-formed relationship object", () => {
   assert.equal(validateAiScore({ ...base(), ...aiExtras, relationship: validRelationship }, ["TWN"]), true);
+});
+
+test("validateAiScore rejects a relationship with a missing or invalid sentiment", () => {
+  const { sentiment, ...noSentiment } = validRelationship;
+  assert.equal(validateAiScore({ ...base(), relationship: noSentiment }, ["TWN"]), false);
+  assert.equal(validateAiScore({ ...base(), relationship: { ...validRelationship, sentiment: "Ecstatic" } }, ["TWN"]), false);
 });
 
 test("validateAiScore rejects a relationship missing a required field", () => {

@@ -1,5 +1,5 @@
 import { generateBrief } from "../llm/client.js";
-import { HEALTH_BANDS, AI_SCORE_BAND } from "./rubric.js";
+import { HEALTH_BANDS, AI_SCORE_BAND, URGENT_CUTOFF, URGENCY } from "./rubric.js";
 
 const SYSTEM =
   "You write a relationship manager's internal client-facing explanation and score the " +
@@ -30,13 +30,20 @@ const SYSTEM =
   "For `actions`, ground personalised recommendations in the mandate, risk profile, tax domicile, " +
   "life stage, and objectives given — rebalancing suggestions need the reasoning attached; tax- " +
   "aware opportunities need the tax domicile fact; life-event actions (retirement, business sale, " +
-  "philanthropy, education, succession) need the life stage or objectives fact, not a guess. " +
+  "philanthropy, education, succession) need the life stage or objectives fact, not a guess. Also " +
+  "set `priority` ('high'|'medium'|'low') for how urgent this action actually is given the facts " +
+  "— usually 'high' when it addresses a high-severity risk, thin lombard headroom, or a goal " +
+  "close to its horizon; a client-conversation or informational action is rarely 'high' on its " +
+  "own. " +
   "For `relationship`, ground `summary`/`concerns`/`talkingPoints`/`objections` in the " +
   "relationship facts given (last contact, topics discussed, behaviour, standing concerns, " +
   "talking points, objections) plus the client's goals/tax domicile/life stage/objectives — " +
   "refine and reprioritise them for the current facts rather than copying them verbatim, and " +
-  "never invent a conversation that didn't happen. Return `relationship: null` only if no " +
-  "relationship facts were given at all. " +
+  "never invent a conversation that didn't happen. Also set `sentiment` " +
+  "('Positive'|'Neutral'|'Cautious'|'Concerned') — the client's current disposition, read only " +
+  "from the behaviour/concerns/objections/standing-concerns facts given, never guessed beyond " +
+  "what they support. Return `relationship: null` only if no relationship facts were given at " +
+  "all (in that case there is nothing to set `sentiment` on either). " +
   "For `complianceChecks`, produce one item per compliance-relevant fact actually given — PEP " +
   "status, tax domicile/reporting jurisdiction, KYC review timing, and how spread out the " +
   "portfolio's real (look-through) holdings are against the mandate's bands — and no others; " +
@@ -49,6 +56,12 @@ const SYSTEM =
   "specific client's mandate concretely involves this review — holdings count, mandate " +
   "complexity, what's flagged — grounded only in this client's own facts, never a book-wide or " +
   "generic operating-leverage claim. " +
+  "For `physicalConcentration`, restate the bank's own look-through chokepoint breakdown given " +
+  "in `chokepoints` — this is a verification pass over the bank's own figures, not a fresh " +
+  "estimate: every entry's `name` must be one of the names given in `chokepoints`, and its " +
+  "`weightPct` must land within " + AI_SCORE_BAND + " points of the weightPct given for that " +
+  "name. Omit a chokepoint from `chokepoints` rather than inventing one; empty array if " +
+  "`chokepoints` is empty. " +
   "Nowhere in the response — overview, risks, opportunities, actions, relationship, " +
   "complianceChecks, or impactNarrative — use the words buy / sell / execute / switch; these are " +
   "internal findings and recommendations for the RM, never client-facing advice or trade " +
@@ -80,19 +93,27 @@ const SCHEMA = {
     "review', 'Client conversation'), category: 'rebalancing'|'tax-optimization'|'life-event'|" +
     "'other', title: string (a short recommended action, plain language), why: string (one " +
     "plain-language sentence grounding it in mandate, risk profile, tax domicile, life stage, " +
-    "or objectives) }",
+    "or objectives), priority: 'high'|'medium'|'low' (how urgent/impactful this action actually " +
+    "is given the facts) }",
   relationship: "null, or an object { summary: string (1-2 sentences: last contact and how this " +
-    "client tends to behave/decide), concerns: array of up to 4 short strings (standing " +
-    "concerns), talkingPoints: array of up to 4 short strings (for the next conversation), " +
-    "objections: array of up to 3 objects { question: string (the likely objection, as the " +
-    "client might phrase it), answer: string (how to respond) } }",
+    "client tends to behave/decide), sentiment: 'Positive'|'Neutral'|'Cautious'|'Concerned' " +
+    "(the client's current disposition, grounded in the behaviour/concerns/objections facts), " +
+    "concerns: array of up to 4 short strings (standing concerns), talkingPoints: array of up to " +
+    "4 short strings (for the next conversation), objections: array of up to 3 objects " +
+    "{ question: string (the likely objection, as the client might phrase it), answer: string " +
+    "(how to respond) } }",
   complianceChecks: "array of up to 4 objects { item: string (e.g. 'PEP status', 'Tax domicile', " +
     "'KYC review', 'Concentration policy'), status: 'clear'|'watch', detail: string (one sentence " +
     "citing the specific fact behind it) } — one per compliance-relevant fact actually present in " +
     "the facts given, no invented checks",
   impactNarrative: "string — one prose paragraph, 60 words or fewer, on what this specific " +
     "client's mandate concretely involves this review (holdings count, mandate complexity, " +
-    "what's flagged); never a book-wide or generic claim"
+    "what's flagged); never a book-wide or generic claim",
+  physicalConcentration: "array of up to 6 objects { name: string (must be one of the names " +
+    "given in `chokepoints`), weightPct: number (within " + AI_SCORE_BAND + " points of the " +
+    "weightPct given for that name in `chokepoints`) } — a restatement/verification of the " +
+    "bank's own look-through chokepoint figures, most concentrated first; empty array if " +
+    "`chokepoints` is empty"
 };
 
 export function templateNarration(clientEval, portfolio, grounding) {
@@ -110,7 +131,7 @@ export function templateNarration(clientEval, portfolio, grounding) {
   const risks = (clientEval.risks || []).slice(0, 4).map(r => ({ text: r.text, severity: r.severity, category: categoriseRisk(r) }));
   const opportunities = (clientEval.opportunities || []).slice(0, 3).map(o => ({ text: o.text }));
   const actions = (clientEval.actions || []).slice(0, 4).map(a => ({
-    kind: humanize(a.kind), category: categoriseAction(a), title: a.text, why: a.reason
+    kind: humanize(a.kind), category: categoriseAction(a), title: a.text, why: a.reason, priority: priorityFor(a.urgency)
   }));
   const relationship = fallbackRelationship(portfolio.relationship);
   const complianceChecks = fallbackComplianceChecks(portfolio, grounding, clientEval);
@@ -118,8 +139,19 @@ export function templateNarration(clientEval, portfolio, grounding) {
   return {
     health: clientEval.health, healthBand: clientEval.healthBand,
     concentration: grounding?.fallbackConcentration, scoreSource: "deterministic",
-    overview, risks, opportunities, actions, relationship, complianceChecks, impactNarrative
+    overview, risks, opportunities, actions, relationship, complianceChecks, impactNarrative,
+    physicalConcentration: grounding?.chokepoints ?? []
   };
+}
+
+/** clientEval.js's actions already carry a numeric urgency (0-100, see rubric.js's URGENCY) —
+ * the same cutoffs the urgent-review rail uses, reused here so the deterministic fallback's
+ * `priority` means the same thing as the AI's own `priority` field, not a second definition. */
+function priorityFor(urgency) {
+  const u = Number(urgency) || 0;
+  if (u >= URGENT_CUTOFF) return "high";
+  if (u >= URGENCY.severityBase.medium) return "medium";
+  return "low";
 }
 
 function fallbackComplianceChecks(portfolio, grounding, clientEval) {
@@ -155,10 +187,21 @@ function fallbackRelationship(r) {
   if (!r) return null;
   return {
     summary: `Last contact ${r.last?.date || "unknown"} via ${r.last?.channel || "unspecified channel"}. ${r.behaviour || ""}`.trim(),
+    sentiment: sentimentFor(r),
     concerns: (r.concerns || []).slice(0, 4),
     talkingPoints: (r.points || []).slice(0, 4),
     objections: (r.objections || []).slice(0, 3).map(o => ({ question: o[0], answer: o[1] }))
   };
+}
+
+/** A stated keyword heuristic, not a claim of real sentiment analysis — the AI path reads the
+ * same behaviour/concerns/objections facts and forms its own judgment; this is what shows while
+ * that hasn't resolved (or has failed/invalidated) so the panel is never blank. */
+function sentimentFor(r) {
+  const text = `${r.behaviour || ""} ${(r.concerns || []).join(" ")}`.toLowerCase();
+  if (/frustrat|worried|unhapp|complain|anxious/.test(text)) return "Concerned";
+  if ((r.concerns || []).length || (r.objections || []).length) return "Cautious";
+  return "Neutral";
 }
 
 /** clientEval.js tags its own findings with a stable `topic` (concentration/chokepoint/funding/
@@ -197,15 +240,20 @@ const HAS_IMPERATIVE = /\b(buy|sell|execute|switch)\b/i;
 const SEVERITIES = ["high", "medium", "low"];
 const RISK_CATEGORIES = ["drift", "concentration", "liquidity", "currency", "collateral", "other"];
 const ACTION_CATEGORIES = ["rebalancing", "tax-optimization", "life-event", "other"];
+const PRIORITIES = ["high", "medium", "low"];
+const SENTIMENTS = ["Positive", "Neutral", "Cautious", "Concerned"];
 const CHECK_STATUSES = ["clear", "watch"];
 
 /** Shape guard for a candidate AI response before it's trusted as
- * health/concentration/overview/risks/opportunities/actions/complianceChecks/impactNarrative.
- * `reference`, when given ({ health, concentrationPct }), is the deterministic engine's own
- * read of the same facts — a response is rejected in full (not partially merged) if its health
- * or concentration.pct drifts more than AI_SCORE_BAND points from it. Callers that don't have
- * (or don't want) a bounded reference can omit it and skip that check — used by tests that only
- * exercise the shape guard. */
+ * health/concentration/overview/risks/opportunities/actions/relationship/complianceChecks/
+ * impactNarrative/physicalConcentration.
+ * `reference`, when given ({ health, concentrationPct, chokepoints }), is the deterministic
+ * engine's own read of the same facts — a response is rejected in full (not partially merged) if
+ * its health or concentration.pct drifts more than AI_SCORE_BAND points from it, or if any
+ * physicalConcentration entry names a chokepoint not in `reference.chokepoints` or drifts more
+ * than AI_SCORE_BAND points from the weightPct given for it. Callers that don't have (or don't
+ * want) a bounded reference can omit it and skip those checks — used by tests that only exercise
+ * the shape guard. */
 export function validateAiScore(data, countryCodes, reference) {
   if (!data) return false;
   if (!nonEmptyString(data.overview) || HAS_IMPERATIVE.test(data.overview) || wordCount(data.overview) > 100) return false;
@@ -222,18 +270,27 @@ export function validateAiScore(data, countryCodes, reference) {
   if (data.opportunities.some(o => !o || !nonEmptyString(o.text) || HAS_IMPERATIVE.test(o.text))) return false;
   if (!Array.isArray(data.actions) || data.actions.length > 4) return false;
   if (data.actions.some(a => !a || !nonEmptyString(a.kind) || !nonEmptyString(a.title) || !nonEmptyString(a.why)
-    || !ACTION_CATEGORIES.includes(a.category)
+    || !ACTION_CATEGORIES.includes(a.category) || !PRIORITIES.includes(a.priority)
     || HAS_IMPERATIVE.test(a.kind) || HAS_IMPERATIVE.test(a.title) || HAS_IMPERATIVE.test(a.why))) return false;
   if (data.relationship !== null && !validRelationship(data.relationship)) return false;
   if (!Array.isArray(data.complianceChecks) || data.complianceChecks.length > 4) return false;
   if (data.complianceChecks.some(c => !c || !nonEmptyString(c.item) || !CHECK_STATUSES.includes(c.status)
     || !nonEmptyString(c.detail) || HAS_IMPERATIVE.test(c.detail))) return false;
   if (!nonEmptyString(data.impactNarrative) || HAS_IMPERATIVE.test(data.impactNarrative) || wordCount(data.impactNarrative) > 60) return false;
+  if (!Array.isArray(data.physicalConcentration) || data.physicalConcentration.length > 6) return false;
+  if (reference?.chokepoints) {
+    const byName = new Map(reference.chokepoints.map(c => [c.name, c.weightPct]));
+    for (const c of data.physicalConcentration) {
+      if (!c || !nonEmptyString(c.name) || typeof c.weightPct !== "number" || !Number.isFinite(c.weightPct)) return false;
+      if (!byName.has(c.name) || Math.abs(c.weightPct - byName.get(c.name)) > AI_SCORE_BAND) return false;
+    }
+  }
   return true;
 }
 
 function validRelationship(r) {
   if (!r || !nonEmptyString(r.summary) || HAS_IMPERATIVE.test(r.summary)) return false;
+  if (!SENTIMENTS.includes(r.sentiment)) return false;
   if (!Array.isArray(r.concerns) || r.concerns.length > 4 || r.concerns.some(c => !nonEmptyString(c) || HAS_IMPERATIVE.test(c))) return false;
   if (!Array.isArray(r.talkingPoints) || r.talkingPoints.length > 4 || r.talkingPoints.some(t => !nonEmptyString(t) || HAS_IMPERATIVE.test(t))) return false;
   if (!Array.isArray(r.objections) || r.objections.length > 3) return false;
@@ -262,15 +319,20 @@ export function factsHash(portfolioId, grounding) {
 
 export async function narrateClient(clientEval, portfolio, rmNotes = [], grounding) {
   const fallback = () => templateNarration(clientEval, portfolio, grounding);
-  const reference = { health: clientEval.health, concentrationPct: grounding?.fallbackConcentration?.pct };
+  const reference = {
+    health: clientEval.health,
+    concentrationPct: grounding?.fallbackConcentration?.pct,
+    chokepoints: grounding?.chokepoints ?? []
+  };
   const facts = {
     // The client's real name never reaches the model — identified by mandate reference only.
     client: { ref: portfolio.ref, mandate: portfolio.mandate, riskProfile: portfolio.riskProfile, riskBand: portfolio.riskBand },
-    // The bank's own deterministic health/concentration read — see AI_SCORE_BAND (rubric.js):
-    // the model's own numbers must land within that many points of these, or the whole
-    // response is rejected in favor of the deterministic fallback (validateAiScore below).
+    // The bank's own deterministic health/concentration/chokepoint read — see AI_SCORE_BAND
+    // (rubric.js): the model's own numbers must land within that many points of these, or the
+    // whole response is rejected in favor of the deterministic fallback (validateAiScore below).
     referenceHealth: reference.health,
     referenceConcentrationPct: reference.concentrationPct ?? null,
+    chokepoints: reference.chokepoints,
     household: grounding?.household ?? false,
     baseCurrency: grounding?.baseCurrency ?? portfolio.currency ?? null,
     taxDomicile: grounding?.taxDomicile ?? null,
@@ -314,7 +376,8 @@ export async function narrateClient(clientEval, portfolio, rmNotes = [], groundi
       overview: res.data.overview,
       risks: res.data.risks, opportunities: res.data.opportunities, actions: res.data.actions,
       relationship: res.data.relationship,
-      complianceChecks: res.data.complianceChecks, impactNarrative: res.data.impactNarrative
+      complianceChecks: res.data.complianceChecks, impactNarrative: res.data.impactNarrative,
+      physicalConcentration: res.data.physicalConcentration
     };
   }
   return fallback();
