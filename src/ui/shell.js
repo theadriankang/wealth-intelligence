@@ -29,9 +29,6 @@ export const shellHtml = (operator = {}) => {
       <select id="snapshot-select"></select>
     </label>
     <div class="operator-controls" aria-label="Operator controls">
-      <button class="icon-btn has-alert" type="button" aria-label="Notifications">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 7h18s-3 0-3-7"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      </button>
       <button class="icon-btn" type="button" aria-label="Settings">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"/><path d="M19.43 12.98c.04-.32.07-.65.07-.98s-.02-.66-.07-.98l2.11-1.65a.5.5 0 0 0 .12-.64l-2-3.46a.5.5 0 0 0-.6-.22l-2.49 1a7.07 7.07 0 0 0-1.69-.98L14.5 2.42A.5.5 0 0 0 14 2h-4a.5.5 0 0 0-.5.42l-.38 2.65c-.61.24-1.18.57-1.69.98l-2.49-1a.5.5 0 0 0-.6.22l-2 3.46a.5.5 0 0 0 .12.64l2.11 1.65c-.04.32-.07.65-.07.98s.02.66.07.98l-2.11 1.65a.5.5 0 0 0-.12.64l2 3.46a.5.5 0 0 0 .6.22l2.49-1c.51.4 1.08.73 1.69.98l.38 2.65a.5.5 0 0 0 .5.42h4a.5.5 0 0 0 .5-.42l.38-2.65c.61-.24 1.18-.57 1.69-.98l2.49 1a.5.5 0 0 0 .6-.22l2-3.46a.5.5 0 0 0-.12-.64l-2.11-1.65Z"/></svg>
       </button>
@@ -51,7 +48,8 @@ export const shellHtml = (operator = {}) => {
     </div>
     <nav class="book client-rail liquid-glass">
       <button class="rail-close" id="close-client-rail" aria-label="Close clients">×</button>
-      <div class="book-h"><h2>Clients</h2><span id="book-n"></span></div>
+      <div class="book-h"><h2>Clients</h2></div>
+      <div class="book-ai-status" id="book-ai-status"></div>
       <label class="client-search liquid-glass"><span>⌕</span><input id="client-search" type="search" placeholder="Search client name or source of wealth"></label>
       <div class="filter-row" id="client-filters">
         <button data-filter="all" aria-pressed="true">All</button>
@@ -73,7 +71,6 @@ export const shellHtml = (operator = {}) => {
         <button class="ghost sm" id="clear-client-filters">Clear all</button>
       </div>
       <div class="book-list" id="book"></div>
-      <div class="book-f" id="book-foot">Prioritised by client urgency, review date, mandate risk and event exposure.</div>
     </nav>
 
     <main class="cockpit liquid-glass">
