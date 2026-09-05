@@ -382,7 +382,21 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
   const activeIndex = urgent.length ? Math.min(S.urgentReviewIndex || 0, urgent.length - 1) : 0;
   const activeUrgent = urgent[activeIndex];
   let cardWasSwiped = false;
-  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card urgent-carousel"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div>${activeUrgent ? urgentReviewCard(activeUrgent, activeIndex, urgent.length) : `<div class="empty-state">No urgent reviews for this scope.</div>`}<div class="urgent-nav"><button class="urgent-arrow" type="button" data-urg-nav="-1" aria-label="Previous urgent review">‹</button><div class="urgent-dots">${urgent.map((_, i) => `<button class="dot" type="button" data-urg-dot="${i}" aria-label="Urgent review ${i + 1}" aria-pressed="${i === activeIndex}"></button>`).join("")}</div><button class="urgent-arrow" type="button" data-urg-nav="1" aria-label="Next urgent review">›</button></div></section>
+  const moveUrgent = delta => {
+    if (!urgent.length) return;
+    S.urgentReviewIndex = (activeIndex + delta + urgent.length) % urgent.length;
+    paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle });
+  };
+  const jumpUrgent = index => {
+    if (!urgent.length) return;
+    S.urgentReviewIndex = Math.max(0, Math.min(urgent.length - 1, index));
+    paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle });
+  };
+  const openUrgentClient = id => {
+    if (!id || cardWasSwiped) return;
+    if (S.portfolios.some(p => p.id === id)) onOpenClient?.(id);
+  };
+  document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button><section class="priority-card urgent-carousel" tabindex="0" aria-label="Urgent client reviews"><div class="sec-h"><h2>Urgent reviews</h2><span class="count">${S.selIso || "global"} · top ${urgent.length}</span></div>${activeUrgent ? urgentReviewCard(activeUrgent, activeIndex, urgent.length) : `<div class="empty-state">No urgent reviews for this scope.</div>`}<div class="urgent-nav"><button class="urgent-arrow" type="button" data-urg-nav="-1" aria-label="Previous urgent review">‹</button><div class="urgent-dots">${urgent.map((_, i) => `<button class="dot" type="button" data-urg-dot="${i}" aria-label="Urgent review ${i + 1}" aria-pressed="${i === activeIndex}"></button>`).join("")}</div><button class="urgent-arrow" type="button" data-urg-nav="1" aria-label="Next urgent review">›</button></div></section>
     <section class="priority-card"><div class="sec-h"><h2>Live Intelligence</h2><button class="ghost sm" id="clear-sel">Reset view</button></div><div class="situation-list">${digest.map(e => signalCard(e)).join("")}</div><div class="policy-mini"><span>Policy Sentinel</span><b>${scan.signal.stance}</b><button class="ghost sm" id="rail-policy-open">Evidence</button></div></section>
     <section class="priority-card positions-mini"><div class="sec-h"><h2>Positions by pressure</h2><span class="count">top 4</span></div>${visibleRows().slice(0,4).map(r => `<button class="mini-pos" data-t="${r.instrumentId}"><span class="tickr">${r.instrumentId}</span><span>${r.name}</span><b style="color:${L.col(r.riskDelta)}">${fmtD(r.riskDelta)}</b></button>`).join("")}</section>
     <section class="priority-card copilot-card"><div class="sec-h"><h2>AI Copilot</h2><span class="spark">✦</span></div><p>Ask about this client, a holding, or a market signal.</p><button class="suggest" data-coprompt="Prepare a call brief for ${p.name}">Prepare call brief</button><button class="suggest" data-coprompt="Show liquidity risks for ${p.name}">Show liquidity risks</button><button class="ghost solid" id="open-copilot">Open copilot</button></section>`;
@@ -400,24 +414,41 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
     if (dot) {
       e.preventDefault();
       e.stopPropagation();
-      S.urgentReviewIndex = Number(dot.dataset.urgDot) || 0;
-      paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle });
+      jumpUrgent(Number(dot.dataset.urgDot) || 0);
       return;
     }
     const open = e.target.closest("[data-open-client]");
     if (!open || cardWasSwiped) return;
     e.preventDefault();
     e.stopPropagation();
-    onOpenClient?.(open.dataset.openClient);
+    openUrgentClient(open.dataset.openClient);
+  });
+  document.querySelectorAll("#pfrail [data-urg-nav]").forEach(b => b.addEventListener("click", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    moveUrgent(Number(b.dataset.urgNav));
+  }));
+  document.querySelectorAll("#pfrail [data-urg-dot]").forEach(b => b.addEventListener("click", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    jumpUrgent(Number(b.dataset.urgDot) || 0);
+  }));
+  document.querySelectorAll("#pfrail [data-open-client]").forEach(b => b.addEventListener("click", e => {
+    e.preventDefault();
+    e.stopPropagation();
+    openUrgentClient(b.dataset.openClient);
+  }));
+  document.querySelector("#pfrail .urgent-carousel")?.addEventListener("keydown", e => {
+    if (e.key === "ArrowLeft") { e.preventDefault(); moveUrgent(-1); }
+    if (e.key === "ArrowRight") { e.preventDefault(); moveUrgent(1); }
+    if ((e.key === "Enter" || e.key === " ") && activeUrgent) {
+      e.preventDefault();
+      openUrgentClient(activeUrgent.p.id);
+    }
   });
   document.querySelectorAll("#pfrail [data-cl]").forEach(b => b.addEventListener("click", () => onOpenClient?.(b.dataset.cl)));
   document.querySelectorAll("#pfrail [data-iso]").forEach(b => b.addEventListener("click", () => onSelectIso?.(b.dataset.iso)));
   document.querySelectorAll("#pfrail [data-t]").forEach(b => b.addEventListener("click", () => onOpenPosition(b.dataset.t)));
-  const moveUrgent = delta => {
-    if (!urgent.length) return;
-    S.urgentReviewIndex = (S.urgentReviewIndex + delta + urgent.length) % urgent.length;
-    paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosition, onRunPolicyScan, onOpenPolicyTrial, onCopilotToggle });
-  };
   const swipeTarget = document.querySelector("#pfrail .urgent-carousel");
   if (swipeTarget) {
     let startX = 0;
@@ -432,7 +463,7 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
       moveUrgent(dx < 0 ? 1 : -1);
     };
     swipeTarget.addEventListener("pointerdown", e => {
-      if (e.target.closest("[data-urg-nav],[data-urg-dot]")) return;
+      if (e.target.closest("[data-urg-nav],[data-urg-dot],[data-open-client]")) return;
       startX = e.clientX;
       startY = e.clientY;
       tracking = true;
@@ -447,7 +478,7 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
     swipeTarget.addEventListener("pointercancel", () => { tracking = false; });
     swipeTarget.addEventListener("touchstart", e => {
       const t = e.changedTouches?.[0];
-      if (!t || e.target.closest("[data-urg-nav],[data-urg-dot]")) return;
+      if (!t || e.target.closest("[data-urg-nav],[data-urg-dot],[data-open-client]")) return;
       startX = t.clientX;
       startY = t.clientY;
       tracking = true;
