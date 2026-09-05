@@ -75,7 +75,6 @@ function fundingVisual(a) {
   if (shortfallUsd > 0 && Number.isFinite(e.funded)) {
     const funded = Math.max(0, Math.min(100, Number(e.funded)));
     return `<div class="funding-viz">
-      <div class="funded-track"><i style="width:${Math.max(3, funded)}%"></i></div>
       <b>${funded.toFixed(0)}% funded</b>
       <strong>Shortfall USD ${(shortfallUsd / 1e6).toFixed(2)}m</strong>
     </div>`;
@@ -112,12 +111,9 @@ function visualFor(a) {
     </button>`;
   }
   if (Number.isFinite(e.weight) && Number.isFinite(e.limit)) {
-    const scale = Math.max(e.weight, e.limit, 1);
     return `<button class="viz twin-viz" data-expand-action="${a.id}" type="button">
       <div><span>Current</span><b>${e.weight.toFixed(1)}%</b></div>
-      <div class="bar"><i style="width:${Math.min(100, e.weight / scale * 100)}%"></i></div>
       <div><span>Proposed</span><b>${e.limit.toFixed(1)}%</b></div>
-      <div class="bar proposed"><i style="width:${Math.min(100, e.limit / scale * 100)}%"></i></div>
     </button>`;
   }
   return `<button class="viz text-viz" data-expand-action="${a.id}" type="button">

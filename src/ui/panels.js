@@ -3,10 +3,8 @@ import { P, LENSES, fmtD, css, BUCKETS, FUNDING_METHOD } from "./palette.js";
 import { POLICY, FEED } from "../signals/fixtures/signals.js";
 import { getMode } from "../signals/worldmonitor.js";
 import { reconcile, HOUSE_VIEW } from "../model/houseview.js";
-import { currentPolicyScan } from "../policy/sentinel.js";
 import * as M from "./motion.js";
 
-const SCALE = { total:20 };
 export const RISK_THRESHOLDS = { critical:80, high:60, medium:35 };
 
 /**
@@ -240,12 +238,33 @@ function reconcileBook(host, rows, emptyHtml) {
   }
 }
 
+/** Book-wide AI-scoring status — how many of the whole book's clients narrateAllPortfolios()
+ * (main.js, fired once at boot) has actually finished with, not just the currently filtered/
+ * visible list. `metas` is already computed once per paintBook() call (one clientMeta() per
+ * portfolio), so this reuses it rather than walking S.portfolios/S.narratedHash a second time.
+ * "Finished" means aiState() moved past "loading" — scoreSource is "ai" (validated) or
+ * "unavailable" (attempted and rejected/failed); either way the attempt resolved, which is what
+ * "done generating" means here, not "succeeded". Reruns on every paintBook() call, which already
+ * happens on every narration resolution (via renderAll() in main.js), so this updates live as
+ * clients finish scoring rather than needing its own polling. */
+function paintBookAiStatus(metas) {
+  const el = document.getElementById("book-ai-status");
+  if (!el) return;
+  const total = metas.size;
+  const done = [...metas.values()].filter(m => m.scoreSource !== "loading").length;
+  const allDone = done >= total;
+  // .pulse is the same small live-indicator dot the ticker's "Breaking News" label already uses
+  // — reused as-is for "still scoring"; .book-ai-dot.done is the one new rule, a static version
+  // of the same dot for once every attempt has resolved.
+  el.innerHTML = `<span class="${allDone ? "book-ai-dot done" : "pulse"}"></span>` +
+    `<span>${done} of ${total} clients AI-scored</span>`;
+}
+
 export function paintBook(onPick) {
   const metas = new Map(S.portfolios.map(p => [p.id, clientMeta(p)]));
   const filtered = S.portfolios.filter(p => clientMatches(p, metas.get(p.id)))
     .sort((a, b) => (metas.get(b.id).urgency ?? -1) - (metas.get(a.id).urgency ?? -1));
-  document.getElementById("book-n").textContent = `${SCALE.total} synthetic clients`;
-  document.getElementById("book-foot").innerHTML = `<span>Showing ${Math.min(filtered.length, 5)} of ${S.portfolios.length} clients</span><button id="view-all-clients">View all clients →</button>`;
+  paintBookAiStatus(metas);
   const input = document.getElementById("client-search");
   if (input && input.value !== S.clientSearch) input.value = S.clientSearch;
   document.querySelectorAll("#client-filters [data-filter]").forEach(b =>
@@ -276,9 +295,6 @@ export function paintBook(onPick) {
   rewire(document.getElementById("filter-toggle"), "click", () => { S.filtersOpen = !S.filtersOpen; paintBook(onPick); });
   rewire(document.getElementById("client-sort"), "change", e => { S.clientSort = e.target.value; paintBook(onPick); });
   rewire(document.getElementById("risk-popover-filter"), "change", e => { S.clientFilter = e.target.value; paintBook(onPick); });
-  document.getElementById("view-all-clients")?.addEventListener("click", () => {
-    S.clientFilter = "all"; S.clientSearch = ""; S.driverFilter = "all"; S.profileFilter = "all"; S.bookingFilter = "all"; S.aumFilter = "all"; paintBook(onPick);
-  });
   rewire(document.getElementById("clear-client-filters"), "click", () => {
     S.clientFilter = "all"; S.clientSearch = ""; S.driverFilter = "all"; S.profileFilter = "all"; S.bookingFilter = "all"; S.aumFilter = "all"; paintBook(onPick);
   });
@@ -316,12 +332,17 @@ export function paintHead(onHousehold) {
   // as the fallback whenever the AI's own independent read doesn't validate (routinely — see
   // AI_SCORE_BAND — not a failure). Gating this on state === "ai" meant "Health" showed
   // "Unavailable" any time that happened, even though ev.health was sitting right there valid
-  // the whole time — that was the health metric "not computing". Only the prose fields
-  // (overview/thesis/summary) genuinely need to wait for narration: evaluateClient() returns
-  // those as null, it doesn't write prose.
+  // the whole time — that was the health metric "not computing". The prose overview has the same
+  // shape once narration resolves: narrateClient() (eval/narrate.js) always returns a populated
+  // `overview` string, whether the response came from the model (scoreSource:"ai") or from
+  // templateNarration()'s deterministic fallback (scoreSource:"deterministic") — the only thing
+  // that's ever genuinely missing is the state while narration is still in flight (ev.overview
+  // is null before narration runs at all, since evaluateClient() doesn't write prose). Gating the
+  // whole paragraph on state === "ai" hid that deterministic prose behind "Overview unavailable"
+  // any time the model call failed — same bug as Health, just for the overview field.
   const healthDisplay = ev ? `${Math.round(ev.health)} · ${ev.healthBand}` : shimmer;
   const healthTag = ev ? `<span class="mode ${state === "ai" ? "ai" : ""}" style="margin-left:6px">${state === "ai" ? "ai-scored" : "deterministic"}</span>` : "";
-  const overviewBlock = state === "ai"
+  const overviewBlock = ev?.overview
     ? `<p class="prose">${ev.overview}</p>`
     : state === "loading" ? `<p class="prose-shimmer">Generating overview…</p>`
     : `<p style="color:var(--ink-4); font-size:12px">Overview unavailable.</p>`;
@@ -419,9 +440,8 @@ export function paintPfRail({ onClearSel, onSelectIso, onOpenClient, onOpenPosit
   const p = S.portfolio, meta = clientMeta(p), L = LENSES().d;
   const digest = S.selIso ? S.signals[S.selIso]?.events || [] : topEventsRaw(4);
   const top = meta.fl[0];
-  const scan = S.policyScan || currentPolicyScan();
   document.getElementById("pfrail").innerHTML = `<button class="rail-close" id="close-priority-rail" aria-label="Close action rail">×</button>
-    <section class="priority-card live-card"><div class="sec-h"><h2>Live Intelligence</h2><button class="ghost sm" id="clear-sel">Reset view</button></div><div class="situation-list">${digest.map(e => signalCard(e)).join("")}</div><div class="policy-mini"><span>Policy Sentinel</span><b>${scan.signal.stance}</b><button class="ghost sm" id="rail-policy-open">Evidence</button></div></section>
+    <section class="priority-card live-card"><div class="sec-h"><h2>Live Intelligence</h2><button class="ghost sm" id="clear-sel">Reset view</button></div><div class="situation-list">${digest.map(e => signalCard(e)).join("")}</div></section>
     <section class="priority-card positions-mini"><div class="sec-h"><h2>Positions by pressure</h2><span class="count">top 4</span></div>${visibleRows().slice(0,4).map(r => `<button class="mini-pos" data-t="${r.instrumentId}"><span class="tickr">${r.instrumentId}</span><span>${r.name}</span><b style="color:${L.col(r.riskDelta)}">${fmtD(r.riskDelta)}</b></button>`).join("")}</section>
     <section class="priority-card copilot-card"><div class="sec-h"><h2>AI Copilot</h2><span class="spark">✦</span></div><p>Ask about this client, a holding, or a market signal.</p><button class="suggest" data-coprompt="Prepare a call brief for ${p.name}">Prepare call brief</button><button class="suggest" data-coprompt="Show liquidity risks for ${p.name}">Show liquidity risks</button><button class="ghost solid" id="open-copilot">Open copilot</button></section>`;
   document.getElementById("priority-open")?.addEventListener("click", () => top ? onOpenPosition(top.instrumentId) : onRunPolicyScan());
@@ -464,23 +484,11 @@ function topEventsRaw(n) {
   return evs.sort((a,b) => (b.value || "").length - (a.value || "").length).slice(0,n);
 }
 
-function affectedForEvent(e) {
-  const iso = e.iso3 || e.iso;
-  const clients = S.portfolios.filter(p => clientHasIso(p, iso));
-  const aum = clients.reduce((s, p) => s + (p.aumUsd || 0), 0);
-  const names = clients.slice(0, 3).map(p => p.name).join(" · ");
-  return { iso, clients, aum, names };
-}
-
 function signalCard(e) {
-  const affected = affectedForEvent(e);
   const sev = e.sev || (e.severity === "Severe" ? "crit" : e.severity === "High" ? "serious" : "warn");
-  const aum = affected.aum >= 1e9 ? `USD ${(affected.aum / 1e9).toFixed(2)}bn` : `USD ${(affected.aum / 1e6).toFixed(0)}m`;
-  const why = e.transmission || e.primary_transmission || e.value || "Review client exposure and portfolio actions.";
   return `<article class="sit">
     <time>${(e.at || "").split(" ").slice(-1)[0]}</time><span class="dot" style="background:${P.SEV[sev] || P.SEV.warn}"></span>
-    <div><h3>${e.text || "Signal update"}</h3><p>${why}</p><span class="src">${affected.clients.length} clients · ${aum}${affected.names ? ` · ${affected.names}` : ""}</span>
-    ${affected.iso ? `<button class="ghost sm" data-iso="${affected.iso}">View ${affected.iso}</button>` : ""}</div>
+    <div><h3>${e.text || "Signal update"}</h3></div>
   </article>`;
 }
 

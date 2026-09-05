@@ -1,7 +1,7 @@
 const SURFACE_SELECTOR = [
   ".bar", ".demo-strip", ".tick-strip", ".client-rail", ".cockpit", ".priority-stack",
   ".drawer", ".legend", ".evid", ".lensbar", ".gt", ".copilot-box", ".copilot-launch",
-  ".priority-card", ".urgent-mini", ".policy-mini", ".client-search", ".filter-panel select",
+  ".priority-card", ".urgent-mini", ".client-search", ".filter-panel select",
   ".goal", ".card", ".act", ".blk", ".trial-card", ".thought", ".econ div"
 ].join(",");
 
