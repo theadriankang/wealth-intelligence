@@ -367,11 +367,15 @@ function renderClientMap() {
     const weight = e.weightPct || 0;
     const height = Math.max(18, Math.min(54, 16 + weight * 1.2));
     const hot = weight >= 20 || S.selIso === iso;
-    const period = Math.max(1.5, 2.6 - Math.min(weight, 25) * 0.044).toFixed(2);
-    const delay = ((i * 0.37) % Number(period)).toFixed(2);
+    const period = Math.max(1.5, 2.6 - Math.min(weight, 25) * 0.044);
+    // Anchored to wall-clock, not to this render. renderClientMap() re-runs on every renderAll()
+    // (narration landing, a lens switch, a signal poll), and a plain per-index offset would
+    // restart all twenty animations from zero each time — a visible book-wide flicker. Phasing
+    // off performance.now() means a re-render resumes each ripple exactly where it was.
+    const delay = (((performance.now() / 1000) + i * 0.37) % period).toFixed(2);
     const spread = (2.4 + Math.min(weight, 30) / 22).toFixed(2);
     return `<g class="map-marker${hot ? " is-hot" : ""}" data-iso="${iso}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"
-      style="--marker:${col};--ripple-period:${period}s;--ripple-delay:-${delay}s;--ripple-spread:${spread}">
+      style="--marker:${col};--ripple-period:${period.toFixed(2)}s;--ripple-delay:-${delay}s;--ripple-spread:${spread}">
       <circle class="marker-ripple" r="11"></circle>
       <circle class="marker-ripple lag" r="11"></circle>
       ${hot ? `<circle class="marker-glow" r="24"></circle><circle class="marker-glow wide" r="34"></circle>` : ""}

@@ -4352,13 +4352,13 @@ body{position:fixed; inset:0}
   filter:drop-shadow(0 4px 8px rgba(40,82,135,.14));
 }
 
-.map-marker circle:first-of-type{
+.map-marker .marker-disc{
   fill:rgba(255,255,255,.58);
   stroke:var(--marker);
   stroke-width:2.4;
 }
 
-.map-marker circle:last-of-type{
+.map-marker .marker-dot{
   fill:var(--marker);
   stroke:#fff;
   stroke-width:2.6;
@@ -4374,6 +4374,48 @@ body{position:fixed; inset:0}
 .marker-glow.wide{
   stroke-width:9;
   opacity:.10;
+}
+
+/* Sonar ping under every exposed country. Scaled rather than r-animated so it composites on the
+   GPU (SVG `r` animation relayouts every frame, and Safari won't interpolate it at all), with
+   non-scaling-stroke so the expanding ring stays hairline-crisp instead of fattening as it grows.
+   Period and spread come from the marker's own exposure weight — see renderClientMap. */
+.marker-ripple{
+  fill:none;
+  stroke:var(--marker);
+  stroke-width:2.2;
+  vector-effect:non-scaling-stroke;
+  transform-box:fill-box;
+  transform-origin:center;
+  opacity:0;
+  animation:marker-ripple var(--ripple-period, 2.4s) cubic-bezier(.22,.61,.36,1) var(--ripple-delay, 0s) infinite;
+  will-change:transform, opacity;
+}
+
+/* Second, trailing ring — half a period behind, so each marker reads as a repeating pulse
+   rather than a single ring that vanishes and restarts. */
+.marker-ripple.lag{
+  animation-delay:calc(var(--ripple-delay, 0s) - var(--ripple-period, 2.4s) / 2);
+  stroke-width:1.4;
+}
+
+.map-marker.is-hot .marker-ripple{
+  stroke-width:3;
+}
+
+@keyframes marker-ripple{
+  0%   { transform:scale(.72); opacity:0 }
+  12%  { opacity:.55 }
+  100% { transform:scale(var(--ripple-spread, 2.8)); opacity:0 }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .marker-ripple{
+    animation:none;
+    opacity:.24;
+    transform:scale(1.6);
+  }
+  .marker-ripple.lag{ opacity:.12; transform:scale(2.3) }
 }
 
 .map-label{
