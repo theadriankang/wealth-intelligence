@@ -3,6 +3,7 @@ import COUNTRIES from "../data/countries.geo.json";
 import { CHOKEPOINTS, LANES } from "../signals/fixtures/signals.js";
 import { S, exposure, clientsExposedIn } from "../store.js";
 import { P, LENSES, css } from "./palette.js";
+import { renderComposition } from "./composition.js";
 
 /* Natural Earth ids are numeric ISO-3166; the model speaks alpha-3. */
 const N2A3 = { "158":"TWN","682":"SAU","410":"KOR","528":"NLD","156":"CHN","076":"BRA",
@@ -179,7 +180,17 @@ export function sizeGlobe() {
 
 export function paintGlobe() {
   const clientMap = S.route === "client";
+  const view = S.pfView || "map";
   setGeoMode(clientMap);
+  document.querySelector(".globe-wrap")?.classList.toggle("composition-mode", view !== "map");
+  if (view !== "map") {
+    // The country card belongs to the map and has no meaning here; leaving it open would
+    // float a China tooltip over a sector donut.
+    hidePanel();
+    renderComposition(view);
+    return;
+  }
+  document.querySelector(".composition-host")?.setAttribute("hidden", "");
   if (clientMap) {
     renderClientMap();
     return;

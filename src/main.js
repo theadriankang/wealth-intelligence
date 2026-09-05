@@ -136,6 +136,15 @@ function wire() {
   document.getElementById("open-priority-rail")?.addEventListener("click", () => { S.railDrawerOpen = true; S.clientDrawerOpen = false; syncDrawers(); });
   document.getElementById("close-client-rail")?.addEventListener("click", () => { S.clientDrawerOpen = false; syncDrawers(); });
 
+  // One control does both jobs — which view, and (for composition) which breakdown.
+  // Two chained dropdowns for four options would be ceremony, not clarity.
+  document.getElementById("pf-view")?.addEventListener("change", e => {
+    S.pfView = e.target.value;
+    paintLegend();
+    paintGlobe();
+    if (S.pfView === "map") requestAnimationFrame(sizeGlobe);
+  });
+
   document.querySelectorAll("[data-lens]").forEach(b => b.addEventListener("click", () => {
     S.lens = b.dataset.lens;
     document.querySelectorAll("[data-lens]").forEach(x =>
