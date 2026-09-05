@@ -76,7 +76,10 @@ async function boot() {
       await mountGoogleGlobe(globeEl, { apiKey: CONFIG.GOOGLE_MAPS_API_KEY });
       document.querySelector(".globe-wrap")?.classList.add("using-google-globe");
     } else {
-      mountGlobe(globeEl, { onSelect: iso => { S.selIso = iso; refresh("globe"); } });
+      mountGlobe(globeEl, {
+        onSelect: iso => { S.selIso = iso; refresh("globe"); },
+        onOpenClient: id => railHandlers.onOpenClient(id)
+      });
     }
   } catch (err) {
     console.warn("[globe] WebGL unavailable, rendering dashboard without globe canvas:", err);
@@ -450,9 +453,9 @@ export function renderAll() {
   syncRouteClass();
   paintBook(id => {
     S.portfolio = S.portfolios.find(p => p.id === id);
-    S.clientScopeId = id; S.goalSel = null; S.household = false; S.clientDrawerOpen = false;
+    S.clientScopeId = null; S.selIso = null; S.goalSel = null; S.household = false; S.clientDrawerOpen = false;
     focusPortfolio(S.portfolio);
-    renderAll();
+    navigateToClient(id);
   });
   paintHead(() => { S.household = !S.household; S.selIso = null; renderAll(); });
   paintGoals(id => {

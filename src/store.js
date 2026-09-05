@@ -70,6 +70,22 @@ export const factsForCountries = isos => isos.flatMap(i => S.signals[i]?.events 
 export { FLAG_THRESHOLD };
 
 export const countryScore = iso3 => S.evaluation?.countries?.[iso3] || null;
+
+/** Every client in the book holding look-through exposure to `iso3`, heaviest first.
+ *  Book-wide by design: the globe tooltip answers "who else is exposed here?", which
+ *  is a question about the whole book, not the selected portfolio. */
+export const clientsExposedIn = iso3 => {
+  if (!iso3) return [];
+  return S.portfolios.map(p => {
+    const e = countryExposure(p.positions || [], S.instruments)[iso3];
+    if (!e) return null;
+    const name = p.clientName || p.name || p.id;
+    return {
+      id: p.id, name, weightPct: e.weightPct,
+      initials: name.split(/\s+/).filter(Boolean).slice(0, 2).map(w => w[0]).join("").toUpperCase()
+    };
+  }).filter(Boolean).sort((a, b) => b.weightPct - a.weightPct);
+};
 export const clientEval = () => S.evaluation?.clients?.[S.portfolio?.id] || null;
 export const urgentTasks = () => S.evaluation?.urgent || [];
 

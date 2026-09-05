@@ -18,8 +18,9 @@ export function countryExposure(positions, instruments) {
     for (const ex of inst.exposures) {
       const w = pos.weightPct * ex.weight;
       if (w <= 0.0001) continue;
-      const e = (out[ex.iso3] ||= { iso3: ex.iso3, weightPct: 0, instrumentIds: [] });
+      const e = (out[ex.iso3] ||= { iso3: ex.iso3, weightPct: 0, instrumentIds: [], byInstrument: {} });
       e.weightPct += w;
+      e.byInstrument[pos.instrumentId] = (e.byInstrument[pos.instrumentId] || 0) + w;
       if (!e.instrumentIds.includes(pos.instrumentId)) e.instrumentIds.push(pos.instrumentId);
     }
   }

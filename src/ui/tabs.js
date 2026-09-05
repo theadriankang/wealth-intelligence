@@ -91,39 +91,41 @@ export function paintActions() {
   const risks = state === "ai" ? (ev.risks || []) : [];
   const opportunities = state === "ai" ? (ev.opportunities || []) : [];
   const actions = state === "ai" ? (ev.actions || []) : [];
-  const suitability = p.mandate === "Discretionary"
-    ? "Executable under standing authority" : "Requires client instruction before execution";
   document.getElementById("tn-act").textContent = actions.length;
   const statusLine = state === "loading" ? `<p class="prose-shimmer">Scoring this client…</p>`
     : state === "unavailable" ? `<p style="color:var(--ink-4); font-size:12px">AI scoring unavailable for this client.</p>`
     : !risks.length && !opportunities.length && !actions.length ? `<p style="color:var(--ink-4); font-size:12px">Nothing flagged this week.</p>` : "";
-  document.getElementById("actions").innerHTML = `
-    <div style="display:flex; align-items:center; gap:8px; margin-bottom:15px">
-      <p style="margin:0; font-size:12.5px; color:var(--ink-3)">Risk findings and recommended
-        actions for this mandate — internal RM guidance, not client-facing advice. The RM reviews,
-        accepts, or rejects every item below; nothing here executes on its own.</p>
-      ${state === "ai" ? `<span class="mode ai">ai-scored</span>` : ""}
-    </div>
+  document.getElementById("actions").innerHTML = `<div class="tab-page risks-page">
+    <div class="tab-titlebar"><div><h2>Risks & Actions</h2><p>AI-driven recommendations to keep your client on track</p></div><div><span>Last updated</span><b>${TODAY}, 09:24 SGT</b></div></div>
+    <section class="ra-summary">
+      <button class="ra-counter" data-action-filter="all" aria-pressed="${UI.actionFilter === "all"}"><span>Total actions</span><b>${actions.length}</b></button>
+      <button class="ra-counter" data-action-filter="high" aria-pressed="${UI.actionFilter === "high"}"><span>High priority</span><b>${actions.filter(isHigh).length}</b></button>
+      <button class="ra-counter" data-action-filter="pending" aria-pressed="${UI.actionFilter === "pending"}"><span>Pending</span><b>${actions.filter(isPending).length}</b></button>
+      <button class="ra-counter" data-action-filter="accepted" aria-pressed="${UI.actionFilter === "accepted"}"><span>Accepted</span><b>${actions.filter(a => ["Accepted", "Executed"].includes(status(a))).length}</b></button>
+    </section>
     ${statusLine}
-    ${risks.length ? `<div class="blk"><h3>Risks</h3>
-      ${risks.map(r => `<div class="tp"><span class="num" style="color:${
-        r.severity === "high" ? "var(--warn)" : r.severity === "medium" ? "var(--ink-3)" : "var(--ink-4)"
-      }">●</span><p>${r.text} <span class="kind" style="margin-left:4px">${r.category || "other"}</span></p></div>`).join("")}</div>` : ""}
-    ${opportunities.length ? `<div class="blk"><h3>Opportunities</h3>
-      ${opportunities.map(o => `<div class="tp"><span class="num" style="color:var(--good)">●</span><p>${o.text}</p></div>`).join("")}</div>` : ""}
-    ${actions.map((a, i) => {
+    <section class="decision-list">${filteredActions(actions).map((a, i) => {
       const key = p.id + "|" + i;
       const acState = S.aiActionState[key] || "pending";
-      return `<article class="act">
-        <div class="act-h"><span class="kind">${a.kind}${a.category ? ` · ${a.category}` : ""}</span><div><h3>${a.title}</h3></div></div>
-        <div class="act-b"><p>${a.why}</p></div>
+      const open = UI.expandedAction === a.id;
+      return `<article class="decision-card sev-${severity(a)} ${open ? "open" : ""}" data-expand-action="${a.id}">
+        <div class="decision-head"><span class="kind">${esc(a.kind || "Action")}</span><div><h3>${esc(strip(a.title))}</h3><p>${esc(strip(a.instrumentId || a.category || "Portfolio recommendation"))}</p></div><button class="ghost sm ${acState === "accepted" ? "solid" : ""}" data-accept="${i}" type="button">${acState === "accepted" ? "Accepted" : status(a)}</button><button class="chev" type="button">›</button></div>
+        <div class="decision-core">${visualFor(a)}${effectTiles(a)}</div>
+        ${open ? `<div class="decision-detail"><p>${esc(strip(a.why || ""))}</p><dl><dt>Objective</dt><dd>${esc(a.suitability?.objective || "Aligned with mandate")}</dd><dt>Risk fit</dt><dd>${esc(a.suitability?.riskFit || "RM review required")}</dd></dl></div>` : ""}
         <div class="act-f">
-          <span class="sp">${suitability}${acState !== "pending" ? ` · ${acState}` : ""}</span>
-          <button class="ghost sm ${acState === "accepted" ? "solid" : ""}" data-accept="${i}">Accept</button>
-          <button class="ghost sm ${acState === "rejected" ? "solid" : ""}" data-reject="${i}">Reject</button>
+          <button class="ghost sm ${acState === "accepted" ? "solid" : ""}" data-accept="${i}" type="button">Accept</button>
+          <button class="ghost sm ${acState === "rejected" ? "solid" : ""}" data-reject="${i}" type="button">Reject</button>
         </div>
       </article>`;
-    }).join("")}`;
+    }).join("")}</section>
+  </div>`;
+  document.querySelectorAll("#actions [data-action-filter]").forEach(b => b.addEventListener("click", () => { UI.actionFilter = b.dataset.actionFilter; paintActions(); }));
+  document.querySelectorAll("#actions [data-expand-action]").forEach(b => b.addEventListener("click", e => {
+    if (e.target.closest("[data-accept],[data-reject],[data-metric]")) return;
+    UI.expandedAction = UI.expandedAction === b.dataset.expandAction ? null : b.dataset.expandAction;
+    paintActions();
+  }));
+  document.querySelectorAll("#actions [data-metric]").forEach(b => b.addEventListener("click", e => { e.stopPropagation(); UI.expandedMetric = UI.expandedMetric === b.dataset.metric ? null : b.dataset.metric; paintActions(); }));
   document.querySelectorAll("#actions [data-accept]").forEach(b => b.addEventListener("click", () => {
     S.aiActionState[p.id + "|" + b.dataset.accept] = "accepted"; paintActions();
   }));
@@ -156,18 +158,20 @@ export function paintConversation() {
     el.innerHTML = `<div class="blk"><p>No relationship record for this mandate.</p></div>`;
     return;
   }
-  el.innerHTML = `
-    <div class="blk"><h3>Relationship <span class="mode ai" style="margin-left:6px">ai-scored</span></h3>
-      <div class="meta-row" style="margin-bottom:11px">
-        <div class="fct"><span class="k">Next review</span><span class="v">${p.reviewDate}</span></div>
-        <div class="fct"><span class="k">Adviser</span><span class="v">${p.rm}</span></div></div>
-      <p>${r.summary}</p></div>
-    <div class="blk"><h3>Standing concerns</h3>
-      ${r.concerns.map(x => `<div class="tp"><span class="num">·</span><p>${x}</p></div>`).join("")}</div>
-    <div class="blk"><h3>Talking points for the next conversation</h3>
-      ${r.talkingPoints.map((x, i) => `<div class="tp"><span class="num">${i + 1}</span><p>${x}</p></div>`).join("")}</div>
-    <div class="blk"><h3>Likely objections</h3>
-      ${r.objections.map(o => `<div class="obj"><p class="q">“${o.question}”</p><p class="a">${o.answer}</p></div>`).join("")}</div>`;
+  el.innerHTML = `<div class="tab-page conversation-page">
+    <section class="conv-top">
+      <div class="glass-panel"><h2>Relationship Timeline</h2><div class="timeline"><button class="tl-node" data-conv-focus="last" aria-pressed="${UI.convFocus === "last"}"><span></span><b>Last Contact</b><em>${esc(r.lastContact || "Recent call")}</em></button><button class="tl-node" data-conv-focus="today" aria-pressed="${UI.convFocus === "today"}"><span></span><b>Today</b><em>${TODAY}</em></button><button class="tl-node" data-conv-focus="next" aria-pressed="${UI.convFocus === "next"}"><span></span><b>Next Review</b><em>${esc(p.reviewDate || "Not scheduled")}</em></button></div><p class="focus-note">${esc(r.summary)}</p></div>
+      <div class="glass-panel lead-panel"><span class="lead-icon">♙</span><p>Relationship Lead</p><h3>${esc(p.rm || "Relationship Manager")}</h3><small>Senior Adviser</small></div>
+      <div class="glass-panel sentiment-panel"><p>Client Sentiment <small>(Recent)</small></p><h3>${esc(r.sentiment || "Neutral")}</h3><small>Stable over last 3 months</small></div>
+    </section>
+    <section class="glass-panel"><h2>Standing Concerns</h2><div class="concern-grid">${(r.concerns || []).slice(0,3).map((x, i) => `<button class="concern-card" data-concern="${i}" type="button"><span>${i + 1}</span><div><em>${i === 0 ? "Relationship" : i === 1 ? "Liquidity / Exit" : "Valuation"}</em><b>${esc(strip(x).split(".")[0])}</b><p>${esc(strip(x))}</p></div></button>`).join("")}</div></section>
+    <section class="brief-grid">
+      <div class="glass-panel"><h2>Talking Points for Next Conversation</h2>${(r.talkingPoints || []).map((x, i) => `<button class="brief-row" data-point="${i}" type="button"><span>${i + 1}</span><div><b>${esc(strip(x).split(":")[0])}</b><p>${esc(strip(x))}</p></div><em>›</em></button>`).join("")}</div>
+      <div class="glass-panel"><h2>Likely Objections</h2>${(r.objections || []).map((o, i) => `<button class="objection-card" data-objection="${i}" type="button"><span>?</span><div><b>“${esc(o.question)}”</b><p>${esc(UI.expandedObjection === String(i) ? o.answer : "Suggested response")}</p></div><em>›</em></button>`).join("")}</div>
+    </section>
+  </div>`;
+  document.querySelectorAll("#conv [data-conv-focus]").forEach(b => b.addEventListener("click", () => { UI.convFocus = b.dataset.convFocus; paintConversation(); }));
+  document.querySelectorAll("#conv [data-objection]").forEach(b => b.addEventListener("click", () => { UI.expandedObjection = UI.expandedObjection === b.dataset.objection ? null : b.dataset.objection; paintConversation(); }));
   M.once("conv", p.id + "|" + state, () => M.enter("#conv .blk", { y: 10, delay: 60, duration: 420 }));
 }
 
