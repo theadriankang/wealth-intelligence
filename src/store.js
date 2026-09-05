@@ -5,6 +5,9 @@ import { goalDelta, riskConcentration, flaggedPositions, rmEconomics, FLAG_THRES
 export const S = {
   instruments: {}, portfolios: [], signals: {}, prevSignals: {},
   portfolio: null, lens: "d", selIso: null, goalSel: null, tab: "pf",
+  /** Which lens on the portfolio the Overview stage is showing: "map" (geography) or a
+   * composition dimension key from model/composition.js ("country"|"holding"|"asset"|"sector"). */
+  pfView: "map",
   route: "dashboard", clientScopeId: null,
   household: false, live: false, actionState: {}, meta: {},
   operator: null,

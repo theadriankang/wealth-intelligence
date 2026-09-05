@@ -3,6 +3,7 @@ import COUNTRIES from "../data/countries.geo.json";
 import { CHOKEPOINTS, LANES } from "../signals/fixtures/signals.js";
 import { S, exposure, clientsExposedIn } from "../store.js";
 import { P, LENSES, css } from "./palette.js";
+import { renderComposition } from "./composition.js";
 
 /* Natural Earth ids are numeric ISO-3166; the model speaks alpha-3. */
 const N2A3 = { "158":"TWN","682":"SAU","410":"KOR","528":"NLD","156":"CHN","076":"BRA",
@@ -179,7 +180,17 @@ export function sizeGlobe() {
 
 export function paintGlobe() {
   const clientMap = S.route === "client";
+  const view = S.pfView || "map";
   setGeoMode(clientMap);
+  document.querySelector(".globe-wrap")?.classList.toggle("composition-mode", view !== "map");
+  if (view !== "map") {
+    // The country card belongs to the map and has no meaning here; leaving it open would
+    // float a China tooltip over a sector donut.
+    hidePanel();
+    renderComposition(view);
+    return;
+  }
+  document.querySelector(".composition-host")?.setAttribute("hidden", "");
   if (clientMap) {
     renderClientMap();
     return;
@@ -353,16 +364,47 @@ function renderClientMap() {
     return `<path class="map-arc ${a.hot ? "is-hot" : ""}" d="M${sx.toFixed(1)} ${sy.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${exx.toFixed(1)} ${ey.toFixed(1)}"></path>`;
   }).join("");
 
-  const markers = Object.entries(COUNTRY_VIEW).map(([iso, p]) => {
+  // Each marker carries an invisible hit circle the size of its own ripple. Singapore, Hong Kong
+  // and Switzerland are a few pixels of coastline at this projection — asking an RM to land the
+  // cursor on the polygon itself made the smallest, often heaviest-weighted positions the hardest
+  // ones to inspect. The ripple is already the thing the eye treats as the target, so it is the
+  // thing the pointer targets too.
+  //
+  // The ripple is a live sonar ping, not decoration: its cadence carries weight. A country
+  // holding more of the book pings faster (2.6s down to 1.5s), so the eye is pulled to the
+  // concentrated exposures before it reads a single number — and the whole map is desynchronised
+  // by a per-marker delay, because markers pulsing in lockstep read as a loading state rather
+  // than as twenty independent positions. Purely CSS/SMIL-free (see .marker-ripple in
+  // styles.css), so it costs nothing per frame and stops dead under prefers-reduced-motion.
+  // Heaviest first so the lightest markers paint last and sit on top. In the European cluster the
+  // hit circles overlap, and SVG hit-testing gives the win to whatever is later in the document —
+  // without this ordering a large neighbour would swallow the hover for Switzerland or the
+  // Netherlands, which are exactly the ones too small to hover on the polygon.
+  const markerOrder = Object.entries(COUNTRY_VIEW)
+    .filter(([iso]) => ex[iso] && sig(iso))
+    .sort((a, b) => (ex[b[0]].weightPct || 0) - (ex[a[0]].weightPct || 0));
+  const markers = markerOrder.map(([iso, p], i) => {
     const e = ex[iso], s = sig(iso);
     if (!e || !s) return "";
     const [x, y] = project(p.lng, p.lat);
     const col = markerTone(L, s, e);
-    const height = Math.max(18, Math.min(54, 16 + (e.weightPct || 0) * 1.2));
-    const hot = e.weightPct >= 20 || S.selIso === iso;
-    return `<g class="map-marker" data-iso="${iso}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" style="--marker:${col}">
+    const weight = e.weightPct || 0;
+    const height = Math.max(18, Math.min(54, 16 + weight * 1.2));
+    const hot = weight >= 20 || S.selIso === iso;
+    const period = Math.max(1.5, 2.6 - Math.min(weight, 25) * 0.044);
+    // Anchored to wall-clock, not to this render. renderClientMap() re-runs on every renderAll()
+    // (narration landing, a lens switch, a signal poll), and a plain per-index offset would
+    // restart all twenty animations from zero each time — a visible book-wide flicker. Phasing
+    // off performance.now() means a re-render resumes each ripple exactly where it was.
+    const delay = (((performance.now() / 1000) + i * 0.37) % period).toFixed(2);
+    const spread = (2.4 + Math.min(weight, 30) / 22).toFixed(2);
+    return `<g class="map-marker${hot ? " is-hot" : ""}" data-iso="${iso}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"
+      style="--marker:${col};--ripple-period:${period.toFixed(2)}s;--ripple-delay:-${delay}s;--ripple-spread:${spread}">
+      <circle class="marker-hit" r="20"></circle>
+      <circle class="marker-ripple" r="11"></circle>
+      <circle class="marker-ripple lag" r="11"></circle>
       ${hot ? `<circle class="marker-glow" r="24"></circle><circle class="marker-glow wide" r="34"></circle>` : ""}
-      <line y1="-${height.toFixed(0)}" y2="-10"></line><circle r="11"></circle><circle r="4.5"></circle>
+      <line y1="-${height.toFixed(0)}" y2="-10"></line><circle class="marker-disc" r="11"></circle><circle class="marker-dot" r="4.5"></circle>
     </g>`;
   }).join("");
   const labels = Object.entries(ex).sort((a, b) => (b[1].weightPct || 0) - (a[1].weightPct || 0))
@@ -385,6 +427,17 @@ function renderClientMap() {
   <div class="client-map-legend"><span><i class="risk"></i>Capital at risk</span><span><i class="good"></i>Improving</span><span><i class="bad"></i>Deteriorating</span><span><i class="hot"></i>Concentration hotspot</span></div>
   <div class="client-map-foot">Global view. Real-time intelligence.</div>`;
   wireClientMap(host);
+  // The card now outlives the hover that opened it, which means it also has to outlive the
+  // re-render that a lens switch, a signal poll or a narration landing triggers — otherwise a
+  // sticky card would quietly go stale, showing last minute's numbers under this minute's lens.
+  // Re-paint it in place, re-anchor it, and drop it only if the exposure itself is gone.
+  if (openIso && panel && !panel.hidden) {
+    if (ex[openIso] && sig(openIso)) {
+      panel.innerHTML = mapPanelHtml(openIso);
+      markMapActive(host, openIso);
+      positionMapPanel(mapAnchor(host, openIso, null));
+    } else hidePanel();
+  }
 }
 
 function wireClientMap(host) {
@@ -407,17 +460,43 @@ function wireClientMap(host) {
   });
   svg.addEventListener("pointerup", () => { setTimeout(() => { mapDrag = null; }, 0); });
   svg.addEventListener("pointerleave", scheduleHide);
+  // The card tracks the cursor's hover state exactly: any move onto something that isn't an
+  // exposed country — open water, an unexposed neighbour, the header strip — closes it. mouseover
+  // is enough (rather than mousemove) because it fires on every element change, and the card
+  // itself is pointer-events:none in map mode, so travelling across it doesn't hold it open.
+  // scheduleHide's 260ms grace is what stops the card strobing while crossing the thin gaps
+  // between two adjacent markers in the European cluster.
   svg.addEventListener("mouseover", ev => {
     const node = ev.target.closest("[data-iso]");
     const iso = node?.dataset.iso;
     if (iso && exposure()[iso] && S.signals[iso]) showMapPanel(iso, node);
+    else scheduleHide();
   });
   svg.addEventListener("click", ev => {
     const node = ev.target.closest("[data-iso]");
     const iso = node?.dataset.iso;
-    if (!iso || mapDrag?.moved) return;
-    selectCountry?.(exposure()[iso] ? iso : null);
+    // Clicking open water or an unexposed country is the "I'm done with this card" gesture —
+    // the same click that already clears the country selection.
+    if (!iso || !exposure()[iso]) { if (!mapDrag?.moved) { selectCountry?.(null); hidePanel(); } return; }
+    if (mapDrag?.moved) return;
+    selectCountry?.(iso);
   });
+}
+
+/** Marks the country path and its marker as the one the open card is describing, so the card and
+ * the map stay visually tied together once the cursor has moved away from either. */
+function markMapActive(host, iso) {
+  if (!host) return;
+  host.querySelectorAll(".is-active").forEach(n => n.classList.remove("is-active"));
+  if (!iso) return;
+  host.querySelectorAll(`[data-iso="${CSS.escape(iso)}"]`).forEach(n => n.classList.add("is-active"));
+}
+
+/** The marker is what the eye reads as "the pin", so anchor the card beside it rather than beside
+ * the country polygon's bounding box — which for a country like the US or Russia puts the card
+ * a continent away from the thing it describes. */
+function mapAnchor(host, iso, fallback) {
+  return host?.querySelector(`.map-marker[data-iso="${CSS.escape(iso)}"]`) || fallback;
 }
 
 
@@ -443,12 +522,14 @@ function mountPanel(el) {
   panel.addEventListener("pointerenter", () => clearTimeout(hideTimer));
   panel.addEventListener("pointerleave", scheduleHide);
   panel.addEventListener("click", ev => {
+    if (ev.target.closest("[data-close-panel]")) { ev.stopPropagation(); hidePanel(); return; }
     const b = ev.target.closest("[data-open-client]");
     if (!b) return;
     ev.stopPropagation();
     hidePanel();
     openClient?.(b.dataset.openClient);
   });
+  addEventListener("keydown", ev => { if (ev.key === "Escape" && !panel.hidden) hidePanel(); });
 }
 
 function scheduleHide() {
@@ -460,7 +541,8 @@ function hidePanel() {
   clearTimeout(hideTimer);
   cancelAnimationFrame(rafId);
   openIso = null;
-  if (panel) panel.hidden = true;
+  markMapActive(document.querySelector(".client-map-host"), null);
+  if (panel) { panel.hidden = true; panel.classList.remove("is-gliding", "is-swapping"); }
   if (globe && wasRotating) { globe.controls().autoRotate = true; wasRotating = false; }
 }
 
@@ -511,12 +593,23 @@ function showPanel(iso, f) {
 function showMapPanel(iso, node) {
   clearTimeout(hideTimer);
   cancelAnimationFrame(rafId);
+  const host = node?.closest(".client-map-host") || document.querySelector(".client-map-host");
+  const wasOpen = !panel.hidden;
   if (iso !== openIso) {
     panel.innerHTML = mapPanelHtml(iso);
     openIso = iso;
+    // Restart the content-swap keyframe. Without the reflow the class is added and removed inside
+    // one frame and the browser never plays it, so moving between two countries would snap.
+    panel.classList.remove("is-swapping");
+    void panel.offsetWidth;
+    panel.classList.add("is-swapping");
   }
+  // Only glide between positions once it is already on screen — the first appearance should fade
+  // in where it belongs, not slide in from wherever the previous card happened to sit.
+  panel.classList.toggle("is-gliding", wasOpen);
   panel.hidden = false;
-  positionMapPanel(node);
+  markMapActive(host, iso);
+  positionMapPanel(mapAnchor(host, iso, node));
 }
 
 function mapPanelHtml(iso) {
