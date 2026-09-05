@@ -84,7 +84,7 @@ export const shellHtml = (operator = {}) => {
         <button role="tab" aria-selected="false" data-tab="act">Risks & Actions<span class="n" id="tn-act"></span></button>
         <button role="tab" aria-selected="false" data-tab="conv">Conversation</button>
         <button role="tab" aria-selected="false" data-tab="comp">Compliance<span class="n" id="tn-comp"></span></button>
-        <button role="tab" aria-selected="false" data-tab="econ">Impact</button>
+        <button role="tab" aria-selected="false" data-tab="econ">News</button>
       </div>
 
       <div class="pane" id="pane-pf">

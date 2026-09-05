@@ -58,38 +58,16 @@ function pauseForFocus() {
   scheduleIdleReset();
 }
 
-function topCountryPositions(iso, limit = 20) {
-  return (S.portfolio?.positions || [])
-    .map(pos => {
-      const inst = S.instruments[pos.instrumentId];
-      const ex = inst?.exposures?.find(x => x.iso3 === iso);
-      return ex ? {
-        id: pos.instrumentId,
-        name: inst.name || pos.instrumentId,
-        weightPct: pos.weightPct * ex.weight
-      } : null;
-    })
-    .filter(Boolean)
-    .sort((a, b) => b.weightPct - a.weightPct)
-    .slice(0, limit);
-}
-
 function exposedClients(iso) {
   return (S.portfolios || []).filter(p =>
     (p.positions || []).some(pos => S.instruments[pos.instrumentId]?.exposures?.some(x => x.iso3 === iso))
   );
 }
 
-function initials(name) {
-  return String(name || "")
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map(x => x[0])
-    .join("")
-    .toUpperCase();
-}
-
+/** Compact by design: one headline number (capital at risk), one line of secondary metrics
+ * (7-day change + holdings/clients counts), no itemised position-by-position breakdown — that
+ * detail already lives in the "Positions by pressure" rail and Compliance's look-through panel,
+ * so a hover tooltip doesn't need to repeat it. */
 function countryTooltip({ countryName, iso, exposureMeta, signal, lens }) {
   if (!exposureMeta || !signal) {
     return `<div class="gt wi-country-tip">
@@ -97,9 +75,7 @@ function countryTooltip({ countryName, iso, exposureMeta, signal, lens }) {
       <div class="gt-empty">No mandate exposure</div>
     </div>`;
   }
-  const positions = topCountryPositions(iso);
-  const clients = exposedClients(iso);
-  const more = Math.max(0, exposureMeta.instrumentIds.length - positions.length);
+  const clientCount = exposedClients(iso).length;
   const delta = lens.val(signal);
   const improving = delta < 0;
   const status = improving ? "Improving" : delta > 0 ? "Worsening" : "Stable";
@@ -107,14 +83,7 @@ function countryTooltip({ countryName, iso, exposureMeta, signal, lens }) {
     <div class="gt-head"><b><span class="gt-flag">${FLAGS[iso] || ""}</span>${signal.name || countryName}</b><span class="gt-status ${improving ? "improving" : delta > 0 ? "worsening" : "stable"}">${status}</span></div>
     <div class="gt-risk"><strong>${exposureMeta.weightPct.toFixed(1)}<small>%</small></strong><span>capital at risk</span></div>
     <div class="gt-rule"><i style="width:${Math.min(100, Math.max(4, exposureMeta.weightPct))}%;background:${lens.col(delta)}"></i></div>
-    <div class="gt-metrics">
-      <span>7-day change in exposure risk</span><strong style="color:${lens.col(delta)}">${lens.fmt(delta)}</strong>
-      <span>Holdings exposed</span><strong>${exposureMeta.instrumentIds.length}</strong>
-    </div>
-    <div class="gt-clients"><span>${clients.length} clients exposed</span><div>${clients.slice(0, 6).map(p => `<b>${initials(p.name)}</b>`).join("")}${clients.length > 6 ? `<em>+${clients.length - 6}</em>` : ""}</div></div>
-    <div class="gt-sub">Exposure via</div>
-    <div class="gt-positions">${positions.map(x => `<div><span title="${x.name}">${x.name}</span><em>${x.weightPct.toFixed(1)}%</em></div>`).join("") || `<p>No positions found</p>`}</div>
-    ${more ? `<div class="gt-more">+ ${more} more positions</div>` : ""}
+    <div class="gt-metrics"><span>7d Δ <strong style="color:${lens.col(delta)}">${lens.fmt(delta)}</strong></span><span>${exposureMeta.instrumentIds.length} holding${exposureMeta.instrumentIds.length === 1 ? "" : "s"}</span><span>${clientCount} client${clientCount === 1 ? "" : "s"}</span></div>
   </div>`;
 }
 

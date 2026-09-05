@@ -12,7 +12,7 @@ import { focusGlobeOnCountries, mountGlobe, paintGlobe, resetGlobeView, sizeGlob
 import { mountGoogleGlobe } from "./ui/googleGlobe.js";
 import { paintBook, paintHead, paintGoals, paintEvidence, paintLegend, paintTicker, paintPfRail, paintCopilot }
   from "./ui/panels.js";
-import { paintActions, paintConversation, paintCompliance, paintEconomics } from "./ui/tabs.js";
+import { paintActions, paintConversation, paintCompliance, paintNews } from "./ui/tabs.js";
 import { initDrawers, openPosition, openPolicyTrial } from "./ui/drawers.js";
 import * as M from "./ui/motion.js";
 import { FALLBACK_SCAN, runPolicyScan } from "./policy/sentinel.js";
@@ -147,6 +147,12 @@ function wire() {
     history.pushState(null, "", "/");
     resetGlobeView();
     renderAll();
+    // The globe's WebGL canvas sits inside #pane-pf, which was hidden (0×0) the whole time a
+    // non-Overview tab was open on the client workbench — sizeGlobe() (which forces globe.gl to
+    // re-measure and re-render) is otherwise only ever called from the tab-click handler below,
+    // never on a route change back to the dashboard. Without it the canvas can come back stale
+    // or simply not repaint, which is the "globe doesn't appear anymore" glitch.
+    requestAnimationFrame(sizeGlobe);
   });
 
   document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => {
@@ -503,7 +509,7 @@ export function renderAll() {
   paintActions();
   paintConversation();
   paintCompliance();
-  paintEconomics();
+  paintNews();
   applyLiquidGlass();
 }
 
