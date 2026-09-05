@@ -1,19 +1,29 @@
 import { generateBrief } from "../llm/client.js";
-import { HEALTH_BANDS } from "./rubric.js";
+import { HEALTH_BANDS, AI_SCORE_BAND } from "./rubric.js";
 
 const SYSTEM =
   "You write a relationship manager's internal client-facing explanation and score the " +
   "portfolio. Arrange only the facts given — never invent a position, signal, country, or life " +
-  "detail. `overview` is a single flowing prose paragraph, 100 words or fewer, not a list or " +
+  "detail. " +
+  "Write every prose field (overview, risks[].text, opportunities[].text, actions[].title/why, " +
+  "relationship's summary/concerns/talkingPoints/objections, complianceChecks[].detail, " +
+  "impactNarrative) like a quick catch-up note a colleague reads before calling the client — " +
+  "not a research report or a compliance memo. Plain, spoken language: 'tied up in' rather than " +
+  "'concentrated exposure', 'under pressure' rather than 'deteriorating', 'slipped below X%' " +
+  "rather than 'crossed a funding-confidence band'. Keep every specific number, name, and " +
+  "country — simplify the words around them, not the substance. " +
+  "`overview` is a single flowing prose paragraph, 100 words or fewer, not a list or " +
   "bullet points: a client introduction, the investment thesis (mandate + what it funds), a " +
   "general overview of the investments (broad theme, not specific positions or weights), and — " +
   "only when the facts support it — a clause naming tax domicile context or an upcoming funding " +
   "goal. No risk, opportunity, urgency, or this-week language in `overview`; that belongs in " +
   "`risks`/`opportunities`/`actions`. " +
   "For `risks`, consider client-specific alerts across drift (positions or goal funding moving " +
-  "off the mandate/target line), concentration, liquidity (illiquid or gated holdings), currency " +
-  "(FX exposure relative to the base currency), and collateral (lombard headroom) — tag each with " +
-  "the category it actually is, and 'other' only if none fit. " +
+  "off the mandate/target line), concentration (too much sitting in one place), liquidity " +
+  "(illiquid or gated holdings), currency (FX exposure relative to the base currency), and " +
+  "collateral (lombard headroom) — tag `category` with whichever of those it actually is, and " +
+  "'other' only if none fit; the category field itself is an internal tag, not something the " +
+  "RM reads, so it can stay technical even while `text` stays plain. " +
   "For `opportunities`, act as an event-based engine: only surface one where a specific country " +
   "signal or the policy stance in the facts connects to this portfolio's own goals or holdings — " +
   "do not invent a connection; return an empty array if nothing in the facts supports one. " +
@@ -28,11 +38,13 @@ const SYSTEM =
   "never invent a conversation that didn't happen. Return `relationship: null` only if no " +
   "relationship facts were given at all. " +
   "For `complianceChecks`, produce one item per compliance-relevant fact actually given — PEP " +
-  "status, tax domicile/reporting jurisdiction, KYC review timing, and look-through concentration " +
-  "against the mandate's bands — and no others; never invent a screening result, a counterparty " +
-  "count, or a check for something not in the facts. status is 'watch' only when the fact itself " +
-  "supports concern (e.g. pepStatus is Yes, or a position's weight exceeds a mandate band's " +
-  "maxSingle), otherwise 'clear'. " +
+  "status, tax domicile/reporting jurisdiction, KYC review timing, and how spread out the " +
+  "portfolio's real (look-through) holdings are against the mandate's bands — and no others; " +
+  "never invent a screening result, a counterparty count, or a check for something not in the " +
+  "facts. `item` can stay a short compliance label (e.g. 'PEP status', 'Concentration policy'); " +
+  "`detail` is the plain-language sentence explaining it. status is 'watch' only when the fact " +
+  "itself supports concern (e.g. pepStatus is Yes, or a position's weight exceeds a mandate " +
+  "band's maxSingle), otherwise 'clear'. " +
   "For `impactNarrative`, one short prose paragraph (60 words or fewer, not a list) on what this " +
   "specific client's mandate concretely involves this review — holdings count, mandate " +
   "complexity, what's flagged — grounded only in this client's own facts, never a book-wide or " +
@@ -40,26 +52,35 @@ const SYSTEM =
   "Nowhere in the response — overview, risks, opportunities, actions, relationship, " +
   "complianceChecks, or impactNarrative — use the words buy / sell / execute / switch; these are " +
   "internal findings and recommendations for the RM, never client-facing advice or trade " +
-  "instructions. Compute `health` and `concentration` from the numbers given, not qualitatively; " +
+  "instructions. Compute `health` and `concentration` from the numbers given, not qualitatively. " +
+  "The facts include `referenceHealth` and `referenceConcentrationPct` — the bank's own " +
+  "deterministic read of the same facts. Your `health` and `concentration.pct` are an " +
+  "independent gut-check within a stated tolerance, not a free estimate: each must land within " +
+  AI_SCORE_BAND + " points of its reference value. " +
   "`concentration.countries` must only contain country codes present in the facts. Return JSON only.";
 const SCHEMA = {
-  health: "number 0-100 — overall portfolio health given the facts",
+  health: "number 0-100 — overall portfolio health given the facts, within " + AI_SCORE_BAND +
+    " points of the given referenceHealth",
   concentration: {
-    pct: "whole number 0-100, no decimal places — risk-weighted concentration of deteriorating exposure",
+    pct: "whole number 0-100, no decimal places — risk-weighted concentration of deteriorating " +
+      "exposure, within " + AI_SCORE_BAND + " points of the given referenceConcentrationPct",
     countries: "array of ISO3 codes present in the facts, most significant first"
   },
   overview: "string — a single prose paragraph, not a list, 100 words or fewer: client intro, " +
     "investment thesis, general portfolio overview, and optionally a tax-domicile or upcoming- " +
     "goal clause when relevant. No risk/opportunity/urgency/this-week language.",
-  risks: "array of up to 4 objects { text: string, severity: 'high'|'medium'|'low', category: " +
-    "'drift'|'concentration'|'liquidity'|'currency'|'collateral'|'other' } — concrete, client- " +
-    "specific risk findings grounded in the facts given, most severe first",
-  opportunities: "array of up to 3 objects { text: string } — a market development connected to " +
-    "this portfolio's own goals or holdings; empty array if none is supported by the facts",
+  risks: "array of up to 4 objects { text: string (plain, spoken language — no jargon), " +
+    "severity: 'high'|'medium'|'low', category: 'drift'|'concentration'|'liquidity'|'currency'|" +
+    "'collateral'|'other' } — concrete, client-specific risk findings grounded in the facts " +
+    "given, most severe first",
+  opportunities: "array of up to 3 objects { text: string (plain, spoken language) } — a market " +
+    "development connected to this portfolio's own goals or holdings; empty array if none is " +
+    "supported by the facts",
   actions: "array of up to 4 objects { kind: string (one or two words, e.g. 'Rebalance', 'Tax " +
     "review', 'Client conversation'), category: 'rebalancing'|'tax-optimization'|'life-event'|" +
-    "'other', title: string (a short recommended action), why: string (one sentence grounding it " +
-    "in mandate, risk profile, tax domicile, life stage, or objectives) }",
+    "'other', title: string (a short recommended action, plain language), why: string (one " +
+    "plain-language sentence grounding it in mandate, risk profile, tax domicile, life stage, " +
+    "or objectives) }",
   relationship: "null, or an object { summary: string (1-2 sentences: last contact and how this " +
     "client tends to behave/decide), concerns: array of up to 4 short strings (standing " +
     "concerns), talkingPoints: array of up to 4 short strings (for the next conversation), " +
@@ -113,10 +134,11 @@ function fallbackComplianceChecks(portfolio, grounding, clientEval) {
     checks.push({ item: "Tax domicile", status: "clear", detail: `On record: ${grounding.taxDomicile}.` });
   }
   checks.push({ item: "KYC review", status: "clear", detail: `Next review due ${portfolio.reviewDate}.` });
-  const concentrationFlagged = (clientEval.risks || []).some(r => /concentration|chokepoint/i.test(r.text));
+  const concentrationFlagged = (clientEval.risks || []).some(r =>
+    r.topic ? (r.topic === "concentration" || r.topic === "chokepoint") : /concentration|chokepoint/i.test(r.text));
   checks.push({ item: "Concentration policy", status: concentrationFlagged ? "watch" : "clear",
-    detail: concentrationFlagged ? "Look-through concentration is elevated against the mandate's typical limits."
-      : "Look-through concentration sits within typical mandate limits." });
+    detail: concentrationFlagged ? "A larger share than usual is tied up in one place, above what's typical for this mandate."
+      : "Holdings are well spread out — nothing unusual for this mandate." });
   return checks;
 }
 
@@ -125,8 +147,8 @@ function fallbackImpactNarrative(portfolio, clientEval) {
   const flagged = (clientEval.risks || []).length;
   return `Reviewing ${portfolio.ref}'s ${portfolio.mandate.toLowerCase()} mandate covers ${n} holding${n === 1 ? "" : "s"}` +
     (flagged
-      ? `, with ${flagged} flagged exposure${flagged === 1 ? "" : "s"} pre-identified rather than assembled by hand.`
-      : ", with no exposures currently flagged for review.");
+      ? `, and ${flagged} ${flagged === 1 ? "is" : "are"} already flagged below — nothing to chase down from scratch.`
+      : ", with nothing flagged for this review.");
 }
 
 function fallbackRelationship(r) {
@@ -139,7 +161,17 @@ function fallbackRelationship(r) {
   };
 }
 
+/** clientEval.js tags its own findings with a stable `topic` (concentration/chokepoint/funding/
+ * lombard/houseview) so its prose can be reworded freely without breaking classification here.
+ * The regex fallback only serves callers that hand-build a risk/action object without a topic —
+ * e.g. narrate.test.js's fixtures. */
 function categoriseRisk(r) {
+  if (r.topic) {
+    if (r.topic === "lombard") return "collateral";
+    if (r.topic === "concentration" || r.topic === "chokepoint") return "concentration";
+    if (r.topic === "funding" || r.topic === "houseview") return "drift";
+    return "other";
+  }
   const t = (r.text || "").toLowerCase();
   if (/lombard|collateral|headroom/.test(t)) return "collateral";
   if (/concentration|chokepoint/.test(t)) return "concentration";
@@ -147,6 +179,11 @@ function categoriseRisk(r) {
   return "other";
 }
 function categoriseAction(a) {
+  if (a.topic) {
+    if (a.topic === "lombard" || a.topic === "concentration" || a.topic === "chokepoint") return "rebalancing";
+    if (a.topic === "funding") return "life-event";
+    return "other";
+  }
   const t = (a.reason || "").toLowerCase();
   if (/lombard|collateral|concentration|chokepoint/.test(t)) return "rebalancing";
   if (/funding confidence|dropped through/.test(t)) return "life-event";
@@ -162,13 +199,21 @@ const RISK_CATEGORIES = ["drift", "concentration", "liquidity", "currency", "col
 const ACTION_CATEGORIES = ["rebalancing", "tax-optimization", "life-event", "other"];
 const CHECK_STATUSES = ["clear", "watch"];
 
-/** Shape guard for a candidate AI response before it's trusted as health/concentration/overview/risks/opportunities/actions/complianceChecks/impactNarrative. */
-export function validateAiScore(data, countryCodes) {
+/** Shape guard for a candidate AI response before it's trusted as
+ * health/concentration/overview/risks/opportunities/actions/complianceChecks/impactNarrative.
+ * `reference`, when given ({ health, concentrationPct }), is the deterministic engine's own
+ * read of the same facts — a response is rejected in full (not partially merged) if its health
+ * or concentration.pct drifts more than AI_SCORE_BAND points from it. Callers that don't have
+ * (or don't want) a bounded reference can omit it and skip that check — used by tests that only
+ * exercise the shape guard. */
+export function validateAiScore(data, countryCodes, reference) {
   if (!data) return false;
   if (!nonEmptyString(data.overview) || HAS_IMPERATIVE.test(data.overview) || wordCount(data.overview) > 100) return false;
   if (typeof data.health !== "number" || !Number.isFinite(data.health) || data.health < 0 || data.health > 100) return false;
+  if (reference && Number.isFinite(reference.health) && Math.abs(data.health - reference.health) > AI_SCORE_BAND) return false;
   const conc = data.concentration;
   if (!conc || typeof conc.pct !== "number" || !Number.isFinite(conc.pct) || conc.pct < 0 || conc.pct > 100) return false;
+  if (reference && Number.isFinite(reference.concentrationPct) && Math.abs(conc.pct - reference.concentrationPct) > AI_SCORE_BAND) return false;
   if (!Array.isArray(conc.countries) || conc.countries.some(c => !countryCodes.includes(c))) return false;
   if (!Array.isArray(data.risks) || data.risks.length > 4) return false;
   if (data.risks.some(r => !r || !nonEmptyString(r.text) || !SEVERITIES.includes(r.severity)
@@ -217,9 +262,15 @@ export function factsHash(portfolioId, grounding) {
 
 export async function narrateClient(clientEval, portfolio, rmNotes = [], grounding) {
   const fallback = () => templateNarration(clientEval, portfolio, grounding);
+  const reference = { health: clientEval.health, concentrationPct: grounding?.fallbackConcentration?.pct };
   const facts = {
     // The client's real name never reaches the model — identified by mandate reference only.
     client: { ref: portfolio.ref, mandate: portfolio.mandate, riskProfile: portfolio.riskProfile, riskBand: portfolio.riskBand },
+    // The bank's own deterministic health/concentration read — see AI_SCORE_BAND (rubric.js):
+    // the model's own numbers must land within that many points of these, or the whole
+    // response is rejected in favor of the deterministic fallback (validateAiScore below).
+    referenceHealth: reference.health,
+    referenceConcentrationPct: reference.concentrationPct ?? null,
     household: grounding?.household ?? false,
     baseCurrency: grounding?.baseCurrency ?? portfolio.currency ?? null,
     taxDomicile: grounding?.taxDomicile ?? null,
@@ -253,7 +304,7 @@ export async function narrateClient(clientEval, portfolio, rmNotes = [], groundi
     return fallback();
   }
   const countryCodes = (grounding?.countrySignals ?? []).map(c => c.iso3);
-  if (res.ok && validateAiScore(res.data, countryCodes)) {
+  if (res.ok && validateAiScore(res.data, countryCodes, reference)) {
     const health = res.data.health;
     const healthBand = health >= HEALTH_BANDS.strong ? "strong" : health >= HEALTH_BANDS.watch ? "watch" : "strained";
     return {

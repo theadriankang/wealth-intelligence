@@ -55,7 +55,7 @@ test("a goal that crossed 80% funding this week is a high-severity risk with urg
   const p = data.portfolios.find(x => x.id === "sg2208");
   const cs = scoreCountries(SIGNALS, PREV_SIGNALS, market);
   const e = evaluateClient(p, data.instruments, SIGNALS, PREV_SIGNALS, cs, null);
-  const cross = e.risks.find(r => /dropped through 80% funding confidence/.test(r.text));
+  const cross = e.risks.find(r => r.topic === "funding" && /slipped below 80% funded/.test(r.text));
   assert.ok(cross, "expected an 80% band-cross risk for sg2208");
   assert.equal(cross.severity, "high");
   assert.ok(cross.urgency >= 55, `urgency ${cross.urgency}`);
@@ -63,7 +63,7 @@ test("a goal that crossed 80% funding this week is a high-severity risk with urg
 
 test("a concentration risk is flagged for the Bergmann book with high-ish urgency", async () => {
   const { e } = await ev("Advisory");
-  const conc = e.risks.find(r => /concentration/i.test(r.text));
+  const conc = e.risks.find(r => r.topic === "concentration");
   assert.ok(conc);
   assert.ok(conc.urgency >= 35);
 });
