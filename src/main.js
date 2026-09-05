@@ -210,6 +210,10 @@ async function switchSnapshot(asOf) {
     S.portfolio = S.portfolios.find(p => p.id === keepId) || S.portfolios[0];
     S.operator = currentOperator(data);
     S.narratedHash = {}; S.aiActionState = {};
+    narrationEpoch++; // invalidates any still-in-flight narration call from the old snapshot —
+                       // see maybeNarratePortfolio; clearing narratedHash alone isn't enough,
+                       // since a stale result resolving after this looks like "never scored" to
+                       // that check, not "scored against facts that no longer apply".
     since = 0;
     await loadSignals(data, collectIsos(S.portfolios, S.instruments));
     refreshEvaluation();
@@ -360,6 +364,13 @@ function copyNarratedFields(target, src) {
  */
 const inflight = new Set(); // `${portfolioId}|${hash}` — guards against asking twice concurrently
 
+// Bumped by switchSnapshot(). A narration call captures this at the start and checks it again
+// after awaiting the model — if a snapshot switch happened in between, the facts it was asked
+// about no longer exist, and its result is discarded even though S.narratedHash[id] looks empty
+// again (the switch clears it first) and would otherwise read as "never scored" rather than
+// "scored against a snapshot that's gone".
+let narrationEpoch = 0;
+
 async function maybeNarratePortfolio(p) {
   const id = p?.id;
   const ev = S.evaluation?.clients?.[id];
@@ -367,6 +378,7 @@ async function maybeNarratePortfolio(p) {
   // refreshEvaluation for how it survives later evaluation refreshes). Never re-ask the model
   // just because a client got opened again or the facts moved under it.
   if (!ev || S.narratedHash[id]) return;
+  const epoch = narrationEpoch;
   const grounding = withPortfolioContext(p, buildGrounding);
   const hash = factsHash(id, grounding);
 
@@ -380,6 +392,7 @@ async function maybeNarratePortfolio(p) {
     inflight.delete(key);
   }
 
+  if (epoch !== narrationEpoch) return; // a snapshot switch invalidated this call while in flight
   const live = S.evaluation?.clients?.[id];
   if (!live || S.narratedHash[id]) return; // scored by someone else while this call was in flight
   S.narratedHash[id] = { hash, ...narrated };
@@ -431,21 +444,30 @@ async function runPolicySentinel() {
 
 /** The AI Copilot's "ask anything" box, actually routed now instead of showing a static
  * placeholder. One-off per question — not cached/hash-gated like narrateClient, since a
- * question isn't a recurring fact-driven score. If the client changes while the answer is in
- * flight, the answer is discarded rather than attached to the wrong client (copilotAnsweredFor
- * lets paintCopilot only ever show an answer that belongs to the portfolio on screen). */
+ * question isn't a recurring fact-driven score. Two ways an in-flight answer can stop applying
+ * by the time it resolves: the client changed (copilotAnsweredFor lets paintCopilot only ever
+ * show an answer that belongs to the portfolio on screen), or a newer question was asked before
+ * this one came back — copilotRequestSeq guards that: two questions in flight at once could
+ * resolve out of order, and without this check the *older* question's answer could land last and
+ * overwrite the newer one's, silently answering the wrong question. */
+let copilotRequestSeq = 0;
+
 async function askCopilotQuestion(question) {
   const q = question?.trim();
   const forId = S.portfolio?.id;
   if (!q || !forId) return;
+  const seq = ++copilotRequestSeq;
   S.copilotAsking = true;
   renderAll();
   const grounding = buildGrounding(); // S.portfolio is already the client being asked about
   const res = await askCopilot(q, S.portfolio, grounding, rmNotesFor(S.portfolio));
+  if (seq !== copilotRequestSeq) return; // a newer question is now in flight (or already answered)
   S.copilotAsking = false;
   if (S.portfolio?.id !== forId) return; // switched clients mid-ask; the answer no longer applies
   S.copilotAnsweredFor = forId;
   S.copilotAnswer = res.ok ? res.answer : "Couldn't find an answer from the current portfolio data — try rephrasing.";
+  if (res.ok) S.copilotDraft = ""; // clear the input for the next question; keep a failed
+                                    // question in place so the RM can edit and retry it
   renderAll();
 }
 

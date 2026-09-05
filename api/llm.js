@@ -1,4 +1,5 @@
 import { callLLM } from "../server/llm.js";
+import { checkRateLimit, clientIp } from "../server/rate-limit.js";
 
 /**
  * Vercel counterpart to server/index.js's POST /api/llm — same shape (result key,
@@ -12,6 +13,11 @@ export default async function handler(req, res) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
     return res.status(405).json({ error: "Method not allowed" });
+  }
+  const { allowed, retryAfterSec } = checkRateLimit(clientIp(req), { limit: 40 });
+  if (!allowed) {
+    res.setHeader("Retry-After", String(retryAfterSec));
+    return res.status(429).json({ error: "Too many requests, try again shortly." });
   }
   try {
     res.status(200).json({ result: await callLLM(req.body || {}) });
