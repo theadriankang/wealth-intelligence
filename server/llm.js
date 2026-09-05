@@ -11,9 +11,31 @@
  * providers — comfortably above what the largest schema (narrateClient's) needs in practice.
  */
 export async function callLLM({ system, prompt, schema }) {
-  if (process.env.ANTHROPIC_API_KEY) return anthropic({ system, prompt, schema });
-  if (process.env.OPENAI_API_KEY) return openai({ system, prompt, schema });
-  throw new Error("No LLM key set — put ANTHROPIC_API_KEY or OPENAI_API_KEY in .env");
+  const providers = [
+    process.env.ANTHROPIC_API_KEY && ["anthropic", anthropic],
+    process.env.OPENAI_API_KEY && ["openai", openai]
+  ].filter(Boolean);
+
+  if (!providers.length) {
+    throw new Error("No LLM key set — put ANTHROPIC_API_KEY or OPENAI_API_KEY in .env");
+  }
+
+  // Anthropic first when both keys are present; OpenAI is a failover, not an alternative.
+  // The provider order is presence-based (a key that isn't set is never tried), but a provider
+  // that IS set and fails hands off to the next one rather than surfacing "Analysis unavailable"
+  // — the realistic demo-day failure is a 429 or an overloaded 529 under a live crowd, not a
+  // missing key. Only the last provider's error escapes, so the caller's template fallback
+  // still fires when every provider is down.
+  let lastErr;
+  for (const [name, call] of providers) {
+    try {
+      return await call({ system, prompt, schema });
+    } catch (err) {
+      lastErr = err;
+      console.warn(`[llm] ${name} failed: ${err.message}`);
+    }
+  }
+  throw lastErr;
 }
 
 async function anthropic({ system, prompt, schema }) {
@@ -25,7 +47,7 @@ async function anthropic({ system, prompt, schema }) {
       "anthropic-version": "2023-06-01"
     },
     body: JSON.stringify({
-      model: process.env.LLM_MODEL || "claude-sonnet-4-5",
+      model: process.env.ANTHROPIC_MODEL || process.env.LLM_MODEL || "claude-sonnet-4-5",
       max_tokens: 2000,
       temperature: 0,
       system,
@@ -48,7 +70,7 @@ async function openai({ system, prompt, schema }) {
       authorization: `Bearer ${process.env.OPENAI_API_KEY}`
     },
     body: JSON.stringify({
-      model: process.env.LLM_MODEL || "gpt-4o",
+      model: process.env.OPENAI_MODEL || "gpt-4o",
       response_format: { type: "json_object" },
       temperature: 0,
       max_tokens: 2000,
