@@ -155,20 +155,15 @@ function wire() {
     history.pushState(null, "", "/");
     resetGlobeView();
     renderAll();
-    // The globe's WebGL canvas sits inside #pane-pf, which was hidden (0×0) the whole time a
-    // non-Overview tab was open on the client workbench — sizeGlobe() (which forces globe.gl to
-    // re-measure and re-render) is otherwise only ever called from the tab-click handler below,
-    // never on a route change back to the dashboard. Without it the canvas can come back stale
-    // or simply not repaint, which is the "globe doesn't appear anymore" glitch.
+    // renderAll() -> syncTabs() has already unhidden #pane-pf, so the globe host has a real box
+    // to measure. sizeGlobe() then forces globe.gl to re-measure and repaint, because the canvas
+    // was 0×0 for as long as a non-Overview tab was open.
     requestAnimationFrame(sizeGlobe);
   });
 
   document.querySelectorAll("[data-tab]").forEach(b => b.addEventListener("click", () => {
     S.tab = b.dataset.tab;
-    document.querySelectorAll("[data-tab]").forEach(x =>
-      x.setAttribute("aria-selected", String(x.dataset.tab === S.tab)));
-    ["pf","act","conv","comp","econ"].forEach(k =>
-      document.getElementById("pane-" + k).hidden = (k !== S.tab));
+    syncTabs();
     if (S.tab === "pf") requestAnimationFrame(sizeGlobe);
     M.pane(S.tab);
   }));
@@ -450,6 +445,29 @@ async function narrateAllPortfolios(concurrency = 4) {
   await Promise.all(Array.from({ length: Math.min(concurrency, queue.length) }, worker));
 }
 
+/** Applies S.tab to the tablist and the panes. This is the only place the panes' `hidden`
+ * attribute is written, and renderAll() calls it — so any state change that moves S.tab
+ * (the home-logo route reset, popstate, opening a client) actually shows that tab, instead of
+ * leaving whatever pane the last tab CLICK happened to unhide. That mismatch was the
+ * "globe doesn't appear" bug: going Overview -> Risks & Actions -> home logo set S.tab = "pf"
+ * but left #pane-pf hidden, so the globe was mounted, painted, and sized inside a 0×0 box. */
+function syncTabs() {
+  document.querySelectorAll("[data-tab]").forEach(x =>
+    x.setAttribute("aria-selected", String(x.dataset.tab === S.tab)));
+  let revealedPf = false;
+  ["pf","act","conv","comp","econ"].forEach(k => {
+    const pane = document.getElementById("pane-" + k);
+    if (!pane) return;
+    const next = (k !== S.tab);
+    if (k === "pf" && pane.hidden && !next) revealedPf = true;
+    pane.hidden = next;
+  });
+  // A pane that was hidden had no box, so the globe canvas inside it is 0×0 and stale. Re-measure
+  // on the frame after it becomes visible again — whatever caused it (tab click, popstate, the
+  // home logo), not just the one code path that used to remember to.
+  if (revealedPf) requestAnimationFrame(sizeGlobe);
+}
+
 function syncRouteClass() {
   const app = document.querySelector(".app");
   app?.classList.toggle("dashboard-view", S.route === "dashboard");
@@ -506,6 +524,7 @@ async function askCopilotQuestion(question) {
 
 export function renderAll() {
   syncRouteClass();
+  syncTabs();
   paintBook(id => {
     S.portfolio = S.portfolios.find(p => p.id === id);
     S.clientScopeId = null; S.selIso = null; S.goalSel = null; S.household = false; S.clientDrawerOpen = false;

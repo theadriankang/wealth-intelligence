@@ -353,16 +353,29 @@ function renderClientMap() {
     return `<path class="map-arc ${a.hot ? "is-hot" : ""}" d="M${sx.toFixed(1)} ${sy.toFixed(1)} Q${mx.toFixed(1)} ${my.toFixed(1)} ${exx.toFixed(1)} ${ey.toFixed(1)}"></path>`;
   }).join("");
 
-  const markers = Object.entries(COUNTRY_VIEW).map(([iso, p]) => {
+  // The ripple is a live sonar ping, not decoration: its cadence carries weight. A country
+  // holding more of the book pings faster (2.6s down to 1.5s), so the eye is pulled to the
+  // concentrated exposures before it reads a single number — and the whole map is desynchronised
+  // by a per-marker delay, because markers pulsing in lockstep read as a loading state rather
+  // than as twenty independent positions. Purely CSS/SMIL-free (see .marker-ripple in
+  // styles.css), so it costs nothing per frame and stops dead under prefers-reduced-motion.
+  const markers = Object.entries(COUNTRY_VIEW).map(([iso, p], i) => {
     const e = ex[iso], s = sig(iso);
     if (!e || !s) return "";
     const [x, y] = project(p.lng, p.lat);
     const col = markerTone(L, s, e);
-    const height = Math.max(18, Math.min(54, 16 + (e.weightPct || 0) * 1.2));
-    const hot = e.weightPct >= 20 || S.selIso === iso;
-    return `<g class="map-marker" data-iso="${iso}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})" style="--marker:${col}">
+    const weight = e.weightPct || 0;
+    const height = Math.max(18, Math.min(54, 16 + weight * 1.2));
+    const hot = weight >= 20 || S.selIso === iso;
+    const period = Math.max(1.5, 2.6 - Math.min(weight, 25) * 0.044).toFixed(2);
+    const delay = ((i * 0.37) % Number(period)).toFixed(2);
+    const spread = (2.4 + Math.min(weight, 30) / 22).toFixed(2);
+    return `<g class="map-marker${hot ? " is-hot" : ""}" data-iso="${iso}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"
+      style="--marker:${col};--ripple-period:${period}s;--ripple-delay:-${delay}s;--ripple-spread:${spread}">
+      <circle class="marker-ripple" r="11"></circle>
+      <circle class="marker-ripple lag" r="11"></circle>
       ${hot ? `<circle class="marker-glow" r="24"></circle><circle class="marker-glow wide" r="34"></circle>` : ""}
-      <line y1="-${height.toFixed(0)}" y2="-10"></line><circle r="11"></circle><circle r="4.5"></circle>
+      <line y1="-${height.toFixed(0)}" y2="-10"></line><circle class="marker-disc" r="11"></circle><circle class="marker-dot" r="4.5"></circle>
     </g>`;
   }).join("");
   const labels = Object.entries(ex).sort((a, b) => (b[1].weightPct || 0) - (a[1].weightPct || 0))
