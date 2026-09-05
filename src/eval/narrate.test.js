@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { templateNarration, narrateClient, validateAiScore, factsHash } from "./narrate.js";
+import { AI_SCORE_BAND } from "./rubric.js";
 
 const p = { name: "Bergmann Family Office", ref: "PF-0003", mandate: "Advisory", riskProfile: "Balanced", riskBand: "8–14% vol",
   goals: [{ name: "Zurich property acquisition", horizon: "Q2 2027" }, { name: "Retirement drawdown", horizon: "from 2034" }],
@@ -154,6 +155,35 @@ test("validateAiScore rejects an empty overview", () => {
 
 test("validateAiScore rejects a health score out of range", () => {
   assert.equal(validateAiScore({ ...base(), health: 140 }, ["TWN"]), false);
+});
+
+test("validateAiScore accepts a health/concentration reading with no reference given (shape-only check)", () => {
+  assert.equal(validateAiScore({ ...base(), ...aiExtras }, ["TWN"]), true);
+});
+
+test("validateAiScore accepts a health score right at the edge of the reference band", () => {
+  const data = { ...base(), ...aiExtras, health: 55 + AI_SCORE_BAND };
+  assert.equal(validateAiScore(data, ["TWN"], { health: 55, concentrationPct: 40 }), true);
+});
+
+test("validateAiScore rejects a health score one point past the reference band", () => {
+  const data = { ...base(), health: 55 + AI_SCORE_BAND + 1 };
+  assert.equal(validateAiScore(data, ["TWN"], { health: 55, concentrationPct: 40 }), false);
+});
+
+test("validateAiScore rejects a health score below the reference band", () => {
+  const data = { ...base(), health: 55 - AI_SCORE_BAND - 1 };
+  assert.equal(validateAiScore(data, ["TWN"], { health: 55, concentrationPct: 40 }), false);
+});
+
+test("validateAiScore rejects a concentration.pct past the reference band", () => {
+  const data = { ...base(), concentration: { pct: 40 + AI_SCORE_BAND + 1, countries: ["TWN"] } };
+  assert.equal(validateAiScore(data, ["TWN"], { health: 55, concentrationPct: 40 }), false);
+});
+
+test("validateAiScore ignores the band check when the reference itself is missing a number", () => {
+  const data = { ...base(), ...aiExtras, health: 99 };
+  assert.equal(validateAiScore(data, ["TWN"], { health: undefined, concentrationPct: undefined }), true);
 });
 
 test("validateAiScore rejects a hallucinated country", () => {
